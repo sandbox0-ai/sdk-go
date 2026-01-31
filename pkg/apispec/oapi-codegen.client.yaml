@@ -1,0 +1,4 @@
+package: apispec
+output: client.gen.go
+generate:
+  - client
