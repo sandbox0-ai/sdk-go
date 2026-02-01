@@ -3,8 +3,11 @@ package sandbox0
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/google/shlex"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -41,7 +44,6 @@ type CmdResult struct {
 
 type runOptions struct {
 	contextID      string
-	tempContext    bool
 	idleTimeoutSec *int32
 	ttlSec         *int32
 	cwd            *string
@@ -56,13 +58,6 @@ type RunOption func(*runOptions)
 func WithContextID(contextID string) RunOption {
 	return func(opts *runOptions) {
 		opts.contextID = contextID
-	}
-}
-
-// WithTempContext forces Run to create and clean up a temporary context.
-func WithTempContext() RunOption {
-	return func(opts *runOptions) {
-		opts.tempContext = true
 	}
 }
 
@@ -129,23 +124,6 @@ func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOp
 		ContextID: contextID,
 		Output:    execResp.Output,
 	}, nil
-}
-
-// RunAsync executes input in a REPL context asynchronously.
-func (s *Sandbox) RunAsync(ctx context.Context, language, input string, opts ...RunOption) (<-chan RunResult, <-chan error) {
-	resultCh := make(chan RunResult, 1)
-	errCh := make(chan error, 1)
-	go func() {
-		defer close(resultCh)
-		defer close(errCh)
-		result, err := s.Run(ctx, language, input, opts...)
-		if err != nil {
-			errCh <- err
-			return
-		}
-		resultCh <- result
-	}()
-	return resultCh, errCh
 }
 
 type cmdOptions struct {
@@ -228,8 +206,10 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 
 	waitUntilDone := true
 	contextResp, err := s.Contexts.Create(ctx, apispec.CreateContextRequest{
-		Type:           ptrProcessType(apispec.Cmd),
-		Command:        &options.command,
+		Type: ptrProcessType(apispec.Cmd),
+		Cmd: &apispec.CreateCMDContextRequest{
+			Command: &options.command,
+		},
 		Cwd:            options.cwd,
 		EnvVars:        options.envVars,
 		PtySize:        options.ptySize,
@@ -243,6 +223,7 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if contextResp == nil {
 		return CmdResult{}, errors.New("create context returned nil response")
 	}
+	defer s.Contexts.Delete(ctx, contextResp.Id)
 
 	output := ""
 	if contextResp.Output != nil {
@@ -256,23 +237,6 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	}, nil
 }
 
-// CmdAsync executes a command asynchronously.
-func (s *Sandbox) CmdAsync(ctx context.Context, cmd string, opts ...CmdOption) (<-chan CmdResult, <-chan error) {
-	resultCh := make(chan CmdResult, 1)
-	errCh := make(chan error, 1)
-	go func() {
-		defer close(resultCh)
-		defer close(errCh)
-		result, err := s.Cmd(ctx, cmd, opts...)
-		if err != nil {
-			errCh <- err
-			return
-		}
-		resultCh <- result
-	}()
-	return resultCh, errCh
-}
-
 func (s *Sandbox) ensureReplContext(ctx context.Context, language string, options runOptions) (string, error) {
 	if options.contextID != "" {
 		return options.contextID, nil
@@ -283,18 +247,18 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 		language = "python"
 	}
 
-	if !options.tempContext {
-		s.mu.Lock()
-		contextID := s.replContextByLang[language]
-		s.mu.Unlock()
-		if contextID != "" {
-			return contextID, nil
-		}
+	s.mu.Lock()
+	contextID := s.replContextByLang[language]
+	s.mu.Unlock()
+	if contextID != "" {
+		return contextID, nil
 	}
 
 	contextResp, err := s.Contexts.Create(ctx, apispec.CreateContextRequest{
-		Type:           ptrProcessType(apispec.Repl),
-		Language:       &language,
+		Type: ptrProcessType(apispec.Repl),
+		Repl: &apispec.CreateREPLContextRequest{
+			Language: &language,
+		},
 		Cwd:            options.cwd,
 		EnvVars:        options.envVars,
 		PtySize:        options.ptySize,
@@ -308,13 +272,10 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 		return "", errors.New("create context returned nil response")
 	}
 
-	contextID := contextResp.Id
-	if !options.tempContext {
-		s.mu.Lock()
-		s.replContextByLang[language] = contextID
-		s.mu.Unlock()
-		return contextID, nil
-	}
+	contextID = contextResp.Id
+	s.mu.Lock()
+	s.replContextByLang[language] = contextID
+	s.mu.Unlock()
 
 	return contextID, nil
 }
@@ -332,4 +293,11 @@ func parseCommand(input string) ([]string, error) {
 		return nil, errors.New("command cannot be empty")
 	}
 	return args, nil
+}
+
+var requestCounter atomic.Uint64
+
+func generateRequestID() string {
+	count := requestCounter.Add(1)
+	return fmt.Sprintf("req-%d-%d", time.Now().UnixNano(), count)
 }

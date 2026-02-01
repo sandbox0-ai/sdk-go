@@ -1254,11 +1254,24 @@ paths:
     get:
       tags: [contexts]
       summary: Context WebSocket (I/O)
-      description: Upgrades to WebSocket for streaming I/O.
+      description: |
+        Upgrades to WebSocket for streaming I/O.
+        Client messages (JSON):
+        - { "type": "input", "data": "ls\n", "request_id": "req-1" }
+        - { "type": "resize", "rows": 24, "cols": 80 }
+        - { "type": "signal", "signal": "INT" }
+        Server messages (JSON):
+        - { "type": "output", "source": "stdout", "data": "hello\n" }
+        - { "type": "done", "request_id": "req-1" }
       security:
         - bearerAuth: []
       x-upstream-service: procd
       x-upstream-path: /api/v1/contexts/{ctx_id}/ws
+      x-websocket:
+        inbound:
+          $ref: "#/components/schemas/ContextWebSocketRequest"
+        outbound:
+          $ref: "#/components/schemas/ContextWebSocketResponse"
       parameters:
         - $ref: "#/components/parameters/SandboxID"
         - $ref: "#/components/parameters/ContextID"
@@ -1351,44 +1364,64 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessMovedResponse"
-  /api/v1/sandboxes/{id}/files/{path}:
+  /api/v1/sandboxes/{id}/files/watch:
     get:
       tags: [files]
-      summary: Read file or query file info
+      summary: File watch WebSocket
       description: |
-        Use query params:
-        - stat=true: returns file metadata
-        - list=true: returns directory entries
-        - binary=true: returns base64 content
+        Upgrades to WebSocket for file watch events.
+        Client messages:
+        - { "action": "subscribe", "path": "/tmp", "recursive": false }
+        - { "action": "unsubscribe", "watch_id": "watch-id" }
+        Server messages:
+        - { "type": "subscribed", "watch_id": "watch-id", "path": "/tmp" }
+        - { "type": "event", "watch_id": "watch-id", "event": "write", "path": "/tmp/a.txt" }
+        - { "type": "unsubscribed", "watch_id": "watch-id" }
+        - { "type": "error", "error": "message" }
       security:
         - bearerAuth: []
       x-upstream-service: procd
-      x-upstream-path: /api/v1/files/{path}
+      x-upstream-path: /api/v1/files/watch
+      x-websocket:
+        inbound:
+          $ref: "#/components/schemas/FileWatchRequest"
+        outbound:
+          $ref: "#/components/schemas/FileWatchResponse"
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+      responses:
+        "101":
+          description: Switching Protocols
+  /api/v1/sandboxes/{id}/files:
+    get:
+      tags: [files]
+      summary: Read file content
+      description: |
+        Use query params:
+        - path=/tmp/a.txt: target file path
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/files
       parameters:
         - $ref: "#/components/parameters/SandboxID"
         - $ref: "#/components/parameters/FilePath"
-        - $ref: "#/components/parameters/QueryStat"
-        - $ref: "#/components/parameters/QueryList"
-        - $ref: "#/components/parameters/QueryBinary"
       responses:
         "200":
-          description: File content or metadata
+          description: File content
           content:
             application/octet-stream:
               schema:
                 type: string
                 format: binary
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessFileReadResponse"
     post:
       tags: [files]
       summary: Write file or create directory
-      description: Use `mkdir=true` to create directories, otherwise writes file content.
+      description: Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
       security:
         - bearerAuth: []
       x-upstream-service: procd
-      x-upstream-path: /api/v1/files/{path}
+      x-upstream-path: /api/v1/files
       parameters:
         - $ref: "#/components/parameters/SandboxID"
         - $ref: "#/components/parameters/FilePath"
@@ -1420,7 +1453,7 @@ paths:
       security:
         - bearerAuth: []
       x-upstream-service: procd
-      x-upstream-path: /api/v1/files/{path}
+      x-upstream-path: /api/v1/files
       parameters:
         - $ref: "#/components/parameters/SandboxID"
         - $ref: "#/components/parameters/FilePath"
@@ -1431,6 +1464,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessDeletedResponse"
+  /api/v1/sandboxes/{id}/files/stat:
+    get:
+      tags: [files]
+      summary: Stat a file
+      description: |
+        Use query params:
+        - path=/tmp/a.txt: target file path
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/files/stat
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/FilePath"
+      responses:
+        "200":
+          description: File metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessFileStatResponse"
+  /api/v1/sandboxes/{id}/files/list:
+    get:
+      tags: [files]
+      summary: List directory entries
+      description: |
+        Use query params:
+        - path=/tmp: target directory path
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/files/list
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/FilePath"
+      responses:
+        "200":
+          description: Directory entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessFileListResponse"
+  /api/v1/sandboxes/{id}/files/binary:
+    get:
+      tags: [files]
+      summary: Read file content as base64
+      description: |
+        Use query params:
+        - path=/tmp/a.txt: target file path
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/files/binary
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/FilePath"
+      responses:
+        "200":
+          description: Base64 file content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessFileBinaryResponse"
   /api/v1/templates:
     get:
       tags: [templates]
@@ -1797,28 +1893,10 @@ components:
         type: string
     FilePath:
       name: path
-      in: path
+      in: query
       required: true
       schema:
         type: string
-    QueryStat:
-      name: stat
-      in: query
-      required: false
-      schema:
-        type: boolean
-    QueryList:
-      name: list
-      in: query
-      required: false
-      schema:
-        type: boolean
-    QueryBinary:
-      name: binary
-      in: query
-      required: false
-      schema:
-        type: boolean
     QueryMkdir:
       name: mkdir
       in: query
@@ -2593,17 +2671,93 @@ components:
         cols:
           type: integer
           format: int32
+    ExecCandidate:
+      type: object
+      properties:
+        name:
+          type: string
+        args:
+          type: array
+          items:
+            type: string
+      required: [name]
+    REPLEnvVar:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        value_from:
+          type: string
+      required: [name]
+    REPLPromptConfig:
+      type: object
+      properties:
+        custom_prompt:
+          type: string
+    REPLReadyMode:
+      type: string
+      enum: [prompt_token, startup_delay]
+    REPLReadyConfig:
+      type: object
+      properties:
+        mode:
+          $ref: "#/components/schemas/REPLReadyMode"
+        token:
+          type: string
+        startup_delay_ms:
+          type: integer
+          format: int32
+    REPLConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        display_name:
+          type: string
+        description:
+          type: string
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExecCandidate"
+        env:
+          type: array
+          items:
+            $ref: "#/components/schemas/REPLEnvVar"
+        default_term:
+          type: string
+        prompt:
+          $ref: "#/components/schemas/REPLPromptConfig"
+        ready:
+          $ref: "#/components/schemas/REPLReadyConfig"
+      required: [name, candidates]
+    CreateREPLContextRequest:
+      type: object
+      properties:
+        language:
+          type: string
+        input:
+          type: string
+        repl_config:
+          $ref: "#/components/schemas/REPLConfig"
+    CreateCMDContextRequest:
+      type: object
+      properties:
+        command:
+          type: array
+          items:
+            type: string
     CreateContextRequest:
       type: object
       properties:
         type:
           $ref: "#/components/schemas/ProcessType"
-        language:
-          type: string
-        command:
-          type: array
-          items:
-            type: string
+        repl:
+          $ref: "#/components/schemas/CreateREPLContextRequest"
+        cmd:
+          $ref: "#/components/schemas/CreateCMDContextRequest"
         wait_until_done:
           type: boolean
         cwd:
@@ -2614,8 +2768,6 @@ components:
             type: string
         pty_size:
           $ref: "#/components/schemas/PTYSize"
-        input:
-          type: string
         idle_timeout_sec:
           type: integer
           format: int32
@@ -2767,6 +2919,32 @@ components:
                       items:
                         $ref: "#/components/schemas/FileInfo"
                 - $ref: "#/components/schemas/FileContentResponse"
+    SuccessFileStatResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/FileInfo"
+    SuccessFileListResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                entries:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/FileInfo"
+    SuccessFileBinaryResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/FileContentResponse"
     MoveFileRequest:
       type: object
       properties:
@@ -2775,6 +2953,141 @@ components:
         destination:
           type: string
       required: [source, destination]
+    FileWatchRequest:
+      oneOf:
+        - $ref: "#/components/schemas/FileWatchSubscribeRequest"
+        - $ref: "#/components/schemas/FileWatchUnsubscribeRequest"
+    FileWatchSubscribeRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [subscribe]
+        path:
+          type: string
+        recursive:
+          type: boolean
+      required: [action, path]
+    FileWatchUnsubscribeRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [unsubscribe]
+        watch_id:
+          type: string
+      required: [action, watch_id]
+    FileWatchResponse:
+      oneOf:
+        - $ref: "#/components/schemas/FileWatchSubscribed"
+        - $ref: "#/components/schemas/FileWatchEvent"
+        - $ref: "#/components/schemas/FileWatchUnsubscribed"
+        - $ref: "#/components/schemas/FileWatchError"
+    FileWatchSubscribed:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [subscribed]
+        watch_id:
+          type: string
+        path:
+          type: string
+      required: [type, watch_id, path]
+    FileWatchEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [event]
+        watch_id:
+          type: string
+        event:
+          type: string
+        path:
+          type: string
+      required: [type, watch_id, event, path]
+    FileWatchUnsubscribed:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [unsubscribed]
+        watch_id:
+          type: string
+      required: [type, watch_id]
+    FileWatchError:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [error]
+        error:
+          type: string
+      required: [type, error]
+    ContextWebSocketRequest:
+      oneOf:
+        - $ref: "#/components/schemas/ContextWebSocketInput"
+        - $ref: "#/components/schemas/ContextWebSocketResize"
+        - $ref: "#/components/schemas/ContextWebSocketSignal"
+    ContextWebSocketInput:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [input]
+        data:
+          type: string
+        request_id:
+          type: string
+      required: [type]
+    ContextWebSocketResize:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [resize]
+        rows:
+          type: integer
+          format: int32
+        cols:
+          type: integer
+          format: int32
+      required: [type, rows, cols]
+    ContextWebSocketSignal:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [signal]
+        signal:
+          type: string
+      required: [type, signal]
+    ContextWebSocketResponse:
+      oneOf:
+        - $ref: "#/components/schemas/ContextWebSocketOutput"
+        - $ref: "#/components/schemas/ContextWebSocketDone"
+    ContextWebSocketOutput:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [output]
+        source:
+          type: string
+          enum: [stdout, stderr, prompt]
+        data:
+          type: string
+      required: [type, source, data]
+    ContextWebSocketDone:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [done]
+        request_id:
+          type: string
+      required: [type, request_id]
     MountRequest:
       type: object
       properties:

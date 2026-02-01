@@ -3,7 +3,11 @@ package sandbox0
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
+	"fmt"
+	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
@@ -12,97 +16,103 @@ type SandboxFileService struct {
 	sandbox *Sandbox
 }
 
-// FileReadResult represents a decoded file read response.
-type FileReadResult struct {
-	Content *apispec.FileContentResponse
-	Info    *apispec.FileInfo
-	Entries []apispec.FileInfo
-	Raw     *apispec.SuccessFileReadResponse
+// FileWatchSubscribeRequest is a subscribe message for file watch.
+type FileWatchSubscribeRequest struct {
+	Action    string `json:"action"`
+	Path      string `json:"path"`
+	Recursive bool   `json:"recursive,omitempty"`
 }
 
-// FileReadOption configures file read behavior.
-type FileReadOption func(*apispec.GetApiV1SandboxesIdFilesPathParams)
-
-// WithFileStat requests file metadata.
-func WithFileStat() FileReadOption {
-	return func(params *apispec.GetApiV1SandboxesIdFilesPathParams) {
-		stat := apispec.QueryStat(true)
-		params.Stat = &stat
-	}
+// FileWatchUnsubscribeRequest is an unsubscribe message for file watch.
+type FileWatchUnsubscribeRequest struct {
+	Action  string `json:"action"`
+	WatchID string `json:"watch_id"`
 }
 
-// WithFileList requests directory listing.
-func WithFileList() FileReadOption {
-	return func(params *apispec.GetApiV1SandboxesIdFilesPathParams) {
-		list := apispec.QueryList(true)
-		params.List = &list
-	}
+// FileWatchResponse represents a server watch message.
+type FileWatchResponse struct {
+	Type    string `json:"type"`
+	WatchID string `json:"watch_id,omitempty"`
+	Event   string `json:"event,omitempty"`
+	Path    string `json:"path,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
 
-// WithFileBinary requests base64 content encoding.
-func WithFileBinary() FileReadOption {
-	return func(params *apispec.GetApiV1SandboxesIdFilesPathParams) {
-		binary := apispec.QueryBinary(true)
-		params.Binary = &binary
+// Read reads a file and returns raw bytes.
+func (s *SandboxFileService) Read(ctx context.Context, path string) ([]byte, error) {
+	params := apispec.GetApiV1SandboxesIdFilesParams{
+		Path: apispec.FilePath(path),
 	}
+	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	if err != nil {
+		return nil, err
+	}
+	if resp.HTTPResponse == nil || resp.HTTPResponse.StatusCode != http.StatusOK {
+		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	}
+	return resp.Body, nil
 }
 
-// Read reads a file or directory info.
-func (s *SandboxFileService) Read(ctx context.Context, path string, opts ...FileReadOption) (*FileReadResult, error) {
-	params := apispec.GetApiV1SandboxesIdFilesPathParams{}
-	for _, opt := range opts {
-		opt(&params)
+// Stat retrieves file metadata.
+func (s *SandboxFileService) Stat(ctx context.Context, path string) (*apispec.FileInfo, error) {
+	params := apispec.GetApiV1SandboxesIdFilesStatParams{
+		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesPathWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), apispec.FilePath(path), &params)
+	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesStatWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
 	if err != nil {
 		return nil, err
 	}
 	if resp.JSON200 == nil || resp.JSON200.Data == nil {
 		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 	}
-
-	result := &FileReadResult{Raw: resp.JSON200}
-	if content, err := resp.JSON200.Data.AsFileContentResponse(); err == nil {
-		result.Content = &content
-	}
-	if info, err := resp.JSON200.Data.AsFileInfo(); err == nil {
-		result.Info = &info
-	}
-	if entries, err := resp.JSON200.Data.AsSuccessFileReadResponseData1(); err == nil && entries.Entries != nil {
-		result.Entries = *entries.Entries
-	}
-	return result, nil
-}
-
-// Stat retrieves file metadata.
-func (s *SandboxFileService) Stat(ctx context.Context, path string) (*apispec.FileInfo, error) {
-	result, err := s.Read(ctx, path, WithFileStat())
-	if err != nil {
-		return nil, err
-	}
-	if result.Info == nil {
-		return nil, &APIError{Code: "unexpected_response", Message: "missing file info"}
-	}
-	return result.Info, nil
+	return resp.JSON200.Data, nil
 }
 
 // List returns directory entries.
 func (s *SandboxFileService) List(ctx context.Context, path string) ([]apispec.FileInfo, error) {
-	result, err := s.Read(ctx, path, WithFileList())
+	params := apispec.GetApiV1SandboxesIdFilesListParams{
+		Path: apispec.FilePath(path),
+	}
+	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesListWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
 	if err != nil {
 		return nil, err
 	}
-	return result.Entries, nil
+	if resp.JSON200 == nil || resp.JSON200.Data == nil || resp.JSON200.Data.Entries == nil {
+		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	}
+	return *resp.JSON200.Data.Entries, nil
+}
+
+// ReadBinary reads file content as base64 and decodes it.
+func (s *SandboxFileService) ReadBinary(ctx context.Context, path string) ([]byte, error) {
+	params := apispec.GetApiV1SandboxesIdFilesBinaryParams{
+		Path: apispec.FilePath(path),
+	}
+	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesBinaryWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	if err != nil {
+		return nil, err
+	}
+	if resp.JSON200 == nil || resp.JSON200.Data == nil || resp.JSON200.Data.Content == nil {
+		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	}
+	content := *resp.JSON200.Data.Content
+	decoded, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		return nil, err
+	}
+	return decoded, nil
 }
 
 // Write writes a file.
 func (s *SandboxFileService) Write(ctx context.Context, path string, data []byte) (*apispec.SuccessWrittenResponse, error) {
 	body := bytes.NewReader(data)
-	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesPathWithBodyWithResponse(
+	params := apispec.PostApiV1SandboxesIdFilesParams{
+		Path: apispec.FilePath(path),
+	}
+	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
 		ctx,
 		apispec.SandboxID(s.sandbox.ID),
-		apispec.FilePath(path),
-		nil,
+		&params,
 		"application/octet-stream",
 		body,
 	)
@@ -120,17 +130,18 @@ func (s *SandboxFileService) Write(ctx context.Context, path string, data []byte
 
 // Mkdir creates a directory.
 func (s *SandboxFileService) Mkdir(ctx context.Context, path string, recursive bool) (*apispec.SuccessCreatedResponse, error) {
-	params := apispec.PostApiV1SandboxesIdFilesPathParams{}
+	params := apispec.PostApiV1SandboxesIdFilesParams{
+		Path: apispec.FilePath(path),
+	}
 	mkdir := apispec.QueryMkdir(true)
 	params.Mkdir = &mkdir
 	if recursive {
 		rec := apispec.QueryRecursive(true)
 		params.Recursive = &rec
 	}
-	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesPathWithBodyWithResponse(
+	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
 		ctx,
 		apispec.SandboxID(s.sandbox.ID),
-		apispec.FilePath(path),
 		&params,
 		"application/octet-stream",
 		bytes.NewReader(nil),
@@ -146,7 +157,10 @@ func (s *SandboxFileService) Mkdir(ctx context.Context, path string, recursive b
 
 // Delete deletes a file or directory.
 func (s *SandboxFileService) Delete(ctx context.Context, path string) (*apispec.SuccessDeletedResponse, error) {
-	resp, err := s.sandbox.client.api.DeleteApiV1SandboxesIdFilesPathWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), apispec.FilePath(path))
+	params := apispec.DeleteApiV1SandboxesIdFilesParams{
+		Path: apispec.FilePath(path),
+	}
+	resp, err := s.sandbox.client.api.DeleteApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -169,4 +183,92 @@ func (s *SandboxFileService) Move(ctx context.Context, source, destination strin
 		return resp.JSON200, nil
 	}
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+}
+
+// ConnectWatch opens a WebSocket stream for file watch events.
+func (s *SandboxFileService) ConnectWatch(ctx context.Context) (*websocket.Conn, *http.Response, error) {
+	wsURL, err := s.sandbox.client.websocketURL("/api/v1/sandboxes/" + s.sandbox.ID + "/files/watch")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, wsURL, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := s.sandbox.client.applyRequestEditors(ctx, req); err != nil {
+		return nil, nil, err
+	}
+
+	return websocket.DefaultDialer.DialContext(ctx, wsURL, req.Header)
+}
+
+// Watch subscribes to file watch events and returns an unsubscribe handler.
+func (s *SandboxFileService) Watch(ctx context.Context, path string, recursive bool) (<-chan FileWatchResponse, <-chan error, func() error, error) {
+	conn, _, err := s.ConnectWatch(ctx)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	subscribe := FileWatchSubscribeRequest{
+		Action:    "subscribe",
+		Path:      path,
+		Recursive: recursive,
+	}
+	if err := conn.WriteJSON(subscribe); err != nil {
+		_ = conn.Close()
+		return nil, nil, nil, err
+	}
+
+	var resp FileWatchResponse
+	if err := conn.ReadJSON(&resp); err != nil {
+		_ = conn.Close()
+		return nil, nil, nil, err
+	}
+	if resp.Type == "error" {
+		_ = conn.Close()
+		return nil, nil, nil, fmt.Errorf("watch subscribe failed: %s", resp.Error)
+	}
+	if resp.Type != "subscribed" || resp.WatchID == "" {
+		_ = conn.Close()
+		return nil, nil, nil, fmt.Errorf("unexpected watch response: %s", resp.Type)
+	}
+
+	unsubscribe := func() error {
+		err := conn.WriteJSON(FileWatchUnsubscribeRequest{
+			Action:  "unsubscribe",
+			WatchID: resp.WatchID,
+		})
+		_ = conn.Close()
+		return err
+	}
+
+	events := make(chan FileWatchResponse)
+	errs := make(chan error, 1)
+
+	go func() {
+		defer close(events)
+		defer close(errs)
+		for {
+			var msg FileWatchResponse
+			if err := conn.ReadJSON(&msg); err != nil {
+				if ctx.Err() == nil {
+					errs <- err
+				}
+				return
+			}
+			if msg.Type == "error" && msg.Error != "" {
+				errs <- fmt.Errorf("watch error: %s", msg.Error)
+				continue
+			}
+			events <- msg
+		}
+	}()
+
+	go func() {
+		<-ctx.Done()
+		_ = conn.Close()
+	}()
+
+	return events, errs, unsubscribe, nil
 }

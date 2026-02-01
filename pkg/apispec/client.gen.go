@@ -170,19 +170,31 @@ type ClientInterface interface {
 	// GetApiV1SandboxesIdContextsCtxIdWs request
 	GetApiV1SandboxesIdContextsCtxIdWs(ctx context.Context, id SandboxID, ctxId ContextID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteApiV1SandboxesIdFiles request
+	DeleteApiV1SandboxesIdFiles(ctx context.Context, id SandboxID, params *DeleteApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetApiV1SandboxesIdFiles request
+	GetApiV1SandboxesIdFiles(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostApiV1SandboxesIdFilesWithBody request with any body
+	PostApiV1SandboxesIdFilesWithBody(ctx context.Context, id SandboxID, params *PostApiV1SandboxesIdFilesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetApiV1SandboxesIdFilesBinary request
+	GetApiV1SandboxesIdFilesBinary(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesBinaryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetApiV1SandboxesIdFilesList request
+	GetApiV1SandboxesIdFilesList(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PostApiV1SandboxesIdFilesMoveWithBody request with any body
 	PostApiV1SandboxesIdFilesMoveWithBody(ctx context.Context, id SandboxID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PostApiV1SandboxesIdFilesMove(ctx context.Context, id SandboxID, body PostApiV1SandboxesIdFilesMoveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DeleteApiV1SandboxesIdFilesPath request
-	DeleteApiV1SandboxesIdFilesPath(ctx context.Context, id SandboxID, path FilePath, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetApiV1SandboxesIdFilesStat request
+	GetApiV1SandboxesIdFilesStat(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesStatParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetApiV1SandboxesIdFilesPath request
-	GetApiV1SandboxesIdFilesPath(ctx context.Context, id SandboxID, path FilePath, params *GetApiV1SandboxesIdFilesPathParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// PostApiV1SandboxesIdFilesPathWithBody request with any body
-	PostApiV1SandboxesIdFilesPathWithBody(ctx context.Context, id SandboxID, path FilePath, params *PostApiV1SandboxesIdFilesPathParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetApiV1SandboxesIdFilesWatch request
+	GetApiV1SandboxesIdFilesWatch(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetApiV1SandboxesIdNetwork request
 	GetApiV1SandboxesIdNetwork(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -725,6 +737,66 @@ func (c *Client) GetApiV1SandboxesIdContextsCtxIdWs(ctx context.Context, id Sand
 	return c.Client.Do(req)
 }
 
+func (c *Client) DeleteApiV1SandboxesIdFiles(ctx context.Context, id SandboxID, params *DeleteApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteApiV1SandboxesIdFilesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetApiV1SandboxesIdFiles(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SandboxesIdFilesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostApiV1SandboxesIdFilesWithBody(ctx context.Context, id SandboxID, params *PostApiV1SandboxesIdFilesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostApiV1SandboxesIdFilesRequestWithBody(c.Server, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetApiV1SandboxesIdFilesBinary(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesBinaryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SandboxesIdFilesBinaryRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetApiV1SandboxesIdFilesList(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SandboxesIdFilesListRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) PostApiV1SandboxesIdFilesMoveWithBody(ctx context.Context, id SandboxID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPostApiV1SandboxesIdFilesMoveRequestWithBody(c.Server, id, contentType, body)
 	if err != nil {
@@ -749,8 +821,8 @@ func (c *Client) PostApiV1SandboxesIdFilesMove(ctx context.Context, id SandboxID
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeleteApiV1SandboxesIdFilesPath(ctx context.Context, id SandboxID, path FilePath, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteApiV1SandboxesIdFilesPathRequest(c.Server, id, path)
+func (c *Client) GetApiV1SandboxesIdFilesStat(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesStatParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SandboxesIdFilesStatRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -761,20 +833,8 @@ func (c *Client) DeleteApiV1SandboxesIdFilesPath(ctx context.Context, id Sandbox
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetApiV1SandboxesIdFilesPath(ctx context.Context, id SandboxID, path FilePath, params *GetApiV1SandboxesIdFilesPathParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1SandboxesIdFilesPathRequest(c.Server, id, path, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PostApiV1SandboxesIdFilesPathWithBody(ctx context.Context, id SandboxID, path FilePath, params *PostApiV1SandboxesIdFilesPathParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostApiV1SandboxesIdFilesPathRequestWithBody(c.Server, id, path, params, contentType, body)
+func (c *Client) GetApiV1SandboxesIdFilesWatch(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SandboxesIdFilesWatchRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -2450,6 +2510,300 @@ func NewGetApiV1SandboxesIdContextsCtxIdWsRequest(server string, id SandboxID, c
 	return req, nil
 }
 
+// NewDeleteApiV1SandboxesIdFilesRequest generates requests for DeleteApiV1SandboxesIdFiles
+func NewDeleteApiV1SandboxesIdFilesRequest(server string, id SandboxID, params *DeleteApiV1SandboxesIdFilesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetApiV1SandboxesIdFilesRequest generates requests for GetApiV1SandboxesIdFiles
+func NewGetApiV1SandboxesIdFilesRequest(server string, id SandboxID, params *GetApiV1SandboxesIdFilesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPostApiV1SandboxesIdFilesRequestWithBody generates requests for PostApiV1SandboxesIdFiles with any type of body
+func NewPostApiV1SandboxesIdFilesRequestWithBody(server string, id SandboxID, params *PostApiV1SandboxesIdFilesParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if params.Mkdir != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "mkdir", runtime.ParamLocationQuery, *params.Mkdir); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Recursive != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "recursive", runtime.ParamLocationQuery, *params.Recursive); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetApiV1SandboxesIdFilesBinaryRequest generates requests for GetApiV1SandboxesIdFilesBinary
+func NewGetApiV1SandboxesIdFilesBinaryRequest(server string, id SandboxID, params *GetApiV1SandboxesIdFilesBinaryParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/binary", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetApiV1SandboxesIdFilesListRequest generates requests for GetApiV1SandboxesIdFilesList
+func NewGetApiV1SandboxesIdFilesListRequest(server string, id SandboxID, params *GetApiV1SandboxesIdFilesListParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/list", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewPostApiV1SandboxesIdFilesMoveRequest calls the generic PostApiV1SandboxesIdFilesMove builder with application/json body
 func NewPostApiV1SandboxesIdFilesMoveRequest(server string, id SandboxID, body PostApiV1SandboxesIdFilesMoveJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2497,8 +2851,8 @@ func NewPostApiV1SandboxesIdFilesMoveRequestWithBody(server string, id SandboxID
 	return req, nil
 }
 
-// NewDeleteApiV1SandboxesIdFilesPathRequest generates requests for DeleteApiV1SandboxesIdFilesPath
-func NewDeleteApiV1SandboxesIdFilesPathRequest(server string, id SandboxID, path FilePath) (*http.Request, error) {
+// NewGetApiV1SandboxesIdFilesStatRequest generates requests for GetApiV1SandboxesIdFilesStat
+func NewGetApiV1SandboxesIdFilesStatRequest(server string, id SandboxID, params *GetApiV1SandboxesIdFilesStatParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2508,60 +2862,12 @@ func NewDeleteApiV1SandboxesIdFilesPathRequest(server string, id SandboxID, path
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "path", runtime.ParamLocationPath, path)
-	if err != nil {
-		return nil, err
-	}
-
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetApiV1SandboxesIdFilesPathRequest generates requests for GetApiV1SandboxesIdFilesPath
-func NewGetApiV1SandboxesIdFilesPathRequest(server string, id SandboxID, path FilePath, params *GetApiV1SandboxesIdFilesPathParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "path", runtime.ParamLocationPath, path)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/stat", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2574,52 +2880,16 @@ func NewGetApiV1SandboxesIdFilesPathRequest(server string, id SandboxID, path Fi
 	if params != nil {
 		queryValues := queryURL.Query()
 
-		if params.Stat != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "stat", runtime.ParamLocationQuery, *params.Stat); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "path", runtime.ParamLocationQuery, params.Path); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
 				}
 			}
-
-		}
-
-		if params.List != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "list", runtime.ParamLocationQuery, *params.List); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Binary != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "binary", runtime.ParamLocationQuery, *params.Binary); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
 		}
 
 		queryURL.RawQuery = queryValues.Encode()
@@ -2633,8 +2903,8 @@ func NewGetApiV1SandboxesIdFilesPathRequest(server string, id SandboxID, path Fi
 	return req, nil
 }
 
-// NewPostApiV1SandboxesIdFilesPathRequestWithBody generates requests for PostApiV1SandboxesIdFilesPath with any type of body
-func NewPostApiV1SandboxesIdFilesPathRequestWithBody(server string, id SandboxID, path FilePath, params *PostApiV1SandboxesIdFilesPathParams, contentType string, body io.Reader) (*http.Request, error) {
+// NewGetApiV1SandboxesIdFilesWatchRequest generates requests for GetApiV1SandboxesIdFilesWatch
+func NewGetApiV1SandboxesIdFilesWatchRequest(server string, id SandboxID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2644,19 +2914,12 @@ func NewPostApiV1SandboxesIdFilesPathRequestWithBody(server string, id SandboxID
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "path", runtime.ParamLocationPath, path)
-	if err != nil {
-		return nil, err
-	}
-
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/api/v1/sandboxes/%s/files/watch", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2666,50 +2929,10 @@ func NewPostApiV1SandboxesIdFilesPathRequestWithBody(server string, id SandboxID
 		return nil, err
 	}
 
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Mkdir != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "mkdir", runtime.ParamLocationQuery, *params.Mkdir); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Recursive != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "recursive", runtime.ParamLocationQuery, *params.Recursive); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -4665,19 +4888,31 @@ type ClientWithResponsesInterface interface {
 	// GetApiV1SandboxesIdContextsCtxIdWsWithResponse request
 	GetApiV1SandboxesIdContextsCtxIdWsWithResponse(ctx context.Context, id SandboxID, ctxId ContextID, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdContextsCtxIdWsResponse, error)
 
+	// DeleteApiV1SandboxesIdFilesWithResponse request
+	DeleteApiV1SandboxesIdFilesWithResponse(ctx context.Context, id SandboxID, params *DeleteApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*DeleteApiV1SandboxesIdFilesResponse, error)
+
+	// GetApiV1SandboxesIdFilesWithResponse request
+	GetApiV1SandboxesIdFilesWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesResponse, error)
+
+	// PostApiV1SandboxesIdFilesWithBodyWithResponse request with any body
+	PostApiV1SandboxesIdFilesWithBodyWithResponse(ctx context.Context, id SandboxID, params *PostApiV1SandboxesIdFilesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesResponse, error)
+
+	// GetApiV1SandboxesIdFilesBinaryWithResponse request
+	GetApiV1SandboxesIdFilesBinaryWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesBinaryParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesBinaryResponse, error)
+
+	// GetApiV1SandboxesIdFilesListWithResponse request
+	GetApiV1SandboxesIdFilesListWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesListParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesListResponse, error)
+
 	// PostApiV1SandboxesIdFilesMoveWithBodyWithResponse request with any body
 	PostApiV1SandboxesIdFilesMoveWithBodyWithResponse(ctx context.Context, id SandboxID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesMoveResponse, error)
 
 	PostApiV1SandboxesIdFilesMoveWithResponse(ctx context.Context, id SandboxID, body PostApiV1SandboxesIdFilesMoveJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesMoveResponse, error)
 
-	// DeleteApiV1SandboxesIdFilesPathWithResponse request
-	DeleteApiV1SandboxesIdFilesPathWithResponse(ctx context.Context, id SandboxID, path FilePath, reqEditors ...RequestEditorFn) (*DeleteApiV1SandboxesIdFilesPathResponse, error)
+	// GetApiV1SandboxesIdFilesStatWithResponse request
+	GetApiV1SandboxesIdFilesStatWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesStatParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesStatResponse, error)
 
-	// GetApiV1SandboxesIdFilesPathWithResponse request
-	GetApiV1SandboxesIdFilesPathWithResponse(ctx context.Context, id SandboxID, path FilePath, params *GetApiV1SandboxesIdFilesPathParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesPathResponse, error)
-
-	// PostApiV1SandboxesIdFilesPathWithBodyWithResponse request with any body
-	PostApiV1SandboxesIdFilesPathWithBodyWithResponse(ctx context.Context, id SandboxID, path FilePath, params *PostApiV1SandboxesIdFilesPathParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesPathResponse, error)
+	// GetApiV1SandboxesIdFilesWatchWithResponse request
+	GetApiV1SandboxesIdFilesWatchWithResponse(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesWatchResponse, error)
 
 	// GetApiV1SandboxesIdNetworkWithResponse request
 	GetApiV1SandboxesIdNetworkWithResponse(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdNetworkResponse, error)
@@ -5334,6 +5569,116 @@ func (r GetApiV1SandboxesIdContextsCtxIdWsResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteApiV1SandboxesIdFilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SuccessDeletedResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteApiV1SandboxesIdFilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteApiV1SandboxesIdFilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetApiV1SandboxesIdFilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetApiV1SandboxesIdFilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetApiV1SandboxesIdFilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostApiV1SandboxesIdFilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SuccessWrittenResponse
+	JSON201      *SuccessCreatedResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PostApiV1SandboxesIdFilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostApiV1SandboxesIdFilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetApiV1SandboxesIdFilesBinaryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SuccessFileBinaryResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetApiV1SandboxesIdFilesBinaryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetApiV1SandboxesIdFilesBinaryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetApiV1SandboxesIdFilesListResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SuccessFileListResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetApiV1SandboxesIdFilesListResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetApiV1SandboxesIdFilesListResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type PostApiV1SandboxesIdFilesMoveResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5356,14 +5701,14 @@ func (r PostApiV1SandboxesIdFilesMoveResponse) StatusCode() int {
 	return 0
 }
 
-type DeleteApiV1SandboxesIdFilesPathResponse struct {
+type GetApiV1SandboxesIdFilesStatResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *SuccessDeletedResponse
+	JSON200      *SuccessFileStatResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r DeleteApiV1SandboxesIdFilesPathResponse) Status() string {
+func (r GetApiV1SandboxesIdFilesStatResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5371,21 +5716,20 @@ func (r DeleteApiV1SandboxesIdFilesPathResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DeleteApiV1SandboxesIdFilesPathResponse) StatusCode() int {
+func (r GetApiV1SandboxesIdFilesStatResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetApiV1SandboxesIdFilesPathResponse struct {
+type GetApiV1SandboxesIdFilesWatchResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *SuccessFileReadResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetApiV1SandboxesIdFilesPathResponse) Status() string {
+func (r GetApiV1SandboxesIdFilesWatchResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5393,30 +5737,7 @@ func (r GetApiV1SandboxesIdFilesPathResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1SandboxesIdFilesPathResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type PostApiV1SandboxesIdFilesPathResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SuccessWrittenResponse
-	JSON201      *SuccessCreatedResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r PostApiV1SandboxesIdFilesPathResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PostApiV1SandboxesIdFilesPathResponse) StatusCode() int {
+func (r GetApiV1SandboxesIdFilesWatchResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -6789,6 +7110,51 @@ func (c *ClientWithResponses) GetApiV1SandboxesIdContextsCtxIdWsWithResponse(ctx
 	return ParseGetApiV1SandboxesIdContextsCtxIdWsResponse(rsp)
 }
 
+// DeleteApiV1SandboxesIdFilesWithResponse request returning *DeleteApiV1SandboxesIdFilesResponse
+func (c *ClientWithResponses) DeleteApiV1SandboxesIdFilesWithResponse(ctx context.Context, id SandboxID, params *DeleteApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*DeleteApiV1SandboxesIdFilesResponse, error) {
+	rsp, err := c.DeleteApiV1SandboxesIdFiles(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteApiV1SandboxesIdFilesResponse(rsp)
+}
+
+// GetApiV1SandboxesIdFilesWithResponse request returning *GetApiV1SandboxesIdFilesResponse
+func (c *ClientWithResponses) GetApiV1SandboxesIdFilesWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesResponse, error) {
+	rsp, err := c.GetApiV1SandboxesIdFiles(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetApiV1SandboxesIdFilesResponse(rsp)
+}
+
+// PostApiV1SandboxesIdFilesWithBodyWithResponse request with arbitrary body returning *PostApiV1SandboxesIdFilesResponse
+func (c *ClientWithResponses) PostApiV1SandboxesIdFilesWithBodyWithResponse(ctx context.Context, id SandboxID, params *PostApiV1SandboxesIdFilesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesResponse, error) {
+	rsp, err := c.PostApiV1SandboxesIdFilesWithBody(ctx, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostApiV1SandboxesIdFilesResponse(rsp)
+}
+
+// GetApiV1SandboxesIdFilesBinaryWithResponse request returning *GetApiV1SandboxesIdFilesBinaryResponse
+func (c *ClientWithResponses) GetApiV1SandboxesIdFilesBinaryWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesBinaryParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesBinaryResponse, error) {
+	rsp, err := c.GetApiV1SandboxesIdFilesBinary(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetApiV1SandboxesIdFilesBinaryResponse(rsp)
+}
+
+// GetApiV1SandboxesIdFilesListWithResponse request returning *GetApiV1SandboxesIdFilesListResponse
+func (c *ClientWithResponses) GetApiV1SandboxesIdFilesListWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesListParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesListResponse, error) {
+	rsp, err := c.GetApiV1SandboxesIdFilesList(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetApiV1SandboxesIdFilesListResponse(rsp)
+}
+
 // PostApiV1SandboxesIdFilesMoveWithBodyWithResponse request with arbitrary body returning *PostApiV1SandboxesIdFilesMoveResponse
 func (c *ClientWithResponses) PostApiV1SandboxesIdFilesMoveWithBodyWithResponse(ctx context.Context, id SandboxID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesMoveResponse, error) {
 	rsp, err := c.PostApiV1SandboxesIdFilesMoveWithBody(ctx, id, contentType, body, reqEditors...)
@@ -6806,31 +7172,22 @@ func (c *ClientWithResponses) PostApiV1SandboxesIdFilesMoveWithResponse(ctx cont
 	return ParsePostApiV1SandboxesIdFilesMoveResponse(rsp)
 }
 
-// DeleteApiV1SandboxesIdFilesPathWithResponse request returning *DeleteApiV1SandboxesIdFilesPathResponse
-func (c *ClientWithResponses) DeleteApiV1SandboxesIdFilesPathWithResponse(ctx context.Context, id SandboxID, path FilePath, reqEditors ...RequestEditorFn) (*DeleteApiV1SandboxesIdFilesPathResponse, error) {
-	rsp, err := c.DeleteApiV1SandboxesIdFilesPath(ctx, id, path, reqEditors...)
+// GetApiV1SandboxesIdFilesStatWithResponse request returning *GetApiV1SandboxesIdFilesStatResponse
+func (c *ClientWithResponses) GetApiV1SandboxesIdFilesStatWithResponse(ctx context.Context, id SandboxID, params *GetApiV1SandboxesIdFilesStatParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesStatResponse, error) {
+	rsp, err := c.GetApiV1SandboxesIdFilesStat(ctx, id, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDeleteApiV1SandboxesIdFilesPathResponse(rsp)
+	return ParseGetApiV1SandboxesIdFilesStatResponse(rsp)
 }
 
-// GetApiV1SandboxesIdFilesPathWithResponse request returning *GetApiV1SandboxesIdFilesPathResponse
-func (c *ClientWithResponses) GetApiV1SandboxesIdFilesPathWithResponse(ctx context.Context, id SandboxID, path FilePath, params *GetApiV1SandboxesIdFilesPathParams, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesPathResponse, error) {
-	rsp, err := c.GetApiV1SandboxesIdFilesPath(ctx, id, path, params, reqEditors...)
+// GetApiV1SandboxesIdFilesWatchWithResponse request returning *GetApiV1SandboxesIdFilesWatchResponse
+func (c *ClientWithResponses) GetApiV1SandboxesIdFilesWatchWithResponse(ctx context.Context, id SandboxID, reqEditors ...RequestEditorFn) (*GetApiV1SandboxesIdFilesWatchResponse, error) {
+	rsp, err := c.GetApiV1SandboxesIdFilesWatch(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetApiV1SandboxesIdFilesPathResponse(rsp)
-}
-
-// PostApiV1SandboxesIdFilesPathWithBodyWithResponse request with arbitrary body returning *PostApiV1SandboxesIdFilesPathResponse
-func (c *ClientWithResponses) PostApiV1SandboxesIdFilesPathWithBodyWithResponse(ctx context.Context, id SandboxID, path FilePath, params *PostApiV1SandboxesIdFilesPathParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1SandboxesIdFilesPathResponse, error) {
-	rsp, err := c.PostApiV1SandboxesIdFilesPathWithBody(ctx, id, path, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePostApiV1SandboxesIdFilesPathResponse(rsp)
+	return ParseGetApiV1SandboxesIdFilesWatchResponse(rsp)
 }
 
 // GetApiV1SandboxesIdNetworkWithResponse request returning *GetApiV1SandboxesIdNetworkResponse
@@ -8036,6 +8393,133 @@ func ParseGetApiV1SandboxesIdContextsCtxIdWsResponse(rsp *http.Response) (*GetAp
 	return response, nil
 }
 
+// ParseDeleteApiV1SandboxesIdFilesResponse parses an HTTP response from a DeleteApiV1SandboxesIdFilesWithResponse call
+func ParseDeleteApiV1SandboxesIdFilesResponse(rsp *http.Response) (*DeleteApiV1SandboxesIdFilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteApiV1SandboxesIdFilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SuccessDeletedResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetApiV1SandboxesIdFilesResponse parses an HTTP response from a GetApiV1SandboxesIdFilesWithResponse call
+func ParseGetApiV1SandboxesIdFilesResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetApiV1SandboxesIdFilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParsePostApiV1SandboxesIdFilesResponse parses an HTTP response from a PostApiV1SandboxesIdFilesWithResponse call
+func ParsePostApiV1SandboxesIdFilesResponse(rsp *http.Response) (*PostApiV1SandboxesIdFilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostApiV1SandboxesIdFilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SuccessWrittenResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SuccessCreatedResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetApiV1SandboxesIdFilesBinaryResponse parses an HTTP response from a GetApiV1SandboxesIdFilesBinaryWithResponse call
+func ParseGetApiV1SandboxesIdFilesBinaryResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesBinaryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetApiV1SandboxesIdFilesBinaryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SuccessFileBinaryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetApiV1SandboxesIdFilesListResponse parses an HTTP response from a GetApiV1SandboxesIdFilesListWithResponse call
+func ParseGetApiV1SandboxesIdFilesListResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesListResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetApiV1SandboxesIdFilesListResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SuccessFileListResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParsePostApiV1SandboxesIdFilesMoveResponse parses an HTTP response from a PostApiV1SandboxesIdFilesMoveWithResponse call
 func ParsePostApiV1SandboxesIdFilesMoveResponse(rsp *http.Response) (*PostApiV1SandboxesIdFilesMoveResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -8062,22 +8546,22 @@ func ParsePostApiV1SandboxesIdFilesMoveResponse(rsp *http.Response) (*PostApiV1S
 	return response, nil
 }
 
-// ParseDeleteApiV1SandboxesIdFilesPathResponse parses an HTTP response from a DeleteApiV1SandboxesIdFilesPathWithResponse call
-func ParseDeleteApiV1SandboxesIdFilesPathResponse(rsp *http.Response) (*DeleteApiV1SandboxesIdFilesPathResponse, error) {
+// ParseGetApiV1SandboxesIdFilesStatResponse parses an HTTP response from a GetApiV1SandboxesIdFilesStatWithResponse call
+func ParseGetApiV1SandboxesIdFilesStatResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesStatResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DeleteApiV1SandboxesIdFilesPathResponse{
+	response := &GetApiV1SandboxesIdFilesStatResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SuccessDeletedResponse
+		var dest SuccessFileStatResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -8088,63 +8572,17 @@ func ParseDeleteApiV1SandboxesIdFilesPathResponse(rsp *http.Response) (*DeleteAp
 	return response, nil
 }
 
-// ParseGetApiV1SandboxesIdFilesPathResponse parses an HTTP response from a GetApiV1SandboxesIdFilesPathWithResponse call
-func ParseGetApiV1SandboxesIdFilesPathResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesPathResponse, error) {
+// ParseGetApiV1SandboxesIdFilesWatchResponse parses an HTTP response from a GetApiV1SandboxesIdFilesWatchWithResponse call
+func ParseGetApiV1SandboxesIdFilesWatchResponse(rsp *http.Response) (*GetApiV1SandboxesIdFilesWatchResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetApiV1SandboxesIdFilesPathResponse{
+	response := &GetApiV1SandboxesIdFilesWatchResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SuccessFileReadResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case rsp.StatusCode == 200:
-		// Content-type (application/octet-stream) unsupported
-
-	}
-
-	return response, nil
-}
-
-// ParsePostApiV1SandboxesIdFilesPathResponse parses an HTTP response from a PostApiV1SandboxesIdFilesPathWithResponse call
-func ParsePostApiV1SandboxesIdFilesPathResponse(rsp *http.Response) (*PostApiV1SandboxesIdFilesPathResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PostApiV1SandboxesIdFilesPathResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SuccessWrittenResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest SuccessCreatedResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
 	}
 
 	return response, nil

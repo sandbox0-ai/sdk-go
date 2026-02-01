@@ -1,0 +1,53 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	sandbox0 "github.com/sandbox0-ai/sdk-go"
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	// Create a client with auth (and optional base URL).
+	client, err := sandbox0.NewClient(
+		sandbox0.WithToken(os.Getenv("SANDBOX0_TOKEN")),
+		sandbox0.WithBaseURL(os.Getenv("SANDBOX0_BASE_URL")),
+	)
+	must(err)
+
+	// Claim a sandbox from a template and ensure cleanup.
+	sandbox, err := client.Sandboxes.Claim(ctx, "default")
+	must(err)
+	defer client.Sandboxes.Delete(ctx, sandbox.ID)
+
+	// Run a REPL-style snippet (stateful; env/vars preserved between Run calls).
+	runResult, err := sandbox.Run(ctx, "python", `x=2`)
+	must(err)
+	fmt.Print(runResult.Output)
+
+	runResult, err = sandbox.Run(ctx, "python", `print(x)`)
+	must(err)
+	fmt.Print(runResult.Output)
+
+	// Run a one-shot command (stateless; env/vars not preserved between Cmd calls).
+	fmt.Println("\nRunning command: /bin/sh -c \"x=3\"")
+	cmdResult, err := sandbox.Cmd(ctx, `/bin/sh -c "x=3"`)
+	must(err)
+
+	fmt.Println("Running command: /bin/sh -c \"echo $x\"")
+	cmdResult, err = sandbox.Cmd(ctx, `/bin/sh -c "echo $x"`)
+	must(err)
+	fmt.Print(cmdResult.Output)
+}
+
+func must(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}

@@ -1,8 +1,10 @@
 package sandbox0
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
@@ -60,6 +62,19 @@ func unexpectedResponseError(resp *http.Response, body []byte) *APIError {
 			Code:       "unexpected_response",
 			Message:    "no response received",
 			Body:       body,
+		}
+	}
+	if len(body) > 0 && strings.Contains(strings.ToLower(resp.Header.Get("Content-Type")), "json") {
+		var envelope apispec.ErrorEnvelope
+		if err := json.Unmarshal(body, &envelope); err == nil && envelope.Error.Code != "" {
+			return &APIError{
+				StatusCode: resp.StatusCode,
+				Code:       envelope.Error.Code,
+				Message:    envelope.Error.Message,
+				Details:    envelope.Error.Details,
+				RequestID:  requestIDFromResponse(resp),
+				Body:       body,
+			}
 		}
 	}
 	return &APIError{
