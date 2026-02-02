@@ -45,12 +45,9 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 			ClusterID:         data.ClusterId,
 			PodName:           data.PodName,
 			Status:            data.Status,
-			client:            c.
+			client:            c,
 			replContextByLang: map[string]string{},
 		}
-		sandbox.Contexts = SandboxContextService{sandbox: sandbox}
-		sandbox.Files = SandboxFileService{sandbox: sandbox}
-		sandbox.Volumes = SandboxVolumeService{sandbox: sandbox}
 		return sandbox, nil
 	}
 	if resp.JSON400 != nil {

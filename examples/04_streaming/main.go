@@ -45,7 +45,7 @@ func main() {
 	fmt.Println("CMD stream:")
 	cmdOutputs, cmdErrs, closeCmd, err := sandbox.CmdStream(ctx, `bash -c "for i in 1 2 3; do echo line-$i; done"`, nil)
 	must(err)
-	time.AfterFunc(2*time.Second, func() {
+	time.AfterFunc(3*time.Second, func() {
 		_ = closeCmd()
 	})
 

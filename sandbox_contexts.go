@@ -69,7 +69,7 @@ func (s *Sandbox) RestartContext(ctx context.Context, contextID string) (*apispe
 }
 
 // Input sends input to a context.
-func (s *Sandbox) InputContext(ctx context.Context, contextID string, input string) (*apispec.SuccessWrittenResponse, error) {
+func (s *Sandbox) ContextInput(ctx context.Context, contextID string, input string) (*apispec.SuccessWrittenResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdInputWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ContextInputRequest{Data: input})
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (s *Sandbox) InputContext(ctx context.Context, contextID string, input stri
 }
 
 // Exec sends input and waits for completion.
-func (s *Sandbox) ExecContext(ctx context.Context, contextID string, input string) (*apispec.ContextExecResponse, error) {
+func (s *Sandbox) ContextExec(ctx context.Context, contextID string, input string) (*apispec.ContextExecResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdExecWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ContextInputRequest{Data: input})
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (s *Sandbox) ExecContext(ctx context.Context, contextID string, input strin
 }
 
 // Resize resizes a PTY context.
-func (s *Sandbox) ResizeContext(ctx context.Context, contextID string, rows, cols uint16) (*apispec.SuccessResizedResponse, error) {
+func (s *Sandbox) ContextResize(ctx context.Context, contextID string, rows, cols uint16) (*apispec.SuccessResizedResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdResizeWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ResizeContextRequest{
 		Rows: int32(rows),
 		Cols: int32(cols),
@@ -108,7 +108,7 @@ func (s *Sandbox) ResizeContext(ctx context.Context, contextID string, rows, col
 }
 
 // Signal sends a signal to a context.
-func (s *Sandbox) SignalContext(ctx context.Context, contextID, signal string) (*apispec.SuccessSignaledResponse, error) {
+func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (*apispec.SuccessSignaledResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdSignalWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.SignalContextRequest{Signal: signal})
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (s *Sandbox) SignalContext(ctx context.Context, contextID, signal string) (
 }
 
 // Stats returns resource usage for a context.
-func (s *Sandbox) StatsContext(ctx context.Context, contextID string) (*apispec.ContextStatsResponse, error) {
+func (s *Sandbox) ContextStats(ctx context.Context, contextID string) (*apispec.ContextStatsResponse, error) {
 	resp, err := s.client.api.GetApiV1SandboxesIdContextsCtxIdStatsWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID))
 	if err != nil {
 		return nil, err

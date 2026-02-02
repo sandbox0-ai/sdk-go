@@ -114,7 +114,7 @@ func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOp
 		return RunResult{}, err
 	}
 
-	execResp, err := s.Contexts.Exec(ctx, contextID, input)
+	execResp, err := s.ContextExec(ctx, contextID, input)
 	if err != nil {
 		return RunResult{}, err
 	}
@@ -205,7 +205,7 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	}
 
 	waitUntilDone := true
-	contextResp, err := s.Contexts.Create(ctx, apispec.CreateContextRequest{
+	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
 		Type: ptrProcessType(apispec.Cmd),
 		Cmd: &apispec.CreateCMDContextRequest{
 			Command: &options.command,
@@ -223,7 +223,7 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if contextResp == nil {
 		return CmdResult{}, errors.New("create context returned nil response")
 	}
-	defer s.Contexts.Delete(ctx, contextResp.Id)
+	defer s.DeleteContext(ctx, contextResp.Id)
 
 	output := ""
 	if contextResp.Output != nil {
@@ -281,7 +281,7 @@ func (s *Sandbox) RunStream(ctx context.Context, language string, input <-chan S
 		return nil, nil, nil, err
 	}
 
-	conn, _, err := s.Contexts.ConnectWS(ctx, contextID)
+	conn, _, err := s.ConnectWSContext(ctx, contextID)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -313,7 +313,7 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 	}
 
 	waitUntilDone := false
-	contextResp, err := s.Contexts.Create(ctx, apispec.CreateContextRequest{
+	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
 		Type: ptrProcessType(apispec.Cmd),
 		Cmd: &apispec.CreateCMDContextRequest{
 			Command: &options.command,
@@ -332,7 +332,7 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 		return nil, nil, nil, errors.New("create context returned nil response")
 	}
 
-	conn, _, err := s.Contexts.ConnectWS(ctx, contextResp.Id)
+	conn, _, err := s.ConnectWSContext(ctx, contextResp.Id)
 	if err != nil {
 		cleanupContext(s, contextResp.Id)
 		return nil, nil, nil, err
@@ -350,7 +350,7 @@ func cleanupContext(s *Sandbox, contextID string) {
 	}
 	cleanupCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, _ = s.Contexts.Delete(cleanupCtx, contextID)
+	_, _ = s.DeleteContext(cleanupCtx, contextID)
 }
 
 func normalizeStreamInput(input StreamInput) (StreamInput, error) {
@@ -519,7 +519,7 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 		return contextID, nil
 	}
 
-	contextResp, err := s.Contexts.Create(ctx, apispec.CreateContextRequest{
+	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
 		Type: ptrProcessType(apispec.Repl),
 		Repl: &apispec.CreateREPLContextRequest{
 			Language: &language,
