@@ -21,7 +21,7 @@ func main() {
 	must(err)
 
 	// List templates available for sandbox creation.
-	templates, err := client.Templates.List(ctx)
+	templates, err := client.ListTemplate(ctx)
 	must(err)
 	fmt.Printf("templates: %d\n", len(templates))
 	for _, tpl := range templates {

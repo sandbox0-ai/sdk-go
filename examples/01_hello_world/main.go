@@ -22,9 +22,9 @@ func main() {
 	must(err)
 
 	// Claim a sandbox from a template and ensure cleanup.
-	sandbox, err := client.Sandboxes.Claim(ctx, "default")
+	sandbox, err := client.ClaimSandbox(ctx, "default")
 	must(err)
-	defer client.Sandboxes.Delete(ctx, sandbox.ID)
+	defer client.DeleteSandbox(ctx, sandbox.ID)
 
 	// Run a REPL-style snippet (stateful; env/vars preserved between Run calls).
 	runResult, err := sandbox.Run(ctx, "python", `x=2`)

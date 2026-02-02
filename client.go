@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -18,10 +19,6 @@ type Client struct {
 	tokenSource    TokenSource
 	userAgent      string
 	requestEditors []apispec.RequestEditorFn
-
-	Sandboxes *SandboxService
-	Volumes   *VolumeService
-	Templates *TemplateService
 }
 
 // NewClient creates a new Sandbox0 SDK client.
@@ -54,10 +51,6 @@ func NewClient(opts ...Option) (*Client, error) {
 	}
 
 	client.api = apiClient
-	client.Sandboxes = &SandboxService{client: client}
-	client.Volumes = &VolumeService{client: client}
-	client.Templates = &TemplateService{client: client}
-
 	return client, nil
 }
 
@@ -68,14 +61,11 @@ func (c *Client) API() *apispec.ClientWithResponses {
 
 // Sandbox returns a convenience wrapper for a known sandbox ID.
 func (c *Client) Sandbox(id string) *Sandbox {
-	sandbox := &Sandbox{
+	return &Sandbox{
 		ID:                id,
 		client:            c,
 		replContextByLang: map[string]string{},
 	}
-	sandbox.Contexts = SandboxContextService{sandbox: sandbox}
-	sandbox.Files = SandboxFileService{sandbox: sandbox}
-	return sandbox
 }
 
 func (c *Client) applyRequestEditors(ctx context.Context, req *http.Request) error {
@@ -97,4 +87,19 @@ func (c *Client) applyRequestEditors(ctx context.Context, req *http.Request) err
 		}
 	}
 	return nil
+}
+
+func (c *Client) websocketURL(path string) (string, error) {
+	baseURL, err := url.Parse(c.baseURL)
+	if err != nil {
+		return "", err
+	}
+	switch strings.ToLower(baseURL.Scheme) {
+	case "https":
+		baseURL.Scheme = "wss"
+	case "http":
+		baseURL.Scheme = "ws"
+	}
+	baseURL.Path = strings.TrimSuffix(baseURL.Path, "/") + path
+	return baseURL.String(), nil
 }

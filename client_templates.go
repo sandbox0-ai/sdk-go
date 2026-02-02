@@ -6,14 +6,9 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-// TemplateService provides template APIs.
-type TemplateService struct {
-	client *Client
-}
-
 // List lists sandbox templates.
-func (s *TemplateService) List(ctx context.Context) ([]apispec.SandboxTemplate, error) {
-	resp, err := s.client.api.GetApiV1TemplatesWithResponse(ctx)
+func (c *Client) ListTemplate(ctx context.Context) ([]apispec.SandboxTemplate, error) {
+	resp, err := c.api.GetApiV1TemplatesWithResponse(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -24,8 +19,8 @@ func (s *TemplateService) List(ctx context.Context) ([]apispec.SandboxTemplate, 
 }
 
 // Get retrieves a template.
-func (s *TemplateService) Get(ctx context.Context, templateID string) (*apispec.SandboxTemplate, error) {
-	resp, err := s.client.api.GetApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
+func (c *Client) GetTemplate(ctx context.Context, templateID string) (*apispec.SandboxTemplate, error) {
+	resp, err := c.api.GetApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +34,8 @@ func (s *TemplateService) Get(ctx context.Context, templateID string) (*apispec.
 }
 
 // Create creates a template.
-func (s *TemplateService) Create(ctx context.Context, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
-	resp, err := s.client.api.PostApiV1TemplatesWithResponse(ctx, template)
+func (c *Client) CreateTemplate(ctx context.Context, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
+	resp, err := c.api.PostApiV1TemplatesWithResponse(ctx, template)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +46,8 @@ func (s *TemplateService) Create(ctx context.Context, template apispec.SandboxTe
 }
 
 // Update updates a template.
-func (s *TemplateService) Update(ctx context.Context, templateID string, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
-	resp, err := s.client.api.PutApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID), template)
+func (c *Client) UpdateTemplate(ctx context.Context, templateID string, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
+	resp, err := c.api.PutApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID), template)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +58,8 @@ func (s *TemplateService) Update(ctx context.Context, templateID string, templat
 }
 
 // Delete deletes a template.
-func (s *TemplateService) Delete(ctx context.Context, templateID string) (*apispec.SuccessMessageResponse, error) {
-	resp, err := s.client.api.DeleteApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
+func (c *Client) DeleteTemplate(ctx context.Context, templateID string) (*apispec.SuccessMessageResponse, error) {
+	resp, err := c.api.DeleteApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +70,8 @@ func (s *TemplateService) Delete(ctx context.Context, templateID string) (*apisp
 }
 
 // WarmPool triggers warm pool creation for a template.
-func (s *TemplateService) WarmPool(ctx context.Context, templateID string, request apispec.WarmPoolRequest) (*apispec.SuccessMessageResponse, error) {
-	resp, err := s.client.api.PostApiV1TemplatesIdPoolWarmWithResponse(ctx, apispec.TemplateID(templateID), request)
+func (c *Client) WarmPoolTemplate(ctx context.Context, templateID string, request apispec.WarmPoolRequest) (*apispec.SuccessMessageResponse, error) {
+	resp, err := c.api.PostApiV1TemplatesIdPoolWarmWithResponse(ctx, apispec.TemplateID(templateID), request)
 	if err != nil {
 		return nil, err
 	}

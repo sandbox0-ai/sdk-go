@@ -22,28 +22,28 @@ func main() {
 	must(err)
 
 	// Claim a sandbox from a template and ensure cleanup.
-	sandbox, err := client.Sandboxes.Claim(ctx, "default")
+	sandbox, err := client.ClaimSandbox(ctx, "default")
 	must(err)
-	defer client.Sandboxes.Delete(ctx, sandbox.ID)
+	defer client.DeleteSandbox(ctx, sandbox.ID)
 
 	dir := "/tmp/sdk-go"
 	path := dir + "/hello.txt"
 
 	// Create a directory, write a file, and read it back.
-	_, err = sandbox.Files.Mkdir(ctx, dir, true)
+	_, err = sandbox.Mkdir(ctx, dir, true)
 	must(err)
 	fmt.Println("file created")
 
-	_, err = sandbox.Files.Write(ctx, path, []byte("hello from file\n"))
+	_, err = sandbox.WriteFile(ctx, path, []byte("hello from file\n"))
 	must(err)
 	fmt.Println("file written")
 
-	readResult, err := sandbox.Files.Read(ctx, path)
+	readResult, err := sandbox.ReadFile(ctx, path)
 	must(err)
 	fmt.Printf("file content: %s\n", strings.TrimSpace(string(readResult)))
 	fmt.Println("file read")
 
-	entries, err := sandbox.Files.List(ctx, dir)
+	entries, err := sandbox.ListFiles(ctx, dir)
 	must(err)
 	fmt.Printf("dir entries: %d\n", len(entries))
 	for _, entry := range entries {
@@ -55,11 +55,11 @@ func main() {
 	// Subscribe to file watch events, then write to trigger one.
 	watchCtx, watchCancel := context.WithTimeout(ctx, 10*time.Second)
 	defer watchCancel()
-	events, errs, unsubscribe, err := sandbox.Files.Watch(watchCtx, dir, true)
+	events, errs, unsubscribe, err := sandbox.WatchFiles(watchCtx, dir, true)
 	must(err)
 	defer unsubscribe()
 
-	_, err = sandbox.Files.Write(ctx, path, []byte("hello from file\nsecond line\n"))
+	_, err = sandbox.WriteFile(ctx, path, []byte("hello from file\nsecond line\n"))
 	must(err)
 
 	select {

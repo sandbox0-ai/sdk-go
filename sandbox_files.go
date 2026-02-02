@@ -11,11 +11,6 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-// SandboxFileService provides file APIs scoped to a sandbox.
-type SandboxFileService struct {
-	sandbox *Sandbox
-}
-
 // FileWatchSubscribeRequest is a subscribe message for file watch.
 type FileWatchSubscribeRequest struct {
 	Action    string `json:"action"`
@@ -39,11 +34,11 @@ type FileWatchResponse struct {
 }
 
 // Read reads a file and returns raw bytes.
-func (s *SandboxFileService) Read(ctx context.Context, path string) ([]byte, error) {
+func (s *Sandbox) ReadFile(ctx context.Context, path string) ([]byte, error) {
 	params := apispec.GetApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	resp, err := s.client.api.GetApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +49,11 @@ func (s *SandboxFileService) Read(ctx context.Context, path string) ([]byte, err
 }
 
 // Stat retrieves file metadata.
-func (s *SandboxFileService) Stat(ctx context.Context, path string) (*apispec.FileInfo, error) {
+func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo, error) {
 	params := apispec.GetApiV1SandboxesIdFilesStatParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesStatWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	resp, err := s.client.api.GetApiV1SandboxesIdFilesStatWithResponse(ctx, apispec.SandboxID(s.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +64,11 @@ func (s *SandboxFileService) Stat(ctx context.Context, path string) (*apispec.Fi
 }
 
 // List returns directory entries.
-func (s *SandboxFileService) List(ctx context.Context, path string) ([]apispec.FileInfo, error) {
+func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInfo, error) {
 	params := apispec.GetApiV1SandboxesIdFilesListParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesListWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	resp, err := s.client.api.GetApiV1SandboxesIdFilesListWithResponse(ctx, apispec.SandboxID(s.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -84,11 +79,11 @@ func (s *SandboxFileService) List(ctx context.Context, path string) ([]apispec.F
 }
 
 // ReadBinary reads file content as base64 and decodes it.
-func (s *SandboxFileService) ReadBinary(ctx context.Context, path string) ([]byte, error) {
+func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, error) {
 	params := apispec.GetApiV1SandboxesIdFilesBinaryParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.GetApiV1SandboxesIdFilesBinaryWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	resp, err := s.client.api.GetApiV1SandboxesIdFilesBinaryWithResponse(ctx, apispec.SandboxID(s.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -104,14 +99,14 @@ func (s *SandboxFileService) ReadBinary(ctx context.Context, path string) ([]byt
 }
 
 // Write writes a file.
-func (s *SandboxFileService) Write(ctx context.Context, path string, data []byte) (*apispec.SuccessWrittenResponse, error) {
+func (s *Sandbox) WriteFile(ctx context.Context, path string, data []byte) (*apispec.SuccessWrittenResponse, error) {
 	body := bytes.NewReader(data)
 	params := apispec.PostApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
+	resp, err := s.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
 		ctx,
-		apispec.SandboxID(s.sandbox.ID),
+		apispec.SandboxID(s.ID),
 		&params,
 		"application/octet-stream",
 		body,
@@ -129,7 +124,7 @@ func (s *SandboxFileService) Write(ctx context.Context, path string, data []byte
 }
 
 // Mkdir creates a directory.
-func (s *SandboxFileService) Mkdir(ctx context.Context, path string, recursive bool) (*apispec.SuccessCreatedResponse, error) {
+func (s *Sandbox) Mkdir(ctx context.Context, path string, recursive bool) (*apispec.SuccessCreatedResponse, error) {
 	params := apispec.PostApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
 	}
@@ -139,9 +134,9 @@ func (s *SandboxFileService) Mkdir(ctx context.Context, path string, recursive b
 		rec := apispec.QueryRecursive(true)
 		params.Recursive = &rec
 	}
-	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
+	resp, err := s.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
 		ctx,
-		apispec.SandboxID(s.sandbox.ID),
+		apispec.SandboxID(s.ID),
 		&params,
 		"application/octet-stream",
 		bytes.NewReader(nil),
@@ -156,11 +151,11 @@ func (s *SandboxFileService) Mkdir(ctx context.Context, path string, recursive b
 }
 
 // Delete deletes a file or directory.
-func (s *SandboxFileService) Delete(ctx context.Context, path string) (*apispec.SuccessDeletedResponse, error) {
+func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.SuccessDeletedResponse, error) {
 	params := apispec.DeleteApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
 	}
-	resp, err := s.sandbox.client.api.DeleteApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), &params)
+	resp, err := s.client.api.DeleteApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.ID), &params)
 	if err != nil {
 		return nil, err
 	}
@@ -171,8 +166,8 @@ func (s *SandboxFileService) Delete(ctx context.Context, path string) (*apispec.
 }
 
 // Move moves a file or directory.
-func (s *SandboxFileService) Move(ctx context.Context, source, destination string) (*apispec.SuccessMovedResponse, error) {
-	resp, err := s.sandbox.client.api.PostApiV1SandboxesIdFilesMoveWithResponse(ctx, apispec.SandboxID(s.sandbox.ID), apispec.MoveFileRequest{
+func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*apispec.SuccessMovedResponse, error) {
+	resp, err := s.client.api.PostApiV1SandboxesIdFilesMoveWithResponse(ctx, apispec.SandboxID(s.ID), apispec.MoveFileRequest{
 		Source:      source,
 		Destination: destination,
 	})
@@ -186,8 +181,8 @@ func (s *SandboxFileService) Move(ctx context.Context, source, destination strin
 }
 
 // ConnectWatch opens a WebSocket stream for file watch events.
-func (s *SandboxFileService) ConnectWatch(ctx context.Context) (*websocket.Conn, *http.Response, error) {
-	wsURL, err := s.sandbox.client.websocketURL("/api/v1/sandboxes/" + s.sandbox.ID + "/files/watch")
+func (s *Sandbox) ConnectWatchFile(ctx context.Context) (*websocket.Conn, *http.Response, error) {
+	wsURL, err := s.client.websocketURL("/api/v1/sandboxes/" + s.ID + "/files/watch")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -196,7 +191,7 @@ func (s *SandboxFileService) ConnectWatch(ctx context.Context) (*websocket.Conn,
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := s.sandbox.client.applyRequestEditors(ctx, req); err != nil {
+	if err := s.client.applyRequestEditors(ctx, req); err != nil {
 		return nil, nil, err
 	}
 
@@ -204,8 +199,8 @@ func (s *SandboxFileService) ConnectWatch(ctx context.Context) (*websocket.Conn,
 }
 
 // Watch subscribes to file watch events and returns an unsubscribe handler.
-func (s *SandboxFileService) Watch(ctx context.Context, path string, recursive bool) (<-chan FileWatchResponse, <-chan error, func() error, error) {
-	conn, _, err := s.ConnectWatch(ctx)
+func (s *Sandbox) WatchFiles(ctx context.Context, path string, recursive bool) (<-chan FileWatchResponse, <-chan error, func() error, error) {
+	conn, _, err := s.ConnectWatchFile(ctx)
 	if err != nil {
 		return nil, nil, nil, err
 	}
