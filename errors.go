@@ -15,7 +15,7 @@ type APIError struct {
 	Code       string
 	Message    string
 	RequestID  string
-	Details    interface{}
+	Details    any
 	Body       []byte
 }
 
