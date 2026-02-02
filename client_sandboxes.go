@@ -14,10 +14,33 @@ type sandboxOptions struct {
 // SandboxOption configures sandbox creation.
 type SandboxOption func(*sandboxOptions)
 
+func ensureSandboxConfig(opts *sandboxOptions) *apispec.SandboxConfig {
+	if opts.config == nil {
+		opts.config = &apispec.SandboxConfig{}
+	}
+	return opts.config
+}
+
 // WithSandboxConfig sets the sandbox configuration for creation.
 func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 	return func(opts *sandboxOptions) {
 		opts.config = &config
+	}
+}
+
+// WithSandboxTTL sets the soft TTL (seconds) for created sandboxes.
+func WithSandboxTTL(ttlSec int32) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.Ttl = &ttlSec
+	}
+}
+
+// WithSandboxHardTTL sets the hard TTL (seconds) for created sandboxes.
+func WithSandboxHardTTL(ttlSec int32) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.HardTtl = &ttlSec
 	}
 }
 

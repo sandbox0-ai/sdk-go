@@ -289,6 +289,13 @@ const (
 	UpdateTeamMemberRequestRoleViewer    UpdateTeamMemberRequestRole = "viewer"
 )
 
+// Defines values for VolumeAccessMode.
+const (
+	ROX VolumeAccessMode = "ROX"
+	RWO VolumeAccessMode = "RWO"
+	RWX VolumeAccessMode = "RWX"
+)
+
 // APIKey defines model for APIKey.
 type APIKey struct {
 	CreatedAt  time.Time  `json:"created_at"`
@@ -472,11 +479,12 @@ type CreateREPLContextRequest struct {
 
 // CreateSandboxVolumeRequest defines model for CreateSandboxVolumeRequest.
 type CreateSandboxVolumeRequest struct {
-	BufferSize *string `json:"buffer_size,omitempty"`
-	CacheSize  *string `json:"cache_size,omitempty"`
-	Prefetch   *int    `json:"prefetch,omitempty"`
-	ReadOnly   *bool   `json:"read_only,omitempty"`
-	Writeback  *bool   `json:"writeback,omitempty"`
+	// AccessMode Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows read-write mounts across instances.
+	AccessMode *VolumeAccessMode `json:"access_mode,omitempty"`
+	BufferSize *string           `json:"buffer_size,omitempty"`
+	CacheSize  *string           `json:"cache_size,omitempty"`
+	Prefetch   *int              `json:"prefetch,omitempty"`
+	Writeback  *bool             `json:"writeback,omitempty"`
 }
 
 // CreateSnapshotRequest defines model for CreateSnapshotRequest.
@@ -827,6 +835,7 @@ type Sandbox struct {
 // SandboxConfig defines model for SandboxConfig.
 type SandboxConfig struct {
 	EnvVars *map[string]string       `json:"env_vars,omitempty"`
+	HardTtl *int32                   `json:"hard_ttl,omitempty"`
 	Network *TplSandboxNetworkPolicy `json:"network,omitempty"`
 	Ttl     *int32                   `json:"ttl,omitempty"`
 	Webhook *WebhookConfig           `json:"webhook,omitempty"`
@@ -913,16 +922,17 @@ type SandboxUpdateRequest struct {
 
 // SandboxVolume defines model for SandboxVolume.
 type SandboxVolume struct {
-	BufferSize string    `json:"buffer_size"`
-	CacheSize  string    `json:"cache_size"`
-	CreatedAt  time.Time `json:"created_at"`
-	Id         string    `json:"id"`
-	Prefetch   *int      `json:"prefetch,omitempty"`
-	ReadOnly   *bool     `json:"read_only,omitempty"`
-	TeamId     string    `json:"team_id"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	UserId     string    `json:"user_id"`
-	Writeback  *bool     `json:"writeback,omitempty"`
+	// AccessMode Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows read-write mounts across instances.
+	AccessMode *VolumeAccessMode `json:"access_mode,omitempty"`
+	BufferSize string            `json:"buffer_size"`
+	CacheSize  string            `json:"cache_size"`
+	CreatedAt  time.Time         `json:"created_at"`
+	Id         string            `json:"id"`
+	Prefetch   *int              `json:"prefetch,omitempty"`
+	TeamId     string            `json:"team_id"`
+	UpdatedAt  time.Time         `json:"updated_at"`
+	UserId     string            `json:"user_id"`
+	Writeback  *bool             `json:"writeback,omitempty"`
 }
 
 // SecurityContext defines model for SecurityContext.
@@ -1460,12 +1470,14 @@ type User struct {
 	UpdatedAt     time.Time           `json:"updated_at"`
 }
 
+// VolumeAccessMode Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows read-write mounts across instances.
+type VolumeAccessMode string
+
 // VolumeConfig defines model for VolumeConfig.
 type VolumeConfig struct {
 	BufferSize *string `json:"buffer_size,omitempty"`
 	CacheSize  *string `json:"cache_size,omitempty"`
 	Prefetch   *int32  `json:"prefetch,omitempty"`
-	ReadOnly   *bool   `json:"read_only,omitempty"`
 	Writeback  *bool   `json:"writeback,omitempty"`
 }
 

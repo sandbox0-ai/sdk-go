@@ -22,12 +22,15 @@ func main() {
 	must(err)
 
 	// Claim a sandbox from a template and ensure cleanup.
-	sandbox, err := client.ClaimSandbox(ctx, "default")
+	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
 	defer client.DeleteSandbox(ctx, sandbox.ID)
 
 	// Create a volume and ensure cleanup.
-	volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{})
+	accessMode := apispec.RWX
+	volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{
+		AccessMode: &accessMode,
+	})
 	must(err)
 	volumeID := volume.Id
 	defer client.DeleteVolume(ctx, volumeID)
@@ -68,6 +71,20 @@ func main() {
 	readResult, err = sandbox.ReadFile(ctx, "/mnt/data/hello.txt")
 	must(err)
 	fmt.Printf("file content: \n%s", string(readResult))
+
+	// Create a new sandbox
+	sandbox2, err := client.ClaimSandbox(ctx, "default")
+	must(err)
+	defer client.DeleteSandbox(ctx, sandbox2.ID)
+	fmt.Printf("new sandbox created: %s\n", sandbox2.ID)
+
+	_, err = sandbox2.Mount(ctx, volumeID, "/mnt/data", nil)
+	must(err)
+	defer sandbox2.Unmount(ctx, volumeID)
+
+	readResult, err = sandbox2.ReadFile(ctx, "/mnt/data/hello.txt")
+	must(err)
+	fmt.Printf("sandbox2 file content: \n%s", string(readResult))
 }
 
 func must(err error) {

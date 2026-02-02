@@ -22,7 +22,7 @@ func main() {
 	must(err)
 
 	// Claim a sandbox from a template and ensure cleanup.
-	sandbox, err := client.ClaimSandbox(ctx, "default")
+	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
 	defer client.DeleteSandbox(ctx, sandbox.ID)
 
