@@ -44,7 +44,30 @@ func WithSandboxHardTTL(ttlSec int32) SandboxOption {
 	}
 }
 
-// Claim creates (claims) a sandbox and returns a convenience wrapper.
+// WithSandboxWebhook configures webhook delivery for sandbox events.
+func WithSandboxWebhook(url, secret string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		if config.Webhook == nil {
+			config.Webhook = &apispec.WebhookConfig{}
+		}
+		config.Webhook.Url = &url
+		config.Webhook.Secret = &secret
+	}
+}
+
+// WithSandboxWebhookWatchDir sets the webhook watch directory (file events).
+func WithSandboxWebhookWatchDir(watchDir string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		if config.Webhook == nil {
+			config.Webhook = &apispec.WebhookConfig{}
+		}
+		config.Webhook.WatchDir = &watchDir
+	}
+}
+
+// ClaimSandbox creates (claims) a sandbox and returns a convenience wrapper.
 func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...SandboxOption) (*Sandbox, error) {
 	options := sandboxOptions{}
 	for _, opt := range opts {
@@ -79,7 +102,7 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Get returns sandbox details by ID.
+// GetSandbox returns sandbox details by ID.
 func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.Sandbox, error) {
 	resp, err := c.api.GetApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID))
 	if err != nil {
@@ -94,7 +117,7 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Update updates sandbox configuration.
+// UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
 	resp, err := c.api.PatchApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID), request)
 	if err != nil {
@@ -109,7 +132,7 @@ func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request ap
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Delete terminates a sandbox.
+// DeleteSandbox terminates a sandbox.
 func (c *Client) DeleteSandbox(ctx context.Context, sandboxID string) (*apispec.SuccessMessageResponse, error) {
 	resp, err := c.api.DeleteApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID))
 	if err != nil {
@@ -127,7 +150,7 @@ func (c *Client) DeleteSandbox(ctx context.Context, sandboxID string) (*apispec.
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Status returns the sandbox status.
+// StatusSandbox returns the sandbox status.
 func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.SandboxStatus, error) {
 	resp, err := c.api.GetApiV1SandboxesIdStatusWithResponse(ctx, apispec.SandboxID(sandboxID))
 	if err != nil {
@@ -139,7 +162,7 @@ func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Pause suspends a sandbox.
+// PauseSandbox suspends a sandbox.
 func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.PauseSandboxResponse, error) {
 	resp, err := c.api.PostApiV1SandboxesIdPauseWithResponse(ctx, apispec.SandboxID(sandboxID))
 	if err != nil {
@@ -151,7 +174,7 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Resume resumes a sandbox.
+// ResumeSandbox resumes a sandbox.
 func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.ResumeSandboxResponse, error) {
 	resp, err := c.api.PostApiV1SandboxesIdResumeWithResponse(ctx, apispec.SandboxID(sandboxID))
 	if err != nil {
@@ -163,7 +186,7 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Refresh refreshes sandbox TTL. If request is nil, an empty body is sent.
+// RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.
 func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *apispec.RefreshRequest) (*apispec.RefreshResponse, error) {
 	var (
 		resp *apispec.PostApiV1SandboxesIdRefreshResponse

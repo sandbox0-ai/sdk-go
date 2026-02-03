@@ -33,7 +33,7 @@ type FileWatchResponse struct {
 	Error   string `json:"error,omitempty"`
 }
 
-// Read reads a file and returns raw bytes.
+// ReadFile reads a file and returns raw bytes.
 func (s *Sandbox) ReadFile(ctx context.Context, path string) ([]byte, error) {
 	params := apispec.GetApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
@@ -48,7 +48,7 @@ func (s *Sandbox) ReadFile(ctx context.Context, path string) ([]byte, error) {
 	return resp.Body, nil
 }
 
-// Stat retrieves file metadata.
+// StatFile retrieves file metadata.
 func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo, error) {
 	params := apispec.GetApiV1SandboxesIdFilesStatParams{
 		Path: apispec.FilePath(path),
@@ -63,7 +63,7 @@ func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo,
 	return resp.JSON200.Data, nil
 }
 
-// List returns directory entries.
+// ListFiles returns directory entries.
 func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInfo, error) {
 	params := apispec.GetApiV1SandboxesIdFilesListParams{
 		Path: apispec.FilePath(path),
@@ -78,7 +78,7 @@ func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInf
 	return *resp.JSON200.Data.Entries, nil
 }
 
-// ReadBinary reads file content as base64 and decodes it.
+// ReadBinaryFile reads file content as base64 and decodes it.
 func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, error) {
 	params := apispec.GetApiV1SandboxesIdFilesBinaryParams{
 		Path: apispec.FilePath(path),
@@ -98,7 +98,7 @@ func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, erro
 	return decoded, nil
 }
 
-// Write writes a file.
+// WriteFile writes a file.
 func (s *Sandbox) WriteFile(ctx context.Context, path string, data []byte) (*apispec.SuccessWrittenResponse, error) {
 	body := bytes.NewReader(data)
 	params := apispec.PostApiV1SandboxesIdFilesParams{
@@ -150,7 +150,7 @@ func (s *Sandbox) Mkdir(ctx context.Context, path string, recursive bool) (*apis
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Delete deletes a file or directory.
+// DeleteFile deletes a file or directory.
 func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.SuccessDeletedResponse, error) {
 	params := apispec.DeleteApiV1SandboxesIdFilesParams{
 		Path: apispec.FilePath(path),
@@ -165,7 +165,7 @@ func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.Success
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Move moves a file or directory.
+// MoveFile moves a file or directory.
 func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*apispec.SuccessMovedResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdFilesMoveWithResponse(ctx, apispec.SandboxID(s.ID), apispec.MoveFileRequest{
 		Source:      source,
@@ -180,7 +180,7 @@ func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*ap
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// ConnectWatch opens a WebSocket stream for file watch events.
+// ConnectWatchFile opens a WebSocket stream for file watch events.
 func (s *Sandbox) ConnectWatchFile(ctx context.Context) (*websocket.Conn, *http.Response, error) {
 	wsURL, err := s.client.websocketURL("/api/v1/sandboxes/" + s.ID + "/files/watch")
 	if err != nil {
@@ -198,7 +198,7 @@ func (s *Sandbox) ConnectWatchFile(ctx context.Context) (*websocket.Conn, *http.
 	return websocket.DefaultDialer.DialContext(ctx, wsURL, req.Header)
 }
 
-// Watch subscribes to file watch events and returns an unsubscribe handler.
+// WatchFiles subscribes to file watch events and returns an unsubscribe handler.
 func (s *Sandbox) WatchFiles(ctx context.Context, path string, recursive bool) (<-chan FileWatchResponse, <-chan error, func() error, error) {
 	conn, _, err := s.ConnectWatchFile(ctx)
 	if err != nil {

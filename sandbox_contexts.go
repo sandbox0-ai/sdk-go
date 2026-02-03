@@ -8,7 +8,7 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-// List returns all contexts for a sandbox.
+// ListContext returns all contexts for a sandbox.
 func (s *Sandbox) ListContext(ctx context.Context) ([]apispec.ContextResponse, error) {
 	resp, err := s.client.api.GetApiV1SandboxesIdContextsWithResponse(ctx, apispec.SandboxID(s.ID))
 	if err != nil {
@@ -20,7 +20,7 @@ func (s *Sandbox) ListContext(ctx context.Context) ([]apispec.ContextResponse, e
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Create creates a new context.
+// CreateContext creates a new context.
 func (s *Sandbox) CreateContext(ctx context.Context, request apispec.CreateContextRequest) (*apispec.ContextResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsWithResponse(ctx, apispec.SandboxID(s.ID), request)
 	if err != nil {
@@ -32,7 +32,7 @@ func (s *Sandbox) CreateContext(ctx context.Context, request apispec.CreateConte
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Get returns a context by ID.
+// GetContext returns a context by ID.
 func (s *Sandbox) GetContext(ctx context.Context, contextID string) (*apispec.ContextResponse, error) {
 	resp, err := s.client.api.GetApiV1SandboxesIdContextsCtxIdWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID))
 	if err != nil {
@@ -44,7 +44,7 @@ func (s *Sandbox) GetContext(ctx context.Context, contextID string) (*apispec.Co
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Delete deletes a context.
+// DeleteContext deletes a context.
 func (s *Sandbox) DeleteContext(ctx context.Context, contextID string) (*apispec.SuccessDeletedResponse, error) {
 	resp, err := s.client.api.DeleteApiV1SandboxesIdContextsCtxIdWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID))
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *Sandbox) DeleteContext(ctx context.Context, contextID string) (*apispec
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Restart restarts a context.
+// RestartContext restarts a context.
 func (s *Sandbox) RestartContext(ctx context.Context, contextID string) (*apispec.ContextResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdRestartWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID))
 	if err != nil {
@@ -68,7 +68,7 @@ func (s *Sandbox) RestartContext(ctx context.Context, contextID string) (*apispe
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Input sends input to a context.
+// ContextInput sends input to a context.
 func (s *Sandbox) ContextInput(ctx context.Context, contextID string, input string) (*apispec.SuccessWrittenResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdInputWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ContextInputRequest{Data: input})
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *Sandbox) ContextInput(ctx context.Context, contextID string, input stri
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Exec sends input and waits for completion.
+// ContextExec sends input and waits for completion.
 func (s *Sandbox) ContextExec(ctx context.Context, contextID string, input string) (*apispec.ContextExecResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdExecWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ContextInputRequest{Data: input})
 	if err != nil {
@@ -92,7 +92,7 @@ func (s *Sandbox) ContextExec(ctx context.Context, contextID string, input strin
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Resize resizes a PTY context.
+// ContextResize resizes a PTY context.
 func (s *Sandbox) ContextResize(ctx context.Context, contextID string, rows, cols uint16) (*apispec.SuccessResizedResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdResizeWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.ResizeContextRequest{
 		Rows: int32(rows),
@@ -107,7 +107,7 @@ func (s *Sandbox) ContextResize(ctx context.Context, contextID string, rows, col
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Signal sends a signal to a context.
+// ContextSignal sends a signal to a context.
 func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (*apispec.SuccessSignaledResponse, error) {
 	resp, err := s.client.api.PostApiV1SandboxesIdContextsCtxIdSignalWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID), apispec.SignalContextRequest{Signal: signal})
 	if err != nil {
@@ -119,7 +119,7 @@ func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Stats returns resource usage for a context.
+// ContextStats returns resource usage for a context.
 func (s *Sandbox) ContextStats(ctx context.Context, contextID string) (*apispec.ContextStatsResponse, error) {
 	resp, err := s.client.api.GetApiV1SandboxesIdContextsCtxIdStatsWithResponse(ctx, apispec.SandboxID(s.ID), apispec.ContextID(contextID))
 	if err != nil {
@@ -131,7 +131,7 @@ func (s *Sandbox) ContextStats(ctx context.Context, contextID string) (*apispec.
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// ConnectWS opens a WebSocket stream for a context.
+// ConnectWSContext opens a WebSocket stream for a context.
 func (s *Sandbox) ConnectWSContext(ctx context.Context, contextID string) (*websocket.Conn, *http.Response, error) {
 	wsURL, err := s.client.websocketURL("/api/v1/sandboxes/" + s.ID + "/contexts/" + contextID + "/ws")
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-// Create creates a sandbox volume.
+// CreateVolume creates a sandbox volume.
 func (c *Client) CreateVolume(ctx context.Context, request apispec.CreateSandboxVolumeRequest) (*apispec.SandboxVolume, error) {
 	resp, err := c.api.PostApiV1SandboxvolumesWithResponse(ctx, request)
 	if err != nil {
@@ -18,7 +18,7 @@ func (c *Client) CreateVolume(ctx context.Context, request apispec.CreateSandbox
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// List lists sandbox volumes.
+// ListVolume lists sandbox volumes.
 func (c *Client) ListVolume(ctx context.Context) ([]apispec.SandboxVolume, error) {
 	resp, err := c.api.GetApiV1SandboxvolumesWithResponse(ctx)
 	if err != nil {
@@ -30,7 +30,7 @@ func (c *Client) ListVolume(ctx context.Context) ([]apispec.SandboxVolume, error
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Get retrieves a sandbox volume.
+// GetVolume retrieves a sandbox volume.
 func (c *Client) GetVolume(ctx context.Context, volumeID string) (*apispec.SandboxVolume, error) {
 	resp, err := c.api.GetApiV1SandboxvolumesIdWithResponse(ctx, apispec.SandboxVolumeID(volumeID))
 	if err != nil {
@@ -45,7 +45,7 @@ func (c *Client) GetVolume(ctx context.Context, volumeID string) (*apispec.Sandb
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// Delete deletes a sandbox volume.
+// DeleteVolume deletes a sandbox volume.
 func (c *Client) DeleteVolume(ctx context.Context, volumeID string) (*apispec.SuccessDeletedResponse, error) {
 	resp, err := c.api.DeleteApiV1SandboxvolumesIdWithResponse(ctx, apispec.SandboxVolumeID(volumeID))
 	if err != nil {
@@ -60,7 +60,7 @@ func (c *Client) DeleteVolume(ctx context.Context, volumeID string) (*apispec.Su
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// CreateSnapshot creates a snapshot for a volume.
+// CreateVolumeSnapshot creates a snapshot for a volume.
 func (c *Client) CreateVolumeSnapshot(ctx context.Context, volumeID string, request apispec.CreateSnapshotRequest) (*apispec.Snapshot, error) {
 	resp, err := c.api.PostApiV1SandboxvolumesIdSnapshotsWithResponse(ctx, apispec.SandboxVolumeID(volumeID), request)
 	if err != nil {
@@ -72,7 +72,7 @@ func (c *Client) CreateVolumeSnapshot(ctx context.Context, volumeID string, requ
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// ListSnapshots lists snapshots for a volume.
+// ListVolumeSnapshots lists snapshots for a volume.
 func (c *Client) ListVolumeSnapshots(ctx context.Context, volumeID string) ([]apispec.Snapshot, error) {
 	resp, err := c.api.GetApiV1SandboxvolumesIdSnapshotsWithResponse(ctx, apispec.SandboxVolumeID(volumeID))
 	if err != nil {
@@ -84,7 +84,7 @@ func (c *Client) ListVolumeSnapshots(ctx context.Context, volumeID string) ([]ap
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// GetSnapshot gets a snapshot.
+// GetVolumeSnapshot gets a snapshot.
 func (c *Client) GetVolumeSnapshot(ctx context.Context, volumeID, snapshotID string) (*apispec.Snapshot, error) {
 	resp, err := c.api.GetApiV1SandboxvolumesIdSnapshotsSnapshotIdWithResponse(ctx, apispec.SandboxVolumeID(volumeID), apispec.SnapshotID(snapshotID))
 	if err != nil {
@@ -99,7 +99,7 @@ func (c *Client) GetVolumeSnapshot(ctx context.Context, volumeID, snapshotID str
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// DeleteSnapshot deletes a snapshot.
+// DeleteVolumeSnapshot deletes a snapshot.
 func (c *Client) DeleteVolumeSnapshot(ctx context.Context, volumeID, snapshotID string) (*apispec.SuccessDeletedResponse, error) {
 	resp, err := c.api.DeleteApiV1SandboxvolumesIdSnapshotsSnapshotIdWithResponse(ctx, apispec.SandboxVolumeID(volumeID), apispec.SnapshotID(snapshotID))
 	if err != nil {
@@ -111,7 +111,7 @@ func (c *Client) DeleteVolumeSnapshot(ctx context.Context, volumeID, snapshotID 
 	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
-// RestoreSnapshot restores a snapshot.
+// RestoreVolumeSnapshot restores a snapshot.
 func (c *Client) RestoreVolumeSnapshot(ctx context.Context, volumeID, snapshotID string) (*apispec.SuccessRestoreResponse, error) {
 	resp, err := c.api.PostApiV1SandboxvolumesIdSnapshotsSnapshotIdRestoreWithResponse(ctx, apispec.SandboxVolumeID(volumeID), apispec.SnapshotID(snapshotID))
 	if err != nil {

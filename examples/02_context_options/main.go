@@ -32,7 +32,7 @@ func main() {
 		`import os, pathlib;
 print(pathlib.Path.cwd());
 print(os.getenv("GREETING"))`,
-		sandbox0.WithCWD("/tmp"),
+		sandbox0.WithCWD("/workspace"),
 		sandbox0.WithEnvVars(map[string]string{"GREETING": "hello from repl"}),
 		sandbox0.WithContextTTL(120),
 		sandbox0.WithIdleTimeout(60),

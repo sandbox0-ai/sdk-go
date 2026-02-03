@@ -1488,8 +1488,14 @@ type WarmPoolRequest struct {
 
 // WebhookConfig defines model for WebhookConfig.
 type WebhookConfig struct {
+	// Secret Optional. Shared secret used to sign webhook payloads.
 	Secret *string `json:"secret,omitempty"`
-	Url    *string `json:"url,omitempty"`
+
+	// Url Required when webhook is enabled. Target URL that receives event callbacks.
+	Url *string `json:"url,omitempty"`
+
+	// WatchDir Optional. When set, procd subscribes to file events under this directory (same semantics as the file watch WebSocket API) and emits file.modified events.
+	WatchDir *string `json:"watch_dir,omitempty"`
 }
 
 // WeightedPodAffinityTerm defines model for WeightedPodAffinityTerm.
