@@ -1,19 +1,19 @@
-.PHONY: apispec oapi-codegen
+.PHONY: apispec ogen
+
+# Generate SDK code from OpenAPI spec
+apispec: ogen
+	@printf "Generating API spec code...\n"
+	@PATH="$(LOCALBIN):$(PATH)" go generate ./pkg/apispec/...
 
 # Tool binaries
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
-OAPI_CODEGEN ?= $(LOCALBIN)/oapi-codegen
-OAPI_CODEGEN_VERSION ?= v2.4.1
+OGEN ?= $(LOCALBIN)/ogen
+OGEN_VERSION ?= v1.18.0
 
-# Generate SDK code from OpenAPI spec
-apispec: oapi-codegen
-	@printf "Generating API spec code...\n"
-	@PATH="$(LOCALBIN):$(PATH)" go generate ./pkg/apispec/...
-
-oapi-codegen: $(OAPI_CODEGEN)
-$(OAPI_CODEGEN): $(LOCALBIN)
-	@test -s $(LOCALBIN)/oapi-codegen && $(LOCALBIN)/oapi-codegen --version | grep -q $(OAPI_CODEGEN_VERSION) || \
-	GOBIN=$(LOCALBIN) go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@$(OAPI_CODEGEN_VERSION)
+ogen: $(OGEN)
+$(OGEN): $(LOCALBIN)
+	@test -s $(LOCALBIN)/ogen && $(LOCALBIN)/ogen -version | grep -q $(OGEN_VERSION) || \
+	GOBIN=$(LOCALBIN) go install github.com/ogen-go/ogen/cmd/ogen@$(OGEN_VERSION)

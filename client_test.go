@@ -15,7 +15,7 @@ func TestApplyRequestEditors(t *testing.T) {
 		tokenSource: func(context.Context) (string, error) {
 			return "token-123", nil
 		},
-		requestEditors: []apispec.RequestEditorFn{
+		requestEditors: []apispec.RequestEditor{
 			func(_ context.Context, req *http.Request) error {
 				req.Header.Set("X-Custom", "ok")
 				return nil

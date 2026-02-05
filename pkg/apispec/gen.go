@@ -1,4 +1,3 @@
-//go:generate oapi-codegen -config oapi-codegen.types.yaml ../../openapi.yaml
-//go:generate oapi-codegen -config oapi-codegen.client.yaml ../../openapi.yaml
+//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v1.18.0 -config ogen.yaml -target . -package apispec ../../openapi.yaml
 
 package apispec

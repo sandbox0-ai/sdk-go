@@ -14,11 +14,11 @@ const defaultBaseURL = "https://api.sandbox0.ai"
 
 // Client is the high-level Sandbox0 SDK client.
 type Client struct {
-	api            *apispec.ClientWithResponses
+	api            *apispec.Client
 	baseURL        string
 	tokenSource    TokenSource
 	userAgent      string
-	requestEditors []apispec.RequestEditorFn
+	requestEditors []apispec.RequestEditor
 }
 
 // NewClient creates a new Sandbox0 SDK client.
@@ -41,11 +41,12 @@ func NewClient(opts ...Option) (*Client, error) {
 
 	var clientOpts []apispec.ClientOption
 	if cfg.httpClient != nil {
-		clientOpts = append(clientOpts, apispec.WithHTTPClient(cfg.httpClient))
+		clientOpts = append(clientOpts, apispec.WithClient(cfg.httpClient))
 	}
-	clientOpts = append(clientOpts, apispec.WithRequestEditorFn(client.applyRequestEditors))
+	clientOpts = append(clientOpts, apispec.WithRequestEditor(client.applyRequestEditors))
 
-	apiClient, err := apispec.NewClientWithResponses(cfg.baseURL, clientOpts...)
+	securitySource := clientSecuritySource{tokenSource: cfg.tokenSource}
+	apiClient, err := apispec.NewClient(cfg.baseURL, securitySource, clientOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +56,7 @@ func NewClient(opts ...Option) (*Client, error) {
 }
 
 // API exposes the generated OpenAPI client for low-level access.
-func (c *Client) API() *apispec.ClientWithResponses {
+func (c *Client) API() *apispec.Client {
 	return c.api
 }
 
@@ -87,6 +88,21 @@ func (c *Client) applyRequestEditors(ctx context.Context, req *http.Request) err
 		}
 	}
 	return nil
+}
+
+type clientSecuritySource struct {
+	tokenSource TokenSource
+}
+
+func (s clientSecuritySource) BearerAuth(ctx context.Context, _ apispec.OperationName) (apispec.BearerAuth, error) {
+	if s.tokenSource == nil {
+		return apispec.BearerAuth{}, nil
+	}
+	token, err := s.tokenSource(ctx)
+	if err != nil {
+		return apispec.BearerAuth{}, err
+	}
+	return apispec.BearerAuth{Token: strings.TrimSpace(token)}, nil
 }
 
 func (c *Client) websocketURL(path string) (string, error) {

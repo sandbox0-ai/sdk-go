@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -35,62 +36,69 @@ type FileWatchResponse struct {
 
 // ReadFile reads a file and returns raw bytes.
 func (s *Sandbox) ReadFile(ctx context.Context, path string) ([]byte, error) {
-	params := apispec.GetApiV1SandboxesIdFilesParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesGetParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.GetApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.ID), &params)
+	resp, err := s.client.api.APIV1SandboxesIDFilesGet(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.HTTPResponse == nil || resp.HTTPResponse.StatusCode != http.StatusOK {
-		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
-	}
-	return resp.Body, nil
+	return io.ReadAll(resp)
 }
 
 // StatFile retrieves file metadata.
 func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo, error) {
-	params := apispec.GetApiV1SandboxesIdFilesStatParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesStatGetParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.GetApiV1SandboxesIdFilesStatWithResponse(ctx, apispec.SandboxID(s.ID), &params)
+	resp, err := s.client.api.APIV1SandboxesIDFilesStatGet(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 == nil || resp.JSON200.Data == nil {
-		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return resp.JSON200.Data, nil
+	return &data, nil
 }
 
 // ListFiles returns directory entries.
 func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInfo, error) {
-	params := apispec.GetApiV1SandboxesIdFilesListParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesListGetParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.GetApiV1SandboxesIdFilesListWithResponse(ctx, apispec.SandboxID(s.ID), &params)
+	resp, err := s.client.api.APIV1SandboxesIDFilesListGet(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 == nil || resp.JSON200.Data == nil || resp.JSON200.Data.Entries == nil {
-		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return *resp.JSON200.Data.Entries, nil
+	return data.Entries, nil
 }
 
 // ReadBinaryFile reads file content as base64 and decodes it.
 func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, error) {
-	params := apispec.GetApiV1SandboxesIdFilesBinaryParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesBinaryGetParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.GetApiV1SandboxesIdFilesBinaryWithResponse(ctx, apispec.SandboxID(s.ID), &params)
+	resp, err := s.client.api.APIV1SandboxesIDFilesBinaryGet(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 == nil || resp.JSON200.Data == nil || resp.JSON200.Data.Content == nil {
-		return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	content := *resp.JSON200.Data.Content
+	content, ok := data.Content.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
+	}
 	decoded, err := base64.StdEncoding.DecodeString(content)
 	if err != nil {
 		return nil, err
@@ -101,83 +109,69 @@ func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, erro
 // WriteFile writes a file.
 func (s *Sandbox) WriteFile(ctx context.Context, path string, data []byte) (*apispec.SuccessWrittenResponse, error) {
 	body := bytes.NewReader(data)
-	params := apispec.PostApiV1SandboxesIdFilesParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesPostParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
-		ctx,
-		apispec.SandboxID(s.ID),
-		&params,
-		"application/octet-stream",
-		body,
-	)
+	resp, err := s.client.api.APIV1SandboxesIDFilesPost(ctx, apispec.APIV1SandboxesIDFilesPostReq{Data: body}, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	if resp.JSON201 != nil {
+	switch response := resp.(type) {
+	case *apispec.SuccessWrittenResponse:
+		return response, nil
+	case *apispec.SuccessCreatedResponse:
 		return nil, &APIError{Code: "unexpected_response", Message: "directory created instead of file"}
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // Mkdir creates a directory.
 func (s *Sandbox) Mkdir(ctx context.Context, path string, recursive bool) (*apispec.SuccessCreatedResponse, error) {
-	params := apispec.PostApiV1SandboxesIdFilesParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesPostParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	mkdir := apispec.QueryMkdir(true)
-	params.Mkdir = &mkdir
+	params.Mkdir = apispec.NewOptBool(true)
 	if recursive {
-		rec := apispec.QueryRecursive(true)
-		params.Recursive = &rec
+		params.Recursive = apispec.NewOptBool(true)
 	}
-	resp, err := s.client.api.PostApiV1SandboxesIdFilesWithBodyWithResponse(
-		ctx,
-		apispec.SandboxID(s.ID),
-		&params,
-		"application/octet-stream",
-		bytes.NewReader(nil),
-	)
+	resp, err := s.client.api.APIV1SandboxesIDFilesPost(ctx, apispec.APIV1SandboxesIDFilesPostReq{Data: bytes.NewReader(nil)}, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON201 != nil {
-		return resp.JSON201, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessCreatedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // DeleteFile deletes a file or directory.
 func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.SuccessDeletedResponse, error) {
-	params := apispec.DeleteApiV1SandboxesIdFilesParams{
-		Path: apispec.FilePath(path),
+	params := apispec.APIV1SandboxesIDFilesDeleteParams{
+		ID:   s.ID,
+		Path: path,
 	}
-	resp, err := s.client.api.DeleteApiV1SandboxesIdFilesWithResponse(ctx, apispec.SandboxID(s.ID), &params)
+	resp, err := s.client.api.APIV1SandboxesIDFilesDelete(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return resp, nil
 }
 
 // MoveFile moves a file or directory.
 func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*apispec.SuccessMovedResponse, error) {
-	resp, err := s.client.api.PostApiV1SandboxesIdFilesMoveWithResponse(ctx, apispec.SandboxID(s.ID), apispec.MoveFileRequest{
+	resp, err := s.client.api.APIV1SandboxesIDFilesMovePost(ctx, &apispec.MoveFileRequest{
 		Source:      source,
 		Destination: destination,
-	})
+	}, apispec.APIV1SandboxesIDFilesMovePostParams{ID: s.ID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return resp, nil
 }
 
 // ConnectWatchFile opens a WebSocket stream for file watch events.

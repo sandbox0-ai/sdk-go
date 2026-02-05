@@ -1,9 +1,9 @@
 package sandbox0
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -29,72 +29,97 @@ func (e *APIError) Error() string {
 	return fmt.Sprintf("sandbox0 API error (%d): %s", e.StatusCode, e.Message)
 }
 
-func apiErrorFromEnvelope(resp *http.Response, envelope *apispec.ErrorEnvelope) *APIError {
-	if resp == nil {
-		return &APIError{
-			StatusCode: 0,
-			Code:       "unknown_error",
-			Message:    "no response received",
-		}
-	}
-	requestID := requestIDFromResponse(resp)
+func apiErrorFromEnvelope(statusCode int, envelope *apispec.ErrorEnvelope) *APIError {
 	if envelope == nil {
 		return &APIError{
-			StatusCode: resp.StatusCode,
+			StatusCode: statusCode,
 			Code:       "unknown_error",
-			Message:    resp.Status,
-			RequestID:  requestID,
+			Message:    "no error body received",
 		}
 	}
 	return &APIError{
-		StatusCode: resp.StatusCode,
+		StatusCode: statusCode,
 		Code:       envelope.Error.Code,
 		Message:    envelope.Error.Message,
 		Details:    envelope.Error.Details,
-		RequestID:  requestID,
 	}
 }
 
-func unexpectedResponseError(resp *http.Response, body []byte) *APIError {
-	if resp == nil {
+func apiErrorFromResponse(res any) *APIError {
+	status := errorStatusFromResponse(res)
+	envelope, ok := errorEnvelopeFromResponse(res)
+	if ok {
+		return apiErrorFromEnvelope(status, envelope)
+	}
+	return &APIError{
+		StatusCode: status,
+		Code:       "unexpected_response",
+		Message:    "unexpected response",
+	}
+}
+
+func errorEnvelopeFromResponse(res any) (*apispec.ErrorEnvelope, bool) {
+	if res == nil {
+		return nil, false
+	}
+	if envelope, ok := res.(*apispec.ErrorEnvelope); ok {
+		return envelope, true
+	}
+	value := reflect.ValueOf(res)
+	if value.Kind() != reflect.Pointer {
+		return nil, false
+	}
+	target := reflect.TypeOf(&apispec.ErrorEnvelope{})
+	if !value.Type().ConvertibleTo(target) {
+		return nil, false
+	}
+	converted := value.Convert(target)
+	envelope, ok := converted.Interface().(*apispec.ErrorEnvelope)
+	return envelope, ok
+}
+
+func errorStatusFromResponse(res any) int {
+	if res == nil {
+		return 0
+	}
+	t := reflect.TypeOf(res)
+	if t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+	name := t.Name()
+	switch {
+	case strings.HasSuffix(name, "BadRequest"):
+		return http.StatusBadRequest
+	case strings.HasSuffix(name, "Unauthorized"):
+		return http.StatusUnauthorized
+	case strings.HasSuffix(name, "Forbidden"):
+		return http.StatusForbidden
+	case strings.HasSuffix(name, "NotFound"):
+		return http.StatusNotFound
+	case strings.HasSuffix(name, "Conflict"):
+		return http.StatusConflict
+	case strings.HasSuffix(name, "TooManyRequests"):
+		return http.StatusTooManyRequests
+	case strings.HasSuffix(name, "InternalServerError"):
+		return http.StatusInternalServerError
+	case strings.HasSuffix(name, "ServiceUnavailable"):
+		return http.StatusServiceUnavailable
+	default:
+		return 0
+	}
+}
+
+func unexpectedResponseError(res any) *APIError {
+	if res == nil {
 		return &APIError{
 			StatusCode: 0,
 			Code:       "unexpected_response",
 			Message:    "no response received",
-			Body:       body,
-		}
-	}
-	if len(body) > 0 && strings.Contains(strings.ToLower(resp.Header.Get("Content-Type")), "json") {
-		var envelope apispec.ErrorEnvelope
-		if err := json.Unmarshal(body, &envelope); err == nil && envelope.Error.Code != "" {
-			return &APIError{
-				StatusCode: resp.StatusCode,
-				Code:       envelope.Error.Code,
-				Message:    envelope.Error.Message,
-				Details:    envelope.Error.Details,
-				RequestID:  requestIDFromResponse(resp),
-				Body:       body,
-			}
 		}
 	}
 	return &APIError{
-		StatusCode: resp.StatusCode,
+		StatusCode: errorStatusFromResponse(res),
 		Code:       "unexpected_response",
-		Message:    resp.Status,
-		RequestID:  requestIDFromResponse(resp),
-		Body:       body,
+		Message:    "unexpected response",
 	}
-}
-
-func requestIDFromResponse(resp *http.Response) string {
-	if resp == nil {
-		return ""
-	}
-	if id := resp.Header.Get("X-Request-Id"); id != "" {
-		return id
-	}
-	if id := resp.Header.Get("X-Request-ID"); id != "" {
-		return id
-	}
-	return ""
 }

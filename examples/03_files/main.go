@@ -47,8 +47,8 @@ func main() {
 	must(err)
 	fmt.Printf("dir entries: %d\n", len(entries))
 	for _, entry := range entries {
-		if entry.Path != nil {
-			fmt.Printf("- %s\n", *entry.Path)
+		if path, ok := entry.Path.Get(); ok {
+			fmt.Printf("- %s\n", path)
 		}
 	}
 

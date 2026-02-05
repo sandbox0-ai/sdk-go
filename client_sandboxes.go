@@ -2,7 +2,6 @@ package sandbox0
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
@@ -32,7 +31,7 @@ func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 func WithSandboxTTL(ttlSec int32) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		config.Ttl = &ttlSec
+		config.TTL = apispec.NewOptInt32(ttlSec)
 	}
 }
 
@@ -40,7 +39,7 @@ func WithSandboxTTL(ttlSec int32) SandboxOption {
 func WithSandboxHardTTL(ttlSec int32) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		config.HardTtl = &ttlSec
+		config.HardTTL = apispec.NewOptInt32(ttlSec)
 	}
 }
 
@@ -48,11 +47,13 @@ func WithSandboxHardTTL(ttlSec int32) SandboxOption {
 func WithSandboxWebhook(url, secret string) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		if config.Webhook == nil {
-			config.Webhook = &apispec.WebhookConfig{}
+		webhook := apispec.WebhookConfig{}
+		if existing, ok := config.Webhook.Get(); ok {
+			webhook = existing
 		}
-		config.Webhook.Url = &url
-		config.Webhook.Secret = &secret
+		webhook.URL = apispec.NewOptString(url)
+		webhook.Secret = apispec.NewOptString(secret)
+		config.Webhook = apispec.NewOptWebhookConfig(webhook)
 	}
 }
 
@@ -60,10 +61,12 @@ func WithSandboxWebhook(url, secret string) SandboxOption {
 func WithSandboxWebhookWatchDir(watchDir string) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		if config.Webhook == nil {
-			config.Webhook = &apispec.WebhookConfig{}
+		webhook := apispec.WebhookConfig{}
+		if existing, ok := config.Webhook.Get(); ok {
+			webhook = existing
 		}
-		config.Webhook.WatchDir = &watchDir
+		webhook.WatchDir = apispec.NewOptString(watchDir)
+		config.Webhook = apispec.NewOptWebhookConfig(webhook)
 	}
 }
 
@@ -71,7 +74,7 @@ func WithSandboxWebhookWatchDir(watchDir string) SandboxOption {
 func WithSandboxNetworkPolicy(policy apispec.TplSandboxNetworkPolicy) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		config.Network = &policy
+		config.Network = apispec.NewOptTplSandboxNetworkPolicy(policy)
 	}
 }
 
@@ -83,138 +86,178 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	}
 
 	req := apispec.ClaimRequest{
-		Template: &template,
-		Config:   options.config,
+		Template: apispec.NewOptString(template),
+	}
+	if options.config != nil {
+		req.Config = apispec.NewOptSandboxConfig(*options.config)
 	}
 
-	resp, err := c.api.PostApiV1SandboxesWithResponse(ctx, req)
+	resp, err := c.api.APIV1SandboxesPost(ctx, &req)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON201 != nil && resp.JSON201.Data != nil {
-		data := resp.JSON201.Data
+	switch response := resp.(type) {
+	case *apispec.SuccessClaimResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		var clusterID *string
+		if value, ok := data.ClusterID.Get(); ok {
+			clusterID = &value
+		}
 		sandbox := &Sandbox{
-			ID:                data.SandboxId,
+			ID:                data.SandboxID,
 			Template:          data.Template,
-			ClusterID:         data.ClusterId,
+			ClusterID:         clusterID,
 			PodName:           data.PodName,
 			Status:            data.Status,
 			client:            c,
 			replContextByLang: map[string]string{},
 		}
 		return sandbox, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	if resp.JSON400 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON400)
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // GetSandbox returns sandbox details by ID.
 func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.Sandbox, error) {
-	resp, err := c.api.GetApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID))
+	resp, err := c.api.APIV1SandboxesIDGet(ctx, apispec.APIV1SandboxesIDGetParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	if resp.JSON403 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON403)
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
-	resp, err := c.api.PatchApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID), request)
+	resp, err := c.api.APIV1SandboxesIDPatch(ctx, &request, apispec.APIV1SandboxesIDPatchParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	if resp.JSON400 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON400)
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // DeleteSandbox terminates a sandbox.
 func (c *Client) DeleteSandbox(ctx context.Context, sandboxID string) (*apispec.SuccessMessageResponse, error) {
-	resp, err := c.api.DeleteApiV1SandboxesIdWithResponse(ctx, apispec.SandboxID(sandboxID))
+	resp, err := c.api.APIV1SandboxesIDDelete(ctx, apispec.APIV1SandboxesIDDeleteParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessMessageResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	if resp.JSON403 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON403)
-	}
-	if resp.JSON404 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON404)
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // StatusSandbox returns the sandbox status.
 func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.SandboxStatus, error) {
-	resp, err := c.api.GetApiV1SandboxesIdStatusWithResponse(ctx, apispec.SandboxID(sandboxID))
+	resp, err := c.api.APIV1SandboxesIDStatusGet(ctx, apispec.APIV1SandboxesIDStatusGetParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxStatusResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	case *apispec.ErrorEnvelope:
+		return nil, apiErrorFromResponse(response)
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // PauseSandbox suspends a sandbox.
 func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.PauseSandboxResponse, error) {
-	resp, err := c.api.PostApiV1SandboxesIdPauseWithResponse(ctx, apispec.SandboxID(sandboxID))
+	resp, err := c.api.APIV1SandboxesIDPausePost(ctx, apispec.APIV1SandboxesIDPausePostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessPauseSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	case *apispec.ErrorEnvelope:
+		return nil, apiErrorFromResponse(response)
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // ResumeSandbox resumes a sandbox.
 func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.ResumeSandboxResponse, error) {
-	resp, err := c.api.PostApiV1SandboxesIdResumeWithResponse(ctx, apispec.SandboxID(sandboxID))
+	resp, err := c.api.APIV1SandboxesIDResumePost(ctx, apispec.APIV1SandboxesIDResumePostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessResumeSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	case *apispec.ErrorEnvelope:
+		return nil, apiErrorFromResponse(response)
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.
 func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *apispec.RefreshRequest) (*apispec.RefreshResponse, error) {
 	var (
-		resp *apispec.PostApiV1SandboxesIdRefreshResponse
+		resp apispec.APIV1SandboxesIDRefreshPostRes
 		err  error
 	)
 	if request == nil {
-		resp, err = c.api.PostApiV1SandboxesIdRefreshWithBodyWithResponse(
-			ctx,
-			apispec.SandboxID(sandboxID),
-			"application/json",
-			http.NoBody,
-		)
+		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.OptRefreshRequest{}, apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
 	} else {
-		resp, err = c.api.PostApiV1SandboxesIdRefreshWithResponse(ctx, apispec.SandboxID(sandboxID), *request)
+		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.NewOptRefreshRequest(*request), apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
 	}
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessRefreshResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	case *apispec.ErrorEnvelope:
+		return nil, apiErrorFromResponse(response)
+	default:
+		if err := apiErrorFromResponse(response); err != nil {
+			return nil, err
+		}
+		return nil, unexpectedResponseError(response)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }

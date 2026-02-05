@@ -27,12 +27,11 @@ func main() {
 	defer client.DeleteSandbox(ctx, sandbox.ID)
 
 	// Create a volume and ensure cleanup.
-	accessMode := apispec.RWX
 	volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{
-		AccessMode: &accessMode,
+		AccessMode: apispec.NewOptVolumeAccessMode(apispec.VolumeAccessModeRWX),
 	})
 	must(err)
-	volumeID := volume.Id
+	volumeID := volume.ID
 	defer client.DeleteVolume(ctx, volumeID)
 	fmt.Printf("volume created: %s\n", volumeID)
 
@@ -52,7 +51,7 @@ func main() {
 		Name: snapshotName,
 	})
 	must(err)
-	fmt.Printf("snapshot created: %s\n", snapshot.Id)
+	fmt.Printf("snapshot created: %s\n", snapshot.ID)
 
 	// Update the file in the volume.
 	_, err = sandbox.WriteFile(ctx, "/mnt/data/hello.txt", []byte("hello volume\nsecond line\n"))
@@ -64,9 +63,9 @@ func main() {
 	fmt.Printf("file content: \n%s", string(readResult))
 
 	// Restore the snapshot.
-	_, err = client.RestoreVolumeSnapshot(ctx, volumeID, snapshot.Id)
+	_, err = client.RestoreVolumeSnapshot(ctx, volumeID, snapshot.ID)
 	must(err)
-	fmt.Printf("snapshot restored: %s\n", snapshot.Id)
+	fmt.Printf("snapshot restored: %s\n", snapshot.ID)
 
 	readResult, err = sandbox.ReadFile(ctx, "/mnt/data/hello.txt")
 	must(err)

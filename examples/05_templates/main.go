@@ -27,11 +27,15 @@ func main() {
 	for _, tpl := range templates {
 		name := ""
 		display := ""
-		if tpl.Metadata != nil && tpl.Metadata.Name != nil {
-			name = *tpl.Metadata.Name
+		if meta, ok := tpl.Metadata.Get(); ok {
+			if value, ok := meta.Name.Get(); ok {
+				name = value
+			}
 		}
-		if tpl.Spec != nil && tpl.Spec.DisplayName != nil {
-			display = *tpl.Spec.DisplayName
+		if spec, ok := tpl.Spec.Get(); ok {
+			if value, ok := spec.DisplayName.Get(); ok {
+				display = value
+			}
 		}
 		fmt.Printf("- name=%s display=%s\n", name, display)
 	}

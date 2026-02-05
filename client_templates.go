@@ -8,75 +8,78 @@ import (
 
 // ListTemplate lists sandbox templates.
 func (c *Client) ListTemplate(ctx context.Context) ([]apispec.SandboxTemplate, error) {
-	resp, err := c.api.GetApiV1TemplatesWithResponse(ctx)
+	resp, err := c.api.APIV1TemplatesGet(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil && resp.JSON200.Data.Templates != nil {
-		return *resp.JSON200.Data.Templates, nil
+	if resp == nil {
+		return nil, unexpectedResponseError(resp)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
+	}
+	return data.Templates, nil
 }
 
 // GetTemplate retrieves a template.
 func (c *Client) GetTemplate(ctx context.Context, templateID string) (*apispec.SandboxTemplate, error) {
-	resp, err := c.api.GetApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
+	resp, err := c.api.APIV1TemplatesIDGet(ctx, apispec.APIV1TemplatesIDGetParams{ID: templateID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessTemplateResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	if resp.JSON404 != nil {
-		return nil, apiErrorFromEnvelope(resp.HTTPResponse, resp.JSON404)
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
 }
 
 // CreateTemplate creates a template.
 func (c *Client) CreateTemplate(ctx context.Context, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
-	resp, err := c.api.PostApiV1TemplatesWithResponse(ctx, template)
+	resp, err := c.api.APIV1TemplatesPost(ctx, &template)
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON201 != nil && resp.JSON201.Data != nil {
-		return resp.JSON201.Data, nil
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return &data, nil
 }
 
 // UpdateTemplate updates a template.
 func (c *Client) UpdateTemplate(ctx context.Context, templateID string, template apispec.SandboxTemplate) (*apispec.SandboxTemplate, error) {
-	resp, err := c.api.PutApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID), template)
+	resp, err := c.api.APIV1TemplatesIDPut(ctx, &template, apispec.APIV1TemplatesIDPutParams{ID: templateID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return &data, nil
 }
 
 // DeleteTemplate deletes a template.
 func (c *Client) DeleteTemplate(ctx context.Context, templateID string) (*apispec.SuccessMessageResponse, error) {
-	resp, err := c.api.DeleteApiV1TemplatesIdWithResponse(ctx, apispec.TemplateID(templateID))
+	resp, err := c.api.APIV1TemplatesIDDelete(ctx, apispec.APIV1TemplatesIDDeleteParams{ID: templateID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return resp, nil
 }
 
 // WarmPoolTemplate triggers warm pool creation for a template.
 func (c *Client) WarmPoolTemplate(ctx context.Context, templateID string, request apispec.WarmPoolRequest) (*apispec.SuccessMessageResponse, error) {
-	resp, err := c.api.PostApiV1TemplatesIdPoolWarmWithResponse(ctx, apispec.TemplateID(templateID), request)
+	resp, err := c.api.APIV1TemplatesIDPoolWarmPost(ctx, &request, apispec.APIV1TemplatesIDPoolWarmPostParams{ID: templateID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return resp, nil
 }

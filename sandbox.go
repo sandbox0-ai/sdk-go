@@ -94,7 +94,10 @@ func WithPTYSize(rows, cols uint16) RunOption {
 	return func(opts *runOptions) {
 		rows32 := int32(rows)
 		cols32 := int32(cols)
-		opts.ptySize = &apispec.PTYSize{Rows: &rows32, Cols: &cols32}
+		opts.ptySize = &apispec.PTYSize{
+			Rows: apispec.NewOptInt32(rows32),
+			Cols: apispec.NewOptInt32(cols32),
+		}
 	}
 }
 
@@ -178,7 +181,10 @@ func WithCmdPTYSize(rows, cols uint16) CmdOption {
 	return func(opts *cmdOptions) {
 		rows32 := int32(rows)
 		cols32 := int32(cols)
-		opts.ptySize = &apispec.PTYSize{Rows: &rows32, Cols: &cols32}
+		opts.ptySize = &apispec.PTYSize{
+			Rows: apispec.NewOptInt32(rows32),
+			Cols: apispec.NewOptInt32(cols32),
+		}
 	}
 }
 
@@ -205,34 +211,43 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	}
 
 	waitUntilDone := true
-	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
-		Type: ptrProcessType(apispec.Cmd),
-		Cmd: &apispec.CreateCMDContextRequest{
-			Command: &options.command,
-		},
-		Cwd:            options.cwd,
-		EnvVars:        options.envVars,
-		PtySize:        options.ptySize,
-		IdleTimeoutSec: options.idleTimeoutSec,
-		TtlSec:         options.ttlSec,
-		WaitUntilDone:  &waitUntilDone,
-	})
+	req := apispec.CreateContextRequest{
+		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
+		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
+		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
+	}
+	if options.cwd != nil {
+		req.Cwd = apispec.NewOptString(*options.cwd)
+	}
+	if options.envVars != nil {
+		req.EnvVars = apispec.NewOptCreateContextRequestEnvVars(apispec.CreateContextRequestEnvVars(*options.envVars))
+	}
+	if options.ptySize != nil {
+		req.PtySize = apispec.NewOptPTYSize(*options.ptySize)
+	}
+	if options.idleTimeoutSec != nil {
+		req.IdleTimeoutSec = apispec.NewOptInt32(*options.idleTimeoutSec)
+	}
+	if options.ttlSec != nil {
+		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
+	}
+	contextResp, err := s.CreateContext(ctx, req)
 	if err != nil {
 		return CmdResult{}, err
 	}
 	if contextResp == nil {
 		return CmdResult{}, errors.New("create context returned nil response")
 	}
-	defer s.DeleteContext(ctx, contextResp.Id)
+	defer s.DeleteContext(ctx, contextResp.ID)
 
 	output := ""
-	if contextResp.Output != nil {
-		output = *contextResp.Output
+	if value, ok := contextResp.Output.Get(); ok {
+		output = value
 	}
 
 	return CmdResult{
 		SandboxID: s.ID,
-		ContextID: contextResp.Id,
+		ContextID: contextResp.ID,
 		Output:    output,
 	}, nil
 }
@@ -313,18 +328,27 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 	}
 
 	waitUntilDone := false
-	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
-		Type: ptrProcessType(apispec.Cmd),
-		Cmd: &apispec.CreateCMDContextRequest{
-			Command: &options.command,
-		},
-		Cwd:            options.cwd,
-		EnvVars:        options.envVars,
-		PtySize:        options.ptySize,
-		IdleTimeoutSec: options.idleTimeoutSec,
-		TtlSec:         options.ttlSec,
-		WaitUntilDone:  &waitUntilDone,
-	})
+	req := apispec.CreateContextRequest{
+		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
+		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
+		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
+	}
+	if options.cwd != nil {
+		req.Cwd = apispec.NewOptString(*options.cwd)
+	}
+	if options.envVars != nil {
+		req.EnvVars = apispec.NewOptCreateContextRequestEnvVars(apispec.CreateContextRequestEnvVars(*options.envVars))
+	}
+	if options.ptySize != nil {
+		req.PtySize = apispec.NewOptPTYSize(*options.ptySize)
+	}
+	if options.idleTimeoutSec != nil {
+		req.IdleTimeoutSec = apispec.NewOptInt32(*options.idleTimeoutSec)
+	}
+	if options.ttlSec != nil {
+		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
+	}
+	contextResp, err := s.CreateContext(ctx, req)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -332,14 +356,14 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 		return nil, nil, nil, errors.New("create context returned nil response")
 	}
 
-	conn, _, err := s.ConnectWSContext(ctx, contextResp.Id)
+	conn, _, err := s.ConnectWSContext(ctx, contextResp.ID)
 	if err != nil {
-		cleanupContext(s, contextResp.Id)
+		cleanupContext(s, contextResp.ID)
 		return nil, nil, nil, err
 	}
 
-	outputs, errs, closeFn := s.streamContext(ctx, contextResp.Id, conn, input, func() {
-		cleanupContext(s, contextResp.Id)
+	outputs, errs, closeFn := s.streamContext(ctx, contextResp.ID, conn, input, func() {
+		cleanupContext(s, contextResp.ID)
 	})
 	return outputs, errs, closeFn, nil
 }
@@ -519,17 +543,28 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 		return contextID, nil
 	}
 
-	contextResp, err := s.CreateContext(ctx, apispec.CreateContextRequest{
-		Type: ptrProcessType(apispec.Repl),
-		Repl: &apispec.CreateREPLContextRequest{
-			Language: &language,
-		},
-		Cwd:            options.cwd,
-		EnvVars:        options.envVars,
-		PtySize:        options.ptySize,
-		IdleTimeoutSec: options.idleTimeoutSec,
-		TtlSec:         options.ttlSec,
-	})
+	req := apispec.CreateContextRequest{
+		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
+		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
+			Language: apispec.NewOptString(language),
+		}),
+	}
+	if options.cwd != nil {
+		req.Cwd = apispec.NewOptString(*options.cwd)
+	}
+	if options.envVars != nil {
+		req.EnvVars = apispec.NewOptCreateContextRequestEnvVars(apispec.CreateContextRequestEnvVars(*options.envVars))
+	}
+	if options.ptySize != nil {
+		req.PtySize = apispec.NewOptPTYSize(*options.ptySize)
+	}
+	if options.idleTimeoutSec != nil {
+		req.IdleTimeoutSec = apispec.NewOptInt32(*options.idleTimeoutSec)
+	}
+	if options.ttlSec != nil {
+		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
+	}
+	contextResp, err := s.CreateContext(ctx, req)
 	if err != nil {
 		return "", err
 	}
@@ -537,16 +572,12 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 		return "", errors.New("create context returned nil response")
 	}
 
-	contextID = contextResp.Id
+	contextID = contextResp.ID
 	s.mu.Lock()
 	s.replContextByLang[language] = contextID
 	s.mu.Unlock()
 
 	return contextID, nil
-}
-
-func ptrProcessType(value apispec.ProcessType) *apispec.ProcessType {
-	return &value
 }
 
 func parseCommand(input string) ([]string, error) {

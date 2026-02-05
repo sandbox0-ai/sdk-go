@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"testing"
 	"time"
-
-	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 type testDoer struct{}
@@ -40,7 +38,7 @@ func TestWithTimeoutCreatesHTTPClient(t *testing.T) {
 
 func TestWithTimeoutRejectsInvalidClient(t *testing.T) {
 	cfg := clientConfig{
-		httpClient: apispec.HttpRequestDoer(testDoer{}),
+		httpClient: testDoer{},
 	}
 	err := WithTimeout(time.Second)(&cfg)
 	if err == nil {

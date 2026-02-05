@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	ogenhttp "github.com/ogen-go/ogen/http"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
@@ -15,9 +16,9 @@ type TokenSource func(ctx context.Context) (string, error)
 type clientConfig struct {
 	baseURL        string
 	tokenSource    TokenSource
-	httpClient     apispec.HttpRequestDoer
+	httpClient     ogenhttp.Client
 	userAgent      string
-	requestEditors []apispec.RequestEditorFn
+	requestEditors []apispec.RequestEditor
 }
 
 // Option configures a Client.
@@ -52,8 +53,8 @@ func WithTokenSource(source TokenSource) Option {
 	}
 }
 
-// WithHTTPClient sets a custom HTTP client (Doer).
-func WithHTTPClient(client apispec.HttpRequestDoer) Option {
+// WithHTTPClient sets a custom HTTP client.
+func WithHTTPClient(client ogenhttp.Client) Option {
 	return func(cfg *clientConfig) error {
 		cfg.httpClient = client
 		return nil
@@ -89,7 +90,7 @@ func WithUserAgent(userAgent string) Option {
 }
 
 // WithRequestEditor appends a request editor to all requests.
-func WithRequestEditor(editor apispec.RequestEditorFn) Option {
+func WithRequestEditor(editor apispec.RequestEditor) Option {
 	return func(cfg *clientConfig) error {
 		cfg.requestEditors = append(cfg.requestEditors, editor)
 		return nil

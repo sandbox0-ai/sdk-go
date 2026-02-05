@@ -10,42 +10,43 @@ import (
 func (s *Sandbox) Mount(ctx context.Context, volumeID, mountPoint string, config *apispec.VolumeConfig) (*apispec.MountResponse, error) {
 	req := apispec.MountRequest{
 		MountPoint:      mountPoint,
-		SandboxvolumeId: volumeID,
-		VolumeConfig:    config,
+		SandboxvolumeID: volumeID,
 	}
-	resp, err := s.client.api.PostApiV1SandboxesIdSandboxvolumesMountWithResponse(ctx, apispec.SandboxID(s.ID), req)
+	if config != nil {
+		req.VolumeConfig = apispec.NewOptVolumeConfig(*config)
+	}
+	resp, err := s.client.api.APIV1SandboxesIDSandboxvolumesMountPost(ctx, &req, apispec.APIV1SandboxesIDSandboxvolumesMountPostParams{ID: s.ID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil {
-		return resp.JSON200.Data, nil
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return &data, nil
 }
 
 // Unmount unmounts a volume from a sandbox.
 func (s *Sandbox) Unmount(ctx context.Context, volumeID string) (*apispec.SuccessUnmountedResponse, error) {
 	req := apispec.UnmountRequest{
-		SandboxvolumeId: volumeID,
+		SandboxvolumeID: volumeID,
 	}
-	resp, err := s.client.api.PostApiV1SandboxesIdSandboxvolumesUnmountWithResponse(ctx, apispec.SandboxID(s.ID), req)
+	resp, err := s.client.api.APIV1SandboxesIDSandboxvolumesUnmountPost(ctx, &req, apispec.APIV1SandboxesIDSandboxvolumesUnmountPostParams{ID: s.ID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil {
-		return resp.JSON200, nil
-	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return resp, nil
 }
 
 // MountStatus returns mount status for a sandbox.
 func (s *Sandbox) MountStatus(ctx context.Context) ([]apispec.MountStatus, error) {
-	resp, err := s.client.api.GetApiV1SandboxesIdSandboxvolumesStatusWithResponse(ctx, apispec.SandboxID(s.ID))
+	resp, err := s.client.api.APIV1SandboxesIDSandboxvolumesStatusGet(ctx, apispec.APIV1SandboxesIDSandboxvolumesStatusGetParams{ID: s.ID})
 	if err != nil {
 		return nil, err
 	}
-	if resp.JSON200 != nil && resp.JSON200.Data != nil && resp.JSON200.Data.Mounts != nil {
-		return *resp.JSON200.Data.Mounts, nil
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
 	}
-	return nil, unexpectedResponseError(resp.HTTPResponse, resp.Body)
+	return data.Mounts, nil
 }

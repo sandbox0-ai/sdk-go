@@ -39,7 +39,7 @@ func main() {
 
 	// Block all traffic
 	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
-		Mode: apispec.BlockAll,
+		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
 	})
 	must(err)
 
