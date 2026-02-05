@@ -67,6 +67,14 @@ func WithSandboxWebhookWatchDir(watchDir string) SandboxOption {
 	}
 }
 
+// WithSandboxNetworkPolicy sets the sandbox network policy at claim time.
+func WithSandboxNetworkPolicy(policy apispec.TplSandboxNetworkPolicy) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.Network = &policy
+	}
+}
+
 // ClaimSandbox creates (claims) a sandbox and returns a convenience wrapper.
 func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...SandboxOption) (*Sandbox, error) {
 	options := sandboxOptions{}

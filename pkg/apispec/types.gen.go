@@ -279,7 +279,6 @@ const (
 const (
 	AllowAll TplSandboxNetworkPolicyMode = "allow-all"
 	BlockAll TplSandboxNetworkPolicyMode = "block-all"
-	Custom   TplSandboxNetworkPolicyMode = "custom"
 )
 
 // Defines values for UpdateTeamMemberRequestRole.
@@ -348,6 +347,7 @@ type BandwidthPolicySpec struct {
 	EgressRateLimit  *RateLimitSpec  `json:"egressRateLimit,omitempty"`
 	IngressRateLimit *RateLimitSpec  `json:"ingressRateLimit,omitempty"`
 	SandboxId        *string         `json:"sandboxId,omitempty"`
+	Version          *string         `json:"version,omitempty"`
 }
 
 // Capabilities defines model for Capabilities.
@@ -624,16 +624,12 @@ type MoveFileRequest struct {
 
 // NetworkEgressPolicy defines model for NetworkEgressPolicy.
 type NetworkEgressPolicy struct {
-	AllowedDomains *[]string `json:"allowedDomains,omitempty"`
-	AllowedIPs     *[]string `json:"allowedIPs,omitempty"`
-	BlockedDomains *[]string `json:"blockedDomains,omitempty"`
-	BlockedIPs     *[]string `json:"blockedIPs,omitempty"`
-}
-
-// NetworkIngressPolicy defines model for NetworkIngressPolicy.
-type NetworkIngressPolicy struct {
-	AllowedIPs *[]string `json:"allowedIPs,omitempty"`
-	BlockedIPs *[]string `json:"blockedIPs,omitempty"`
+	AllowedCidrs   *[]string   `json:"allowedCidrs,omitempty"`
+	AllowedDomains *[]string   `json:"allowedDomains,omitempty"`
+	AllowedPorts   *[]PortSpec `json:"allowedPorts,omitempty"`
+	DeniedCidrs    *[]string   `json:"deniedCidrs,omitempty"`
+	DeniedDomains  *[]string   `json:"deniedDomains,omitempty"`
+	DeniedPorts    *[]PortSpec `json:"deniedPorts,omitempty"`
 }
 
 // NodeAffinity defines model for NodeAffinity.
@@ -709,6 +705,13 @@ type PoolStrategy struct {
 	AutoScale bool  `json:"autoScale"`
 	MaxIdle   int32 `json:"maxIdle"`
 	MinIdle   int32 `json:"minIdle"`
+}
+
+// PortSpec defines model for PortSpec.
+type PortSpec struct {
+	EndPort  *int32  `json:"endPort,omitempty"`
+	Port     int32   `json:"port"`
+	Protocol *string `json:"protocol,omitempty"`
 }
 
 // PreStopHook defines model for PreStopHook.
@@ -1423,9 +1426,8 @@ type Toleration struct {
 
 // TplSandboxNetworkPolicy defines model for TplSandboxNetworkPolicy.
 type TplSandboxNetworkPolicy struct {
-	Egress  *NetworkEgressPolicy        `json:"egress,omitempty"`
-	Ingress *NetworkIngressPolicy       `json:"ingress,omitempty"`
-	Mode    TplSandboxNetworkPolicyMode `json:"mode"`
+	Egress *NetworkEgressPolicy        `json:"egress,omitempty"`
+	Mode   TplSandboxNetworkPolicyMode `json:"mode"`
 }
 
 // TplSandboxNetworkPolicyMode defines model for TplSandboxNetworkPolicy.Mode.
