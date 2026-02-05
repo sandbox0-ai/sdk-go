@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
@@ -44,6 +45,10 @@ func NewClient(opts ...Option) (*Client, error) {
 		clientOpts = append(clientOpts, apispec.WithClient(cfg.httpClient))
 	}
 	clientOpts = append(clientOpts, apispec.WithRequestEditor(client.applyRequestEditors))
+	clientOpts = append(clientOpts, apispec.WithResponseEditor(normalizeNullMapResponse))
+	for _, editor := range cfg.responseEditors {
+		clientOpts = append(clientOpts, apispec.WithResponseEditor(editor))
+	}
 
 	securitySource := clientSecuritySource{tokenSource: cfg.tokenSource}
 	apiClient, err := apispec.NewClient(cfg.baseURL, securitySource, clientOpts...)
@@ -96,13 +101,17 @@ type clientSecuritySource struct {
 
 func (s clientSecuritySource) BearerAuth(ctx context.Context, _ apispec.OperationName) (apispec.BearerAuth, error) {
 	if s.tokenSource == nil {
-		return apispec.BearerAuth{}, nil
+		return apispec.BearerAuth{}, ogenerrors.ErrSkipClientSecurity
 	}
 	token, err := s.tokenSource(ctx)
 	if err != nil {
 		return apispec.BearerAuth{}, err
 	}
-	return apispec.BearerAuth{Token: strings.TrimSpace(token)}, nil
+	token = strings.TrimSpace(token)
+	if token == "" {
+		return apispec.BearerAuth{}, ogenerrors.ErrSkipClientSecurity
+	}
+	return apispec.BearerAuth{Token: token}, nil
 }
 
 func (c *Client) websocketURL(path string) (string, error) {

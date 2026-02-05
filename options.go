@@ -14,11 +14,12 @@ import (
 type TokenSource func(ctx context.Context) (string, error)
 
 type clientConfig struct {
-	baseURL        string
-	tokenSource    TokenSource
-	httpClient     ogenhttp.Client
-	userAgent      string
-	requestEditors []apispec.RequestEditor
+	baseURL         string
+	tokenSource     TokenSource
+	httpClient      ogenhttp.Client
+	userAgent       string
+	requestEditors  []apispec.RequestEditor
+	responseEditors []apispec.ResponseEditor
 }
 
 // Option configures a Client.
@@ -93,6 +94,14 @@ func WithUserAgent(userAgent string) Option {
 func WithRequestEditor(editor apispec.RequestEditor) Option {
 	return func(cfg *clientConfig) error {
 		cfg.requestEditors = append(cfg.requestEditors, editor)
+		return nil
+	}
+}
+
+// WithResponseEditor appends a response editor to all requests.
+func WithResponseEditor(editor apispec.ResponseEditor) Option {
+	return func(cfg *clientConfig) error {
+		cfg.responseEditors = append(cfg.responseEditors, editor)
 		return nil
 	}
 }
