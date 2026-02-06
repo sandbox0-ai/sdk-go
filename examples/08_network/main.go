@@ -46,6 +46,18 @@ func main() {
 	resp, err = sandbox.Cmd(ctx, shell)
 	must(err)
 	fmt.Println(resp.Output)
+
+	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
+		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
+		Egress: apispec.NewOptNetworkEgressPolicy(apispec.NetworkEgressPolicy{
+			AllowedDomains: []string{"github.com"},
+		}),
+	})
+	must(err)
+
+	resp, err = sandbox.Cmd(ctx, shell)
+	must(err)
+	fmt.Println(resp.Output)
 }
 
 func must(err error) {

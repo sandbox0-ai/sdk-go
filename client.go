@@ -45,6 +45,7 @@ func NewClient(opts ...Option) (*Client, error) {
 		clientOpts = append(clientOpts, apispec.WithClient(cfg.httpClient))
 	}
 	clientOpts = append(clientOpts, apispec.WithRequestEditor(client.applyRequestEditors))
+	clientOpts = append(clientOpts, apispec.WithResponseEditor(handleErrorResponse))
 	clientOpts = append(clientOpts, apispec.WithResponseEditor(normalizeNullMapResponse))
 	for _, editor := range cfg.responseEditors {
 		clientOpts = append(clientOpts, apispec.WithResponseEditor(editor))
