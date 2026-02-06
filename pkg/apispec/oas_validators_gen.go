@@ -1285,38 +1285,6 @@ func (s SuccessAuthProvidersResponseSuccess) Validate() error {
 	}
 }
 
-func (s *SuccessBandwidthPolicyResponse) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Success.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "success",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s SuccessBandwidthPolicyResponseSuccess) Validate() error {
-	switch s {
-	case true:
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
 func (s *SuccessClaimResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer

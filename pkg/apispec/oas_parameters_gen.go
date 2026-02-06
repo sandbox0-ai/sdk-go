@@ -12,16 +12,6 @@ type APIKeysIDDeleteParams struct {
 	ID string
 }
 
-// APIV1SandboxesIDBandwidthGetParams is parameters of GET /api/v1/sandboxes/{id}/bandwidth operation.
-type APIV1SandboxesIDBandwidthGetParams struct {
-	ID string
-}
-
-// APIV1SandboxesIDBandwidthPatchParams is parameters of PATCH /api/v1/sandboxes/{id}/bandwidth operation.
-type APIV1SandboxesIDBandwidthPatchParams struct {
-	ID string
-}
-
 // APIV1SandboxesIDContextsCtxIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 type APIV1SandboxesIDContextsCtxIDDeleteParams struct {
 	ID    string

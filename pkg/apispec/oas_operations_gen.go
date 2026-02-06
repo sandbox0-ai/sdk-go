@@ -10,8 +10,6 @@ const (
 	APIKeysIDDeactivatePostOperation                             OperationName = "APIKeysIDDeactivatePost"
 	APIKeysIDDeleteOperation                                     OperationName = "APIKeysIDDelete"
 	APIKeysPostOperation                                         OperationName = "APIKeysPost"
-	APIV1SandboxesIDBandwidthGetOperation                        OperationName = "APIV1SandboxesIDBandwidthGet"
-	APIV1SandboxesIDBandwidthPatchOperation                      OperationName = "APIV1SandboxesIDBandwidthPatch"
 	APIV1SandboxesIDContextsCtxIDDeleteOperation                 OperationName = "APIV1SandboxesIDContextsCtxIDDelete"
 	APIV1SandboxesIDContextsCtxIDExecPostOperation               OperationName = "APIV1SandboxesIDContextsCtxIDExecPost"
 	APIV1SandboxesIDContextsCtxIDGetOperation                    OperationName = "APIV1SandboxesIDContextsCtxIDGet"

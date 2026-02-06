@@ -24,6 +24,9 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default",
 		sandbox0.WithSandboxHardTTL(600),
+		sandbox0.WithSandboxNetworkPolicy(apispec.TplSandboxNetworkPolicy{
+			Mode: apispec.TplSandboxNetworkPolicyModeAllowAll,
+		}),
 	)
 	must(err)
 	defer client.DeleteSandbox(ctx, sandbox.ID)

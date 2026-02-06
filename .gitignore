@@ -1,4 +1,6 @@
 vendor
 bin
 
+*.test
+
 fswatch-sh.sh

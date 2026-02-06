@@ -36,29 +36,3 @@ func (s *Sandbox) UpdateNetworkPolicy(ctx context.Context, policy apispec.TplSan
 	}
 	return &data, nil
 }
-
-// GetBandwidthPolicy retrieves the sandbox bandwidth policy.
-func (s *Sandbox) GetBandwidthPolicy(ctx context.Context) (*apispec.BandwidthPolicySpec, error) {
-	resp, err := s.client.api.APIV1SandboxesIDBandwidthGet(ctx, apispec.APIV1SandboxesIDBandwidthGetParams{ID: s.ID})
-	if err != nil {
-		return nil, err
-	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return &data, nil
-}
-
-// UpdateBandwidthPolicy updates the sandbox bandwidth policy.
-func (s *Sandbox) UpdateBandwidthPolicy(ctx context.Context, policy apispec.BandwidthPolicySpec) (*apispec.BandwidthPolicySpec, error) {
-	resp, err := s.client.api.APIV1SandboxesIDBandwidthPatch(ctx, &policy, apispec.APIV1SandboxesIDBandwidthPatchParams{ID: s.ID})
-	if err != nil {
-		return nil, err
-	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return &data, nil
-}

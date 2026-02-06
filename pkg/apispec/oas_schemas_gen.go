@@ -242,32 +242,6 @@ type APIV1SandboxesIDPatchNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPatchNotFound) aPIV1SandboxesIDPatchRes() {}
 
-// Ref: #/components/schemas/AccountingSpec
-type AccountingSpec struct {
-	Enabled               bool     `json:"enabled"`
-	ReportIntervalSeconds OptInt32 `json:"reportIntervalSeconds"`
-}
-
-// GetEnabled returns the value of Enabled.
-func (s *AccountingSpec) GetEnabled() bool {
-	return s.Enabled
-}
-
-// GetReportIntervalSeconds returns the value of ReportIntervalSeconds.
-func (s *AccountingSpec) GetReportIntervalSeconds() OptInt32 {
-	return s.ReportIntervalSeconds
-}
-
-// SetEnabled sets the value of Enabled.
-func (s *AccountingSpec) SetEnabled(val bool) {
-	s.Enabled = val
-}
-
-// SetReportIntervalSeconds sets the value of ReportIntervalSeconds.
-func (s *AccountingSpec) SetReportIntervalSeconds(val OptInt32) {
-	s.ReportIntervalSeconds = val
-}
-
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
 	Email string                   `json:"email"`
@@ -465,65 +439,6 @@ func (*AuthRegisterPostConflict) authRegisterPostRes() {}
 type AuthRegisterPostForbidden ErrorEnvelope
 
 func (*AuthRegisterPostForbidden) authRegisterPostRes() {}
-
-// Ref: #/components/schemas/BandwidthPolicySpec
-type BandwidthPolicySpec struct {
-	Version          OptString         `json:"version"`
-	SandboxId        OptString         `json:"sandboxId"`
-	EgressRateLimit  OptRateLimitSpec  `json:"egressRateLimit"`
-	IngressRateLimit OptRateLimitSpec  `json:"ingressRateLimit"`
-	Accounting       OptAccountingSpec `json:"accounting"`
-}
-
-// GetVersion returns the value of Version.
-func (s *BandwidthPolicySpec) GetVersion() OptString {
-	return s.Version
-}
-
-// GetSandboxId returns the value of SandboxId.
-func (s *BandwidthPolicySpec) GetSandboxId() OptString {
-	return s.SandboxId
-}
-
-// GetEgressRateLimit returns the value of EgressRateLimit.
-func (s *BandwidthPolicySpec) GetEgressRateLimit() OptRateLimitSpec {
-	return s.EgressRateLimit
-}
-
-// GetIngressRateLimit returns the value of IngressRateLimit.
-func (s *BandwidthPolicySpec) GetIngressRateLimit() OptRateLimitSpec {
-	return s.IngressRateLimit
-}
-
-// GetAccounting returns the value of Accounting.
-func (s *BandwidthPolicySpec) GetAccounting() OptAccountingSpec {
-	return s.Accounting
-}
-
-// SetVersion sets the value of Version.
-func (s *BandwidthPolicySpec) SetVersion(val OptString) {
-	s.Version = val
-}
-
-// SetSandboxId sets the value of SandboxId.
-func (s *BandwidthPolicySpec) SetSandboxId(val OptString) {
-	s.SandboxId = val
-}
-
-// SetEgressRateLimit sets the value of EgressRateLimit.
-func (s *BandwidthPolicySpec) SetEgressRateLimit(val OptRateLimitSpec) {
-	s.EgressRateLimit = val
-}
-
-// SetIngressRateLimit sets the value of IngressRateLimit.
-func (s *BandwidthPolicySpec) SetIngressRateLimit(val OptRateLimitSpec) {
-	s.IngressRateLimit = val
-}
-
-// SetAccounting sets the value of Accounting.
-func (s *BandwidthPolicySpec) SetAccounting(val OptAccountingSpec) {
-	s.Accounting = val
-}
 
 type BearerAuth struct {
 	Token string
@@ -1507,9 +1422,9 @@ func (s *EnvVar) SetValue(val string) {
 
 // Ref: #/components/schemas/Error
 type Error struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Details jx.Raw `json:"details"`
+	Code    string          `json:"code"`
+	Message string          `json:"message"`
+	Details OptErrorDetails `json:"details"`
 }
 
 // GetCode returns the value of Code.
@@ -1523,7 +1438,7 @@ func (s *Error) GetMessage() string {
 }
 
 // GetDetails returns the value of Details.
-func (s *Error) GetDetails() jx.Raw {
+func (s *Error) GetDetails() OptErrorDetails {
 	return s.Details
 }
 
@@ -1538,8 +1453,19 @@ func (s *Error) SetMessage(val string) {
 }
 
 // SetDetails sets the value of Details.
-func (s *Error) SetDetails(val jx.Raw) {
+func (s *Error) SetDetails(val OptErrorDetails) {
 	s.Details = val
+}
+
+type ErrorDetails map[string]jx.Raw
+
+func (s *ErrorDetails) init() ErrorDetails {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
 }
 
 // Ref: #/components/schemas/ErrorEnvelope
@@ -2477,52 +2403,6 @@ func (s *ObjectMetaLabels) init() ObjectMetaLabels {
 	return m
 }
 
-// NewOptAccountingSpec returns new OptAccountingSpec with value set to v.
-func NewOptAccountingSpec(v AccountingSpec) OptAccountingSpec {
-	return OptAccountingSpec{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptAccountingSpec is optional AccountingSpec.
-type OptAccountingSpec struct {
-	Value AccountingSpec
-	Set   bool
-}
-
-// IsSet returns true if OptAccountingSpec was set.
-func (o OptAccountingSpec) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptAccountingSpec) Reset() {
-	var v AccountingSpec
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptAccountingSpec) SetTo(v AccountingSpec) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptAccountingSpec) Get() (v AccountingSpec, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptAccountingSpec) Or(d AccountingSpec) AccountingSpec {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptAffinity returns new OptAffinity with value set to v.
 func NewOptAffinity(v Affinity) OptAffinity {
 	return OptAffinity{
@@ -2563,52 +2443,6 @@ func (o OptAffinity) Get() (v Affinity, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptAffinity) Or(d Affinity) Affinity {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptBandwidthPolicySpec returns new OptBandwidthPolicySpec with value set to v.
-func NewOptBandwidthPolicySpec(v BandwidthPolicySpec) OptBandwidthPolicySpec {
-	return OptBandwidthPolicySpec{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptBandwidthPolicySpec is optional BandwidthPolicySpec.
-type OptBandwidthPolicySpec struct {
-	Value BandwidthPolicySpec
-	Set   bool
-}
-
-// IsSet returns true if OptBandwidthPolicySpec was set.
-func (o OptBandwidthPolicySpec) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptBandwidthPolicySpec) Reset() {
-	var v BandwidthPolicySpec
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptBandwidthPolicySpec) SetTo(v BandwidthPolicySpec) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptBandwidthPolicySpec) Get() (v BandwidthPolicySpec, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptBandwidthPolicySpec) Or(d BandwidthPolicySpec) BandwidthPolicySpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -3207,6 +3041,52 @@ func (o OptDateTime) Get() (v time.Time, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptErrorDetails returns new OptErrorDetails with value set to v.
+func NewOptErrorDetails(v ErrorDetails) OptErrorDetails {
+	return OptErrorDetails{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptErrorDetails is optional ErrorDetails.
+type OptErrorDetails struct {
+	Value ErrorDetails
+	Set   bool
+}
+
+// IsSet returns true if OptErrorDetails was set.
+func (o OptErrorDetails) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptErrorDetails) Reset() {
+	var v ErrorDetails
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptErrorDetails) SetTo(v ErrorDetails) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptErrorDetails) Get() (v ErrorDetails, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptErrorDetails) Or(d ErrorDetails) ErrorDetails {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -4696,52 +4576,6 @@ func (o OptREPLReadyMode) Get() (v REPLReadyMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptREPLReadyMode) Or(d REPLReadyMode) REPLReadyMode {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptRateLimitSpec returns new OptRateLimitSpec with value set to v.
-func NewOptRateLimitSpec(v RateLimitSpec) OptRateLimitSpec {
-	return OptRateLimitSpec{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRateLimitSpec is optional RateLimitSpec.
-type OptRateLimitSpec struct {
-	Value RateLimitSpec
-	Set   bool
-}
-
-// IsSet returns true if OptRateLimitSpec was set.
-func (o OptRateLimitSpec) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRateLimitSpec) Reset() {
-	var v RateLimitSpec
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRateLimitSpec) SetTo(v RateLimitSpec) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRateLimitSpec) Get() (v RateLimitSpec, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRateLimitSpec) Or(d RateLimitSpec) RateLimitSpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7324,43 +7158,6 @@ func (s *REPLReadyMode) UnmarshalText(data []byte) error {
 	}
 }
 
-// Ref: #/components/schemas/RateLimitSpec
-type RateLimitSpec struct {
-	RateBps    int64    `json:"rateBps"`
-	BurstBytes OptInt64 `json:"burstBytes"`
-	CeilBps    OptInt64 `json:"ceilBps"`
-}
-
-// GetRateBps returns the value of RateBps.
-func (s *RateLimitSpec) GetRateBps() int64 {
-	return s.RateBps
-}
-
-// GetBurstBytes returns the value of BurstBytes.
-func (s *RateLimitSpec) GetBurstBytes() OptInt64 {
-	return s.BurstBytes
-}
-
-// GetCeilBps returns the value of CeilBps.
-func (s *RateLimitSpec) GetCeilBps() OptInt64 {
-	return s.CeilBps
-}
-
-// SetRateBps sets the value of RateBps.
-func (s *RateLimitSpec) SetRateBps(val int64) {
-	s.RateBps = val
-}
-
-// SetBurstBytes sets the value of BurstBytes.
-func (s *RateLimitSpec) SetBurstBytes(val OptInt64) {
-	s.BurstBytes = val
-}
-
-// SetCeilBps sets the value of CeilBps.
-func (s *RateLimitSpec) SetCeilBps(val OptInt64) {
-	s.CeilBps = val
-}
-
 // Ref: #/components/schemas/RefreshRequest
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
@@ -8785,47 +8582,6 @@ const (
 func (SuccessAuthProvidersResponseSuccess) AllValues() []SuccessAuthProvidersResponseSuccess {
 	return []SuccessAuthProvidersResponseSuccess{
 		SuccessAuthProvidersResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessBandwidthPolicyResponse
-type SuccessBandwidthPolicyResponse struct {
-	Success SuccessBandwidthPolicyResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptBandwidthPolicySpec `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessBandwidthPolicyResponse) GetSuccess() SuccessBandwidthPolicyResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessBandwidthPolicyResponse) GetData() OptBandwidthPolicySpec {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessBandwidthPolicyResponse) SetSuccess(val SuccessBandwidthPolicyResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessBandwidthPolicyResponse) SetData(val OptBandwidthPolicySpec) {
-	s.Data = val
-}
-
-type SuccessBandwidthPolicyResponseSuccess bool
-
-const (
-	SuccessBandwidthPolicyResponseSuccessTrue SuccessBandwidthPolicyResponseSuccess = true
-)
-
-// AllValues returns all SuccessBandwidthPolicyResponseSuccess values.
-func (SuccessBandwidthPolicyResponseSuccess) AllValues() []SuccessBandwidthPolicyResponseSuccess {
-	return []SuccessBandwidthPolicyResponseSuccess{
-		SuccessBandwidthPolicyResponseSuccessTrue,
 	}
 }
 
