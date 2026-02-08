@@ -19,6 +19,43 @@ var nullMapKeys = map[string]struct{}{
 	"nodeSelector": {},
 }
 
+var nullArrayKeys = map[string]struct{}{
+	"allowedCidrs":                              {},
+	"allowedDomains":                            {},
+	"allowedPorts":                              {},
+	"allowedTeams":                              {},
+	"api_keys":                                  {},
+	"args":                                      {},
+	"candidates":                                {},
+	"command":                                   {},
+	"conditions":                                {},
+	"contexts":                                  {},
+	"data":                                      {},
+	"deniedCidrs":                               {},
+	"deniedDomains":                             {},
+	"deniedPorts":                               {},
+	"drop":                                      {},
+	"entries":                                   {},
+	"env":                                       {},
+	"identities":                                {},
+	"matchExpressions":                          {},
+	"matchFields":                               {},
+	"members":                                   {},
+	"mounts":                                    {},
+	"namespaces":                                {},
+	"nodeSelectorTerms":                         {},
+	"preferredDuringSchedulingIgnoredDuringExecution": {},
+	"providers":                                 {},
+	"requiredDuringSchedulingIgnoredDuringExecution":  {},
+	"roles":                                     {},
+	"sidecars":                                  {},
+	"tags":                                      {},
+	"teams":                                     {},
+	"templates":                                 {},
+	"tolerations":                               {},
+	"values":                                    {},
+}
+
 func normalizeNullMapResponse(_ context.Context, resp *http.Response) error {
 	if resp == nil || resp.Body == nil {
 		return nil
@@ -70,6 +107,11 @@ func normalizeNullMaps(payload *any) bool {
 				changed = true
 				continue
 			}
+			if raw == nil && isNullArrayKey(key) {
+				value[key] = []any{}
+				changed = true
+				continue
+			}
 			if isNullMapKey(key) {
 				if strKeyed, ok := raw.(map[string]any); ok {
 					changed = normalizeNullStringMap(strKeyed) || changed
@@ -97,6 +139,11 @@ func normalizeNullMaps(payload *any) bool {
 
 func isNullMapKey(key string) bool {
 	_, ok := nullMapKeys[key]
+	return ok
+}
+
+func isNullArrayKey(key string) bool {
+	_, ok := nullArrayKeys[key]
 	return ok
 }
 

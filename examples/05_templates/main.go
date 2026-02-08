@@ -25,19 +25,12 @@ func main() {
 	must(err)
 	fmt.Printf("templates: %d\n", len(templates))
 	for _, tpl := range templates {
-		name := ""
+		templateID := tpl.TemplateID
 		display := ""
-		if meta, ok := tpl.Metadata.Get(); ok {
-			if value, ok := meta.Name.Get(); ok {
-				name = value
-			}
+		if value, ok := tpl.Spec.DisplayName.Get(); ok {
+			display = value
 		}
-		if spec, ok := tpl.Spec.Get(); ok {
-			if value, ok := spec.DisplayName.Get(); ok {
-				display = value
-			}
-		}
-		fmt.Printf("- name=%s display=%s\n", name, display)
+		fmt.Printf("- template_id=%s display=%s scope=%s\n", templateID, display, tpl.Scope)
 	}
 }
 

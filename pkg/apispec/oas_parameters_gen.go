@@ -232,11 +232,6 @@ type APIV1TemplatesIDGetParams struct {
 	ID string
 }
 
-// APIV1TemplatesIDPoolWarmPostParams is parameters of POST /api/v1/templates/{id}/pool/warm operation.
-type APIV1TemplatesIDPoolWarmPostParams struct {
-	ID string
-}
-
 // APIV1TemplatesIDPutParams is parameters of PUT /api/v1/templates/{id} operation.
 type APIV1TemplatesIDPutParams struct {
 	ID string

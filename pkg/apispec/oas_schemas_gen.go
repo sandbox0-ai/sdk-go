@@ -184,6 +184,14 @@ type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
 
+type APIV1RegistryCredentialsPostInternalServerError ErrorEnvelope
+
+func (*APIV1RegistryCredentialsPostInternalServerError) aPIV1RegistryCredentialsPostRes() {}
+
+type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
+
+func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
+
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
 
@@ -1422,9 +1430,9 @@ func (s *EnvVar) SetValue(val string) {
 
 // Ref: #/components/schemas/Error
 type Error struct {
-	Code    string          `json:"code"`
-	Message string          `json:"message"`
-	Details OptErrorDetails `json:"details"`
+	Code    string `json:"code"`
+	Message string `json:"message"`
+	Details jx.Raw `json:"details"`
 }
 
 // GetCode returns the value of Code.
@@ -1438,7 +1446,7 @@ func (s *Error) GetMessage() string {
 }
 
 // GetDetails returns the value of Details.
-func (s *Error) GetDetails() OptErrorDetails {
+func (s *Error) GetDetails() jx.Raw {
 	return s.Details
 }
 
@@ -1453,19 +1461,8 @@ func (s *Error) SetMessage(val string) {
 }
 
 // SetDetails sets the value of Details.
-func (s *Error) SetDetails(val OptErrorDetails) {
+func (s *Error) SetDetails(val jx.Raw) {
 	s.Details = val
-}
-
-type ErrorDetails map[string]jx.Raw
-
-func (s *ErrorDetails) init() ErrorDetails {
-	m := *s
-	if m == nil {
-		m = map[string]jx.Raw{}
-		*s = m
-	}
-	return m
 }
 
 // Ref: #/components/schemas/ErrorEnvelope
@@ -2333,76 +2330,6 @@ func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 	s.MatchFields = val
 }
 
-// Ref: #/components/schemas/ObjectMeta
-type ObjectMeta struct {
-	Name        OptString                `json:"name"`
-	Namespace   OptString                `json:"namespace"`
-	Labels      OptObjectMetaLabels      `json:"labels"`
-	Annotations OptObjectMetaAnnotations `json:"annotations"`
-}
-
-// GetName returns the value of Name.
-func (s *ObjectMeta) GetName() OptString {
-	return s.Name
-}
-
-// GetNamespace returns the value of Namespace.
-func (s *ObjectMeta) GetNamespace() OptString {
-	return s.Namespace
-}
-
-// GetLabels returns the value of Labels.
-func (s *ObjectMeta) GetLabels() OptObjectMetaLabels {
-	return s.Labels
-}
-
-// GetAnnotations returns the value of Annotations.
-func (s *ObjectMeta) GetAnnotations() OptObjectMetaAnnotations {
-	return s.Annotations
-}
-
-// SetName sets the value of Name.
-func (s *ObjectMeta) SetName(val OptString) {
-	s.Name = val
-}
-
-// SetNamespace sets the value of Namespace.
-func (s *ObjectMeta) SetNamespace(val OptString) {
-	s.Namespace = val
-}
-
-// SetLabels sets the value of Labels.
-func (s *ObjectMeta) SetLabels(val OptObjectMetaLabels) {
-	s.Labels = val
-}
-
-// SetAnnotations sets the value of Annotations.
-func (s *ObjectMeta) SetAnnotations(val OptObjectMetaAnnotations) {
-	s.Annotations = val
-}
-
-type ObjectMetaAnnotations map[string]string
-
-func (s *ObjectMetaAnnotations) init() ObjectMetaAnnotations {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
-}
-
-type ObjectMetaLabels map[string]string
-
-func (s *ObjectMetaLabels) init() ObjectMetaLabels {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
-}
-
 // NewOptAffinity returns new OptAffinity with value set to v.
 func NewOptAffinity(v Affinity) OptAffinity {
 	return OptAffinity{
@@ -3041,52 +2968,6 @@ func (o OptDateTime) Get() (v time.Time, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDateTime) Or(d time.Time) time.Time {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptErrorDetails returns new OptErrorDetails with value set to v.
-func NewOptErrorDetails(v ErrorDetails) OptErrorDetails {
-	return OptErrorDetails{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptErrorDetails is optional ErrorDetails.
-type OptErrorDetails struct {
-	Value ErrorDetails
-	Set   bool
-}
-
-// IsSet returns true if OptErrorDetails was set.
-func (o OptErrorDetails) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptErrorDetails) Reset() {
-	var v ErrorDetails
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptErrorDetails) SetTo(v ErrorDetails) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptErrorDetails) Get() (v ErrorDetails, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptErrorDetails) Or(d ErrorDetails) ErrorDetails {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -3892,144 +3773,6 @@ func (o OptNodeSelector) Or(d NodeSelector) NodeSelector {
 	return d
 }
 
-// NewOptObjectMeta returns new OptObjectMeta with value set to v.
-func NewOptObjectMeta(v ObjectMeta) OptObjectMeta {
-	return OptObjectMeta{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptObjectMeta is optional ObjectMeta.
-type OptObjectMeta struct {
-	Value ObjectMeta
-	Set   bool
-}
-
-// IsSet returns true if OptObjectMeta was set.
-func (o OptObjectMeta) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptObjectMeta) Reset() {
-	var v ObjectMeta
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptObjectMeta) SetTo(v ObjectMeta) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptObjectMeta) Get() (v ObjectMeta, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptObjectMeta) Or(d ObjectMeta) ObjectMeta {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptObjectMetaAnnotations returns new OptObjectMetaAnnotations with value set to v.
-func NewOptObjectMetaAnnotations(v ObjectMetaAnnotations) OptObjectMetaAnnotations {
-	return OptObjectMetaAnnotations{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptObjectMetaAnnotations is optional ObjectMetaAnnotations.
-type OptObjectMetaAnnotations struct {
-	Value ObjectMetaAnnotations
-	Set   bool
-}
-
-// IsSet returns true if OptObjectMetaAnnotations was set.
-func (o OptObjectMetaAnnotations) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptObjectMetaAnnotations) Reset() {
-	var v ObjectMetaAnnotations
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptObjectMetaAnnotations) SetTo(v ObjectMetaAnnotations) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptObjectMetaAnnotations) Get() (v ObjectMetaAnnotations, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptObjectMetaAnnotations) Or(d ObjectMetaAnnotations) ObjectMetaAnnotations {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptObjectMetaLabels returns new OptObjectMetaLabels with value set to v.
-func NewOptObjectMetaLabels(v ObjectMetaLabels) OptObjectMetaLabels {
-	return OptObjectMetaLabels{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptObjectMetaLabels is optional ObjectMetaLabels.
-type OptObjectMetaLabels struct {
-	Value ObjectMetaLabels
-	Set   bool
-}
-
-// IsSet returns true if OptObjectMetaLabels was set.
-func (o OptObjectMetaLabels) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptObjectMetaLabels) Reset() {
-	var v ObjectMetaLabels
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptObjectMetaLabels) SetTo(v ObjectMetaLabels) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptObjectMetaLabels) Get() (v ObjectMetaLabels, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptObjectMetaLabels) Or(d ObjectMetaLabels) ObjectMetaLabels {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptPTYSize returns new OptPTYSize with value set to v.
 func NewOptPTYSize(v PTYSize) OptPTYSize {
 	return OptPTYSize{
@@ -4674,6 +4417,52 @@ func (o OptRefreshResponse) Or(d RefreshResponse) RefreshResponse {
 	return d
 }
 
+// NewOptRegistryCredentials returns new OptRegistryCredentials with value set to v.
+func NewOptRegistryCredentials(v RegistryCredentials) OptRegistryCredentials {
+	return OptRegistryCredentials{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRegistryCredentials is optional RegistryCredentials.
+type OptRegistryCredentials struct {
+	Value RegistryCredentials
+	Set   bool
+}
+
+// IsSet returns true if OptRegistryCredentials was set.
+func (o OptRegistryCredentials) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRegistryCredentials) Reset() {
+	var v RegistryCredentials
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRegistryCredentials) SetTo(v RegistryCredentials) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRegistryCredentials) Get() (v RegistryCredentials, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRegistryCredentials) Or(d RegistryCredentials) RegistryCredentials {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptResourceUsage returns new OptResourceUsage with value set to v.
 func NewOptResourceUsage(v ResourceUsage) OptResourceUsage {
 	return OptResourceUsage{
@@ -4996,98 +4785,6 @@ func (o OptSandboxStatus) Or(d SandboxStatus) SandboxStatus {
 	return d
 }
 
-// NewOptSandboxTemplate returns new OptSandboxTemplate with value set to v.
-func NewOptSandboxTemplate(v SandboxTemplate) OptSandboxTemplate {
-	return OptSandboxTemplate{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxTemplate is optional SandboxTemplate.
-type OptSandboxTemplate struct {
-	Value SandboxTemplate
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxTemplate was set.
-func (o OptSandboxTemplate) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxTemplate) Reset() {
-	var v SandboxTemplate
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxTemplate) SetTo(v SandboxTemplate) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxTemplate) Get() (v SandboxTemplate, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxTemplate) Or(d SandboxTemplate) SandboxTemplate {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxTemplateSpec returns new OptSandboxTemplateSpec with value set to v.
-func NewOptSandboxTemplateSpec(v SandboxTemplateSpec) OptSandboxTemplateSpec {
-	return OptSandboxTemplateSpec{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxTemplateSpec is optional SandboxTemplateSpec.
-type OptSandboxTemplateSpec struct {
-	Value SandboxTemplateSpec
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxTemplateSpec was set.
-func (o OptSandboxTemplateSpec) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxTemplateSpec) Reset() {
-	var v SandboxTemplateSpec
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxTemplateSpec) SetTo(v SandboxTemplateSpec) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxTemplateSpec) Get() (v SandboxTemplateSpec, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxTemplateSpec) Or(d SandboxTemplateSpec) SandboxTemplateSpec {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxTemplateSpecEnvVars returns new OptSandboxTemplateSpecEnvVars with value set to v.
 func NewOptSandboxTemplateSpecEnvVars(v SandboxTemplateSpecEnvVars) OptSandboxTemplateSpecEnvVars {
 	return OptSandboxTemplateSpecEnvVars{
@@ -5128,52 +4825,6 @@ func (o OptSandboxTemplateSpecEnvVars) Get() (v SandboxTemplateSpecEnvVars, ok b
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxTemplateSpecEnvVars) Or(d SandboxTemplateSpecEnvVars) SandboxTemplateSpecEnvVars {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxTemplateStatus returns new OptSandboxTemplateStatus with value set to v.
-func NewOptSandboxTemplateStatus(v SandboxTemplateStatus) OptSandboxTemplateStatus {
-	return OptSandboxTemplateStatus{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxTemplateStatus is optional SandboxTemplateStatus.
-type OptSandboxTemplateStatus struct {
-	Value SandboxTemplateStatus
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxTemplateStatus was set.
-func (o OptSandboxTemplateStatus) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxTemplateStatus) Reset() {
-	var v SandboxTemplateStatus
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxTemplateStatus) SetTo(v SandboxTemplateStatus) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxTemplateStatus) Get() (v SandboxTemplateStatus, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxTemplateStatus) Or(d SandboxTemplateStatus) SandboxTemplateStatus {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -6330,6 +5981,52 @@ func (o OptTeamMember) Or(d TeamMember) TeamMember {
 	return d
 }
 
+// NewOptTemplate returns new OptTemplate with value set to v.
+func NewOptTemplate(v Template) OptTemplate {
+	return OptTemplate{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTemplate is optional Template.
+type OptTemplate struct {
+	Value Template
+	Set   bool
+}
+
+// IsSet returns true if OptTemplate was set.
+func (o OptTemplate) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTemplate) Reset() {
+	var v Template
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTemplate) SetTo(v Template) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTemplate) Get() (v Template, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTemplate) Or(d Template) Template {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptTplSandboxNetworkPolicy returns new OptTplSandboxNetworkPolicy with value set to v.
 func NewOptTplSandboxNetworkPolicy(v TplSandboxNetworkPolicy) OptTplSandboxNetworkPolicy {
 	return OptTplSandboxNetworkPolicy{
@@ -7236,6 +6933,65 @@ func (s *RegisterRequest) SetName(val string) {
 	s.Name = val
 }
 
+// Ref: #/components/schemas/RegistryCredentials
+type RegistryCredentials struct {
+	Provider  string      `json:"provider"`
+	Registry  string      `json:"registry"`
+	Username  string      `json:"username"`
+	Password  string      `json:"password"`
+	ExpiresAt OptDateTime `json:"expiresAt"`
+}
+
+// GetProvider returns the value of Provider.
+func (s *RegistryCredentials) GetProvider() string {
+	return s.Provider
+}
+
+// GetRegistry returns the value of Registry.
+func (s *RegistryCredentials) GetRegistry() string {
+	return s.Registry
+}
+
+// GetUsername returns the value of Username.
+func (s *RegistryCredentials) GetUsername() string {
+	return s.Username
+}
+
+// GetPassword returns the value of Password.
+func (s *RegistryCredentials) GetPassword() string {
+	return s.Password
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *RegistryCredentials) GetExpiresAt() OptDateTime {
+	return s.ExpiresAt
+}
+
+// SetProvider sets the value of Provider.
+func (s *RegistryCredentials) SetProvider(val string) {
+	s.Provider = val
+}
+
+// SetRegistry sets the value of Registry.
+func (s *RegistryCredentials) SetRegistry(val string) {
+	s.Registry = val
+}
+
+// SetUsername sets the value of Username.
+func (s *RegistryCredentials) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetPassword sets the value of Password.
+func (s *RegistryCredentials) SetPassword(val string) {
+	s.Password = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *RegistryCredentials) SetExpiresAt(val OptDateTime) {
+	s.ExpiresAt = val
+}
+
 // Ref: #/components/schemas/ResizeContextRequest
 type ResizeContextRequest struct {
 	Rows int32 `json:"rows"`
@@ -7873,124 +7629,6 @@ func (s *SandboxStatus) SetCreatedAt(val OptString) {
 	s.CreatedAt = val
 }
 
-// Ref: #/components/schemas/SandboxTemplate
-type SandboxTemplate struct {
-	ApiVersion OptString                `json:"apiVersion"`
-	Kind       OptString                `json:"kind"`
-	Metadata   OptObjectMeta            `json:"metadata"`
-	Spec       OptSandboxTemplateSpec   `json:"spec"`
-	Status     OptSandboxTemplateStatus `json:"status"`
-}
-
-// GetApiVersion returns the value of ApiVersion.
-func (s *SandboxTemplate) GetApiVersion() OptString {
-	return s.ApiVersion
-}
-
-// GetKind returns the value of Kind.
-func (s *SandboxTemplate) GetKind() OptString {
-	return s.Kind
-}
-
-// GetMetadata returns the value of Metadata.
-func (s *SandboxTemplate) GetMetadata() OptObjectMeta {
-	return s.Metadata
-}
-
-// GetSpec returns the value of Spec.
-func (s *SandboxTemplate) GetSpec() OptSandboxTemplateSpec {
-	return s.Spec
-}
-
-// GetStatus returns the value of Status.
-func (s *SandboxTemplate) GetStatus() OptSandboxTemplateStatus {
-	return s.Status
-}
-
-// SetApiVersion sets the value of ApiVersion.
-func (s *SandboxTemplate) SetApiVersion(val OptString) {
-	s.ApiVersion = val
-}
-
-// SetKind sets the value of Kind.
-func (s *SandboxTemplate) SetKind(val OptString) {
-	s.Kind = val
-}
-
-// SetMetadata sets the value of Metadata.
-func (s *SandboxTemplate) SetMetadata(val OptObjectMeta) {
-	s.Metadata = val
-}
-
-// SetSpec sets the value of Spec.
-func (s *SandboxTemplate) SetSpec(val OptSandboxTemplateSpec) {
-	s.Spec = val
-}
-
-// SetStatus sets the value of Status.
-func (s *SandboxTemplate) SetStatus(val OptSandboxTemplateStatus) {
-	s.Status = val
-}
-
-// Ref: #/components/schemas/SandboxTemplateCondition
-type SandboxTemplateCondition struct {
-	Type               OptString   `json:"type"`
-	Status             OptString   `json:"status"`
-	LastTransitionTime OptDateTime `json:"lastTransitionTime"`
-	Reason             OptString   `json:"reason"`
-	Message            OptString   `json:"message"`
-}
-
-// GetType returns the value of Type.
-func (s *SandboxTemplateCondition) GetType() OptString {
-	return s.Type
-}
-
-// GetStatus returns the value of Status.
-func (s *SandboxTemplateCondition) GetStatus() OptString {
-	return s.Status
-}
-
-// GetLastTransitionTime returns the value of LastTransitionTime.
-func (s *SandboxTemplateCondition) GetLastTransitionTime() OptDateTime {
-	return s.LastTransitionTime
-}
-
-// GetReason returns the value of Reason.
-func (s *SandboxTemplateCondition) GetReason() OptString {
-	return s.Reason
-}
-
-// GetMessage returns the value of Message.
-func (s *SandboxTemplateCondition) GetMessage() OptString {
-	return s.Message
-}
-
-// SetType sets the value of Type.
-func (s *SandboxTemplateCondition) SetType(val OptString) {
-	s.Type = val
-}
-
-// SetStatus sets the value of Status.
-func (s *SandboxTemplateCondition) SetStatus(val OptString) {
-	s.Status = val
-}
-
-// SetLastTransitionTime sets the value of LastTransitionTime.
-func (s *SandboxTemplateCondition) SetLastTransitionTime(val OptDateTime) {
-	s.LastTransitionTime = val
-}
-
-// SetReason sets the value of Reason.
-func (s *SandboxTemplateCondition) SetReason(val OptString) {
-	s.Reason = val
-}
-
-// SetMessage sets the value of Message.
-func (s *SandboxTemplateCondition) SetMessage(val OptString) {
-	s.Message = val
-}
-
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
 	Description      OptString                     `json:"description"`
@@ -8158,54 +7796,6 @@ func (s *SandboxTemplateSpecEnvVars) init() SandboxTemplateSpecEnvVars {
 		*s = m
 	}
 	return m
-}
-
-// Ref: #/components/schemas/SandboxTemplateStatus
-type SandboxTemplateStatus struct {
-	IdleCount      OptInt32                   `json:"idleCount"`
-	ActiveCount    OptInt32                   `json:"activeCount"`
-	Conditions     []SandboxTemplateCondition `json:"conditions"`
-	LastUpdateTime OptDateTime                `json:"lastUpdateTime"`
-}
-
-// GetIdleCount returns the value of IdleCount.
-func (s *SandboxTemplateStatus) GetIdleCount() OptInt32 {
-	return s.IdleCount
-}
-
-// GetActiveCount returns the value of ActiveCount.
-func (s *SandboxTemplateStatus) GetActiveCount() OptInt32 {
-	return s.ActiveCount
-}
-
-// GetConditions returns the value of Conditions.
-func (s *SandboxTemplateStatus) GetConditions() []SandboxTemplateCondition {
-	return s.Conditions
-}
-
-// GetLastUpdateTime returns the value of LastUpdateTime.
-func (s *SandboxTemplateStatus) GetLastUpdateTime() OptDateTime {
-	return s.LastUpdateTime
-}
-
-// SetIdleCount sets the value of IdleCount.
-func (s *SandboxTemplateStatus) SetIdleCount(val OptInt32) {
-	s.IdleCount = val
-}
-
-// SetActiveCount sets the value of ActiveCount.
-func (s *SandboxTemplateStatus) SetActiveCount(val OptInt32) {
-	s.ActiveCount = val
-}
-
-// SetConditions sets the value of Conditions.
-func (s *SandboxTemplateStatus) SetConditions(val []SandboxTemplateCondition) {
-	s.Conditions = val
-}
-
-// SetLastUpdateTime sets the value of LastUpdateTime.
-func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptDateTime) {
-	s.LastUpdateTime = val
 }
 
 // Ref: #/components/schemas/SandboxUpdateRequest
@@ -9574,6 +9164,49 @@ func (SuccessRefreshResponseSuccess) AllValues() []SuccessRefreshResponseSuccess
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessRegistryCredentialsResponse
+type SuccessRegistryCredentialsResponse struct {
+	Success SuccessRegistryCredentialsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptRegistryCredentials `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessRegistryCredentialsResponse) GetSuccess() SuccessRegistryCredentialsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessRegistryCredentialsResponse) GetData() OptRegistryCredentials {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessRegistryCredentialsResponse) SetSuccess(val SuccessRegistryCredentialsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessRegistryCredentialsResponse) SetData(val OptRegistryCredentials) {
+	s.Data = val
+}
+
+func (*SuccessRegistryCredentialsResponse) aPIV1RegistryCredentialsPostRes() {}
+
+type SuccessRegistryCredentialsResponseSuccess bool
+
+const (
+	SuccessRegistryCredentialsResponseSuccessTrue SuccessRegistryCredentialsResponseSuccess = true
+)
+
+// AllValues returns all SuccessRegistryCredentialsResponseSuccess values.
+func (SuccessRegistryCredentialsResponseSuccess) AllValues() []SuccessRegistryCredentialsResponseSuccess {
+	return []SuccessRegistryCredentialsResponseSuccess{
+		SuccessRegistryCredentialsResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessResizedResponse
 type SuccessResizedResponse struct {
 	Success SuccessResizedResponseSuccess `json:"success"`
@@ -10310,12 +9943,12 @@ func (s *SuccessTemplateListResponse) SetData(val OptSuccessTemplateListResponse
 }
 
 type SuccessTemplateListResponseData struct {
-	Templates []SandboxTemplate `json:"templates"`
-	Count     OptInt            `json:"count"`
+	Templates []Template `json:"templates"`
+	Count     OptInt     `json:"count"`
 }
 
 // GetTemplates returns the value of Templates.
-func (s *SuccessTemplateListResponseData) GetTemplates() []SandboxTemplate {
+func (s *SuccessTemplateListResponseData) GetTemplates() []Template {
 	return s.Templates
 }
 
@@ -10325,7 +9958,7 @@ func (s *SuccessTemplateListResponseData) GetCount() OptInt {
 }
 
 // SetTemplates sets the value of Templates.
-func (s *SuccessTemplateListResponseData) SetTemplates(val []SandboxTemplate) {
+func (s *SuccessTemplateListResponseData) SetTemplates(val []Template) {
 	s.Templates = val
 }
 
@@ -10352,7 +9985,7 @@ func (SuccessTemplateListResponseSuccess) AllValues() []SuccessTemplateListRespo
 type SuccessTemplateResponse struct {
 	Success SuccessTemplateResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxTemplate `json:"data"`
+	Data OptTemplate `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -10361,7 +9994,7 @@ func (s *SuccessTemplateResponse) GetSuccess() SuccessTemplateResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTemplateResponse) GetData() OptSandboxTemplate {
+func (s *SuccessTemplateResponse) GetData() OptTemplate {
 	return s.Data
 }
 
@@ -10371,7 +10004,7 @@ func (s *SuccessTemplateResponse) SetSuccess(val SuccessTemplateResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTemplateResponse) SetData(val OptSandboxTemplate) {
+func (s *SuccessTemplateResponse) SetData(val OptTemplate) {
 	s.Data = val
 }
 
@@ -10738,6 +10371,128 @@ func (*TeamsPostBadRequest) teamsPostRes() {}
 type TeamsPostConflict ErrorEnvelope
 
 func (*TeamsPostConflict) teamsPostRes() {}
+
+// Ref: #/components/schemas/Template
+type Template struct {
+	TemplateID string              `json:"template_id"`
+	Scope      string              `json:"scope"`
+	TeamID     OptString           `json:"team_id"`
+	UserID     OptString           `json:"user_id"`
+	Spec       SandboxTemplateSpec `json:"spec"`
+	CreatedAt  time.Time           `json:"created_at"`
+	UpdatedAt  time.Time           `json:"updated_at"`
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *Template) GetTemplateID() string {
+	return s.TemplateID
+}
+
+// GetScope returns the value of Scope.
+func (s *Template) GetScope() string {
+	return s.Scope
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *Template) GetTeamID() OptString {
+	return s.TeamID
+}
+
+// GetUserID returns the value of UserID.
+func (s *Template) GetUserID() OptString {
+	return s.UserID
+}
+
+// GetSpec returns the value of Spec.
+func (s *Template) GetSpec() SandboxTemplateSpec {
+	return s.Spec
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *Template) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *Template) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *Template) SetTemplateID(val string) {
+	s.TemplateID = val
+}
+
+// SetScope sets the value of Scope.
+func (s *Template) SetScope(val string) {
+	s.Scope = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *Template) SetTeamID(val OptString) {
+	s.TeamID = val
+}
+
+// SetUserID sets the value of UserID.
+func (s *Template) SetUserID(val OptString) {
+	s.UserID = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *Template) SetSpec(val SandboxTemplateSpec) {
+	s.Spec = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *Template) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *Template) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/TemplateCreateRequest
+type TemplateCreateRequest struct {
+	TemplateID string              `json:"template_id"`
+	Spec       SandboxTemplateSpec `json:"spec"`
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *TemplateCreateRequest) GetTemplateID() string {
+	return s.TemplateID
+}
+
+// GetSpec returns the value of Spec.
+func (s *TemplateCreateRequest) GetSpec() SandboxTemplateSpec {
+	return s.Spec
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *TemplateCreateRequest) SetTemplateID(val string) {
+	s.TemplateID = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *TemplateCreateRequest) SetSpec(val SandboxTemplateSpec) {
+	s.Spec = val
+}
+
+// Ref: #/components/schemas/TemplateUpdateRequest
+type TemplateUpdateRequest struct {
+	Spec SandboxTemplateSpec `json:"spec"`
+}
+
+// GetSpec returns the value of Spec.
+func (s *TemplateUpdateRequest) GetSpec() SandboxTemplateSpec {
+	return s.Spec
+}
+
+// SetSpec sets the value of Spec.
+func (s *TemplateUpdateRequest) SetSpec(val SandboxTemplateSpec) {
+	s.Spec = val
+}
 
 // Ref: #/components/schemas/Toleration
 type Toleration struct {
@@ -11216,21 +10971,6 @@ func (s *VolumeConfig) SetBufferSize(val OptString) {
 // SetWriteback sets the value of Writeback.
 func (s *VolumeConfig) SetWriteback(val OptBool) {
 	s.Writeback = val
-}
-
-// Ref: #/components/schemas/WarmPoolRequest
-type WarmPoolRequest struct {
-	Count int32 `json:"count"`
-}
-
-// GetCount returns the value of Count.
-func (s *WarmPoolRequest) GetCount() int32 {
-	return s.Count
-}
-
-// SetCount sets the value of Count.
-func (s *WarmPoolRequest) SetCount(val int32) {
-	s.Count = val
 }
 
 // Ref: #/components/schemas/WebhookConfig

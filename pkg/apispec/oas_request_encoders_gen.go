@@ -236,22 +236,8 @@ func encodeAPIV1SandboxvolumesPostRequest(
 	return nil
 }
 
-func encodeAPIV1TemplatesIDPoolWarmPostRequest(
-	req *WarmPoolRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
 func encodeAPIV1TemplatesIDPutRequest(
-	req *SandboxTemplate,
+	req *TemplateUpdateRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -265,7 +251,7 @@ func encodeAPIV1TemplatesIDPutRequest(
 }
 
 func encodeAPIV1TemplatesPostRequest(
-	req *SandboxTemplate,
+	req *TemplateCreateRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

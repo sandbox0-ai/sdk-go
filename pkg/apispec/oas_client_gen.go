@@ -104,6 +104,12 @@ type Invoker interface {
 	//
 	// POST /api-keys
 	APIKeysPost(ctx context.Context, request *CreateAPIKeyRequest, options ...RequestOption) (APIKeysPostRes, error)
+	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
+	//
+	// Get registry credentials for uploads.
+	//
+	// POST /api/v1/registry/credentials
+	APIV1RegistryCredentialsPost(ctx context.Context, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDDelete invokes DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 	//
 	// Delete context.
@@ -386,24 +392,18 @@ type Invoker interface {
 	//
 	// GET /api/v1/templates/{id}
 	APIV1TemplatesIDGet(ctx context.Context, params APIV1TemplatesIDGetParams, options ...RequestOption) (APIV1TemplatesIDGetRes, error)
-	// APIV1TemplatesIDPoolWarmPost invokes POST /api/v1/templates/{id}/pool/warm operation.
-	//
-	// Warm template pool.
-	//
-	// POST /api/v1/templates/{id}/pool/warm
-	APIV1TemplatesIDPoolWarmPost(ctx context.Context, request *WarmPoolRequest, params APIV1TemplatesIDPoolWarmPostParams, options ...RequestOption) (*SuccessMessageResponse, error)
 	// APIV1TemplatesIDPut invokes PUT /api/v1/templates/{id} operation.
 	//
 	// Update template.
 	//
 	// PUT /api/v1/templates/{id}
-	APIV1TemplatesIDPut(ctx context.Context, request *SandboxTemplate, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error)
+	APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error)
 	// APIV1TemplatesPost invokes POST /api/v1/templates operation.
 	//
 	// Create template.
 	//
 	// POST /api/v1/templates
-	APIV1TemplatesPost(ctx context.Context, request *SandboxTemplate, options ...RequestOption) (*SuccessTemplateResponse, error)
+	APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (*SuccessTemplateResponse, error)
 	// AuthChangePasswordPost invokes POST /auth/change-password operation.
 	//
 	// Change password.
@@ -1006,6 +1006,101 @@ func (c *Client) sendAPIKeysPost(ctx context.Context, request *CreateAPIKeyReque
 	}
 
 	result, err := decodeAPIKeysPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
+//
+// Get registry credentials for uploads.
+//
+// POST /api/v1/registry/credentials
+func (c *Client) APIV1RegistryCredentialsPost(ctx context.Context, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error) {
+	res, err := c.sendAPIV1RegistryCredentialsPost(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1RegistryCredentialsPost(ctx context.Context, requestOptions ...RequestOption) (res APIV1RegistryCredentialsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/registry/credentials"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1RegistryCredentialsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1RegistryCredentialsPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -6369,134 +6464,17 @@ func (c *Client) sendAPIV1TemplatesIDGet(ctx context.Context, params APIV1Templa
 	return result, nil
 }
 
-// APIV1TemplatesIDPoolWarmPost invokes POST /api/v1/templates/{id}/pool/warm operation.
-//
-// Warm template pool.
-//
-// POST /api/v1/templates/{id}/pool/warm
-func (c *Client) APIV1TemplatesIDPoolWarmPost(ctx context.Context, request *WarmPoolRequest, params APIV1TemplatesIDPoolWarmPostParams, options ...RequestOption) (*SuccessMessageResponse, error) {
-	res, err := c.sendAPIV1TemplatesIDPoolWarmPost(ctx, request, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1TemplatesIDPoolWarmPost(ctx context.Context, request *WarmPoolRequest, params APIV1TemplatesIDPoolWarmPostParams, requestOptions ...RequestOption) (res *SuccessMessageResponse, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/templates/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/pool/warm"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAPIV1TemplatesIDPoolWarmPostRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1TemplatesIDPoolWarmPostOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1TemplatesIDPoolWarmPostResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // APIV1TemplatesIDPut invokes PUT /api/v1/templates/{id} operation.
 //
 // Update template.
 //
 // PUT /api/v1/templates/{id}
-func (c *Client) APIV1TemplatesIDPut(ctx context.Context, request *SandboxTemplate, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error) {
+func (c *Client) APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error) {
 	res, err := c.sendAPIV1TemplatesIDPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *SandboxTemplate, params APIV1TemplatesIDPutParams, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
+func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -6607,12 +6585,12 @@ func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *SandboxTe
 // Create template.
 //
 // POST /api/v1/templates
-func (c *Client) APIV1TemplatesPost(ctx context.Context, request *SandboxTemplate, options ...RequestOption) (*SuccessTemplateResponse, error) {
+func (c *Client) APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (*SuccessTemplateResponse, error) {
 	res, err := c.sendAPIV1TemplatesPost(ctx, request, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesPost(ctx context.Context, request *SandboxTemplate, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
+func (c *Client) sendAPIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
