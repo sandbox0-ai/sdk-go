@@ -1263,56 +1263,6 @@ func decodeAPIV1SandboxesIDDeleteResponse(resp *http.Response) (res APIV1Sandbox
 	return res, validate.UnexpectedStatusCodeWithResponse(resp)
 }
 
-func decodeAPIV1SandboxesIDFilesBinaryGetResponse(resp *http.Response) (res *SuccessFileBinaryResponse, _ error) {
-	switch resp.StatusCode {
-	case 200:
-		// Code 200.
-		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-		if err != nil {
-			return res, errors.Wrap(err, "parse media type")
-		}
-		switch {
-		case ct == "application/json":
-			buf, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return res, err
-			}
-			d := jx.DecodeBytes(buf)
-
-			var response SuccessFileBinaryResponse
-			if err := func() error {
-				if err := response.Decode(d); err != nil {
-					return err
-				}
-				if err := d.Skip(); err != io.EOF {
-					return errors.New("unexpected trailing data")
-				}
-				return nil
-			}(); err != nil {
-				err = &ogenerrors.DecodeBodyError{
-					ContentType: ct,
-					Body:        buf,
-					Err:         err,
-				}
-				return res, err
-			}
-			// Validate response.
-			if err := func() error {
-				if err := response.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return res, errors.Wrap(err, "validate")
-			}
-			return &response, nil
-		default:
-			return res, validate.InvalidContentType(ct)
-		}
-	}
-	return res, validate.UnexpectedStatusCodeWithResponse(resp)
-}
-
 func decodeAPIV1SandboxesIDFilesDeleteResponse(resp *http.Response) (res *SuccessDeletedResponse, _ error) {
 	switch resp.StatusCode {
 	case 200:
@@ -1363,7 +1313,7 @@ func decodeAPIV1SandboxesIDFilesDeleteResponse(resp *http.Response) (res *Succes
 	return res, validate.UnexpectedStatusCodeWithResponse(resp)
 }
 
-func decodeAPIV1SandboxesIDFilesGetResponse(resp *http.Response) (res APIV1SandboxesIDFilesGetOK, _ error) {
+func decodeAPIV1SandboxesIDFilesGetResponse(resp *http.Response) (res APIV1SandboxesIDFilesGetRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -1372,6 +1322,40 @@ func decodeAPIV1SandboxesIDFilesGetResponse(resp *http.Response) (res APIV1Sandb
 			return res, errors.Wrap(err, "parse media type")
 		}
 		switch {
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return res, err
+			}
+			d := jx.DecodeBytes(buf)
+
+			var response APIV1SandboxesIDFilesGetOKApplicationJSON
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			// Validate response.
+			if err := func() error {
+				if err := response.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "validate")
+			}
+			return &response, nil
 		case ct == "application/octet-stream":
 			reader := resp.Body
 			b, err := io.ReadAll(reader)
@@ -1379,8 +1363,8 @@ func decodeAPIV1SandboxesIDFilesGetResponse(resp *http.Response) (res APIV1Sandb
 				return res, err
 			}
 
-			response := APIV1SandboxesIDFilesGetOK{Data: bytes.NewReader(b)}
-			return response, nil
+			response := APIV1SandboxesIDFilesGetOKApplicationOctetStream{Data: bytes.NewReader(b)}
+			return &response, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}

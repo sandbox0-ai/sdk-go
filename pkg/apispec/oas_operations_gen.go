@@ -23,7 +23,6 @@ const (
 	APIV1SandboxesIDContextsGetOperation                         OperationName = "APIV1SandboxesIDContextsGet"
 	APIV1SandboxesIDContextsPostOperation                        OperationName = "APIV1SandboxesIDContextsPost"
 	APIV1SandboxesIDDeleteOperation                              OperationName = "APIV1SandboxesIDDelete"
-	APIV1SandboxesIDFilesBinaryGetOperation                      OperationName = "APIV1SandboxesIDFilesBinaryGet"
 	APIV1SandboxesIDFilesDeleteOperation                         OperationName = "APIV1SandboxesIDFilesDelete"
 	APIV1SandboxesIDFilesGetOperation                            OperationName = "APIV1SandboxesIDFilesGet"
 	APIV1SandboxesIDFilesListGetOperation                        OperationName = "APIV1SandboxesIDFilesListGet"

@@ -203,19 +203,63 @@ type APIV1SandboxesIDDeleteNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDDeleteNotFound) aPIV1SandboxesIDDeleteRes() {}
 
-type APIV1SandboxesIDFilesGetOK struct {
+// Merged schema.
+type APIV1SandboxesIDFilesGetOKApplicationJSON struct {
+	Success APIV1SandboxesIDFilesGetOKApplicationJSONSuccess `json:"success"`
+	// Merged property.
+	Data OptFileContentResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *APIV1SandboxesIDFilesGetOKApplicationJSON) GetSuccess() APIV1SandboxesIDFilesGetOKApplicationJSONSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *APIV1SandboxesIDFilesGetOKApplicationJSON) GetData() OptFileContentResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *APIV1SandboxesIDFilesGetOKApplicationJSON) SetSuccess(val APIV1SandboxesIDFilesGetOKApplicationJSONSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *APIV1SandboxesIDFilesGetOKApplicationJSON) SetData(val OptFileContentResponse) {
+	s.Data = val
+}
+
+func (*APIV1SandboxesIDFilesGetOKApplicationJSON) aPIV1SandboxesIDFilesGetRes() {}
+
+type APIV1SandboxesIDFilesGetOKApplicationJSONSuccess bool
+
+const (
+	APIV1SandboxesIDFilesGetOKApplicationJSONSuccessTrue APIV1SandboxesIDFilesGetOKApplicationJSONSuccess = true
+)
+
+// AllValues returns all APIV1SandboxesIDFilesGetOKApplicationJSONSuccess values.
+func (APIV1SandboxesIDFilesGetOKApplicationJSONSuccess) AllValues() []APIV1SandboxesIDFilesGetOKApplicationJSONSuccess {
+	return []APIV1SandboxesIDFilesGetOKApplicationJSONSuccess{
+		APIV1SandboxesIDFilesGetOKApplicationJSONSuccessTrue,
+	}
+}
+
+type APIV1SandboxesIDFilesGetOKApplicationOctetStream struct {
 	Data io.Reader
 }
 
 // Read reads data from the Data reader.
 //
 // Kept to satisfy the io.Reader interface.
-func (s APIV1SandboxesIDFilesGetOK) Read(p []byte) (n int, err error) {
+func (s APIV1SandboxesIDFilesGetOKApplicationOctetStream) Read(p []byte) (n int, err error) {
 	if s.Data == nil {
 		return 0, io.EOF
 	}
 	return s.Data.Read(p)
 }
+
+func (*APIV1SandboxesIDFilesGetOKApplicationOctetStream) aPIV1SandboxesIDFilesGetRes() {}
 
 type APIV1SandboxesIDFilesPostReq struct {
 	Data io.Reader
@@ -8550,47 +8594,6 @@ const (
 func (SuccessDeletedResponseSuccess) AllValues() []SuccessDeletedResponseSuccess {
 	return []SuccessDeletedResponseSuccess{
 		SuccessDeletedResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessFileBinaryResponse
-type SuccessFileBinaryResponse struct {
-	Success SuccessFileBinaryResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptFileContentResponse `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessFileBinaryResponse) GetSuccess() SuccessFileBinaryResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessFileBinaryResponse) GetData() OptFileContentResponse {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessFileBinaryResponse) SetSuccess(val SuccessFileBinaryResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessFileBinaryResponse) SetData(val OptFileContentResponse) {
-	s.Data = val
-}
-
-type SuccessFileBinaryResponseSuccess bool
-
-const (
-	SuccessFileBinaryResponseSuccessTrue SuccessFileBinaryResponseSuccess = true
-)
-
-// AllValues returns all SuccessFileBinaryResponseSuccess values.
-func (SuccessFileBinaryResponseSuccess) AllValues() []SuccessFileBinaryResponseSuccess {
-	return []SuccessFileBinaryResponseSuccess{
-		SuccessFileBinaryResponseSuccessTrue,
 	}
 }
 

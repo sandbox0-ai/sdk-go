@@ -81,12 +81,6 @@ type APIV1SandboxesIDDeleteParams struct {
 	ID string
 }
 
-// APIV1SandboxesIDFilesBinaryGetParams is parameters of GET /api/v1/sandboxes/{id}/files/binary operation.
-type APIV1SandboxesIDFilesBinaryGetParams struct {
-	ID   string
-	Path string
-}
-
 // APIV1SandboxesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/files operation.
 type APIV1SandboxesIDFilesDeleteParams struct {
 	ID   string
