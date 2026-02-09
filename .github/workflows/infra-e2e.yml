@@ -1,0 +1,69 @@
+name: Infra E2E Trigger
+
+on:
+  workflow_dispatch:
+    inputs:
+      infra_repo:
+        description: "Infra repository (owner/repo)"
+        required: true
+        default: "sandbox0-ai/infra"
+      infra_ref:
+        description: "Infra workflow ref"
+        required: true
+        default: "main"
+      infra_workflow:
+        description: "Infra workflow file"
+        required: true
+        default: "sdk-e2e.yml"
+      infra_manifest:
+        description: "Infra scenario manifest"
+        required: true
+        default: "infra-operator/chart/samples/single-cluster/fullmode.yaml"
+      infra_name:
+        description: "Sandbox0Infra name from manifest"
+        required: true
+        default: "fullmode"
+      infra_namespace:
+        description: "Infra namespace"
+        required: true
+        default: "sandbox0-system"
+      sdk_test_cmd:
+        description: "SDK test command"
+        required: true
+        default: "go test -tags=e2e ./..."
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-infra-e2e:
+    if: ${{ secrets.INFRA_CI_TOKEN != '' && github.repository == 'sandbox0-ai/sdk-go' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Trigger infra SDK E2E workflow
+        env:
+          INFRA_TOKEN: ${{ secrets.INFRA_CI_TOKEN }}
+          INFRA_REPO: ${{ inputs.infra_repo || 'sandbox0-ai/infra' }}
+          INFRA_REF: ${{ inputs.infra_ref || 'main' }}
+          INFRA_WORKFLOW: ${{ inputs.infra_workflow || 'sdk-e2e.yml' }}
+          INFRA_MANIFEST: ${{ inputs.infra_manifest || 'infra-operator/chart/samples/single-cluster/fullmode.yaml' }}
+          INFRA_NAME: ${{ inputs.infra_name || 'fullmode' }}
+          INFRA_NAMESPACE: ${{ inputs.infra_namespace || 'sandbox0-system' }}
+          SDK_TEST_CMD: ${{ inputs.sdk_test_cmd || 'go test -tags=e2e ./...' }}
+        run: |
+          payload=$(jq -n \
+            --arg ref "${INFRA_REF}" \
+            --arg sdk_repo "${GITHUB_REPOSITORY}" \
+            --arg sdk_ref "${GITHUB_SHA}" \
+            --arg sdk_test_cmd "${SDK_TEST_CMD}" \
+            --arg infra_manifest "${INFRA_MANIFEST}" \
+            --arg infra_name "${INFRA_NAME}" \
+            --arg infra_namespace "${INFRA_NAMESPACE}" \
+            '{ref:$ref, inputs:{sdk_repo:$sdk_repo, sdk_ref:$sdk_ref, sdk_test_cmd:$sdk_test_cmd, infra_manifest:$infra_manifest, infra_name:$infra_name, infra_namespace:$infra_namespace}}')
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${INFRA_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${INFRA_REPO}/actions/workflows/${INFRA_WORKFLOW}/dispatches" \
+            -d "${payload}"

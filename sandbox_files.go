@@ -44,7 +44,36 @@ func (s *Sandbox) ReadFile(ctx context.Context, path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return io.ReadAll(resp)
+	return decodeFileGetResponse(resp)
+}
+
+func decodeFileGetResponse(resp apispec.APIV1SandboxesIDFilesGetRes) ([]byte, error) {
+	switch response := resp.(type) {
+	case *apispec.APIV1SandboxesIDFilesGetOKApplicationOctetStream:
+		return io.ReadAll(response)
+	case *apispec.APIV1SandboxesIDFilesGetOKApplicationJSON:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(resp)
+		}
+		content, ok := data.Content.Get()
+		if !ok {
+			return nil, unexpectedResponseError(resp)
+		}
+		if encoding, ok := data.Encoding.Get(); ok && encoding != apispec.FileContentResponseEncodingBase64 {
+			return nil, &APIError{
+				Code:    "unexpected_response",
+				Message: fmt.Sprintf("unsupported file encoding: %s", encoding),
+			}
+		}
+		decoded, err := base64.StdEncoding.DecodeString(content)
+		if err != nil {
+			return nil, err
+		}
+		return decoded, nil
+	default:
+		return nil, unexpectedResponseError(resp)
+	}
 }
 
 // StatFile retrieves file metadata.
@@ -79,31 +108,6 @@ func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInf
 		return nil, unexpectedResponseError(resp)
 	}
 	return data.Entries, nil
-}
-
-// ReadBinaryFile reads file content as base64 and decodes it.
-func (s *Sandbox) ReadBinaryFile(ctx context.Context, path string) ([]byte, error) {
-	params := apispec.APIV1SandboxesIDFilesBinaryGetParams{
-		ID:   s.ID,
-		Path: path,
-	}
-	resp, err := s.client.api.APIV1SandboxesIDFilesBinaryGet(ctx, params)
-	if err != nil {
-		return nil, err
-	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	content, ok := data.Content.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	decoded, err := base64.StdEncoding.DecodeString(content)
-	if err != nil {
-		return nil, err
-	}
-	return decoded, nil
 }
 
 // WriteFile writes a file.
