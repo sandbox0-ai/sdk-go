@@ -37,18 +37,12 @@ on:
 
 jobs:
   trigger-infra-e2e:
-    if: ${{ github.repository == 'sandbox0-ai/sdk-go' }}
+    if: github.repository == 'sandbox0-ai/sdk-go'
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-      - name: Skip when INFRA_CI_TOKEN is missing
-        if: ${{ secrets.INFRA_CI_TOKEN == '' }}
-        run: |
-          echo "INFRA_CI_TOKEN is not set; skipping infra E2E trigger."
-          exit 0
       - name: Trigger infra SDK E2E workflow
-        if: ${{ secrets.INFRA_CI_TOKEN != '' }}
         env:
           INFRA_TOKEN: ${{ secrets.INFRA_CI_TOKEN }}
           INFRA_REPO: ${{ inputs.infra_repo || 'sandbox0-ai/infra' }}
