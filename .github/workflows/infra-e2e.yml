@@ -42,9 +42,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Trigger infra SDK E2E workflow
+      - name: Trigger and Wait for Infra E2E
         env:
-          INFRA_TOKEN: ${{ secrets.INFRA_CI_TOKEN }}
+          GH_TOKEN: ${{ secrets.INFRA_CI_TOKEN }}
           INFRA_REPO: ${{ inputs.infra_repo || 'sandbox0-ai/infra' }}
           INFRA_REF: ${{ inputs.infra_ref || 'main' }}
           INFRA_WORKFLOW: ${{ inputs.infra_workflow || 'sdk-e2e.yml' }}
@@ -52,18 +52,42 @@ jobs:
           INFRA_NAME: ${{ inputs.infra_name || 'fullmode' }}
           INFRA_NAMESPACE: ${{ inputs.infra_namespace || 'sandbox0-system' }}
           SDK_TEST_CMD: ${{ inputs.sdk_test_cmd || 'go test -tags=e2e ./...' }}
+          TRACE_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
-          payload=$(jq -n \
-            --arg ref "${INFRA_REF}" \
-            --arg sdk_repo "${GITHUB_REPOSITORY}" \
-            --arg sdk_ref "${GITHUB_SHA}" \
-            --arg sdk_test_cmd "${SDK_TEST_CMD}" \
-            --arg infra_manifest "${INFRA_MANIFEST}" \
-            --arg infra_name "${INFRA_NAME}" \
-            --arg infra_namespace "${INFRA_NAMESPACE}" \
-            '{ref:$ref, inputs:{sdk_repo:$sdk_repo, sdk_ref:$sdk_ref, sdk_test_cmd:$sdk_test_cmd, infra_manifest:$infra_manifest, infra_name:$infra_name, infra_namespace:$infra_namespace}}')
-          curl -sS -X POST \
-            -H "Authorization: Bearer ${INFRA_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${INFRA_REPO}/actions/workflows/${INFRA_WORKFLOW}/dispatches" \
-            -d "${payload}"
+          # Trigger workflow
+          echo "Triggering workflow in $INFRA_REPO..."
+          gh workflow run "$INFRA_WORKFLOW" --repo "$INFRA_REPO" --ref "$INFRA_REF" \
+            -f sdk_repo="${GITHUB_REPOSITORY}" \
+            -f sdk_ref="${GITHUB_SHA}" \
+            -f sdk_test_cmd="$SDK_TEST_CMD" \
+            -f infra_manifest="$INFRA_MANIFEST" \
+            -f infra_name="$INFRA_NAME" \
+            -f infra_namespace="$INFRA_NAMESPACE" \
+            -f trace_id="$TRACE_ID"
+
+          # Wait for run to appear
+          echo "Waiting for run to appear..."
+          sleep 5
+          
+          # Find the run ID (looking for runs created in the last minute)
+          # Note: We filter by the workflow filename to be safe
+          RUN_ID=""
+          for i in {1..12}; do
+            # Get the latest run ID for this workflow
+            LATEST_RUN=$(gh run list --repo "$INFRA_REPO" --workflow "$INFRA_WORKFLOW" --limit 1 --json databaseId,createdAt --jq '.[0]')
+            
+            if [ -n "$LATEST_RUN" ]; then
+              RUN_ID=$(echo "$LATEST_RUN" | jq -r '.databaseId')
+              echo "Found latest run: $RUN_ID"
+              break
+            fi
+            sleep 5
+          done
+
+          if [ -z "$RUN_ID" ]; then
+            echo "Error: Could not find triggered workflow run."
+            exit 1
+          fi
+
+          echo "Watching run $RUN_ID..."
+          gh run watch "$RUN_ID" --repo "$INFRA_REPO" --exit-status
