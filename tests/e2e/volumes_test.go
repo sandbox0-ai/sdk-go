@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	sandbox0 "github.com/sandbox0-ai/sdk-go"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
