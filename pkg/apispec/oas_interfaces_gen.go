@@ -41,12 +41,12 @@ type APIV1SandboxesIDNetworkGetRes interface {
 	aPIV1SandboxesIDNetworkGetRes()
 }
 
-type APIV1SandboxesIDPatchRes interface {
-	aPIV1SandboxesIDPatchRes()
-}
-
 type APIV1SandboxesIDPausePostRes interface {
 	aPIV1SandboxesIDPausePostRes()
+}
+
+type APIV1SandboxesIDPutRes interface {
+	aPIV1SandboxesIDPutRes()
 }
 
 type APIV1SandboxesIDRefreshPostRes interface {

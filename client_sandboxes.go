@@ -141,7 +141,7 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 
 // UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
-	resp, err := c.api.APIV1SandboxesIDPatch(ctx, &request, apispec.APIV1SandboxesIDPatchParams{ID: sandboxID})
+	resp, err := c.api.APIV1SandboxesIDPut(ctx, &request, apispec.APIV1SandboxesIDPutParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}

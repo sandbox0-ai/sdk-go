@@ -286,13 +286,13 @@ type APIV1SandboxesIDGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDGetNotFound) aPIV1SandboxesIDGetRes() {}
 
-type APIV1SandboxesIDPatchBadRequest ErrorEnvelope
+type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
-func (*APIV1SandboxesIDPatchBadRequest) aPIV1SandboxesIDPatchRes() {}
+func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
 
-type APIV1SandboxesIDPatchNotFound ErrorEnvelope
+type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
-func (*APIV1SandboxesIDPatchNotFound) aPIV1SandboxesIDPatchRes() {}
+func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
@@ -9433,8 +9433,8 @@ func (s *SuccessSandboxResponse) SetData(val OptSandbox) {
 	s.Data = val
 }
 
-func (*SuccessSandboxResponse) aPIV1SandboxesIDGetRes()   {}
-func (*SuccessSandboxResponse) aPIV1SandboxesIDPatchRes() {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDGetRes() {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDPutRes() {}
 
 type SuccessSandboxResponseSuccess bool
 

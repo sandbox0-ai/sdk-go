@@ -162,7 +162,7 @@ func (s *APIV1SandboxesIDGetNotFound) Validate() error {
 	return nil
 }
 
-func (s *APIV1SandboxesIDPatchBadRequest) Validate() error {
+func (s *APIV1SandboxesIDPutBadRequest) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -170,7 +170,7 @@ func (s *APIV1SandboxesIDPatchBadRequest) Validate() error {
 	return nil
 }
 
-func (s *APIV1SandboxesIDPatchNotFound) Validate() error {
+func (s *APIV1SandboxesIDPutNotFound) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err

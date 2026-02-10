@@ -133,18 +133,18 @@ type APIV1SandboxesIDNetworkGetParams struct {
 	ID string
 }
 
-// APIV1SandboxesIDNetworkPatchParams is parameters of PATCH /api/v1/sandboxes/{id}/network operation.
-type APIV1SandboxesIDNetworkPatchParams struct {
-	ID string
-}
-
-// APIV1SandboxesIDPatchParams is parameters of PATCH /api/v1/sandboxes/{id} operation.
-type APIV1SandboxesIDPatchParams struct {
+// APIV1SandboxesIDNetworkPutParams is parameters of PUT /api/v1/sandboxes/{id}/network operation.
+type APIV1SandboxesIDNetworkPutParams struct {
 	ID string
 }
 
 // APIV1SandboxesIDPausePostParams is parameters of POST /api/v1/sandboxes/{id}/pause operation.
 type APIV1SandboxesIDPausePostParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDPutParams is parameters of PUT /api/v1/sandboxes/{id} operation.
+type APIV1SandboxesIDPutParams struct {
 	ID string
 }
 

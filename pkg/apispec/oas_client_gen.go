@@ -254,24 +254,24 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes/{id}/network
 	APIV1SandboxesIDNetworkGet(ctx context.Context, params APIV1SandboxesIDNetworkGetParams, options ...RequestOption) (APIV1SandboxesIDNetworkGetRes, error)
-	// APIV1SandboxesIDNetworkPatch invokes PATCH /api/v1/sandboxes/{id}/network operation.
+	// APIV1SandboxesIDNetworkPut invokes PUT /api/v1/sandboxes/{id}/network operation.
 	//
 	// Update sandbox network policy.
 	//
-	// PATCH /api/v1/sandboxes/{id}/network
-	APIV1SandboxesIDNetworkPatch(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPatchParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
-	// APIV1SandboxesIDPatch invokes PATCH /api/v1/sandboxes/{id} operation.
-	//
-	// Update sandbox configuration.
-	//
-	// PATCH /api/v1/sandboxes/{id}
-	APIV1SandboxesIDPatch(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPatchParams, options ...RequestOption) (APIV1SandboxesIDPatchRes, error)
+	// PUT /api/v1/sandboxes/{id}/network
+	APIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
 	// APIV1SandboxesIDPausePost invokes POST /api/v1/sandboxes/{id}/pause operation.
 	//
 	// Pause a sandbox.
 	//
 	// POST /api/v1/sandboxes/{id}/pause
 	APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	// APIV1SandboxesIDPut invokes PUT /api/v1/sandboxes/{id} operation.
+	//
+	// Update sandbox configuration.
+	//
+	// PUT /api/v1/sandboxes/{id}
+	APIV1SandboxesIDPut(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPutParams, options ...RequestOption) (APIV1SandboxesIDPutRes, error)
 	// APIV1SandboxesIDRefreshPost invokes POST /api/v1/sandboxes/{id}/refresh operation.
 	//
 	// Refresh sandbox TTL.
@@ -3821,17 +3821,17 @@ func (c *Client) sendAPIV1SandboxesIDNetworkGet(ctx context.Context, params APIV
 	return result, nil
 }
 
-// APIV1SandboxesIDNetworkPatch invokes PATCH /api/v1/sandboxes/{id}/network operation.
+// APIV1SandboxesIDNetworkPut invokes PUT /api/v1/sandboxes/{id}/network operation.
 //
 // Update sandbox network policy.
 //
-// PATCH /api/v1/sandboxes/{id}/network
-func (c *Client) APIV1SandboxesIDNetworkPatch(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPatchParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error) {
-	res, err := c.sendAPIV1SandboxesIDNetworkPatch(ctx, request, params, options...)
+// PUT /api/v1/sandboxes/{id}/network
+func (c *Client) APIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDNetworkPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDNetworkPatch(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPatchParams, requestOptions ...RequestOption) (res *SuccessSandboxNetworkPolicyResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, requestOptions ...RequestOption) (res *SuccessSandboxNetworkPolicyResponse, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3867,11 +3867,11 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPatch(ctx context.Context, request *
 	pathParts[2] = "/network"
 	uri.AddPathParts(u, pathParts[:]...)
 
-	r, err := ht.NewRequest(ctx, "PATCH", u)
+	r, err := ht.NewRequest(ctx, "PUT", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeAPIV1SandboxesIDNetworkPatchRequest(request, r); err != nil {
+	if err := encodeAPIV1SandboxesIDNetworkPutRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -3880,7 +3880,7 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPatch(ctx context.Context, request *
 		var satisfied bitset
 		{
 
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDNetworkPatchOperation, r); {
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDNetworkPutOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -3930,123 +3930,7 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPatch(ctx context.Context, request *
 		return res, errors.Wrap(err, "edit response")
 	}
 
-	result, err := decodeAPIV1SandboxesIDNetworkPatchResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDPatch invokes PATCH /api/v1/sandboxes/{id} operation.
-//
-// Update sandbox configuration.
-//
-// PATCH /api/v1/sandboxes/{id}
-func (c *Client) APIV1SandboxesIDPatch(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPatchParams, options ...RequestOption) (APIV1SandboxesIDPatchRes, error) {
-	res, err := c.sendAPIV1SandboxesIDPatch(ctx, request, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDPatch(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPatchParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPatchRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [2]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "PATCH", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAPIV1SandboxesIDPatchRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPatchOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDPatchResponse(resp)
+	result, err := decodeAPIV1SandboxesIDNetworkPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -4161,6 +4045,122 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1
 	}
 
 	result, err := decodeAPIV1SandboxesIDPausePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPut invokes PUT /api/v1/sandboxes/{id} operation.
+//
+// Update sandbox configuration.
+//
+// PUT /api/v1/sandboxes/{id}
+func (c *Client) APIV1SandboxesIDPut(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPutParams, options ...RequestOption) (APIV1SandboxesIDPutRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPut(ctx context.Context, request *SandboxUpdateRequest, params APIV1SandboxesIDPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

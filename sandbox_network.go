@@ -26,7 +26,7 @@ func (s *Sandbox) GetNetworkPolicy(ctx context.Context) (*apispec.TplSandboxNetw
 
 // UpdateNetworkPolicy updates the sandbox network policy.
 func (s *Sandbox) UpdateNetworkPolicy(ctx context.Context, policy apispec.TplSandboxNetworkPolicy) (*apispec.TplSandboxNetworkPolicy, error) {
-	resp, err := s.client.api.APIV1SandboxesIDNetworkPatch(ctx, &policy, apispec.APIV1SandboxesIDNetworkPatchParams{ID: s.ID})
+	resp, err := s.client.api.APIV1SandboxesIDNetworkPut(ctx, &policy, apispec.APIV1SandboxesIDNetworkPutParams{ID: s.ID})
 	if err != nil {
 		return nil, err
 	}

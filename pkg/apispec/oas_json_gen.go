@@ -866,17 +866,17 @@ func (s *APIV1SandboxesIDGetNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDPatchBadRequest as json.
-func (s *APIV1SandboxesIDPatchBadRequest) Encode(e *jx.Encoder) {
+// Encode encodes APIV1SandboxesIDPutBadRequest as json.
+func (s *APIV1SandboxesIDPutBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes APIV1SandboxesIDPatchBadRequest from json.
-func (s *APIV1SandboxesIDPatchBadRequest) Decode(d *jx.Decoder) error {
+// Decode decodes APIV1SandboxesIDPutBadRequest from json.
+func (s *APIV1SandboxesIDPutBadRequest) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDPatchBadRequest to nil")
+		return errors.New("invalid: unable to decode APIV1SandboxesIDPutBadRequest to nil")
 	}
 	var unwrapped ErrorEnvelope
 	if err := func() error {
@@ -887,34 +887,34 @@ func (s *APIV1SandboxesIDPatchBadRequest) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = APIV1SandboxesIDPatchBadRequest(unwrapped)
+	*s = APIV1SandboxesIDPutBadRequest(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDPatchBadRequest) MarshalJSON() ([]byte, error) {
+func (s *APIV1SandboxesIDPutBadRequest) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDPatchBadRequest) UnmarshalJSON(data []byte) error {
+func (s *APIV1SandboxesIDPutBadRequest) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDPatchNotFound as json.
-func (s *APIV1SandboxesIDPatchNotFound) Encode(e *jx.Encoder) {
+// Encode encodes APIV1SandboxesIDPutNotFound as json.
+func (s *APIV1SandboxesIDPutNotFound) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes APIV1SandboxesIDPatchNotFound from json.
-func (s *APIV1SandboxesIDPatchNotFound) Decode(d *jx.Decoder) error {
+// Decode decodes APIV1SandboxesIDPutNotFound from json.
+func (s *APIV1SandboxesIDPutNotFound) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDPatchNotFound to nil")
+		return errors.New("invalid: unable to decode APIV1SandboxesIDPutNotFound to nil")
 	}
 	var unwrapped ErrorEnvelope
 	if err := func() error {
@@ -925,19 +925,19 @@ func (s *APIV1SandboxesIDPatchNotFound) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = APIV1SandboxesIDPatchNotFound(unwrapped)
+	*s = APIV1SandboxesIDPutNotFound(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDPatchNotFound) MarshalJSON() ([]byte, error) {
+func (s *APIV1SandboxesIDPutNotFound) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDPatchNotFound) UnmarshalJSON(data []byte) error {
+func (s *APIV1SandboxesIDPutNotFound) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

@@ -118,7 +118,7 @@ func encodeAPIV1SandboxesIDFilesPostRequest(
 	return nil
 }
 
-func encodeAPIV1SandboxesIDNetworkPatchRequest(
+func encodeAPIV1SandboxesIDNetworkPutRequest(
 	req *TplSandboxNetworkPolicy,
 	r *http.Request,
 ) error {
@@ -132,7 +132,7 @@ func encodeAPIV1SandboxesIDNetworkPatchRequest(
 	return nil
 }
 
-func encodeAPIV1SandboxesIDPatchRequest(
+func encodeAPIV1SandboxesIDPutRequest(
 	req *SandboxUpdateRequest,
 	r *http.Request,
 ) error {
