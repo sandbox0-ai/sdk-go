@@ -4,6 +4,7 @@ package sandbox0_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -72,43 +73,66 @@ func TestSandboxStreams(t *testing.T) {
 	if err != nil {
 		t.Fatalf("run stream failed: %v", err)
 	}
+	defer func() { _ = closeFn() }()
 	runInput <- sandbox0.StreamInput{Type: sandbox0.StreamInputTypeInput, Data: "print('stream')\n"}
+	close(runInput)
+	time.AfterFunc(1500*time.Millisecond, func() {
+		_ = closeFn()
+	})
 
-	runReceived := false
-	select {
-	case <-outputs:
-		runReceived = true
-	case err := <-errs:
-		if err != nil {
-			t.Fatalf("run stream error: %v", err)
-		}
-	case <-time.After(10 * time.Second):
-		t.Fatalf("run stream timed out")
+	runReceived, err := readStreamUntilClosed(ctx, outputs, errs, 20*time.Second)
+	if err != nil {
+		t.Fatalf("run stream error: %v", err)
 	}
 	if !runReceived {
 		t.Fatalf("run stream did not produce output")
 	}
-	_ = closeFn()
 
-	cmdInput := make(chan sandbox0.StreamInput, 1)
-	cmdOutputs, cmdErrs, cmdClose, err := sandbox.CmdStream(ctx, "sh -c \"echo stream\"", cmdInput)
+	cmdOutputs, cmdErrs, cmdClose, err := sandbox.CmdStream(ctx, "sh -c \"echo stream\"", nil)
 	if err != nil {
 		t.Fatalf("cmd stream failed: %v", err)
 	}
+	defer func() { _ = cmdClose() }()
+	time.AfterFunc(2*time.Second, func() {
+		_ = cmdClose()
+	})
 
-	cmdReceived := false
-	select {
-	case <-cmdOutputs:
-		cmdReceived = true
-	case err := <-cmdErrs:
-		if err != nil {
-			t.Fatalf("cmd stream error: %v", err)
-		}
-	case <-time.After(10 * time.Second):
-		t.Fatalf("cmd stream timed out")
+	cmdReceived, err := readStreamUntilClosed(ctx, cmdOutputs, cmdErrs, 20*time.Second)
+	if err != nil {
+		t.Fatalf("cmd stream error: %v", err)
 	}
 	if !cmdReceived {
 		t.Fatalf("cmd stream did not produce output")
 	}
-	_ = cmdClose()
+}
+
+func readStreamUntilClosed(
+	ctx context.Context,
+	outputs <-chan sandbox0.StreamOutput,
+	errs <-chan error,
+	timeout time.Duration,
+) (bool, error) {
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
+
+	received := false
+	for {
+		select {
+		case output, ok := <-outputs:
+			if !ok {
+				return received, nil
+			}
+			if output.Data != "" || output.Source != "" {
+				received = true
+			}
+		case err, ok := <-errs:
+			if ok && err != nil {
+				return received, err
+			}
+		case <-timer.C:
+			return received, fmt.Errorf("stream timed out after %s", timeout)
+		case <-ctx.Done():
+			return received, ctx.Err()
+		}
+	}
 }

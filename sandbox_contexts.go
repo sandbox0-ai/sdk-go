@@ -2,7 +2,13 @@ package sandbox0
 
 import (
 	"context"
+	"errors"
+	"io"
+	"net"
 	"net/http"
+	"strings"
+	"syscall"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -167,5 +173,49 @@ func (s *Sandbox) ConnectWSContext(ctx context.Context, contextID string) (*webs
 		return nil, nil, err
 	}
 
-	return websocket.DefaultDialer.DialContext(ctx, wsURL, req.Header)
+	var lastErr error
+	const maxAttempts = 3
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		conn, resp, dialErr := websocket.DefaultDialer.DialContext(ctx, wsURL, req.Header)
+		if dialErr == nil {
+			return conn, resp, nil
+		}
+		lastErr = dialErr
+		if ctx.Err() != nil || !isRetryableWSDialError(dialErr) || attempt == maxAttempts {
+			return nil, resp, dialErr
+		}
+
+		delay := time.Duration(attempt) * 150 * time.Millisecond
+		timer := time.NewTimer(delay)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return nil, nil, ctx.Err()
+		case <-timer.C:
+		}
+	}
+
+	return nil, nil, lastErr
+}
+
+func isRetryableWSDialError(err error) bool {
+	if err == nil {
+		return false
+	}
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return false
+	}
+	if errors.Is(err, io.EOF) || errors.Is(err, syscall.ECONNRESET) || errors.Is(err, syscall.EPIPE) {
+		return true
+	}
+
+	var netErr net.Error
+	if errors.As(err, &netErr) && netErr.Timeout() {
+		return true
+	}
+
+	lower := strings.ToLower(err.Error())
+	return strings.Contains(lower, "connection reset by peer") ||
+		strings.Contains(lower, "broken pipe") ||
+		strings.Contains(lower, "unexpected eof")
 }
