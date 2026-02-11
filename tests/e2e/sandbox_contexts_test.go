@@ -71,4 +71,26 @@ func TestSandboxContextOperations(t *testing.T) {
 		t.Fatalf("connect ws context failed: %v", err)
 	}
 	_ = conn.Close()
+
+	cmdReq := apispec.CreateContextRequest{
+		Type: apispec.NewOptProcessType(apispec.ProcessTypeCmd),
+		Cmd: apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{
+			Command:      []string{"/bin/sh", "-lc", "echo sdk-e2e"},
+			ExposePort:   apispec.NewOptInt32(3000),
+			ExposeResume: apispec.NewOptBool(false),
+		}),
+		WaitUntilDone: apispec.NewOptBool(true),
+	}
+	cmdResp, err := sandbox.CreateContext(ctx, cmdReq)
+	if err != nil {
+		t.Fatalf("create cmd context failed: %v", err)
+	}
+	if cmdResp == nil || cmdResp.ID == "" {
+		t.Fatalf("create cmd context returned empty response")
+	}
+	t.Cleanup(func() {
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cleanupCancel()
+		_, _ = sandbox.DeleteContext(cleanupCtx, cmdResp.ID)
+	})
 }

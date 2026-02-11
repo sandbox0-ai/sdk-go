@@ -2836,18 +2836,32 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 			s.Output.Encode(e)
 		}
 	}
+	{
+		if s.PublicURL.Set {
+			e.FieldStart("public_url")
+			s.PublicURL.Encode(e)
+		}
+	}
+	{
+		if s.ExposedPort.Set {
+			e.FieldStart("exposed_port")
+			s.ExposedPort.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfContextResponse = [9]string{
-	0: "id",
-	1: "type",
-	2: "language",
-	3: "cwd",
-	4: "env_vars",
-	5: "running",
-	6: "paused",
-	7: "created_at",
-	8: "output",
+var jsonFieldsNameOfContextResponse = [11]string{
+	0:  "id",
+	1:  "type",
+	2:  "language",
+	3:  "cwd",
+	4:  "env_vars",
+	5:  "running",
+	6:  "paused",
+	7:  "created_at",
+	8:  "output",
+	9:  "public_url",
+	10: "exposed_port",
 }
 
 // Decode decodes ContextResponse from json.
@@ -2956,6 +2970,26 @@ func (s *ContextResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"output\"")
+			}
+		case "public_url":
+			if err := func() error {
+				s.PublicURL.Reset()
+				if err := s.PublicURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"public_url\"")
+			}
+		case "exposed_port":
+			if err := func() error {
+				s.ExposedPort.Reset()
+				if err := s.ExposedPort.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exposed_port\"")
 			}
 		default:
 			return d.Skip()
@@ -3662,10 +3696,24 @@ func (s *CreateCMDContextRequest) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
+	{
+		if s.ExposePort.Set {
+			e.FieldStart("expose_port")
+			s.ExposePort.Encode(e)
+		}
+	}
+	{
+		if s.ExposeResume.Set {
+			e.FieldStart("expose_resume")
+			s.ExposeResume.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfCreateCMDContextRequest = [1]string{
+var jsonFieldsNameOfCreateCMDContextRequest = [3]string{
 	0: "command",
+	1: "expose_port",
+	2: "expose_resume",
 }
 
 // Decode decodes CreateCMDContextRequest from json.
@@ -3694,6 +3742,26 @@ func (s *CreateCMDContextRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"command\"")
+			}
+		case "expose_port":
+			if err := func() error {
+				s.ExposePort.Reset()
+				if err := s.ExposePort.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"expose_port\"")
+			}
+		case "expose_resume":
+			if err := func() error {
+				s.ExposeResume.Reset()
+				if err := s.ExposeResume.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"expose_resume\"")
 			}
 		default:
 			return d.Skip()
@@ -4935,6 +5003,119 @@ func (s *ExecCandidate) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ExecCandidate) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *ExposedPortConfig) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ExposedPortConfig) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("port")
+		e.Int32(s.Port)
+	}
+	{
+		e.FieldStart("resume")
+		e.Bool(s.Resume)
+	}
+}
+
+var jsonFieldsNameOfExposedPortConfig = [2]string{
+	0: "port",
+	1: "resume",
+}
+
+// Decode decodes ExposedPortConfig from json.
+func (s *ExposedPortConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ExposedPortConfig to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "port":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int32()
+				s.Port = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"port\"")
+			}
+		case "resume":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Bool()
+				s.Resume = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"resume\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ExposedPortConfig")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfExposedPortConfig) {
+					name = jsonFieldsNameOfExposedPortConfig[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ExposedPortConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ExposedPortConfig) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -12883,6 +13064,24 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		e.Str(s.Status)
 	}
 	{
+		e.FieldStart("paused")
+		e.Bool(s.Paused)
+	}
+	{
+		e.FieldStart("auto_resume")
+		e.Bool(s.AutoResume)
+	}
+	{
+		if s.ExposedPorts != nil {
+			e.FieldStart("exposed_ports")
+			e.ArrStart()
+			for _, elem := range s.ExposedPorts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		e.FieldStart("pod_name")
 		e.Str(s.PodName)
 	}
@@ -12900,16 +13099,19 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [9]string{
-	0: "id",
-	1: "template_id",
-	2: "team_id",
-	3: "user_id",
-	4: "status",
-	5: "pod_name",
-	6: "expires_at",
-	7: "claimed_at",
-	8: "created_at",
+var jsonFieldsNameOfSandbox = [12]string{
+	0:  "id",
+	1:  "template_id",
+	2:  "team_id",
+	3:  "user_id",
+	4:  "status",
+	5:  "paused",
+	6:  "auto_resume",
+	7:  "exposed_ports",
+	8:  "pod_name",
+	9:  "expires_at",
+	10: "claimed_at",
+	11: "created_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -12979,8 +13181,49 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"status\"")
 			}
-		case "pod_name":
+		case "paused":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.Paused = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"paused\"")
+			}
+		case "auto_resume":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Bool()
+				s.AutoResume = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"auto_resume\"")
+			}
+		case "exposed_ports":
+			if err := func() error {
+				s.ExposedPorts = make([]ExposedPortConfig, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ExposedPortConfig
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.ExposedPorts = append(s.ExposedPorts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exposed_ports\"")
+			}
+		case "pod_name":
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.PodName = string(v)
@@ -12992,7 +13235,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"pod_name\"")
 			}
 		case "expires_at":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -13004,7 +13247,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -13016,7 +13259,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -13037,8 +13280,8 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b11110111,
-		0b00000001,
+		0b01110111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -13123,14 +13366,32 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 			s.Webhook.Encode(e)
 		}
 	}
+	{
+		if s.AutoResume.Set {
+			e.FieldStart("auto_resume")
+			s.AutoResume.Encode(e)
+		}
+	}
+	{
+		if s.ExposedPorts != nil {
+			e.FieldStart("exposed_ports")
+			e.ArrStart()
+			for _, elem := range s.ExposedPorts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
 }
 
-var jsonFieldsNameOfSandboxConfig = [5]string{
+var jsonFieldsNameOfSandboxConfig = [7]string{
 	0: "env_vars",
 	1: "ttl",
 	2: "hard_ttl",
 	3: "network",
 	4: "webhook",
+	5: "auto_resume",
+	6: "exposed_ports",
 }
 
 // Decode decodes SandboxConfig from json.
@@ -13138,6 +13399,7 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode SandboxConfig to nil")
 	}
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -13190,6 +13452,33 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"webhook\"")
+			}
+		case "auto_resume":
+			if err := func() error {
+				s.AutoResume.Reset()
+				if err := s.AutoResume.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"auto_resume\"")
+			}
+		case "exposed_ports":
+			if err := func() error {
+				s.ExposedPorts = make([]ExposedPortConfig, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ExposedPortConfig
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.ExposedPorts = append(s.ExposedPorts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exposed_ports\"")
 			}
 		default:
 			return d.Skip()

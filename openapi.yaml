@@ -2394,6 +2394,29 @@ components:
           $ref: "#/components/schemas/TplSandboxNetworkPolicy"
         webhook:
           $ref: "#/components/schemas/WebhookConfig"
+        auto_resume:
+          type: boolean
+          default: false
+          description: |
+            Sandbox-level resume gate for paused sandboxes. When false, any inbound request
+            (API or public exposure) must not auto resume the sandbox.
+        exposed_ports:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExposedPortConfig"
+    ExposedPortConfig:
+      type: object
+      properties:
+        port:
+          type: integer
+          format: int32
+        resume:
+          type: boolean
+          description: |
+            Port-level resume gate for public exposure traffic. Evaluated only when
+            sandbox auto_resume is true. Priority: sandbox auto_resume (global gate)
+            > exposed_ports[].resume (per-port gate).
+      required: [port, resume]
     WebhookConfig:
       type: object
       properties:
@@ -2441,6 +2464,14 @@ components:
           type: string
         status:
           type: string
+        paused:
+          type: boolean
+        auto_resume:
+          type: boolean
+        exposed_ports:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExposedPortConfig"
         pod_name:
           type: string
         expires_at:
@@ -2457,6 +2488,8 @@ components:
         - template_id
         - team_id
         - status
+        - paused
+        - auto_resume
         - pod_name
         - expires_at
         - claimed_at
@@ -2732,6 +2765,15 @@ components:
           type: array
           items:
             type: string
+        expose_port:
+          type: integer
+          format: int32
+        expose_resume:
+          type: boolean
+          description: |
+            Port-level resume policy used when expose_port is set. Stored as
+            exposed_ports[].resume for this sandbox. Priority at runtime:
+            sandbox.auto_resume (global gate) > cmd.expose_resume (per-port gate).
     CreateContextRequest:
       type: object
       properties:
@@ -2780,6 +2822,11 @@ components:
           type: string
         output:
           type: string
+        public_url:
+          type: string
+        exposed_port:
+          type: integer
+          format: int32
       required: [id, type, running, paused, created_at]
     ContextStatsResponse:
       type: object

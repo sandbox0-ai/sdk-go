@@ -804,15 +804,17 @@ func (s *ContextResourceUsage) SetUsage(val OptResourceUsage) {
 
 // Ref: #/components/schemas/ContextResponse
 type ContextResponse struct {
-	ID        string                    `json:"id"`
-	Type      ProcessType               `json:"type"`
-	Language  OptString                 `json:"language"`
-	Cwd       OptString                 `json:"cwd"`
-	EnvVars   OptContextResponseEnvVars `json:"env_vars"`
-	Running   bool                      `json:"running"`
-	Paused    bool                      `json:"paused"`
-	CreatedAt string                    `json:"created_at"`
-	Output    OptString                 `json:"output"`
+	ID          string                    `json:"id"`
+	Type        ProcessType               `json:"type"`
+	Language    OptString                 `json:"language"`
+	Cwd         OptString                 `json:"cwd"`
+	EnvVars     OptContextResponseEnvVars `json:"env_vars"`
+	Running     bool                      `json:"running"`
+	Paused      bool                      `json:"paused"`
+	CreatedAt   string                    `json:"created_at"`
+	Output      OptString                 `json:"output"`
+	PublicURL   OptString                 `json:"public_url"`
+	ExposedPort OptInt32                  `json:"exposed_port"`
 }
 
 // GetID returns the value of ID.
@@ -860,6 +862,16 @@ func (s *ContextResponse) GetOutput() OptString {
 	return s.Output
 }
 
+// GetPublicURL returns the value of PublicURL.
+func (s *ContextResponse) GetPublicURL() OptString {
+	return s.PublicURL
+}
+
+// GetExposedPort returns the value of ExposedPort.
+func (s *ContextResponse) GetExposedPort() OptInt32 {
+	return s.ExposedPort
+}
+
 // SetID sets the value of ID.
 func (s *ContextResponse) SetID(val string) {
 	s.ID = val
@@ -903,6 +915,16 @@ func (s *ContextResponse) SetCreatedAt(val string) {
 // SetOutput sets the value of Output.
 func (s *ContextResponse) SetOutput(val OptString) {
 	s.Output = val
+}
+
+// SetPublicURL sets the value of PublicURL.
+func (s *ContextResponse) SetPublicURL(val OptString) {
+	s.PublicURL = val
+}
+
+// SetExposedPort sets the value of ExposedPort.
+func (s *ContextResponse) SetExposedPort(val OptInt32) {
+	s.ExposedPort = val
 }
 
 type ContextResponseEnvVars map[string]string
@@ -1170,7 +1192,12 @@ func (s *CreateAPIKeyResponse) SetCreatedAt(val time.Time) {
 
 // Ref: #/components/schemas/CreateCMDContextRequest
 type CreateCMDContextRequest struct {
-	Command []string `json:"command"`
+	Command    []string `json:"command"`
+	ExposePort OptInt32 `json:"expose_port"`
+	// Port-level resume policy used when expose_port is set. Stored as
+	// exposed_ports[].resume for this sandbox. Priority at runtime:
+	// sandbox.auto_resume (global gate) > cmd.expose_resume (per-port gate).
+	ExposeResume OptBool `json:"expose_resume"`
 }
 
 // GetCommand returns the value of Command.
@@ -1178,9 +1205,29 @@ func (s *CreateCMDContextRequest) GetCommand() []string {
 	return s.Command
 }
 
+// GetExposePort returns the value of ExposePort.
+func (s *CreateCMDContextRequest) GetExposePort() OptInt32 {
+	return s.ExposePort
+}
+
+// GetExposeResume returns the value of ExposeResume.
+func (s *CreateCMDContextRequest) GetExposeResume() OptBool {
+	return s.ExposeResume
+}
+
 // SetCommand sets the value of Command.
 func (s *CreateCMDContextRequest) SetCommand(val []string) {
 	s.Command = val
+}
+
+// SetExposePort sets the value of ExposePort.
+func (s *CreateCMDContextRequest) SetExposePort(val OptInt32) {
+	s.ExposePort = val
+}
+
+// SetExposeResume sets the value of ExposeResume.
+func (s *CreateCMDContextRequest) SetExposeResume(val OptBool) {
+	s.ExposeResume = val
 }
 
 // Ref: #/components/schemas/CreateContextRequest
@@ -1592,6 +1639,35 @@ func (s *ExecCandidate) SetName(val string) {
 // SetArgs sets the value of Args.
 func (s *ExecCandidate) SetArgs(val []string) {
 	s.Args = val
+}
+
+// Ref: #/components/schemas/ExposedPortConfig
+type ExposedPortConfig struct {
+	Port int32 `json:"port"`
+	// Port-level resume gate for public exposure traffic. Evaluated only when
+	// sandbox auto_resume is true. Priority: sandbox auto_resume (global gate)
+	// > exposed_ports[].resume (per-port gate).
+	Resume bool `json:"resume"`
+}
+
+// GetPort returns the value of Port.
+func (s *ExposedPortConfig) GetPort() int32 {
+	return s.Port
+}
+
+// GetResume returns the value of Resume.
+func (s *ExposedPortConfig) GetResume() bool {
+	return s.Resume
+}
+
+// SetPort sets the value of Port.
+func (s *ExposedPortConfig) SetPort(val int32) {
+	s.Port = val
+}
+
+// SetResume sets the value of Resume.
+func (s *ExposedPortConfig) SetResume(val bool) {
+	s.Resume = val
 }
 
 // Ref: #/components/schemas/FileContentResponse
@@ -7252,15 +7328,18 @@ func (s *ResumeSandboxResponse) SetRestoredMemory(val OptString) {
 
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID         string    `json:"id"`
-	TemplateID string    `json:"template_id"`
-	TeamID     string    `json:"team_id"`
-	UserID     OptString `json:"user_id"`
-	Status     string    `json:"status"`
-	PodName    string    `json:"pod_name"`
-	ExpiresAt  time.Time `json:"expires_at"`
-	ClaimedAt  time.Time `json:"claimed_at"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID           string              `json:"id"`
+	TemplateID   string              `json:"template_id"`
+	TeamID       string              `json:"team_id"`
+	UserID       OptString           `json:"user_id"`
+	Status       string              `json:"status"`
+	Paused       bool                `json:"paused"`
+	AutoResume   bool                `json:"auto_resume"`
+	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
+	PodName      string              `json:"pod_name"`
+	ExpiresAt    time.Time           `json:"expires_at"`
+	ClaimedAt    time.Time           `json:"claimed_at"`
+	CreatedAt    time.Time           `json:"created_at"`
 }
 
 // GetID returns the value of ID.
@@ -7286,6 +7365,21 @@ func (s *Sandbox) GetUserID() OptString {
 // GetStatus returns the value of Status.
 func (s *Sandbox) GetStatus() string {
 	return s.Status
+}
+
+// GetPaused returns the value of Paused.
+func (s *Sandbox) GetPaused() bool {
+	return s.Paused
+}
+
+// GetAutoResume returns the value of AutoResume.
+func (s *Sandbox) GetAutoResume() bool {
+	return s.AutoResume
+}
+
+// GetExposedPorts returns the value of ExposedPorts.
+func (s *Sandbox) GetExposedPorts() []ExposedPortConfig {
+	return s.ExposedPorts
 }
 
 // GetPodName returns the value of PodName.
@@ -7333,6 +7427,21 @@ func (s *Sandbox) SetStatus(val string) {
 	s.Status = val
 }
 
+// SetPaused sets the value of Paused.
+func (s *Sandbox) SetPaused(val bool) {
+	s.Paused = val
+}
+
+// SetAutoResume sets the value of AutoResume.
+func (s *Sandbox) SetAutoResume(val bool) {
+	s.AutoResume = val
+}
+
+// SetExposedPorts sets the value of ExposedPorts.
+func (s *Sandbox) SetExposedPorts(val []ExposedPortConfig) {
+	s.ExposedPorts = val
+}
+
 // SetPodName sets the value of PodName.
 func (s *Sandbox) SetPodName(val string) {
 	s.PodName = val
@@ -7360,6 +7469,10 @@ type SandboxConfig struct {
 	HardTTL OptInt32                   `json:"hard_ttl"`
 	Network OptTplSandboxNetworkPolicy `json:"network"`
 	Webhook OptWebhookConfig           `json:"webhook"`
+	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
+	// (API or public exposure) must not auto resume the sandbox.
+	AutoResume   OptBool             `json:"auto_resume"`
+	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
 }
 
 // GetEnvVars returns the value of EnvVars.
@@ -7387,6 +7500,16 @@ func (s *SandboxConfig) GetWebhook() OptWebhookConfig {
 	return s.Webhook
 }
 
+// GetAutoResume returns the value of AutoResume.
+func (s *SandboxConfig) GetAutoResume() OptBool {
+	return s.AutoResume
+}
+
+// GetExposedPorts returns the value of ExposedPorts.
+func (s *SandboxConfig) GetExposedPorts() []ExposedPortConfig {
+	return s.ExposedPorts
+}
+
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxConfig) SetEnvVars(val OptSandboxConfigEnvVars) {
 	s.EnvVars = val
@@ -7410,6 +7533,16 @@ func (s *SandboxConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
 // SetWebhook sets the value of Webhook.
 func (s *SandboxConfig) SetWebhook(val OptWebhookConfig) {
 	s.Webhook = val
+}
+
+// SetAutoResume sets the value of AutoResume.
+func (s *SandboxConfig) SetAutoResume(val OptBool) {
+	s.AutoResume = val
+}
+
+// SetExposedPorts sets the value of ExposedPorts.
+func (s *SandboxConfig) SetExposedPorts(val []ExposedPortConfig) {
+	s.ExposedPorts = val
 }
 
 type SandboxConfigEnvVars map[string]string

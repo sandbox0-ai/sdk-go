@@ -136,6 +136,8 @@ type cmdOptions struct {
 	cwd            *string
 	envVars        *map[string]string
 	ptySize        *apispec.PTYSize
+	exposePort     *int32
+	exposeResume   *bool
 }
 
 // CmdOption configures sandbox Cmd behavior.
@@ -188,6 +190,21 @@ func WithCmdPTYSize(rows, cols uint16) CmdOption {
 	}
 }
 
+// WithCmdExposePort requests a public exposure port for CMD context.
+func WithCmdExposePort(port int32) CmdOption {
+	return func(opts *cmdOptions) {
+		opts.exposePort = &port
+	}
+}
+
+// WithCmdExposeResume sets whether public traffic can resume paused sandbox on this exposed port.
+// Runtime precedence: sandbox auto_resume (global gate) > cmd expose_resume (per-port gate).
+func WithCmdExposeResume(enabled bool) CmdOption {
+	return func(opts *cmdOptions) {
+		opts.exposeResume = &enabled
+	}
+}
+
 // Cmd executes a one-time command in a CMD context.
 func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdResult, error) {
 	if strings.TrimSpace(cmd) == "" {
@@ -216,6 +233,14 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
 		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
 	}
+	cmdReq := apispec.CreateCMDContextRequest{Command: options.command}
+	if options.exposePort != nil {
+		cmdReq.ExposePort = apispec.NewOptInt32(*options.exposePort)
+	}
+	if options.exposeResume != nil {
+		cmdReq.ExposeResume = apispec.NewOptBool(*options.exposeResume)
+	}
+	req.Cmd = apispec.NewOptCreateCMDContextRequest(cmdReq)
 	if options.cwd != nil {
 		req.Cwd = apispec.NewOptString(*options.cwd)
 	}
@@ -333,6 +358,14 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
 		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
 	}
+	cmdReq := apispec.CreateCMDContextRequest{Command: options.command}
+	if options.exposePort != nil {
+		cmdReq.ExposePort = apispec.NewOptInt32(*options.exposePort)
+	}
+	if options.exposeResume != nil {
+		cmdReq.ExposeResume = apispec.NewOptBool(*options.exposeResume)
+	}
+	req.Cmd = apispec.NewOptCreateCMDContextRequest(cmdReq)
 	if options.cwd != nil {
 		req.Cwd = apispec.NewOptString(*options.cwd)
 	}

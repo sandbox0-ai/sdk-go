@@ -78,6 +78,15 @@ func WithSandboxNetworkPolicy(policy apispec.TplSandboxNetworkPolicy) SandboxOpt
 	}
 }
 
+// WithSandboxAutoResume controls whether paused sandbox auto resumes on access.
+// Default is false when unset.
+func WithSandboxAutoResume(enabled bool) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.AutoResume = apispec.NewOptBool(enabled)
+	}
+}
+
 // ClaimSandbox creates (claims) a sandbox and returns a convenience wrapper.
 func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...SandboxOption) (*Sandbox, error) {
 	options := sandboxOptions{}

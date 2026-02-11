@@ -27,6 +27,7 @@ func TestSandboxLifecycle(t *testing.T) {
 		sandbox0.WithSandboxHardTTL(600),
 		sandbox0.WithSandboxWebhook("https://example.com/webhook", "secret"),
 		sandbox0.WithSandboxWebhookWatchDir("/workspace"),
+		sandbox0.WithSandboxAutoResume(true),
 		sandbox0.WithSandboxNetworkPolicy(apispec.TplSandboxNetworkPolicy{
 			Mode: apispec.TplSandboxNetworkPolicyModeAllowAll,
 		}),
@@ -52,12 +53,17 @@ func TestSandboxLifecycle(t *testing.T) {
 
 	updateRequest := apispec.SandboxUpdateRequest{
 		Config: apispec.NewOptSandboxConfig(apispec.SandboxConfig{
-			TTL:     apispec.NewOptInt32(300),
-			HardTTL: apispec.NewOptInt32(600),
+			TTL:        apispec.NewOptInt32(300),
+			HardTTL:    apispec.NewOptInt32(600),
+			AutoResume: apispec.NewOptBool(false),
 		}),
 	}
-	if _, err := client.UpdateSandbox(ctx, sandbox.ID, updateRequest); err != nil {
+	updated, err := client.UpdateSandbox(ctx, sandbox.ID, updateRequest)
+	if err != nil {
 		t.Fatalf("update sandbox failed: %v", err)
+	}
+	if updated.GetAutoResume() {
+		t.Fatalf("expected sandbox auto_resume to be false after update")
 	}
 
 	if _, err := client.PauseSandbox(ctx, sandbox.ID); err != nil {
