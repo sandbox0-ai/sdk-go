@@ -94,6 +94,20 @@ func encodeAPIV1SandboxesIDContextsPostRequest(
 	return nil
 }
 
+func encodeAPIV1SandboxesIDExposedPortsPutRequest(
+	req *UpdateExposedPortsRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAPIV1SandboxesIDFilesMovePostRequest(
 	req *MoveFileRequest,
 	r *http.Request,

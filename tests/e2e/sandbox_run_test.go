@@ -69,7 +69,7 @@ func TestSandboxStreams(t *testing.T) {
 	defer cancel()
 
 	runInput := make(chan sandbox0.StreamInput, 1)
-	outputs, errs, closeFn, err := sandbox.RunStream(ctx, "python", runInput)
+	outputs, errs, closeFn, _, err := sandbox.RunStream(ctx, "python", runInput)
 	if err != nil {
 		t.Fatalf("run stream failed: %v", err)
 	}
@@ -88,11 +88,14 @@ func TestSandboxStreams(t *testing.T) {
 		t.Fatalf("run stream did not produce output")
 	}
 
-	cmdOutputs, cmdErrs, cmdClose, err := sandbox.CmdStream(ctx, "sh -c \"echo stream\"", nil)
+	cmdOutputs, cmdErrs, cmdClose, cmdCtxID, err := sandbox.CmdStream(ctx, "sh -c \"echo stream\"", nil)
 	if err != nil {
 		t.Fatalf("cmd stream failed: %v", err)
 	}
-	defer func() { _ = cmdClose() }()
+	defer func() {
+		_ = cmdClose()
+		_ = sandbox.DeleteContext(ctx, cmdCtxID)
+	}()
 	time.AfterFunc(2*time.Second, func() {
 		_ = cmdClose()
 	})

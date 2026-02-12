@@ -25,6 +25,22 @@ type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
 }
 
+type APIV1SandboxesIDExposedPortsDeleteRes interface {
+	aPIV1SandboxesIDExposedPortsDeleteRes()
+}
+
+type APIV1SandboxesIDExposedPortsGetRes interface {
+	aPIV1SandboxesIDExposedPortsGetRes()
+}
+
+type APIV1SandboxesIDExposedPortsPortDeleteRes interface {
+	aPIV1SandboxesIDExposedPortsPortDeleteRes()
+}
+
+type APIV1SandboxesIDExposedPortsPutRes interface {
+	aPIV1SandboxesIDExposedPortsPutRes()
+}
+
 type APIV1SandboxesIDFilesGetRes interface {
 	aPIV1SandboxesIDFilesGetRes()
 }

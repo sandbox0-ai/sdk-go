@@ -188,6 +188,31 @@ type Invoker interface {
 	//
 	// DELETE /api/v1/sandboxes/{id}
 	APIV1SandboxesIDDelete(ctx context.Context, params APIV1SandboxesIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDDeleteRes, error)
+	// APIV1SandboxesIDExposedPortsDelete invokes DELETE /api/v1/sandboxes/{id}/exposed-ports operation.
+	//
+	// Clear all exposed ports.
+	//
+	// DELETE /api/v1/sandboxes/{id}/exposed-ports
+	APIV1SandboxesIDExposedPortsDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsDeleteParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsDeleteRes, error)
+	// APIV1SandboxesIDExposedPortsGet invokes GET /api/v1/sandboxes/{id}/exposed-ports operation.
+	//
+	// Get sandbox exposed ports.
+	//
+	// GET /api/v1/sandboxes/{id}/exposed-ports
+	APIV1SandboxesIDExposedPortsGet(ctx context.Context, params APIV1SandboxesIDExposedPortsGetParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsGetRes, error)
+	// APIV1SandboxesIDExposedPortsPortDelete invokes DELETE /api/v1/sandboxes/{id}/exposed-ports/{port} operation.
+	//
+	// Remove a specific exposed port.
+	//
+	// DELETE /api/v1/sandboxes/{id}/exposed-ports/{port}
+	APIV1SandboxesIDExposedPortsPortDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsPortDeleteParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsPortDeleteRes, error)
+	// APIV1SandboxesIDExposedPortsPut invokes PUT /api/v1/sandboxes/{id}/exposed-ports operation.
+	//
+	// Replaces all exposed ports for the sandbox. Used to control which ports
+	// are publicly accessible via the exposure domain.
+	//
+	// PUT /api/v1/sandboxes/{id}/exposed-ports
+	APIV1SandboxesIDExposedPortsPut(ctx context.Context, request *UpdateExposedPortsRequest, params APIV1SandboxesIDExposedPortsPutParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsPutRes, error)
 	// APIV1SandboxesIDFilesDelete invokes DELETE /api/v1/sandboxes/{id}/files operation.
 	//
 	// Delete file or directory.
@@ -2652,6 +2677,484 @@ func (c *Client) sendAPIV1SandboxesIDDelete(ctx context.Context, params APIV1San
 	}
 
 	result, err := decodeAPIV1SandboxesIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDExposedPortsDelete invokes DELETE /api/v1/sandboxes/{id}/exposed-ports operation.
+//
+// Clear all exposed ports.
+//
+// DELETE /api/v1/sandboxes/{id}/exposed-ports
+func (c *Client) APIV1SandboxesIDExposedPortsDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsDeleteParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsDeleteRes, error) {
+	res, err := c.sendAPIV1SandboxesIDExposedPortsDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDExposedPortsDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDExposedPortsDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/exposed-ports"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDExposedPortsDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDExposedPortsDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDExposedPortsGet invokes GET /api/v1/sandboxes/{id}/exposed-ports operation.
+//
+// Get sandbox exposed ports.
+//
+// GET /api/v1/sandboxes/{id}/exposed-ports
+func (c *Client) APIV1SandboxesIDExposedPortsGet(ctx context.Context, params APIV1SandboxesIDExposedPortsGetParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDExposedPortsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDExposedPortsGet(ctx context.Context, params APIV1SandboxesIDExposedPortsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDExposedPortsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/exposed-ports"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDExposedPortsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDExposedPortsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDExposedPortsPortDelete invokes DELETE /api/v1/sandboxes/{id}/exposed-ports/{port} operation.
+//
+// Remove a specific exposed port.
+//
+// DELETE /api/v1/sandboxes/{id}/exposed-ports/{port}
+func (c *Client) APIV1SandboxesIDExposedPortsPortDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsPortDeleteParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsPortDeleteRes, error) {
+	res, err := c.sendAPIV1SandboxesIDExposedPortsPortDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDExposedPortsPortDelete(ctx context.Context, params APIV1SandboxesIDExposedPortsPortDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDExposedPortsPortDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/exposed-ports/"
+	{
+		// Encode "port" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "port",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.Int32ToString(params.Port))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDExposedPortsPortDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDExposedPortsPortDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDExposedPortsPut invokes PUT /api/v1/sandboxes/{id}/exposed-ports operation.
+//
+// Replaces all exposed ports for the sandbox. Used to control which ports
+// are publicly accessible via the exposure domain.
+//
+// PUT /api/v1/sandboxes/{id}/exposed-ports
+func (c *Client) APIV1SandboxesIDExposedPortsPut(ctx context.Context, request *UpdateExposedPortsRequest, params APIV1SandboxesIDExposedPortsPutParams, options ...RequestOption) (APIV1SandboxesIDExposedPortsPutRes, error) {
+	res, err := c.sendAPIV1SandboxesIDExposedPortsPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDExposedPortsPut(ctx context.Context, request *UpdateExposedPortsRequest, params APIV1SandboxesIDExposedPortsPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDExposedPortsPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/exposed-ports"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDExposedPortsPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDExposedPortsPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDExposedPortsPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

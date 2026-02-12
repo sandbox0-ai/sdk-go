@@ -28,7 +28,7 @@ func main() {
 
 	fmt.Println("REPL stream:")
 	replInput := make(chan sandbox0.StreamInput)
-	replOutputs, replErrs, closeRepl, err := sandbox.RunStream(ctx, "python", replInput)
+	replOutputs, replErrs, closeRepl, _, err := sandbox.RunStream(ctx, "python", replInput)
 	must(err)
 
 	go func() {
@@ -43,8 +43,9 @@ func main() {
 	must(readStream(ctx, replOutputs, replErrs))
 
 	fmt.Println("CMD stream:")
-	cmdOutputs, cmdErrs, closeCmd, err := sandbox.CmdStream(ctx, `bash -c "for i in 1 2 3; do echo line-$i; done"`, nil)
+	cmdOutputs, cmdErrs, closeCmd, cmdCtxID, err := sandbox.CmdStream(ctx, `bash -c "for i in 1 2 3; do echo line-$i; done"`, nil)
 	must(err)
+	defer sandbox.DeleteContext(ctx, cmdCtxID)
 	time.AfterFunc(3*time.Second, func() {
 		_ = closeCmd()
 	})

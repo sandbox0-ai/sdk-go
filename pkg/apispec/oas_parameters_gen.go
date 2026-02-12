@@ -81,6 +81,27 @@ type APIV1SandboxesIDDeleteParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDExposedPortsDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/exposed-ports operation.
+type APIV1SandboxesIDExposedPortsDeleteParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDExposedPortsGetParams is parameters of GET /api/v1/sandboxes/{id}/exposed-ports operation.
+type APIV1SandboxesIDExposedPortsGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDExposedPortsPortDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/exposed-ports/{port} operation.
+type APIV1SandboxesIDExposedPortsPortDeleteParams struct {
+	ID   string
+	Port int32
+}
+
+// APIV1SandboxesIDExposedPortsPutParams is parameters of PUT /api/v1/sandboxes/{id}/exposed-ports operation.
+type APIV1SandboxesIDExposedPortsPutParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/files operation.
 type APIV1SandboxesIDFilesDeleteParams struct {
 	ID   string

@@ -131,13 +131,12 @@ func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOp
 
 type cmdOptions struct {
 	command        []string
+	wait           *bool
 	idleTimeoutSec *int32
 	ttlSec         *int32
 	cwd            *string
 	envVars        *map[string]string
 	ptySize        *apispec.PTYSize
-	exposePort     *int32
-	exposeResume   *bool
 }
 
 // CmdOption configures sandbox Cmd behavior.
@@ -147,6 +146,14 @@ type CmdOption func(*cmdOptions)
 func WithCommand(command []string) CmdOption {
 	return func(opts *cmdOptions) {
 		opts.command = command
+	}
+}
+
+// WithCmdWait sets whether to wait for command completion.
+// Default is true. Set to false for async execution.
+func WithCmdWait(wait bool) CmdOption {
+	return func(opts *cmdOptions) {
+		opts.wait = &wait
 	}
 }
 
@@ -190,22 +197,9 @@ func WithCmdPTYSize(rows, cols uint16) CmdOption {
 	}
 }
 
-// WithCmdExposePort requests a public exposure port for CMD context.
-func WithCmdExposePort(port int32) CmdOption {
-	return func(opts *cmdOptions) {
-		opts.exposePort = &port
-	}
-}
-
-// WithCmdExposeResume sets whether public traffic can resume paused sandbox on this exposed port.
-// Runtime precedence: sandbox auto_resume (global gate) > cmd expose_resume (per-port gate).
-func WithCmdExposeResume(enabled bool) CmdOption {
-	return func(opts *cmdOptions) {
-		opts.exposeResume = &enabled
-	}
-}
-
-// Cmd executes a one-time command in a CMD context.
+// Cmd executes a command in a CMD context.
+// By default, it waits for command completion. Use WithCmdWait(false) for async execution.
+// The context is not automatically deleted; use DeleteContext to clean up when done.
 func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdResult, error) {
 	if strings.TrimSpace(cmd) == "" {
 		return CmdResult{}, errors.New("command cannot be empty")
@@ -228,19 +222,14 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	}
 
 	waitUntilDone := true
+	if options.wait != nil {
+		waitUntilDone = *options.wait
+	}
 	req := apispec.CreateContextRequest{
 		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
 		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
 		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
 	}
-	cmdReq := apispec.CreateCMDContextRequest{Command: options.command}
-	if options.exposePort != nil {
-		cmdReq.ExposePort = apispec.NewOptInt32(*options.exposePort)
-	}
-	if options.exposeResume != nil {
-		cmdReq.ExposeResume = apispec.NewOptBool(*options.exposeResume)
-	}
-	req.Cmd = apispec.NewOptCreateCMDContextRequest(cmdReq)
 	if options.cwd != nil {
 		req.Cwd = apispec.NewOptString(*options.cwd)
 	}
@@ -263,7 +252,6 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if contextResp == nil {
 		return CmdResult{}, errors.New("create context returned nil response")
 	}
-	defer s.DeleteContext(ctx, contextResp.ID)
 
 	output := ""
 	if value, ok := contextResp.Output.Get(); ok {
@@ -310,7 +298,7 @@ type streamOutputMessage struct {
 }
 
 // RunStream opens a REPL context WebSocket stream.
-func (s *Sandbox) RunStream(ctx context.Context, language string, input <-chan StreamInput, opts ...RunOption) (<-chan StreamOutput, <-chan error, func() error, error) {
+func (s *Sandbox) RunStream(ctx context.Context, language string, input <-chan StreamInput, opts ...RunOption) (<-chan StreamOutput, <-chan error, func() error, string, error) {
 	options := runOptions{}
 	for _, opt := range opts {
 		opt(&options)
@@ -318,22 +306,24 @@ func (s *Sandbox) RunStream(ctx context.Context, language string, input <-chan S
 
 	contextID, err := s.ensureReplContext(ctx, language, options)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, "", err
 	}
 
 	conn, _, err := s.ConnectWSContext(ctx, contextID)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, "", err
 	}
 
 	outputs, errs, closeFn := s.streamContext(ctx, contextID, conn, input, nil)
-	return outputs, errs, closeFn, nil
+	return outputs, errs, closeFn, contextID, nil
 }
 
 // CmdStream opens a CMD context WebSocket stream.
-func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan StreamInput, opts ...CmdOption) (<-chan StreamOutput, <-chan error, func() error, error) {
+// By default, it does not wait for command completion (async). Use WithCmdWait(true) to wait.
+// The context is not automatically deleted; use DeleteContext to clean up when done.
+func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan StreamInput, opts ...CmdOption) (<-chan StreamOutput, <-chan error, func() error, string, error) {
 	if strings.TrimSpace(cmd) == "" {
-		return nil, nil, nil, errors.New("command cannot be empty")
+		return nil, nil, nil, "", errors.New("command cannot be empty")
 	}
 
 	options := cmdOptions{}
@@ -344,28 +334,23 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 	if options.command == nil {
 		parsed, err := parseCommand(cmd)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, "", err
 		}
 		options.command = parsed
 	}
 	if len(options.command) == 0 {
-		return nil, nil, nil, errors.New("command cannot be empty")
+		return nil, nil, nil, "", errors.New("command cannot be empty")
 	}
 
 	waitUntilDone := false
+	if options.wait != nil {
+		waitUntilDone = *options.wait
+	}
 	req := apispec.CreateContextRequest{
 		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
 		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
 		WaitUntilDone: apispec.NewOptBool(waitUntilDone),
 	}
-	cmdReq := apispec.CreateCMDContextRequest{Command: options.command}
-	if options.exposePort != nil {
-		cmdReq.ExposePort = apispec.NewOptInt32(*options.exposePort)
-	}
-	if options.exposeResume != nil {
-		cmdReq.ExposeResume = apispec.NewOptBool(*options.exposeResume)
-	}
-	req.Cmd = apispec.NewOptCreateCMDContextRequest(cmdReq)
 	if options.cwd != nil {
 		req.Cwd = apispec.NewOptString(*options.cwd)
 	}
@@ -383,31 +368,19 @@ func (s *Sandbox) CmdStream(ctx context.Context, cmd string, input <-chan Stream
 	}
 	contextResp, err := s.CreateContext(ctx, req)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, "", err
 	}
 	if contextResp == nil {
-		return nil, nil, nil, errors.New("create context returned nil response")
+		return nil, nil, nil, "", errors.New("create context returned nil response")
 	}
 
 	conn, _, err := s.ConnectWSContext(ctx, contextResp.ID)
 	if err != nil {
-		cleanupContext(s, contextResp.ID)
-		return nil, nil, nil, err
+		return nil, nil, nil, "", err
 	}
 
-	outputs, errs, closeFn := s.streamContext(ctx, contextResp.ID, conn, input, func() {
-		cleanupContext(s, contextResp.ID)
-	})
-	return outputs, errs, closeFn, nil
-}
-
-func cleanupContext(s *Sandbox, contextID string) {
-	if contextID == "" {
-		return
-	}
-	cleanupCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	_, _ = s.DeleteContext(cleanupCtx, contextID)
+	outputs, errs, closeFn := s.streamContext(ctx, contextResp.ID, conn, input, nil)
+	return outputs, errs, closeFn, contextResp.ID, nil
 }
 
 func normalizeStreamInput(input StreamInput) (StreamInput, error) {
