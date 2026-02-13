@@ -61,7 +61,7 @@ func main() {
 	fmt.Println("Verifying server is running...")
 	resp, err := sandbox.Cmd(ctx, "curl -s http://localhost:8080/index.html")
 	must(err)
-	fmt.Printf("Server response: \n%s\n", resp.Output)
+	fmt.Printf("Server response: \n%s\n", resp.OutputRaw)
 
 	// List all exposed ports
 	allPorts, err := sandbox.GetExposedPorts(ctx)

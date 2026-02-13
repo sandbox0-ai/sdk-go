@@ -78,7 +78,7 @@ func main() {
 	// Use CMD to read the file from inside the sandbox.
 	runResult, err := sandbox.Cmd(ctx, `cat /tmp/sdk-go/hello.txt`)
 	must(err)
-	fmt.Printf("run output:\n%s", runResult.Output)
+	fmt.Printf("run output:\n%s", runResult.OutputRaw)
 }
 
 func must(err error) {

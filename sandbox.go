@@ -32,14 +32,14 @@ type Sandbox struct {
 type RunResult struct {
 	SandboxID string
 	ContextID string
-	Output    string
+	OutputRaw string
 }
 
 // CmdResult represents CMD execution output.
 type CmdResult struct {
 	SandboxID string
 	ContextID string
-	Output    string
+	OutputRaw string
 }
 
 type runOptions struct {
@@ -125,7 +125,7 @@ func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOp
 	return RunResult{
 		SandboxID: s.ID,
 		ContextID: contextID,
-		Output:    execResp.Output,
+		OutputRaw: execResp.OutputRaw,
 	}, nil
 }
 
@@ -253,15 +253,15 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 		return CmdResult{}, errors.New("create context returned nil response")
 	}
 
-	output := ""
-	if value, ok := contextResp.Output.Get(); ok {
-		output = value
+	outputRaw := ""
+	if value, ok := contextResp.OutputRaw.Get(); ok {
+		outputRaw = value
 	}
 
 	return CmdResult{
 		SandboxID: s.ID,
 		ContextID: contextResp.ID,
-		Output:    output,
+		OutputRaw: outputRaw,
 	}, nil
 }
 

@@ -38,7 +38,7 @@ func main() {
 	const shell = `/bin/curl -s -o /dev/null -w "%{http_code}\n" --max-time 3 https://github.com`
 	resp, err := sandbox.Cmd(ctx, shell)
 	must(err)
-	fmt.Println(resp.Output)
+	fmt.Println(resp.OutputRaw)
 
 	// Block all traffic
 	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
@@ -48,7 +48,7 @@ func main() {
 
 	resp, err = sandbox.Cmd(ctx, shell)
 	must(err)
-	fmt.Println(resp.Output)
+	fmt.Println(resp.OutputRaw)
 
 	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
 		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
@@ -60,7 +60,7 @@ func main() {
 
 	resp, err = sandbox.Cmd(ctx, shell)
 	must(err)
-	fmt.Println(resp.Output)
+	fmt.Println(resp.OutputRaw)
 }
 
 func must(err error) {

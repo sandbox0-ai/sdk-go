@@ -2453,13 +2453,13 @@ func (s *ContextExecResponse) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *ContextExecResponse) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("output")
-		e.Str(s.Output)
+		e.FieldStart("output_raw")
+		e.Str(s.OutputRaw)
 	}
 }
 
 var jsonFieldsNameOfContextExecResponse = [1]string{
-	0: "output",
+	0: "output_raw",
 }
 
 // Decode decodes ContextExecResponse from json.
@@ -2471,17 +2471,17 @@ func (s *ContextExecResponse) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "output":
+		case "output_raw":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
-				s.Output = string(v)
+				s.OutputRaw = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"output\"")
+				return errors.Wrap(err, "decode field \"output_raw\"")
 			}
 		default:
 			return d.Skip()
@@ -2831,9 +2831,9 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 		e.Str(s.CreatedAt)
 	}
 	{
-		if s.Output.Set {
-			e.FieldStart("output")
-			s.Output.Encode(e)
+		if s.OutputRaw.Set {
+			e.FieldStart("output_raw")
+			s.OutputRaw.Encode(e)
 		}
 	}
 }
@@ -2847,7 +2847,7 @@ var jsonFieldsNameOfContextResponse = [9]string{
 	5: "running",
 	6: "paused",
 	7: "created_at",
-	8: "output",
+	8: "output_raw",
 }
 
 // Decode decodes ContextResponse from json.
@@ -2947,15 +2947,15 @@ func (s *ContextResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
-		case "output":
+		case "output_raw":
 			if err := func() error {
-				s.Output.Reset()
-				if err := s.Output.Decode(d); err != nil {
+				s.OutputRaw.Reset()
+				if err := s.OutputRaw.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"output\"")
+				return errors.Wrap(err, "decode field \"output_raw\"")
 			}
 		default:
 			return d.Skip()

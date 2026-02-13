@@ -704,17 +704,18 @@ func (s *ContainerSpec) SetSecurityContext(val OptSecurityContext) {
 
 // Ref: #/components/schemas/ContextExecResponse
 type ContextExecResponse struct {
-	Output string `json:"output"`
+	// Raw PTY output, may contain terminal control characters (e.g. \r).
+	OutputRaw string `json:"output_raw"`
 }
 
-// GetOutput returns the value of Output.
-func (s *ContextExecResponse) GetOutput() string {
-	return s.Output
+// GetOutputRaw returns the value of OutputRaw.
+func (s *ContextExecResponse) GetOutputRaw() string {
+	return s.OutputRaw
 }
 
-// SetOutput sets the value of Output.
-func (s *ContextExecResponse) SetOutput(val string) {
-	s.Output = val
+// SetOutputRaw sets the value of OutputRaw.
+func (s *ContextExecResponse) SetOutputRaw(val string) {
+	s.OutputRaw = val
 }
 
 // Ref: #/components/schemas/ContextInputRequest
@@ -812,7 +813,8 @@ type ContextResponse struct {
 	Running   bool                      `json:"running"`
 	Paused    bool                      `json:"paused"`
 	CreatedAt string                    `json:"created_at"`
-	Output    OptString                 `json:"output"`
+	// Raw PTY output for CMD contexts with wait=true, may contain terminal control characters.
+	OutputRaw OptString `json:"output_raw"`
 }
 
 // GetID returns the value of ID.
@@ -855,9 +857,9 @@ func (s *ContextResponse) GetCreatedAt() string {
 	return s.CreatedAt
 }
 
-// GetOutput returns the value of Output.
-func (s *ContextResponse) GetOutput() OptString {
-	return s.Output
+// GetOutputRaw returns the value of OutputRaw.
+func (s *ContextResponse) GetOutputRaw() OptString {
+	return s.OutputRaw
 }
 
 // SetID sets the value of ID.
@@ -900,9 +902,9 @@ func (s *ContextResponse) SetCreatedAt(val string) {
 	s.CreatedAt = val
 }
 
-// SetOutput sets the value of Output.
-func (s *ContextResponse) SetOutput(val OptString) {
-	s.Output = val
+// SetOutputRaw sets the value of OutputRaw.
+func (s *ContextResponse) SetOutputRaw(val OptString) {
+	s.OutputRaw = val
 }
 
 type ContextResponseEnvVars map[string]string

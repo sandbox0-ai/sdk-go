@@ -38,7 +38,7 @@ print(os.getenv("GREETING"))`,
 		sandbox0.WithIdleTimeout(60),
 	)
 	must(err)
-	fmt.Print(runResult.Output)
+	fmt.Print(runResult.OutputRaw)
 
 	// Run a one-shot command with its own context options.
 	cmdResult, err := sandbox.Cmd(
@@ -50,7 +50,7 @@ print(os.getenv("GREETING"))`,
 		sandbox0.WithCmdIdleTimeout(60),
 	)
 	must(err)
-	fmt.Printf("cmd output:\n%s", cmdResult.Output)
+	fmt.Printf("cmd output:\n%s", cmdResult.OutputRaw)
 }
 
 func must(err error) {
