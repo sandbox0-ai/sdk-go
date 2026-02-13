@@ -94,7 +94,7 @@ func TestSandboxStreams(t *testing.T) {
 	}
 	defer func() {
 		_ = cmdClose()
-		_ = sandbox.DeleteContext(ctx, cmdCtxID)
+		_, _ = sandbox.DeleteContext(ctx, cmdCtxID)
 	}()
 	time.AfterFunc(2*time.Second, func() {
 		_ = cmdClose()

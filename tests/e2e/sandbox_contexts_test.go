@@ -75,9 +75,7 @@ func TestSandboxContextOperations(t *testing.T) {
 	cmdReq := apispec.CreateContextRequest{
 		Type: apispec.NewOptProcessType(apispec.ProcessTypeCmd),
 		Cmd: apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{
-			Command:      []string{"/bin/sh", "-lc", "echo sdk-e2e"},
-			ExposePort:   apispec.NewOptInt32(3000),
-			ExposeResume: apispec.NewOptBool(false),
+			Command: []string{"/bin/sh", "-lc", "echo sdk-e2e"},
 		}),
 		WaitUntilDone: apispec.NewOptBool(true),
 	}

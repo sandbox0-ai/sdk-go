@@ -70,20 +70,6 @@ func main() {
 	for _, p := range allPorts.Ports {
 		fmt.Printf("  - Port: %d, Resume: %v, PublicURL: %s\n", p.Port, p.Resume, p.PublicURL)
 	}
-
-	// Remove the exposed port
-	fmt.Println("Removing exposed port 8080...")
-	remainingPorts, err := sandbox.UnexposePort(ctx, 8080)
-	must(err)
-	fmt.Printf("Remaining exposed ports: %+v\n", remainingPorts.Ports)
-
-	// Clean up exposed ports
-	fmt.Println("Clearing all exposed ports...")
-	err = sandbox.ClearExposedPorts(ctx)
-	must(err)
-	fmt.Println("All exposed ports cleared")
-
-	fmt.Println("Done!")
 }
 
 func must(err error) {
