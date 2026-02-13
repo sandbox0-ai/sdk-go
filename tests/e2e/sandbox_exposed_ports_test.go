@@ -15,7 +15,7 @@ func TestSandboxExposedPorts(t *testing.T) {
 	cfg := loadE2EConfig(t)
 	token := e2eToken(t, cfg)
 	client := newClientWithToken(t, cfg, token)
-	sandbox := claimSandbox(t, client, cfg)
+	sandbox := claimSandbox(t, client, cfg, sandbox0.WithSandboxAutoResume(true))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
