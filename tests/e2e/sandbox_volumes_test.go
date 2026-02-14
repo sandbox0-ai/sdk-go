@@ -38,13 +38,14 @@ func TestSandboxMounts(t *testing.T) {
 	})
 
 	mountPoint := fmt.Sprintf("/mnt/sdk-e2e-%d", time.Now().UnixNano())
-	if _, err := sandbox.Mount(ctx, volume.ID, mountPoint, nil); err != nil {
+	mountResp, err := sandbox.Mount(ctx, volume.ID, mountPoint, nil)
+	if err != nil {
 		t.Fatalf("mount failed: %v", err)
 	}
 	if _, err := sandbox.MountStatus(ctx); err != nil {
 		t.Fatalf("mount status failed: %v", err)
 	}
-	if _, err := sandbox.Unmount(ctx, volume.ID); err != nil {
+	if _, err := sandbox.Unmount(ctx, volume.ID, mountResp.MountSessionID); err != nil {
 		t.Fatalf("unmount failed: %v", err)
 	}
 

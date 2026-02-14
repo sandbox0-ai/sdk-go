@@ -36,9 +36,9 @@ func main() {
 	fmt.Printf("volume created: %s\n", volumeID)
 
 	// Mount the volume into the sandbox, write a file, then unmount.
-	_, err = sandbox.Mount(ctx, volumeID, "/mnt/data", nil)
+	mountResp, err := sandbox.Mount(ctx, volumeID, "/mnt/data", nil)
 	must(err)
-	defer sandbox.Unmount(ctx, volumeID)
+	defer sandbox.Unmount(ctx, volumeID, mountResp.MountSessionID)
 	fmt.Printf("volume mounted: %s\n", volumeID)
 
 	_, err = sandbox.WriteFile(ctx, "/mnt/data/hello.txt", []byte("hello volume\n"))
@@ -77,9 +77,9 @@ func main() {
 	defer client.DeleteSandbox(ctx, sandbox2.ID)
 	fmt.Printf("new sandbox created: %s\n", sandbox2.ID)
 
-	_, err = sandbox2.Mount(ctx, volumeID, "/mnt/data", nil)
+	mountResp2, err := sandbox2.Mount(ctx, volumeID, "/mnt/data", nil)
 	must(err)
-	defer sandbox2.Unmount(ctx, volumeID)
+	defer sandbox2.Unmount(ctx, volumeID, mountResp2.MountSessionID)
 
 	readResult, err = sandbox2.ReadFile(ctx, "/mnt/data/hello.txt")
 	must(err)

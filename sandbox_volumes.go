@@ -27,9 +27,10 @@ func (s *Sandbox) Mount(ctx context.Context, volumeID, mountPoint string, config
 }
 
 // Unmount unmounts a volume from a sandbox.
-func (s *Sandbox) Unmount(ctx context.Context, volumeID string) (*apispec.SuccessUnmountedResponse, error) {
+func (s *Sandbox) Unmount(ctx context.Context, volumeID, mountSessionID string) (*apispec.SuccessUnmountedResponse, error) {
 	req := apispec.UnmountRequest{
 		SandboxvolumeID: volumeID,
+		MountSessionID:  mountSessionID,
 	}
 	resp, err := s.client.api.APIV1SandboxesIDSandboxvolumesUnmountPost(ctx, &req, apispec.APIV1SandboxesIDSandboxvolumesUnmountPostParams{ID: s.ID})
 	if err != nil {

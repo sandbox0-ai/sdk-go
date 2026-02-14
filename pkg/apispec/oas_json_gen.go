@@ -6403,12 +6403,17 @@ func (s *MountResponse) encodeFields(e *jx.Encoder) {
 		e.FieldStart("mounted_at")
 		e.Str(s.MountedAt)
 	}
+	{
+		e.FieldStart("mount_session_id")
+		e.Str(s.MountSessionID)
+	}
 }
 
-var jsonFieldsNameOfMountResponse = [3]string{
+var jsonFieldsNameOfMountResponse = [4]string{
 	0: "sandboxvolume_id",
 	1: "mount_point",
 	2: "mounted_at",
+	3: "mount_session_id",
 }
 
 // Decode decodes MountResponse from json.
@@ -6456,6 +6461,18 @@ func (s *MountResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"mounted_at\"")
 			}
+		case "mount_session_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.MountSessionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_session_id\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -6466,7 +6483,7 @@ func (s *MountResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -6545,13 +6562,20 @@ func (s *MountStatus) encodeFields(e *jx.Encoder) {
 			s.MountedDurationSec.Encode(e)
 		}
 	}
+	{
+		if s.MountSessionID.Set {
+			e.FieldStart("mount_session_id")
+			s.MountSessionID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfMountStatus = [4]string{
+var jsonFieldsNameOfMountStatus = [5]string{
 	0: "sandboxvolume_id",
 	1: "mount_point",
 	2: "mounted_at",
 	3: "mounted_duration_sec",
+	4: "mount_session_id",
 }
 
 // Decode decodes MountStatus from json.
@@ -6601,6 +6625,16 @@ func (s *MountStatus) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"mounted_duration_sec\"")
+			}
+		case "mount_session_id":
+			if err := func() error {
+				s.MountSessionID.Reset()
+				if err := s.MountSessionID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_session_id\"")
 			}
 		default:
 			return d.Skip()
@@ -24405,10 +24439,15 @@ func (s *UnmountRequest) encodeFields(e *jx.Encoder) {
 		e.FieldStart("sandboxvolume_id")
 		e.Str(s.SandboxvolumeID)
 	}
+	{
+		e.FieldStart("mount_session_id")
+		e.Str(s.MountSessionID)
+	}
 }
 
-var jsonFieldsNameOfUnmountRequest = [1]string{
+var jsonFieldsNameOfUnmountRequest = [2]string{
 	0: "sandboxvolume_id",
+	1: "mount_session_id",
 }
 
 // Decode decodes UnmountRequest from json.
@@ -24432,6 +24471,18 @@ func (s *UnmountRequest) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"sandboxvolume_id\"")
 			}
+		case "mount_session_id":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.MountSessionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_session_id\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -24442,7 +24493,7 @@ func (s *UnmountRequest) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

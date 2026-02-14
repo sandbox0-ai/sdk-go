@@ -2142,6 +2142,7 @@ type MountResponse struct {
 	SandboxvolumeID string `json:"sandboxvolume_id"`
 	MountPoint      string `json:"mount_point"`
 	MountedAt       string `json:"mounted_at"`
+	MountSessionID  string `json:"mount_session_id"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
@@ -2159,6 +2160,11 @@ func (s *MountResponse) GetMountedAt() string {
 	return s.MountedAt
 }
 
+// GetMountSessionID returns the value of MountSessionID.
+func (s *MountResponse) GetMountSessionID() string {
+	return s.MountSessionID
+}
+
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
 func (s *MountResponse) SetSandboxvolumeID(val string) {
 	s.SandboxvolumeID = val
@@ -2174,12 +2180,18 @@ func (s *MountResponse) SetMountedAt(val string) {
 	s.MountedAt = val
 }
 
+// SetMountSessionID sets the value of MountSessionID.
+func (s *MountResponse) SetMountSessionID(val string) {
+	s.MountSessionID = val
+}
+
 // Ref: #/components/schemas/MountStatus
 type MountStatus struct {
 	SandboxvolumeID    OptString `json:"sandboxvolume_id"`
 	MountPoint         OptString `json:"mount_point"`
 	MountedAt          OptString `json:"mounted_at"`
 	MountedDurationSec OptInt64  `json:"mounted_duration_sec"`
+	MountSessionID     OptString `json:"mount_session_id"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
@@ -2202,6 +2214,11 @@ func (s *MountStatus) GetMountedDurationSec() OptInt64 {
 	return s.MountedDurationSec
 }
 
+// GetMountSessionID returns the value of MountSessionID.
+func (s *MountStatus) GetMountSessionID() OptString {
+	return s.MountSessionID
+}
+
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
 func (s *MountStatus) SetSandboxvolumeID(val OptString) {
 	s.SandboxvolumeID = val
@@ -2220,6 +2237,11 @@ func (s *MountStatus) SetMountedAt(val OptString) {
 // SetMountedDurationSec sets the value of MountedDurationSec.
 func (s *MountStatus) SetMountedDurationSec(val OptInt64) {
 	s.MountedDurationSec = val
+}
+
+// SetMountSessionID sets the value of MountSessionID.
+func (s *MountStatus) SetMountSessionID(val OptString) {
+	s.MountSessionID = val
 }
 
 // Ref: #/components/schemas/MoveFileRequest
@@ -10850,6 +10872,7 @@ func (s *TplSandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 // Ref: #/components/schemas/UnmountRequest
 type UnmountRequest struct {
 	SandboxvolumeID string `json:"sandboxvolume_id"`
+	MountSessionID  string `json:"mount_session_id"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
@@ -10857,9 +10880,19 @@ func (s *UnmountRequest) GetSandboxvolumeID() string {
 	return s.SandboxvolumeID
 }
 
+// GetMountSessionID returns the value of MountSessionID.
+func (s *UnmountRequest) GetMountSessionID() string {
+	return s.MountSessionID
+}
+
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
 func (s *UnmountRequest) SetSandboxvolumeID(val string) {
 	s.SandboxvolumeID = val
+}
+
+// SetMountSessionID sets the value of MountSessionID.
+func (s *UnmountRequest) SetMountSessionID(val string) {
+	s.MountSessionID = val
 }
 
 // Ref: #/components/schemas/UpdateExposedPortsRequest
