@@ -4,11 +4,16 @@ package sandbox0_test
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"net"
 	"testing"
 	"time"
 
+	"github.com/gorilla/websocket"
 	sandbox0 "github.com/sandbox0-ai/sdk-go"
+	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 func TestSandboxRunAndCmd(t *testing.T) {
@@ -68,74 +73,108 @@ func TestSandboxStreams(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 
-	runInput := make(chan sandbox0.StreamInput, 1)
-	outputs, errs, closeFn, _, err := sandbox.RunStream(ctx, "python", runInput)
-	if err != nil {
-		t.Fatalf("run stream failed: %v", err)
-	}
-	defer func() { _ = closeFn() }()
-	runInput <- sandbox0.StreamInput{Type: sandbox0.StreamInputTypeInput, Data: "print('stream')\n"}
-	close(runInput)
-	time.AfterFunc(1500*time.Millisecond, func() {
-		_ = closeFn()
+	// Test REPL stream via WebSocket
+	t.Run("repl_stream", func(t *testing.T) {
+		ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+			Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
+			Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
+				Language: apispec.NewOptString("python"),
+			}),
+		})
+		if err != nil {
+			t.Fatalf("create repl context failed: %v", err)
+		}
+
+		conn, _, err := sandbox.ConnectWSContext(ctx, ctxResp.ID)
+		if err != nil {
+			t.Fatalf("connect websocket failed: %v", err)
+		}
+		defer conn.Close()
+
+		// Send input
+		msg := map[string]any{
+			"type":       "input",
+			"data":       "print('stream')\n",
+			"request_id": "req-1",
+		}
+		if err := conn.WriteJSON(msg); err != nil {
+			t.Fatalf("write message failed: %v", err)
+		}
+
+		// Read output with timeout
+		received, err := readWSUntilClosed(ctx, conn, 10*time.Second)
+		if err != nil {
+			t.Fatalf("read stream error: %v", err)
+		}
+		if !received {
+			t.Fatalf("repl stream did not produce output")
+		}
 	})
 
-	runReceived, err := readStreamUntilClosed(ctx, outputs, errs, 20*time.Second)
-	if err != nil {
-		t.Fatalf("run stream error: %v", err)
-	}
-	if !runReceived {
-		t.Fatalf("run stream did not produce output")
-	}
+	// Test CMD stream via WebSocket
+	t.Run("cmd_stream", func(t *testing.T) {
+		ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+			Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
+			Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: []string{"sh", "-c", "echo stream"}}),
+			WaitUntilDone: apispec.NewOptBool(false),
+		})
+		if err != nil {
+			t.Fatalf("create cmd context failed: %v", err)
+		}
+		defer sandbox.DeleteContext(ctx, ctxResp.ID)
 
-	cmdOutputs, cmdErrs, cmdClose, cmdCtxID, err := sandbox.CmdStream(ctx, "sh -c \"echo stream\"", nil)
-	if err != nil {
-		t.Fatalf("cmd stream failed: %v", err)
-	}
-	defer func() {
-		_ = cmdClose()
-		_, _ = sandbox.DeleteContext(ctx, cmdCtxID)
-	}()
-	time.AfterFunc(2*time.Second, func() {
-		_ = cmdClose()
+		conn, _, err := sandbox.ConnectWSContext(ctx, ctxResp.ID)
+		if err != nil {
+			t.Fatalf("connect websocket failed: %v", err)
+		}
+		defer conn.Close()
+
+		received, err := readWSUntilClosed(ctx, conn, 10*time.Second)
+		if err != nil {
+			t.Fatalf("read stream error: %v", err)
+		}
+		if !received {
+			t.Fatalf("cmd stream did not produce output")
+		}
 	})
-
-	cmdReceived, err := readStreamUntilClosed(ctx, cmdOutputs, cmdErrs, 20*time.Second)
-	if err != nil {
-		t.Fatalf("cmd stream error: %v", err)
-	}
-	if !cmdReceived {
-		t.Fatalf("cmd stream did not produce output")
-	}
 }
 
-func readStreamUntilClosed(
-	ctx context.Context,
-	outputs <-chan sandbox0.StreamOutput,
-	errs <-chan error,
-	timeout time.Duration,
-) (bool, error) {
+func readWSUntilClosed(ctx context.Context, conn *websocket.Conn, timeout time.Duration) (bool, error) {
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()
 
 	received := false
 	for {
 		select {
-		case output, ok := <-outputs:
-			if !ok {
-				return received, nil
-			}
-			if output.Data != "" || output.Source != "" {
-				received = true
-			}
-		case err, ok := <-errs:
-			if ok && err != nil {
-				return received, err
-			}
 		case <-timer.C:
 			return received, fmt.Errorf("stream timed out after %s", timeout)
 		case <-ctx.Done():
 			return received, ctx.Err()
+		default:
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				if isWsClosed(err) {
+					return received, nil
+				}
+				return received, err
+			}
+			var msg struct {
+				Source string `json:"source"`
+				Data   string `json:"data"`
+			}
+			if err := json.Unmarshal(message, &msg); err != nil {
+				continue
+			}
+			if msg.Data != "" || msg.Source != "" {
+				received = true
+			}
 		}
 	}
+}
+
+func isWsClosed(err error) bool {
+	if errors.Is(err, net.ErrClosed) {
+		return true
+	}
+	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)
 }
