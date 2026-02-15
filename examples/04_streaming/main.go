@@ -30,7 +30,11 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			log.Printf("cleanup delete sandbox %s: %v", sandbox.ID, err)
+		}
+	}()
 
 	// Example 1: REPL stream using raw WebSocket
 	fmt.Println("REPL stream:")
@@ -58,7 +62,11 @@ func runReplStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Printf("close websocket connection: %v", err)
+		}
+	}()
 
 	// 3. Handle WebSocket read/write
 	var wg sync.WaitGroup
@@ -106,11 +114,13 @@ func runReplStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
 	// Wait briefly then close
 	time.Sleep(500 * time.Millisecond)
 	close(done)
-	conn.WriteControl(
+	if err := conn.WriteControl(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 		time.Now().Add(time.Second),
-	)
+	); err != nil {
+		log.Printf("write websocket close control: %v", err)
+	}
 
 	wg.Wait()
 	return nil
@@ -126,14 +136,22 @@ func runCmdStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
 	if err != nil {
 		return err
 	}
-	defer sandbox.DeleteContext(ctx, ctxResp.ID)
+	defer func() {
+		if _, err := sandbox.DeleteContext(ctx, ctxResp.ID); err != nil {
+			log.Printf("cleanup delete context %s: %v", ctxResp.ID, err)
+		}
+	}()
 
 	// 2. Connect WebSocket
 	conn, _, err := sandbox.ConnectWSContext(ctx, ctxResp.ID)
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Printf("close websocket connection: %v", err)
+		}
+	}()
 
 	// 3. Read outputs until stream closes
 	for {

@@ -29,7 +29,11 @@ func main() {
 		}),
 	)
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			fmt.Printf("cleanup delete sandbox %s: %v\n", sandbox.ID, err)
+		}
+	}()
 
 	current, err := sandbox.GetNetworkPolicy(ctx)
 	must(err)

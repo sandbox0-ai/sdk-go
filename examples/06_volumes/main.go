@@ -24,7 +24,11 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			fmt.Printf("cleanup delete sandbox %s: %v\n", sandbox.ID, err)
+		}
+	}()
 
 	// Create a volume and ensure cleanup.
 	volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{
@@ -32,13 +36,21 @@ func main() {
 	})
 	must(err)
 	volumeID := volume.ID
-	defer client.DeleteVolume(ctx, volumeID)
+	defer func() {
+		if _, err := client.DeleteVolume(ctx, volumeID); err != nil {
+			fmt.Printf("cleanup delete volume %s: %v\n", volumeID, err)
+		}
+	}()
 	fmt.Printf("volume created: %s\n", volumeID)
 
 	// Mount the volume into the sandbox, write a file, then unmount.
 	mountResp, err := sandbox.Mount(ctx, volumeID, "/mnt/data", nil)
 	must(err)
-	defer sandbox.Unmount(ctx, volumeID, mountResp.MountSessionID)
+	defer func() {
+		if _, err := sandbox.Unmount(ctx, volumeID, mountResp.MountSessionID); err != nil {
+			fmt.Printf("cleanup unmount volume %s in sandbox %s: %v\n", volumeID, sandbox.ID, err)
+		}
+	}()
 	fmt.Printf("volume mounted: %s\n", volumeID)
 
 	_, err = sandbox.WriteFile(ctx, "/mnt/data/hello.txt", []byte("hello volume\n"))
@@ -74,12 +86,20 @@ func main() {
 	// Create a new sandbox
 	sandbox2, err := client.ClaimSandbox(ctx, "default")
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox2.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox2.ID); err != nil {
+			fmt.Printf("cleanup delete sandbox %s: %v\n", sandbox2.ID, err)
+		}
+	}()
 	fmt.Printf("new sandbox created: %s\n", sandbox2.ID)
 
 	mountResp2, err := sandbox2.Mount(ctx, volumeID, "/mnt/data", nil)
 	must(err)
-	defer sandbox2.Unmount(ctx, volumeID, mountResp2.MountSessionID)
+	defer func() {
+		if _, err := sandbox2.Unmount(ctx, volumeID, mountResp2.MountSessionID); err != nil {
+			fmt.Printf("cleanup unmount volume %s in sandbox %s: %v\n", volumeID, sandbox2.ID, err)
+		}
+	}()
 
 	readResult, err = sandbox2.ReadFile(ctx, "/mnt/data/hello.txt")
 	must(err)

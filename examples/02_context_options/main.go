@@ -23,7 +23,11 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			fmt.Printf("cleanup delete sandbox %s: %v\n", sandbox.ID, err)
+		}
+	}()
 
 	// Run with REPL options: working dir, env, temporary context, TTL/idle timeout.
 	runResult, err := sandbox.Run(

@@ -24,7 +24,11 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			fmt.Printf("cleanup delete sandbox %s: %v\n", sandbox.ID, err)
+		}
+	}()
 
 	dir := "/tmp/sdk-go"
 	path := dir + "/hello.txt"
@@ -57,7 +61,11 @@ func main() {
 	defer watchCancel()
 	events, errs, unsubscribe, err := sandbox.WatchFiles(watchCtx, dir, true)
 	must(err)
-	defer unsubscribe()
+	defer func() {
+		if err := unsubscribe(); err != nil {
+			fmt.Printf("cleanup unsubscribe watch: %v\n", err)
+		}
+	}()
 
 	_, err = sandbox.WriteFile(ctx, path, []byte("hello from file\nsecond line\n"))
 	must(err)

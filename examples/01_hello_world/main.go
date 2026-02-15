@@ -24,7 +24,11 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default", sandbox0.WithSandboxHardTTL(300))
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			log.Printf("cleanup delete sandbox %s: %v", sandbox.ID, err)
+		}
+	}()
 
 	// Run a REPL-style snippet (stateful; env/vars preserved between Run calls).
 	runResult, err := sandbox.Run(ctx, "python", `x=2`)
@@ -37,11 +41,11 @@ func main() {
 
 	// Run a one-shot command (stateless; env/vars not preserved between Cmd calls).
 	fmt.Println("\nRunning command: /bin/sh -c \"x=3\"")
-	cmdResult, err := sandbox.Cmd(ctx, `/bin/sh -c "x=3"`)
+	_, err = sandbox.Cmd(ctx, `/bin/sh -c "x=3"`)
 	must(err)
 
 	fmt.Println("Running command: /bin/sh -c \"echo $x\"")
-	cmdResult, err = sandbox.Cmd(ctx, `/bin/sh -c "echo $x"`)
+	cmdResult, err := sandbox.Cmd(ctx, `/bin/sh -c "echo $x"`)
 	must(err)
 	fmt.Print(cmdResult.OutputRaw)
 }

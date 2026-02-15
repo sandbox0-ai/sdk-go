@@ -37,7 +37,11 @@ func main() {
 		sandbox0.WithSandboxWebhookWatchDir(baseDir),
 	)
 	must(err)
-	defer client.DeleteSandbox(ctx, sandbox.ID)
+	defer func() {
+		if _, err := client.DeleteSandbox(ctx, sandbox.ID); err != nil {
+			log.Printf("cleanup delete sandbox %s: %v", sandbox.ID, err)
+		}
+	}()
 
 	// Process started/exited events (exit code 0).
 	_, err = sandbox.Run(ctx, "bash", `echo webhook test`)

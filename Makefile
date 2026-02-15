@@ -1,4 +1,4 @@
-.PHONY: apispec ogen test test-e2e lint check build set-version tag publish release
+.PHONY: apispec ogen golangci-lint test test-e2e lint check build set-version tag publish release
 
 # Version for publishing (usage: make publish v=0.1.0)
 v ?=
@@ -14,9 +14,8 @@ test:
 	go test -v -race -cover ./...
 
 # Lint with golangci-lint
-lint:
-	@which golangci-lint > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
-	golangci-lint run ./...
+lint: golangci-lint
+	$(GOLANGCI_LINT) run ./...
 
 # Build verification
 build:
@@ -65,6 +64,14 @@ release: publish
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
+
+GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint
+GOLANGCI_LINT_VERSION ?= v2.8.0
+
+golangci-lint: $(GOLANGCI_LINT)
+$(GOLANGCI_LINT): $(LOCALBIN)
+	@test -s $(GOLANGCI_LINT) && $(GOLANGCI_LINT) version | grep -q "$(GOLANGCI_LINT_VERSION)" || \
+	GOBIN=$(LOCALBIN) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 OGEN ?= $(LOCALBIN)/ogen
 OGEN_VERSION ?= v1.18.0
