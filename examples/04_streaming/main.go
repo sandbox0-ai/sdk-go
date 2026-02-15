@@ -2,12 +2,18 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
+	"sync"
 	"time"
 
+	"github.com/gorilla/websocket"
 	sandbox0 "github.com/sandbox0-ai/sdk-go"
+	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 func main() {
@@ -26,49 +32,136 @@ func main() {
 	must(err)
 	defer client.DeleteSandbox(ctx, sandbox.ID)
 
+	// Example 1: REPL stream using raw WebSocket
 	fmt.Println("REPL stream:")
-	replInput := make(chan sandbox0.StreamInput)
-	replOutputs, replErrs, closeRepl, _, err := sandbox.RunStream(ctx, "python", replInput)
-	must(err)
+	must(runReplStream(ctx, sandbox))
 
-	go func() {
-		replInput <- sandbox0.StreamInput{Type: sandbox0.StreamInputTypeInput, Data: "print('hello from repl')"}
-		replInput <- sandbox0.StreamInput{Type: sandbox0.StreamInputTypeInput, Data: "print(1 + 2)"}
-		close(replInput)
-		time.AfterFunc(500*time.Millisecond, func() {
-			_ = closeRepl()
-		})
-	}()
-
-	must(readStream(ctx, replOutputs, replErrs))
-
+	// Example 2: CMD stream using raw WebSocket
 	fmt.Println("CMD stream:")
-	cmdOutputs, cmdErrs, closeCmd, cmdCtxID, err := sandbox.CmdStream(ctx, `bash -c "for i in 1 2 3; do echo line-$i; done"`, nil)
-	must(err)
-	defer sandbox.DeleteContext(ctx, cmdCtxID)
-	time.AfterFunc(3*time.Second, func() {
-		_ = closeCmd()
-	})
-
-	must(readStream(ctx, cmdOutputs, cmdErrs))
+	must(runCmdStream(ctx, sandbox))
 }
 
-func readStream(ctx context.Context, outputs <-chan sandbox0.StreamOutput, errs <-chan error) error {
-	for {
-		select {
-		case output, ok := <-outputs:
-			if !ok {
-				return nil
+func runReplStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
+	// 1. Create REPL context
+	ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
+		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
+			Language: apispec.NewOptString("python"),
+		}),
+	})
+	if err != nil {
+		return err
+	}
+
+	// 2. Connect WebSocket
+	conn, _, err := sandbox.ConnectWSContext(ctx, ctxResp.ID)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// 3. Handle WebSocket read/write
+	var wg sync.WaitGroup
+	done := make(chan struct{})
+
+	// Reader goroutine
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				if !isWsClosed(err) {
+					log.Printf("read error: %v", err)
+				}
+				return
 			}
-			fmt.Print(output.Data)
-		case err, ok := <-errs:
-			if ok && err != nil {
-				return err
+			var msg struct {
+				Source string `json:"source"`
+				Data   string `json:"data"`
 			}
-		case <-ctx.Done():
-			return ctx.Err()
+			if err := json.Unmarshal(message, &msg); err != nil {
+				continue
+			}
+			fmt.Print(msg.Data)
+		}
+	}()
+
+	// Send inputs
+	inputs := []string{
+		"print('hello from repl')\n",
+		"print(1 + 2)\n",
+	}
+	for _, input := range inputs {
+		msg := map[string]any{
+			"type":       "input",
+			"data":       input,
+			"request_id": fmt.Sprintf("req-%d", time.Now().UnixNano()),
+		}
+		if err := conn.WriteJSON(msg); err != nil {
+			return err
 		}
 	}
+
+	// Wait briefly then close
+	time.Sleep(500 * time.Millisecond)
+	close(done)
+	conn.WriteControl(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+		time.Now().Add(time.Second),
+	)
+
+	wg.Wait()
+	return nil
+}
+
+func runCmdStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
+	// 1. Create CMD context (async, don't wait for completion)
+	ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
+		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: []string{"bash", "-c", "for i in 1 2 3; do echo line-$i; done"}}),
+		WaitUntilDone: apispec.NewOptBool(false),
+	})
+	if err != nil {
+		return err
+	}
+	defer sandbox.DeleteContext(ctx, ctxResp.ID)
+
+	// 2. Connect WebSocket
+	conn, _, err := sandbox.ConnectWSContext(ctx, ctxResp.ID)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// 3. Read outputs until stream closes
+	for {
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			if !isWsClosed(err) {
+				return err
+			}
+			break
+		}
+		var msg struct {
+			Source string `json:"source"`
+			Data   string `json:"data"`
+		}
+		if err := json.Unmarshal(message, &msg); err != nil {
+			continue
+		}
+		fmt.Print(msg.Data)
+	}
+
+	return nil
+}
+
+func isWsClosed(err error) bool {
+	if errors.Is(err, net.ErrClosed) {
+		return true
+	}
+	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)
 }
 
 func must(err error) {
