@@ -5,7 +5,7 @@ package apispec
 // setDefaults set default value of fields.
 func (s *SandboxConfig) setDefaults() {
 	{
-		val := bool(false)
+		val := bool(true)
 		s.AutoResume.SetTo(val)
 	}
 }
