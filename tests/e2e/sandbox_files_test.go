@@ -15,7 +15,7 @@ func TestSandboxFileOperations(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	baseDir := fmt.Sprintf("/tmp/sdk-e2e-%d", time.Now().UnixNano())

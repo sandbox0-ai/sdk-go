@@ -17,7 +17,7 @@ func TestSandboxExposedPorts(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg, sandbox0.WithSandboxAutoResume(true))
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	// Clear any existing ports first to start with a clean state
@@ -139,7 +139,7 @@ func TestSandboxExposedPortsPublicURL(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	// Clear any existing ports first

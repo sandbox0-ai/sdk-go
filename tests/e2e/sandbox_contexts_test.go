@@ -16,7 +16,7 @@ func TestSandboxContextOperations(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	createReq := apispec.CreateContextRequest{
@@ -37,7 +37,7 @@ func TestSandboxContextOperations(t *testing.T) {
 		t.Fatalf("create context returned empty response")
 	}
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = sandbox.DeleteContext(cleanupCtx, contextResp.ID)
 	})
@@ -87,7 +87,7 @@ func TestSandboxContextOperations(t *testing.T) {
 		t.Fatalf("create cmd context returned empty response")
 	}
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = sandbox.DeleteContext(cleanupCtx, cmdResp.ID)
 	})

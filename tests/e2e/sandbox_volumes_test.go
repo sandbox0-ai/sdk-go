@@ -17,7 +17,7 @@ func TestSandboxMounts(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{})
@@ -32,7 +32,7 @@ func TestSandboxMounts(t *testing.T) {
 		if deleted {
 			return
 		}
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = client.DeleteVolume(cleanupCtx, volume.ID)
 	})

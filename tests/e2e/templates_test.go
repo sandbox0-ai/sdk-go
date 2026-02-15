@@ -16,7 +16,7 @@ func TestTemplateCRUD(t *testing.T) {
 	token := e2eToken(t, cfg)
 	client := newClientWithToken(t, cfg, token)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	templates, err := client.ListTemplate(ctx)
@@ -46,7 +46,7 @@ func TestTemplateCRUD(t *testing.T) {
 		if deleted {
 			return
 		}
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = client.DeleteTemplate(cleanupCtx, templateID)
 	})

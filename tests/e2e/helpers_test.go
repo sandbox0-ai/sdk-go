@@ -60,7 +60,7 @@ func loginWithRetry(ctx context.Context, baseURL, email, password string) (strin
 		return "", err
 	}
 
-	deadline := time.Now().Add(3 * time.Minute)
+	deadline := time.Now().Add(15 * time.Second)
 	for {
 		token, err := loginOnce(ctx, apiClient, email, password)
 		if err == nil && strings.TrimSpace(token) != "" {
@@ -75,7 +75,7 @@ func loginWithRetry(ctx context.Context, baseURL, email, password string) (strin
 		select {
 		case <-ctx.Done():
 			return "", ctx.Err()
-		case <-time.After(5 * time.Second):
+		case <-time.After(2 * time.Second):
 		}
 	}
 }
@@ -102,7 +102,7 @@ func loginOnce(ctx context.Context, apiClient *apispec.Client, email, password s
 
 func e2eToken(t *testing.T, cfg e2eConfig) string {
 	t.Helper()
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	token, err := loginWithRetry(ctx, cfg.baseURL, cfg.email, cfg.password)
 	if err != nil {
@@ -116,6 +116,7 @@ func newClientWithToken(t *testing.T, cfg e2eConfig, token string, opts ...sandb
 	allOpts := append([]sandbox0.Option{
 		sandbox0.WithBaseURL(cfg.baseURL),
 		sandbox0.WithToken(token),
+		sandbox0.WithTimeout(30 * time.Second),
 	}, opts...)
 	client, err := sandbox0.NewClient(allOpts...)
 	if err != nil {
@@ -126,7 +127,7 @@ func newClientWithToken(t *testing.T, cfg e2eConfig, token string, opts ...sandb
 
 func claimSandbox(t *testing.T, client *sandbox0.Client, cfg e2eConfig, opts ...sandbox0.SandboxOption) *sandbox0.Sandbox {
 	t.Helper()
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	sandbox, err := client.ClaimSandbox(ctx, cfg.template, opts...)
 	if err != nil {
@@ -136,7 +137,7 @@ func claimSandbox(t *testing.T, client *sandbox0.Client, cfg e2eConfig, opts ...
 		t.Fatalf("claim sandbox returned empty sandbox")
 	}
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = client.DeleteSandbox(cleanupCtx, sandbox.ID)
 	})

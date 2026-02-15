@@ -16,7 +16,7 @@ func TestSandboxLifecycle(t *testing.T) {
 	token := e2eToken(t, cfg)
 	client := newClientWithToken(t, cfg, token)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	sandbox, err := client.ClaimSandbox(
@@ -39,7 +39,7 @@ func TestSandboxLifecycle(t *testing.T) {
 		t.Fatalf("claim sandbox returned empty sandbox")
 	}
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cleanupCancel()
 		_, _ = client.DeleteSandbox(cleanupCtx, sandbox.ID)
 	})
