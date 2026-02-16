@@ -21,6 +21,10 @@ type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
 }
 
+type APIV1SandboxesGetRes interface {
+	aPIV1SandboxesGetRes()
+}
+
 type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
 }

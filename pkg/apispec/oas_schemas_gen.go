@@ -192,6 +192,61 @@ type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
 
+type APIV1SandboxesGetStatus string
+
+const (
+	APIV1SandboxesGetStatusStarting  APIV1SandboxesGetStatus = "starting"
+	APIV1SandboxesGetStatusRunning   APIV1SandboxesGetStatus = "running"
+	APIV1SandboxesGetStatusFailed    APIV1SandboxesGetStatus = "failed"
+	APIV1SandboxesGetStatusCompleted APIV1SandboxesGetStatus = "completed"
+)
+
+// AllValues returns all APIV1SandboxesGetStatus values.
+func (APIV1SandboxesGetStatus) AllValues() []APIV1SandboxesGetStatus {
+	return []APIV1SandboxesGetStatus{
+		APIV1SandboxesGetStatusStarting,
+		APIV1SandboxesGetStatusRunning,
+		APIV1SandboxesGetStatusFailed,
+		APIV1SandboxesGetStatusCompleted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s APIV1SandboxesGetStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case APIV1SandboxesGetStatusStarting:
+		return []byte(s), nil
+	case APIV1SandboxesGetStatusRunning:
+		return []byte(s), nil
+	case APIV1SandboxesGetStatusFailed:
+		return []byte(s), nil
+	case APIV1SandboxesGetStatusCompleted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *APIV1SandboxesGetStatus) UnmarshalText(data []byte) error {
+	switch APIV1SandboxesGetStatus(data) {
+	case APIV1SandboxesGetStatusStarting:
+		*s = APIV1SandboxesGetStatusStarting
+		return nil
+	case APIV1SandboxesGetStatusRunning:
+		*s = APIV1SandboxesGetStatusRunning
+		return nil
+	case APIV1SandboxesGetStatusFailed:
+		*s = APIV1SandboxesGetStatusFailed
+		return nil
+	case APIV1SandboxesGetStatusCompleted:
+		*s = APIV1SandboxesGetStatusCompleted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
 
@@ -1539,6 +1594,7 @@ func (s *ErrorEnvelope) SetError(val Error) {
 
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIKeysPostRes()                                 {}
+func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()          {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()             {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()      {}
@@ -2442,6 +2498,52 @@ func (s *NodeSelectorTerm) SetMatchExpressions(val []NodeSelectorRequirement) {
 // SetMatchFields sets the value of MatchFields.
 func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 	s.MatchFields = val
+}
+
+// NewOptAPIV1SandboxesGetStatus returns new OptAPIV1SandboxesGetStatus with value set to v.
+func NewOptAPIV1SandboxesGetStatus(v APIV1SandboxesGetStatus) OptAPIV1SandboxesGetStatus {
+	return OptAPIV1SandboxesGetStatus{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptAPIV1SandboxesGetStatus is optional APIV1SandboxesGetStatus.
+type OptAPIV1SandboxesGetStatus struct {
+	Value APIV1SandboxesGetStatus
+	Set   bool
+}
+
+// IsSet returns true if OptAPIV1SandboxesGetStatus was set.
+func (o OptAPIV1SandboxesGetStatus) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptAPIV1SandboxesGetStatus) Reset() {
+	var v APIV1SandboxesGetStatus
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptAPIV1SandboxesGetStatus) SetTo(v APIV1SandboxesGetStatus) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptAPIV1SandboxesGetStatus) Get() (v APIV1SandboxesGetStatus, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptAPIV1SandboxesGetStatus) Or(d APIV1SandboxesGetStatus) APIV1SandboxesGetStatus {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // NewOptAffinity returns new OptAffinity with value set to v.
@@ -5773,6 +5875,52 @@ func (o OptSuccessRestoreResponseData) Or(d SuccessRestoreResponseData) SuccessR
 	return d
 }
 
+// NewOptSuccessSandboxListResponseData returns new OptSuccessSandboxListResponseData with value set to v.
+func NewOptSuccessSandboxListResponseData(v SuccessSandboxListResponseData) OptSuccessSandboxListResponseData {
+	return OptSuccessSandboxListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessSandboxListResponseData is optional SuccessSandboxListResponseData.
+type OptSuccessSandboxListResponseData struct {
+	Value SuccessSandboxListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessSandboxListResponseData was set.
+func (o OptSuccessSandboxListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessSandboxListResponseData) Reset() {
+	var v SuccessSandboxListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessSandboxListResponseData) SetTo(v SuccessSandboxListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessSandboxListResponseData) Get() (v SuccessSandboxListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessSandboxListResponseData) Or(d SuccessSandboxListResponseData) SuccessSandboxListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSuccessSignaledResponseData returns new OptSuccessSignaledResponseData with value set to v.
 func NewOptSuccessSignaledResponseData(v SuccessSignaledResponseData) OptSuccessSignaledResponseData {
 	return OptSuccessSignaledResponseData{
@@ -7846,6 +7994,143 @@ func (s *SandboxStatus) SetCreatedAt(val OptString) {
 	s.CreatedAt = val
 }
 
+// Ref: #/components/schemas/SandboxSummary
+type SandboxSummary struct {
+	ID         string               `json:"id"`
+	TemplateID string               `json:"template_id"`
+	Status     SandboxSummaryStatus `json:"status"`
+	Paused     bool                 `json:"paused"`
+	// Cluster where sandbox runs (multi-cluster only).
+	ClusterID OptNilString `json:"cluster_id"`
+	CreatedAt time.Time    `json:"created_at"`
+	ExpiresAt time.Time    `json:"expires_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxSummary) GetID() string {
+	return s.ID
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *SandboxSummary) GetTemplateID() string {
+	return s.TemplateID
+}
+
+// GetStatus returns the value of Status.
+func (s *SandboxSummary) GetStatus() SandboxSummaryStatus {
+	return s.Status
+}
+
+// GetPaused returns the value of Paused.
+func (s *SandboxSummary) GetPaused() bool {
+	return s.Paused
+}
+
+// GetClusterID returns the value of ClusterID.
+func (s *SandboxSummary) GetClusterID() OptNilString {
+	return s.ClusterID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxSummary) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *SandboxSummary) GetExpiresAt() time.Time {
+	return s.ExpiresAt
+}
+
+// SetID sets the value of ID.
+func (s *SandboxSummary) SetID(val string) {
+	s.ID = val
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *SandboxSummary) SetTemplateID(val string) {
+	s.TemplateID = val
+}
+
+// SetStatus sets the value of Status.
+func (s *SandboxSummary) SetStatus(val SandboxSummaryStatus) {
+	s.Status = val
+}
+
+// SetPaused sets the value of Paused.
+func (s *SandboxSummary) SetPaused(val bool) {
+	s.Paused = val
+}
+
+// SetClusterID sets the value of ClusterID.
+func (s *SandboxSummary) SetClusterID(val OptNilString) {
+	s.ClusterID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxSummary) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *SandboxSummary) SetExpiresAt(val time.Time) {
+	s.ExpiresAt = val
+}
+
+type SandboxSummaryStatus string
+
+const (
+	SandboxSummaryStatusStarting  SandboxSummaryStatus = "starting"
+	SandboxSummaryStatusRunning   SandboxSummaryStatus = "running"
+	SandboxSummaryStatusFailed    SandboxSummaryStatus = "failed"
+	SandboxSummaryStatusCompleted SandboxSummaryStatus = "completed"
+)
+
+// AllValues returns all SandboxSummaryStatus values.
+func (SandboxSummaryStatus) AllValues() []SandboxSummaryStatus {
+	return []SandboxSummaryStatus{
+		SandboxSummaryStatusStarting,
+		SandboxSummaryStatusRunning,
+		SandboxSummaryStatusFailed,
+		SandboxSummaryStatusCompleted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxSummaryStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxSummaryStatusStarting:
+		return []byte(s), nil
+	case SandboxSummaryStatusRunning:
+		return []byte(s), nil
+	case SandboxSummaryStatusFailed:
+		return []byte(s), nil
+	case SandboxSummaryStatusCompleted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxSummaryStatus) UnmarshalText(data []byte) error {
+	switch SandboxSummaryStatus(data) {
+	case SandboxSummaryStatusStarting:
+		*s = SandboxSummaryStatusStarting
+		return nil
+	case SandboxSummaryStatusRunning:
+		*s = SandboxSummaryStatusRunning
+		return nil
+	case SandboxSummaryStatusFailed:
+		*s = SandboxSummaryStatusFailed
+		return nil
+	case SandboxSummaryStatusCompleted:
+		*s = SandboxSummaryStatusCompleted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
 	Description      OptString                     `json:"description"`
@@ -9616,6 +9901,87 @@ const (
 func (SuccessResumeSandboxResponseSuccess) AllValues() []SuccessResumeSandboxResponseSuccess {
 	return []SuccessResumeSandboxResponseSuccess{
 		SuccessResumeSandboxResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxListResponse
+type SuccessSandboxListResponse struct {
+	Success SuccessSandboxListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessSandboxListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxListResponse) GetSuccess() SuccessSandboxListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxListResponse) GetData() OptSuccessSandboxListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxListResponse) SetSuccess(val SuccessSandboxListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxListResponse) SetData(val OptSuccessSandboxListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessSandboxListResponse) aPIV1SandboxesGetRes() {}
+
+type SuccessSandboxListResponseData struct {
+	Sandboxes []SandboxSummary `json:"sandboxes"`
+	// Total matching sandboxes.
+	Count int `json:"count"`
+	// More results available.
+	HasMore bool `json:"has_more"`
+}
+
+// GetSandboxes returns the value of Sandboxes.
+func (s *SuccessSandboxListResponseData) GetSandboxes() []SandboxSummary {
+	return s.Sandboxes
+}
+
+// GetCount returns the value of Count.
+func (s *SuccessSandboxListResponseData) GetCount() int {
+	return s.Count
+}
+
+// GetHasMore returns the value of HasMore.
+func (s *SuccessSandboxListResponseData) GetHasMore() bool {
+	return s.HasMore
+}
+
+// SetSandboxes sets the value of Sandboxes.
+func (s *SuccessSandboxListResponseData) SetSandboxes(val []SandboxSummary) {
+	s.Sandboxes = val
+}
+
+// SetCount sets the value of Count.
+func (s *SuccessSandboxListResponseData) SetCount(val int) {
+	s.Count = val
+}
+
+// SetHasMore sets the value of HasMore.
+func (s *SuccessSandboxListResponseData) SetHasMore(val bool) {
+	s.HasMore = val
+}
+
+type SuccessSandboxListResponseSuccess bool
+
+const (
+	SuccessSandboxListResponseSuccessTrue SuccessSandboxListResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxListResponseSuccess values.
+func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListResponseSuccess {
+	return []SuccessSandboxListResponseSuccess{
+		SuccessSandboxListResponseSuccessTrue,
 	}
 }
 

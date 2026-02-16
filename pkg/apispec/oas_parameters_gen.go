@@ -12,6 +12,20 @@ type APIKeysIDDeleteParams struct {
 	ID string
 }
 
+// APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
+type APIV1SandboxesGetParams struct {
+	// Filter by sandbox status.
+	Status OptAPIV1SandboxesGetStatus `json:",omitempty,omitzero"`
+	// Filter by template ID.
+	TemplateID OptString `json:",omitempty,omitzero"`
+	// Filter by paused state.
+	Paused OptBool `json:",omitempty,omitzero"`
+	// Maximum number of results per page.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Pagination offset.
+	Offset OptInt `json:",omitempty,omitzero"`
+}
+
 // APIV1SandboxesIDContextsCtxIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 type APIV1SandboxesIDContextsCtxIDDeleteParams struct {
 	ID    string

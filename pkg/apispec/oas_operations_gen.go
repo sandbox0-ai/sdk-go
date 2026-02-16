@@ -11,6 +11,7 @@ const (
 	APIKeysIDDeleteOperation                                     OperationName = "APIKeysIDDelete"
 	APIKeysPostOperation                                         OperationName = "APIKeysPost"
 	APIV1RegistryCredentialsPostOperation                        OperationName = "APIV1RegistryCredentialsPost"
+	APIV1SandboxesGetOperation                                   OperationName = "APIV1SandboxesGet"
 	APIV1SandboxesIDContextsCtxIDDeleteOperation                 OperationName = "APIV1SandboxesIDContextsCtxIDDelete"
 	APIV1SandboxesIDContextsCtxIDExecPostOperation               OperationName = "APIV1SandboxesIDContextsCtxIDExecPost"
 	APIV1SandboxesIDContextsCtxIDGetOperation                    OperationName = "APIV1SandboxesIDContextsCtxIDGet"

@@ -270,3 +270,63 @@ func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *
 		return nil, unexpectedResponseError(response)
 	}
 }
+
+// ListSandboxesOptions configures the list sandboxes request.
+type ListSandboxesOptions struct {
+	Status     string
+	TemplateID string
+	Paused     *bool
+	Limit      *int
+	Offset     *int
+}
+
+// ListSandboxesResponse represents the response from listing sandboxes.
+type ListSandboxesResponse struct {
+	Sandboxes []apispec.SandboxSummary
+	Count     int
+	HasMore   bool
+}
+
+// ListSandboxes lists all sandboxes for the authenticated team.
+func (c *Client) ListSandboxes(ctx context.Context, opts *ListSandboxesOptions) (*ListSandboxesResponse, error) {
+	params := apispec.APIV1SandboxesGetParams{}
+	if opts != nil {
+		if opts.Status != "" {
+			params.Status = apispec.NewOptAPIV1SandboxesGetStatus(apispec.APIV1SandboxesGetStatus(opts.Status))
+		}
+		if opts.TemplateID != "" {
+			params.TemplateID = apispec.NewOptString(opts.TemplateID)
+		}
+		if opts.Paused != nil {
+			params.Paused = apispec.NewOptBool(*opts.Paused)
+		}
+		if opts.Limit != nil {
+			params.Limit = apispec.NewOptInt(*opts.Limit)
+		}
+		if opts.Offset != nil {
+			params.Offset = apispec.NewOptInt(*opts.Offset)
+		}
+	}
+
+	resp, err := c.api.APIV1SandboxesGet(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &ListSandboxesResponse{
+			Sandboxes: data.Sandboxes,
+			Count:     data.Count,
+			HasMore:   data.HasMore,
+		}, nil
+	case *apispec.ErrorEnvelope:
+		return nil, apiErrorFromResponse(response)
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
