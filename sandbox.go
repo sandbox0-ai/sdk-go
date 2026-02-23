@@ -97,7 +97,7 @@ func WithPTYSize(rows, cols uint16) RunOption {
 }
 
 // Run executes input in a REPL context.
-func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOption) (RunResult, error) {
+func (s *Sandbox) Run(ctx context.Context, alias, input string, opts ...RunOption) (RunResult, error) {
 	if strings.TrimSpace(input) == "" {
 		return RunResult{}, errors.New("input cannot be empty")
 	}
@@ -107,7 +107,7 @@ func (s *Sandbox) Run(ctx context.Context, language, input string, opts ...RunOp
 		opt(&options)
 	}
 
-	contextID, err := s.ensureReplContext(ctx, language, options)
+	contextID, err := s.ensureReplContext(ctx, alias, options)
 	if err != nil {
 		return RunResult{}, err
 	}
@@ -260,18 +260,18 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	}, nil
 }
 
-func (s *Sandbox) ensureReplContext(ctx context.Context, language string, options runOptions) (string, error) {
+func (s *Sandbox) ensureReplContext(ctx context.Context, alias string, options runOptions) (string, error) {
 	if options.contextID != "" {
 		return options.contextID, nil
 	}
 
-	language = strings.TrimSpace(language)
-	if language == "" {
-		language = "python"
+	alias = strings.TrimSpace(alias)
+	if alias == "" {
+		alias = "python"
 	}
 
 	s.mu.Lock()
-	contextID := s.replContextByLang[language]
+	contextID := s.replContextByLang[alias]
 	s.mu.Unlock()
 	if contextID != "" {
 		return contextID, nil
@@ -280,7 +280,7 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 	req := apispec.CreateContextRequest{
 		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
 		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
-			Language: apispec.NewOptString(language),
+			Alias: apispec.NewOptString(alias),
 		}),
 	}
 	if options.cwd != nil {
@@ -308,7 +308,7 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, language string, option
 
 	contextID = contextResp.ID
 	s.mu.Lock()
-	s.replContextByLang[language] = contextID
+	s.replContextByLang[alias] = contextID
 	s.mu.Unlock()
 
 	return contextID, nil

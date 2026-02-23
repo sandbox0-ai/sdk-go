@@ -22,7 +22,7 @@ func TestSandboxContextOperations(t *testing.T) {
 	createReq := apispec.CreateContextRequest{
 		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
 		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
-			Language: apispec.NewOptString("python"),
+			Alias: apispec.NewOptString("python"),
 		}),
 		PtySize: apispec.NewOptPTYSize(apispec.PTYSize{
 			Rows: apispec.NewOptInt32(24),

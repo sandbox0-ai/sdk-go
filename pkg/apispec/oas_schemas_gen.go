@@ -790,12 +790,13 @@ func (s *ContextInputRequest) SetData(val string) {
 
 // Ref: #/components/schemas/ContextResourceUsage
 type ContextResourceUsage struct {
-	ContextID OptString        `json:"context_id"`
-	Type      OptString        `json:"type"`
-	Language  OptString        `json:"language"`
-	Running   OptBool          `json:"running"`
-	Paused    OptBool          `json:"paused"`
-	Usage     OptResourceUsage `json:"usage"`
+	ContextID OptString `json:"context_id"`
+	Type      OptString `json:"type"`
+	// Alias for the REPL or CLI tool (e.g., python, node, bash, redis-cli).
+	Alias   OptString        `json:"alias"`
+	Running OptBool          `json:"running"`
+	Paused  OptBool          `json:"paused"`
+	Usage   OptResourceUsage `json:"usage"`
 }
 
 // GetContextID returns the value of ContextID.
@@ -808,9 +809,9 @@ func (s *ContextResourceUsage) GetType() OptString {
 	return s.Type
 }
 
-// GetLanguage returns the value of Language.
-func (s *ContextResourceUsage) GetLanguage() OptString {
-	return s.Language
+// GetAlias returns the value of Alias.
+func (s *ContextResourceUsage) GetAlias() OptString {
+	return s.Alias
 }
 
 // GetRunning returns the value of Running.
@@ -838,9 +839,9 @@ func (s *ContextResourceUsage) SetType(val OptString) {
 	s.Type = val
 }
 
-// SetLanguage sets the value of Language.
-func (s *ContextResourceUsage) SetLanguage(val OptString) {
-	s.Language = val
+// SetAlias sets the value of Alias.
+func (s *ContextResourceUsage) SetAlias(val OptString) {
+	s.Alias = val
 }
 
 // SetRunning sets the value of Running.
@@ -860,9 +861,10 @@ func (s *ContextResourceUsage) SetUsage(val OptResourceUsage) {
 
 // Ref: #/components/schemas/ContextResponse
 type ContextResponse struct {
-	ID        string                    `json:"id"`
-	Type      ProcessType               `json:"type"`
-	Language  OptString                 `json:"language"`
+	ID   string      `json:"id"`
+	Type ProcessType `json:"type"`
+	// Alias for the REPL or CLI tool (e.g., python, node, bash, redis-cli).
+	Alias     OptString                 `json:"alias"`
 	Cwd       OptString                 `json:"cwd"`
 	EnvVars   OptContextResponseEnvVars `json:"env_vars"`
 	Running   bool                      `json:"running"`
@@ -882,9 +884,9 @@ func (s *ContextResponse) GetType() ProcessType {
 	return s.Type
 }
 
-// GetLanguage returns the value of Language.
-func (s *ContextResponse) GetLanguage() OptString {
-	return s.Language
+// GetAlias returns the value of Alias.
+func (s *ContextResponse) GetAlias() OptString {
+	return s.Alias
 }
 
 // GetCwd returns the value of Cwd.
@@ -927,9 +929,9 @@ func (s *ContextResponse) SetType(val ProcessType) {
 	s.Type = val
 }
 
-// SetLanguage sets the value of Language.
-func (s *ContextResponse) SetLanguage(val OptString) {
-	s.Language = val
+// SetAlias sets the value of Alias.
+func (s *ContextResponse) SetAlias(val OptString) {
+	s.Alias = val
 }
 
 // SetCwd sets the value of Cwd.
@@ -975,12 +977,13 @@ func (s *ContextResponseEnvVars) init() ContextResponseEnvVars {
 
 // Ref: #/components/schemas/ContextStatsResponse
 type ContextStatsResponse struct {
-	ContextID OptString        `json:"context_id"`
-	Type      OptString        `json:"type"`
-	Language  OptString        `json:"language"`
-	Running   OptBool          `json:"running"`
-	Paused    OptBool          `json:"paused"`
-	Usage     OptResourceUsage `json:"usage"`
+	ContextID OptString `json:"context_id"`
+	Type      OptString `json:"type"`
+	// Alias for the REPL or CLI tool (e.g., python, node, bash, redis-cli).
+	Alias   OptString        `json:"alias"`
+	Running OptBool          `json:"running"`
+	Paused  OptBool          `json:"paused"`
+	Usage   OptResourceUsage `json:"usage"`
 }
 
 // GetContextID returns the value of ContextID.
@@ -993,9 +996,9 @@ func (s *ContextStatsResponse) GetType() OptString {
 	return s.Type
 }
 
-// GetLanguage returns the value of Language.
-func (s *ContextStatsResponse) GetLanguage() OptString {
-	return s.Language
+// GetAlias returns the value of Alias.
+func (s *ContextStatsResponse) GetAlias() OptString {
+	return s.Alias
 }
 
 // GetRunning returns the value of Running.
@@ -1023,9 +1026,9 @@ func (s *ContextStatsResponse) SetType(val OptString) {
 	s.Type = val
 }
 
-// SetLanguage sets the value of Language.
-func (s *ContextStatsResponse) SetLanguage(val OptString) {
-	s.Language = val
+// SetAlias sets the value of Alias.
+func (s *ContextStatsResponse) SetAlias(val OptString) {
+	s.Alias = val
 }
 
 // SetRunning sets the value of Running.
@@ -1356,14 +1359,15 @@ func (s *CreateContextRequestEnvVars) init() CreateContextRequestEnvVars {
 
 // Ref: #/components/schemas/CreateREPLContextRequest
 type CreateREPLContextRequest struct {
-	Language   OptString     `json:"language"`
+	// Alias for the REPL or CLI tool (e.g., python, node, bash, redis-cli).
+	Alias      OptString     `json:"alias"`
 	Input      OptString     `json:"input"`
 	ReplConfig OptREPLConfig `json:"repl_config"`
 }
 
-// GetLanguage returns the value of Language.
-func (s *CreateREPLContextRequest) GetLanguage() OptString {
-	return s.Language
+// GetAlias returns the value of Alias.
+func (s *CreateREPLContextRequest) GetAlias() OptString {
+	return s.Alias
 }
 
 // GetInput returns the value of Input.
@@ -1376,9 +1380,9 @@ func (s *CreateREPLContextRequest) GetReplConfig() OptREPLConfig {
 	return s.ReplConfig
 }
 
-// SetLanguage sets the value of Language.
-func (s *CreateREPLContextRequest) SetLanguage(val OptString) {
-	s.Language = val
+// SetAlias sets the value of Alias.
+func (s *CreateREPLContextRequest) SetAlias(val OptString) {
+	s.Alias = val
 }
 
 // SetInput sets the value of Input.

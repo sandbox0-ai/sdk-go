@@ -50,7 +50,7 @@ func runReplStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
 	ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
 		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
 		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
-			Language: apispec.NewOptString("python"),
+			Alias: apispec.NewOptString("python"),
 		}),
 	})
 	if err != nil {
@@ -177,6 +177,9 @@ func runCmdStream(ctx context.Context, sandbox *sandbox0.Sandbox) error {
 
 func isWsClosed(err error) bool {
 	if errors.Is(err, net.ErrClosed) {
+		return true
+	}
+	if errors.Is(err, websocket.ErrCloseSent) {
 		return true
 	}
 	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)

@@ -77,7 +77,7 @@ func TestSandboxStreams(t *testing.T) {
 		ctxResp, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
 			Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
 			Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
-				Language: apispec.NewOptString("python"),
+				Alias: apispec.NewOptString("python"),
 			}),
 		})
 		if err != nil {

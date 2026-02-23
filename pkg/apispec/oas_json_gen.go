@@ -2657,9 +2657,9 @@ func (s *ContextResourceUsage) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Language.Set {
-			e.FieldStart("language")
-			s.Language.Encode(e)
+		if s.Alias.Set {
+			e.FieldStart("alias")
+			s.Alias.Encode(e)
 		}
 	}
 	{
@@ -2685,7 +2685,7 @@ func (s *ContextResourceUsage) encodeFields(e *jx.Encoder) {
 var jsonFieldsNameOfContextResourceUsage = [6]string{
 	0: "context_id",
 	1: "type",
-	2: "language",
+	2: "alias",
 	3: "running",
 	4: "paused",
 	5: "usage",
@@ -2719,15 +2719,15 @@ func (s *ContextResourceUsage) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
 			}
-		case "language":
+		case "alias":
 			if err := func() error {
-				s.Language.Reset()
-				if err := s.Language.Decode(d); err != nil {
+				s.Alias.Reset()
+				if err := s.Alias.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"language\"")
+				return errors.Wrap(err, "decode field \"alias\"")
 			}
 		case "running":
 			if err := func() error {
@@ -2801,9 +2801,9 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 		s.Type.Encode(e)
 	}
 	{
-		if s.Language.Set {
-			e.FieldStart("language")
-			s.Language.Encode(e)
+		if s.Alias.Set {
+			e.FieldStart("alias")
+			s.Alias.Encode(e)
 		}
 	}
 	{
@@ -2841,7 +2841,7 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 var jsonFieldsNameOfContextResponse = [9]string{
 	0: "id",
 	1: "type",
-	2: "language",
+	2: "alias",
 	3: "cwd",
 	4: "env_vars",
 	5: "running",
@@ -2881,15 +2881,15 @@ func (s *ContextResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
 			}
-		case "language":
+		case "alias":
 			if err := func() error {
-				s.Language.Reset()
-				if err := s.Language.Decode(d); err != nil {
+				s.Alias.Reset()
+				if err := s.Alias.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"language\"")
+				return errors.Wrap(err, "decode field \"alias\"")
 			}
 		case "cwd":
 			if err := func() error {
@@ -3092,9 +3092,9 @@ func (s *ContextStatsResponse) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Language.Set {
-			e.FieldStart("language")
-			s.Language.Encode(e)
+		if s.Alias.Set {
+			e.FieldStart("alias")
+			s.Alias.Encode(e)
 		}
 	}
 	{
@@ -3120,7 +3120,7 @@ func (s *ContextStatsResponse) encodeFields(e *jx.Encoder) {
 var jsonFieldsNameOfContextStatsResponse = [6]string{
 	0: "context_id",
 	1: "type",
-	2: "language",
+	2: "alias",
 	3: "running",
 	4: "paused",
 	5: "usage",
@@ -3154,15 +3154,15 @@ func (s *ContextStatsResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
 			}
-		case "language":
+		case "alias":
 			if err := func() error {
-				s.Language.Reset()
-				if err := s.Language.Decode(d); err != nil {
+				s.Alias.Reset()
+				if err := s.Alias.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"language\"")
+				return errors.Wrap(err, "decode field \"alias\"")
 			}
 		case "running":
 			if err := func() error {
@@ -4016,9 +4016,9 @@ func (s *CreateREPLContextRequest) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *CreateREPLContextRequest) encodeFields(e *jx.Encoder) {
 	{
-		if s.Language.Set {
-			e.FieldStart("language")
-			s.Language.Encode(e)
+		if s.Alias.Set {
+			e.FieldStart("alias")
+			s.Alias.Encode(e)
 		}
 	}
 	{
@@ -4036,7 +4036,7 @@ func (s *CreateREPLContextRequest) encodeFields(e *jx.Encoder) {
 }
 
 var jsonFieldsNameOfCreateREPLContextRequest = [3]string{
-	0: "language",
+	0: "alias",
 	1: "input",
 	2: "repl_config",
 }
@@ -4049,15 +4049,15 @@ func (s *CreateREPLContextRequest) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "language":
+		case "alias":
 			if err := func() error {
-				s.Language.Reset()
-				if err := s.Language.Decode(d); err != nil {
+				s.Alias.Reset()
+				if err := s.Alias.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"language\"")
+				return errors.Wrap(err, "decode field \"alias\"")
 			}
 		case "input":
 			if err := func() error {
