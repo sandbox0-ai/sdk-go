@@ -87,6 +87,14 @@ func WithSandboxAutoResume(enabled bool) SandboxOption {
 	}
 }
 
+// WithSandboxEnvVars sets environment variables for created sandboxes.
+func WithSandboxEnvVars(envVars map[string]string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.EnvVars = apispec.NewOptSandboxConfigEnvVars(envVars)
+	}
+}
+
 // ClaimSandbox creates (claims) a sandbox and returns a convenience wrapper.
 func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...SandboxOption) (*Sandbox, error) {
 	options := sandboxOptions{}
