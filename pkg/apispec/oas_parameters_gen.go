@@ -218,6 +218,11 @@ type APIV1SandboxvolumesIDDeleteParams struct {
 	ID string
 }
 
+// APIV1SandboxvolumesIDForkPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/fork operation.
+type APIV1SandboxvolumesIDForkPostParams struct {
+	ID string
+}
+
 // APIV1SandboxvolumesIDGetParams is parameters of GET /api/v1/sandboxvolumes/{id} operation.
 type APIV1SandboxvolumesIDGetParams struct {
 	ID string

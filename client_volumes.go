@@ -63,6 +63,30 @@ func (c *Client) DeleteVolume(ctx context.Context, volumeID string) (*apispec.Su
 	}
 }
 
+// ForkVolume forks a sandbox volume.
+func (c *Client) ForkVolume(ctx context.Context, sourceVolumeID string, request *apispec.ForkVolumeRequest) (*apispec.SandboxVolume, error) {
+	var req apispec.OptForkVolumeRequest
+	if request != nil {
+		req = apispec.NewOptForkVolumeRequest(*request)
+	}
+
+	resp, err := c.api.APIV1SandboxvolumesIDForkPost(ctx, req, apispec.APIV1SandboxvolumesIDForkPostParams{ID: sourceVolumeID})
+	if err != nil {
+		return nil, err
+	}
+
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxVolumeResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
 // CreateVolumeSnapshot creates a snapshot for a volume.
 func (c *Client) CreateVolumeSnapshot(ctx context.Context, volumeID string, request apispec.CreateSnapshotRequest) (*apispec.Snapshot, error) {
 	resp, err := c.api.APIV1SandboxvolumesIDSnapshotsPost(ctx, &request, apispec.APIV1SandboxvolumesIDSnapshotsPostParams{ID: volumeID})

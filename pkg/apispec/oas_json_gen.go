@@ -5444,6 +5444,137 @@ func (s *FileInfoType) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *ForkVolumeRequest) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ForkVolumeRequest) encodeFields(e *jx.Encoder) {
+	{
+		if s.CacheSize.Set {
+			e.FieldStart("cache_size")
+			s.CacheSize.Encode(e)
+		}
+	}
+	{
+		if s.Prefetch.Set {
+			e.FieldStart("prefetch")
+			s.Prefetch.Encode(e)
+		}
+	}
+	{
+		if s.BufferSize.Set {
+			e.FieldStart("buffer_size")
+			s.BufferSize.Encode(e)
+		}
+	}
+	{
+		if s.Writeback.Set {
+			e.FieldStart("writeback")
+			s.Writeback.Encode(e)
+		}
+	}
+	{
+		if s.AccessMode.Set {
+			e.FieldStart("access_mode")
+			s.AccessMode.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfForkVolumeRequest = [5]string{
+	0: "cache_size",
+	1: "prefetch",
+	2: "buffer_size",
+	3: "writeback",
+	4: "access_mode",
+}
+
+// Decode decodes ForkVolumeRequest from json.
+func (s *ForkVolumeRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ForkVolumeRequest to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "cache_size":
+			if err := func() error {
+				s.CacheSize.Reset()
+				if err := s.CacheSize.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cache_size\"")
+			}
+		case "prefetch":
+			if err := func() error {
+				s.Prefetch.Reset()
+				if err := s.Prefetch.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"prefetch\"")
+			}
+		case "buffer_size":
+			if err := func() error {
+				s.BufferSize.Reset()
+				if err := s.BufferSize.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"buffer_size\"")
+			}
+		case "writeback":
+			if err := func() error {
+				s.Writeback.Reset()
+				if err := s.Writeback.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"writeback\"")
+			}
+		case "access_mode":
+			if err := func() error {
+				s.AccessMode.Reset()
+				if err := s.AccessMode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"access_mode\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ForkVolumeRequest")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ForkVolumeRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ForkVolumeRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *Identity) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -8036,6 +8167,39 @@ func (s OptFloat64) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptFloat64) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ForkVolumeRequest as json.
+func (o OptForkVolumeRequest) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes ForkVolumeRequest from json.
+func (o *OptForkVolumeRequest) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptForkVolumeRequest to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptForkVolumeRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptForkVolumeRequest) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -14820,6 +14984,12 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		e.Str(s.UserID)
 	}
 	{
+		if s.SourceVolumeID.Set {
+			e.FieldStart("source_volume_id")
+			s.SourceVolumeID.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("cache_size")
 		e.Str(s.CacheSize)
 	}
@@ -14855,17 +15025,18 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxVolume = [10]string{
-	0: "id",
-	1: "team_id",
-	2: "user_id",
-	3: "cache_size",
-	4: "prefetch",
-	5: "buffer_size",
-	6: "writeback",
-	7: "access_mode",
-	8: "created_at",
-	9: "updated_at",
+var jsonFieldsNameOfSandboxVolume = [11]string{
+	0:  "id",
+	1:  "team_id",
+	2:  "user_id",
+	3:  "source_volume_id",
+	4:  "cache_size",
+	5:  "prefetch",
+	6:  "buffer_size",
+	7:  "writeback",
+	8:  "access_mode",
+	9:  "created_at",
+	10: "updated_at",
 }
 
 // Decode decodes SandboxVolume from json.
@@ -14913,8 +15084,18 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"user_id\"")
 			}
+		case "source_volume_id":
+			if err := func() error {
+				s.SourceVolumeID.Reset()
+				if err := s.SourceVolumeID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_volume_id\"")
+			}
 		case "cache_size":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := d.Str()
 				s.CacheSize = string(v)
@@ -14936,7 +15117,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"prefetch\"")
 			}
 		case "buffer_size":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.BufferSize = string(v)
@@ -14968,7 +15149,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"access_mode\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -14980,7 +15161,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -15001,8 +15182,8 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b00101111,
-		0b00000011,
+		0b01010111,
+		0b00000110,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

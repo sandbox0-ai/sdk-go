@@ -83,6 +83,17 @@ func main() {
 	must(err)
 	fmt.Printf("file content: \n%s", string(readResult))
 
+	// Fork the volume and verify COW isolation.
+	forkedVolume, err := client.ForkVolume(ctx, volumeID, &apispec.ForkVolumeRequest{})
+	must(err)
+	forkedVolumeID := forkedVolume.ID
+	defer func() {
+		if _, err := client.DeleteVolume(ctx, forkedVolumeID); err != nil {
+			fmt.Printf("cleanup delete forked volume %s: %v\n", forkedVolumeID, err)
+		}
+	}()
+	fmt.Printf("volume forked: %s (source: %s)\n", forkedVolumeID, volumeID)
+
 	// Create a new sandbox
 	sandbox2, err := client.ClaimSandbox(ctx, "default")
 	must(err)
@@ -104,6 +115,25 @@ func main() {
 	readResult, err = sandbox2.ReadFile(ctx, "/mnt/data/hello.txt")
 	must(err)
 	fmt.Printf("sandbox2 file content: \n%s", string(readResult))
+
+	mountRespFork, err := sandbox2.Mount(ctx, forkedVolumeID, "/mnt/fork", nil)
+	must(err)
+	defer func() {
+		if _, err := sandbox2.Unmount(ctx, forkedVolumeID, mountRespFork.MountSessionID); err != nil {
+			fmt.Printf("cleanup unmount forked volume %s in sandbox %s: %v\n", forkedVolumeID, sandbox2.ID, err)
+		}
+	}()
+
+	_, err = sandbox2.WriteFile(ctx, "/mnt/fork/hello.txt", []byte("hello from fork\n"))
+	must(err)
+
+	forkContent, err := sandbox2.ReadFile(ctx, "/mnt/fork/hello.txt")
+	must(err)
+	fmt.Printf("forked volume file content: \n%s", string(forkContent))
+
+	sourceContent, err := sandbox2.ReadFile(ctx, "/mnt/data/hello.txt")
+	must(err)
+	fmt.Printf("source volume file content after fork write: \n%s", string(sourceContent))
 }
 
 func must(err error) {

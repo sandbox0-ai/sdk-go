@@ -49,6 +49,7 @@ const (
 	APIV1SandboxesPostOperation                                  OperationName = "APIV1SandboxesPost"
 	APIV1SandboxvolumesGetOperation                              OperationName = "APIV1SandboxvolumesGet"
 	APIV1SandboxvolumesIDDeleteOperation                         OperationName = "APIV1SandboxvolumesIDDelete"
+	APIV1SandboxvolumesIDForkPostOperation                       OperationName = "APIV1SandboxvolumesIDForkPost"
 	APIV1SandboxvolumesIDGetOperation                            OperationName = "APIV1SandboxvolumesIDGet"
 	APIV1SandboxvolumesIDSnapshotsGetOperation                   OperationName = "APIV1SandboxvolumesIDSnapshotsGet"
 	APIV1SandboxvolumesIDSnapshotsPostOperation                  OperationName = "APIV1SandboxvolumesIDSnapshotsPost"

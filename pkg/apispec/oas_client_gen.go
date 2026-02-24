@@ -358,6 +358,12 @@ type Invoker interface {
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}
 	APIV1SandboxvolumesIDDelete(ctx context.Context, params APIV1SandboxvolumesIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDDeleteRes, error)
+	// APIV1SandboxvolumesIDForkPost invokes POST /api/v1/sandboxvolumes/{id}/fork operation.
+	//
+	// Fork sandbox volume.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/fork
+	APIV1SandboxvolumesIDForkPost(ctx context.Context, request OptForkVolumeRequest, params APIV1SandboxvolumesIDForkPostParams, options ...RequestOption) (APIV1SandboxvolumesIDForkPostRes, error)
 	// APIV1SandboxvolumesIDGet invokes GET /api/v1/sandboxvolumes/{id} operation.
 	//
 	// Get sandbox volume.
@@ -5854,6 +5860,123 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 	}
 
 	result, err := decodeAPIV1SandboxvolumesIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDForkPost invokes POST /api/v1/sandboxvolumes/{id}/fork operation.
+//
+// Fork sandbox volume.
+//
+// POST /api/v1/sandboxvolumes/{id}/fork
+func (c *Client) APIV1SandboxvolumesIDForkPost(ctx context.Context, request OptForkVolumeRequest, params APIV1SandboxvolumesIDForkPostParams, options ...RequestOption) (APIV1SandboxvolumesIDForkPostRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDForkPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDForkPost(ctx context.Context, request OptForkVolumeRequest, params APIV1SandboxvolumesIDForkPostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDForkPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/fork"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDForkPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDForkPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDForkPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

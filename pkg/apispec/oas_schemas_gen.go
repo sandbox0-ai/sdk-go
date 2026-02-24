@@ -1610,6 +1610,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDResumePostRes()                  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
 func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
 func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
@@ -1900,6 +1901,66 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/ForkVolumeRequest
+type ForkVolumeRequest struct {
+	CacheSize  OptString `json:"cache_size"`
+	Prefetch   OptInt    `json:"prefetch"`
+	BufferSize OptString `json:"buffer_size"`
+	Writeback  OptBool   `json:"writeback"`
+	// Access mode for the volume. Defaults to RWO when omitted.
+	AccessMode OptVolumeAccessMode `json:"access_mode"`
+}
+
+// GetCacheSize returns the value of CacheSize.
+func (s *ForkVolumeRequest) GetCacheSize() OptString {
+	return s.CacheSize
+}
+
+// GetPrefetch returns the value of Prefetch.
+func (s *ForkVolumeRequest) GetPrefetch() OptInt {
+	return s.Prefetch
+}
+
+// GetBufferSize returns the value of BufferSize.
+func (s *ForkVolumeRequest) GetBufferSize() OptString {
+	return s.BufferSize
+}
+
+// GetWriteback returns the value of Writeback.
+func (s *ForkVolumeRequest) GetWriteback() OptBool {
+	return s.Writeback
+}
+
+// GetAccessMode returns the value of AccessMode.
+func (s *ForkVolumeRequest) GetAccessMode() OptVolumeAccessMode {
+	return s.AccessMode
+}
+
+// SetCacheSize sets the value of CacheSize.
+func (s *ForkVolumeRequest) SetCacheSize(val OptString) {
+	s.CacheSize = val
+}
+
+// SetPrefetch sets the value of Prefetch.
+func (s *ForkVolumeRequest) SetPrefetch(val OptInt) {
+	s.Prefetch = val
+}
+
+// SetBufferSize sets the value of BufferSize.
+func (s *ForkVolumeRequest) SetBufferSize(val OptString) {
+	s.BufferSize = val
+}
+
+// SetWriteback sets the value of Writeback.
+func (s *ForkVolumeRequest) SetWriteback(val OptBool) {
+	s.Writeback = val
+}
+
+// SetAccessMode sets the value of AccessMode.
+func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
+	s.AccessMode = val
 }
 
 // Ref: #/components/schemas/Identity
@@ -3418,6 +3479,52 @@ func (o OptFloat64) Get() (v float64, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptFloat64) Or(d float64) float64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptForkVolumeRequest returns new OptForkVolumeRequest with value set to v.
+func NewOptForkVolumeRequest(v ForkVolumeRequest) OptForkVolumeRequest {
+	return OptForkVolumeRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptForkVolumeRequest is optional ForkVolumeRequest.
+type OptForkVolumeRequest struct {
+	Value ForkVolumeRequest
+	Set   bool
+}
+
+// IsSet returns true if OptForkVolumeRequest was set.
+func (o OptForkVolumeRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptForkVolumeRequest) Reset() {
+	var v ForkVolumeRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptForkVolumeRequest) SetTo(v ForkVolumeRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptForkVolumeRequest) Get() (v ForkVolumeRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8321,13 +8428,14 @@ func (s *SandboxUpdateRequest) SetConfig(val OptSandboxConfig) {
 
 // Ref: #/components/schemas/SandboxVolume
 type SandboxVolume struct {
-	ID         string  `json:"id"`
-	TeamID     string  `json:"team_id"`
-	UserID     string  `json:"user_id"`
-	CacheSize  string  `json:"cache_size"`
-	Prefetch   OptInt  `json:"prefetch"`
-	BufferSize string  `json:"buffer_size"`
-	Writeback  OptBool `json:"writeback"`
+	ID             string       `json:"id"`
+	TeamID         string       `json:"team_id"`
+	UserID         string       `json:"user_id"`
+	SourceVolumeID OptNilString `json:"source_volume_id"`
+	CacheSize      string       `json:"cache_size"`
+	Prefetch       OptInt       `json:"prefetch"`
+	BufferSize     string       `json:"buffer_size"`
+	Writeback      OptBool      `json:"writeback"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
 	CreatedAt  time.Time           `json:"created_at"`
@@ -8347,6 +8455,11 @@ func (s *SandboxVolume) GetTeamID() string {
 // GetUserID returns the value of UserID.
 func (s *SandboxVolume) GetUserID() string {
 	return s.UserID
+}
+
+// GetSourceVolumeID returns the value of SourceVolumeID.
+func (s *SandboxVolume) GetSourceVolumeID() OptNilString {
+	return s.SourceVolumeID
 }
 
 // GetCacheSize returns the value of CacheSize.
@@ -8397,6 +8510,11 @@ func (s *SandboxVolume) SetTeamID(val string) {
 // SetUserID sets the value of UserID.
 func (s *SandboxVolume) SetUserID(val string) {
 	s.UserID = val
+}
+
+// SetSourceVolumeID sets the value of SourceVolumeID.
+func (s *SandboxVolume) SetSourceVolumeID(val OptNilString) {
+	s.SourceVolumeID = val
 }
 
 // SetCacheSize sets the value of CacheSize.
@@ -10188,7 +10306,8 @@ func (s *SuccessSandboxVolumeResponse) SetData(val OptSandboxVolume) {
 	s.Data = val
 }
 
-func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesIDGetRes() {}
+func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesIDForkPostRes() {}
+func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesIDGetRes()      {}
 
 type SuccessSandboxVolumeResponseSuccess bool
 
