@@ -7,6 +7,7 @@ import (
 	"time"
 
 	sandbox0 "github.com/sandbox0-ai/sdk-go"
+	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 func main() {
@@ -29,22 +30,35 @@ func main() {
 		}
 	}()
 
-	// Run with REPL options: working dir, env, temporary context, TTL/idle timeout.
+	// Create a custom REPL context with specific cwd, env vars, and TTL.
+	// This is useful when you need fine-grained control over the context settings.
+	customCtx, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
+		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
+			Alias: apispec.NewOptString("python"),
+		}),
+		Cwd:            apispec.NewOptString("/workspace"),
+		EnvVars:        apispec.NewOptCreateContextRequestEnvVars(map[string]string{"GREETING": "hello from repl"}),
+		TTLSec:         apispec.NewOptInt32(120),
+		IdleTimeoutSec: apispec.NewOptInt32(60),
+	})
+	must(err)
+	fmt.Printf("Created context: %s\n", customCtx.ID)
+
+	// Run using the custom context via WithContextID.
 	runResult, err := sandbox.Run(
 		ctx,
 		"python",
 		`import os, pathlib;
 print(pathlib.Path.cwd());
 print(os.getenv("GREETING"))`,
-		sandbox0.WithCWD("/workspace"),
-		sandbox0.WithEnvVars(map[string]string{"GREETING": "hello from repl"}),
-		sandbox0.WithContextTTL(120),
-		sandbox0.WithIdleTimeout(60),
+		sandbox0.WithContextID(customCtx.ID),
 	)
 	must(err)
 	fmt.Print(runResult.OutputRaw)
 
 	// Run a one-shot command with its own context options.
+	// Cmd always creates a new context, so options work directly.
 	cmdResult, err := sandbox.Cmd(
 		ctx,
 		"bash -c 'echo $GREETING && pwd'",

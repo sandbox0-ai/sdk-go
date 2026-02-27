@@ -38,61 +38,17 @@ type CmdResult struct {
 }
 
 type runOptions struct {
-	contextID      string
-	idleTimeoutSec *int32
-	ttlSec         *int32
-	cwd            *string
-	envVars        *map[string]string
-	ptySize        *apispec.PTYSize
+	contextID string
 }
 
 // RunOption configures sandbox Run behavior.
 type RunOption func(*runOptions)
 
-// WithContextID uses a specific context ID.
+// WithContextID uses a specific context ID instead of the default cached REPL context.
+// Use this when you need custom envVars, cwd, or other context settings.
 func WithContextID(contextID string) RunOption {
 	return func(opts *runOptions) {
 		opts.contextID = contextID
-	}
-}
-
-// WithContextTTL sets TTL in seconds for created contexts.
-func WithContextTTL(ttlSec int32) RunOption {
-	return func(opts *runOptions) {
-		opts.ttlSec = &ttlSec
-	}
-}
-
-// WithIdleTimeout sets idle timeout in seconds for created contexts.
-func WithIdleTimeout(idleTimeoutSec int32) RunOption {
-	return func(opts *runOptions) {
-		opts.idleTimeoutSec = &idleTimeoutSec
-	}
-}
-
-// WithCWD sets the working directory for created contexts.
-func WithCWD(cwd string) RunOption {
-	return func(opts *runOptions) {
-		opts.cwd = &cwd
-	}
-}
-
-// WithEnvVars sets environment variables for created contexts.
-func WithEnvVars(envVars map[string]string) RunOption {
-	return func(opts *runOptions) {
-		opts.envVars = &envVars
-	}
-}
-
-// WithPTYSize sets PTY size for created contexts.
-func WithPTYSize(rows, cols uint16) RunOption {
-	return func(opts *runOptions) {
-		rows32 := int32(rows)
-		cols32 := int32(cols)
-		opts.ptySize = &apispec.PTYSize{
-			Rows: apispec.NewOptInt32(rows32),
-			Cols: apispec.NewOptInt32(cols32),
-		}
 	}
 }
 
@@ -277,26 +233,12 @@ func (s *Sandbox) ensureReplContext(ctx context.Context, alias string, options r
 		return contextID, nil
 	}
 
+	// Create a default REPL context with no custom settings
 	req := apispec.CreateContextRequest{
 		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
 		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
 			Alias: apispec.NewOptString(alias),
 		}),
-	}
-	if options.cwd != nil {
-		req.Cwd = apispec.NewOptString(*options.cwd)
-	}
-	if options.envVars != nil {
-		req.EnvVars = apispec.NewOptCreateContextRequestEnvVars(apispec.CreateContextRequestEnvVars(*options.envVars))
-	}
-	if options.ptySize != nil {
-		req.PtySize = apispec.NewOptPTYSize(*options.ptySize)
-	}
-	if options.idleTimeoutSec != nil {
-		req.IdleTimeoutSec = apispec.NewOptInt32(*options.idleTimeoutSec)
-	}
-	if options.ttlSec != nil {
-		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
 	}
 	contextResp, err := s.CreateContext(ctx, req)
 	if err != nil {

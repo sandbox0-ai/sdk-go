@@ -24,15 +24,31 @@ func TestSandboxRunAndCmd(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	// Create a custom REPL context with specific settings
+	customCtx, err := sandbox.CreateContext(ctx, apispec.CreateContextRequest{
+		Type: apispec.NewOptProcessType(apispec.ProcessTypeRepl),
+		Repl: apispec.NewOptCreateREPLContextRequest(apispec.CreateREPLContextRequest{
+			Alias: apispec.NewOptString("python"),
+		}),
+		Cwd:            apispec.NewOptString("/tmp"),
+		EnvVars:        apispec.NewOptCreateContextRequestEnvVars(map[string]string{"SDK_E2E": "true"}),
+		TTLSec:         apispec.NewOptInt32(120),
+		IdleTimeoutSec: apispec.NewOptInt32(60),
+		PtySize:        apispec.NewOptPTYSize(apispec.PTYSize{Rows: apispec.NewOptInt32(24), Cols: apispec.NewOptInt32(80)}),
+	})
+	if err != nil {
+		t.Fatalf("create context failed: %v", err)
+	}
+	if customCtx.ID == "" {
+		t.Fatalf("create context returned empty ID")
+	}
+
+	// Run using the custom context
 	runResult, err := sandbox.Run(
 		ctx,
 		"python",
 		"print('hello')\n",
-		sandbox0.WithContextTTL(120),
-		sandbox0.WithIdleTimeout(60),
-		sandbox0.WithCWD("/tmp"),
-		sandbox0.WithEnvVars(map[string]string{"SDK_E2E": "true"}),
-		sandbox0.WithPTYSize(24, 80),
+		sandbox0.WithContextID(customCtx.ID),
 	)
 	if err != nil {
 		t.Fatalf("run failed: %v", err)
