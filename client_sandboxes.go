@@ -249,15 +249,15 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 }
 
 // RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.
-func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *apispec.RefreshRequest) (*apispec.RefreshResponse, error) {
+func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *apispec.SandboxRefreshRequest) (*apispec.RefreshResponse, error) {
 	var (
 		resp apispec.APIV1SandboxesIDRefreshPostRes
 		err  error
 	)
 	if request == nil {
-		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.OptRefreshRequest{}, apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
+		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.OptSandboxRefreshRequest{}, apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
 	} else {
-		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.NewOptRefreshRequest(*request), apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
+		resp, err = c.api.APIV1SandboxesIDRefreshPost(ctx, apispec.NewOptSandboxRefreshRequest(*request), apispec.APIV1SandboxesIDRefreshPostParams{ID: sandboxID})
 	}
 	if err != nil {
 		return nil, err
