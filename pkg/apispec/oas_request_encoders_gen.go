@@ -161,7 +161,7 @@ func encodeAPIV1SandboxesIDPutRequest(
 }
 
 func encodeAPIV1SandboxesIDRefreshPostRequest(
-	req OptRefreshRequest,
+	req OptSandboxRefreshRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

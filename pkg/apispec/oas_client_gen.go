@@ -309,7 +309,7 @@ type Invoker interface {
 	// Refresh sandbox TTL.
 	//
 	// POST /api/v1/sandboxes/{id}/refresh
-	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
+	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
 	// APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 	//
 	// Resume a sandbox.
@@ -4873,12 +4873,12 @@ func (c *Client) sendAPIV1SandboxesIDPut(ctx context.Context, request *SandboxUp
 // Refresh sandbox TTL.
 //
 // POST /api/v1/sandboxes/{id}/refresh
-func (c *Client) APIV1SandboxesIDRefreshPost(ctx context.Context, request OptRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error) {
+func (c *Client) APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDRefreshPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request OptRefreshRequest, params APIV1SandboxesIDRefreshPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDRefreshPostRes, err error) {
+func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDRefreshPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)

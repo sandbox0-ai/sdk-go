@@ -4652,52 +4652,6 @@ func (o OptREPLReadyMode) Or(d REPLReadyMode) REPLReadyMode {
 	return d
 }
 
-// NewOptRefreshRequest returns new OptRefreshRequest with value set to v.
-func NewOptRefreshRequest(v RefreshRequest) OptRefreshRequest {
-	return OptRefreshRequest{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRefreshRequest is optional RefreshRequest.
-type OptRefreshRequest struct {
-	Value RefreshRequest
-	Set   bool
-}
-
-// IsSet returns true if OptRefreshRequest was set.
-func (o OptRefreshRequest) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRefreshRequest) Reset() {
-	var v RefreshRequest
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRefreshRequest) SetTo(v RefreshRequest) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRefreshRequest) Get() (v RefreshRequest, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRefreshRequest) Or(d RefreshRequest) RefreshRequest {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptRefreshResponse returns new OptRefreshResponse with value set to v.
 func NewOptRefreshResponse(v RefreshResponse) OptRefreshResponse {
 	return OptRefreshResponse{
@@ -5014,6 +4968,52 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRefreshRequest returns new OptSandboxRefreshRequest with value set to v.
+func NewOptSandboxRefreshRequest(v SandboxRefreshRequest) OptSandboxRefreshRequest {
+	return OptSandboxRefreshRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRefreshRequest is optional SandboxRefreshRequest.
+type OptSandboxRefreshRequest struct {
+	Value SandboxRefreshRequest
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRefreshRequest was set.
+func (o OptSandboxRefreshRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRefreshRequest) Reset() {
+	var v SandboxRefreshRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRefreshRequest) SetTo(v SandboxRefreshRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRefreshRequest) Get() (v SandboxRefreshRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRefreshRequest) Or(d SandboxRefreshRequest) SandboxRefreshRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7899,6 +7899,22 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxRefreshRequest
+type SandboxRefreshRequest struct {
+	// Duration to extend TTL in seconds (optional, defaults to original TTL).
+	Duration OptInt32 `json:"duration"`
+}
+
+// GetDuration returns the value of Duration.
+func (s *SandboxRefreshRequest) GetDuration() OptInt32 {
+	return s.Duration
+}
+
+// SetDuration sets the value of Duration.
+func (s *SandboxRefreshRequest) SetDuration(val OptInt32) {
+	s.Duration = val
 }
 
 // Ref: #/components/schemas/SandboxResourceUsage
