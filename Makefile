@@ -1,4 +1,4 @@
-.PHONY: apispec ogen golangci-lint test test-e2e lint check build set-version tag publish release
+.PHONY: apispec ogen golangci-lint test test-e2e lint check build set-version tag publish release install
 
 # Version for publishing (usage: make publish v=0.1.0)
 v ?=
@@ -80,3 +80,12 @@ ogen: $(OGEN)
 $(OGEN): $(LOCALBIN)
 	@test -s $(LOCALBIN)/ogen && $(LOCALBIN)/ogen -version | grep -q $(OGEN_VERSION) || \
 	GOBIN=$(LOCALBIN) go install github.com/ogen-go/ogen/cmd/ogen@$(OGEN_VERSION)
+
+# Local installation for development/testing
+# Go modules use replace directive in go.mod for local development
+install:
+	@echo "For local development with Go modules, add this to your project's go.mod:"
+	@echo ""
+	@echo "replace github.com/sandbox0-ai/sdk-go => $(shell pwd)"
+	@echo ""
+	@echo "Then run: go mod tidy"

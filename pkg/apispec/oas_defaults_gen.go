@@ -9,3 +9,11 @@ func (s *SandboxConfig) setDefaults() {
 		s.AutoResume.SetTo(val)
 	}
 }
+
+// setDefaults set default value of fields.
+func (s *SandboxUpdateConfig) setDefaults() {
+	{
+		val := bool(true)
+		s.AutoResume.SetTo(val)
+	}
+}

@@ -9387,6 +9387,39 @@ func (s *OptSandboxTemplateSpecEnvVars) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxUpdateConfig as json.
+func (o OptSandboxUpdateConfig) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxUpdateConfig from json.
+func (o *OptSandboxUpdateConfig) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxUpdateConfig to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxUpdateConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxUpdateConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SandboxVolume as json.
 func (o OptSandboxVolume) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -14895,6 +14928,149 @@ func (s SandboxTemplateSpecEnvVars) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxTemplateSpecEnvVars) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxUpdateConfig) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
+	{
+		if s.TTL.Set {
+			e.FieldStart("ttl")
+			s.TTL.Encode(e)
+		}
+	}
+	{
+		if s.HardTTL.Set {
+			e.FieldStart("hard_ttl")
+			s.HardTTL.Encode(e)
+		}
+	}
+	{
+		if s.Network.Set {
+			e.FieldStart("network")
+			s.Network.Encode(e)
+		}
+	}
+	{
+		if s.AutoResume.Set {
+			e.FieldStart("auto_resume")
+			s.AutoResume.Encode(e)
+		}
+	}
+	{
+		if s.ExposedPorts != nil {
+			e.FieldStart("exposed_ports")
+			e.ArrStart()
+			for _, elem := range s.ExposedPorts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxUpdateConfig = [5]string{
+	0: "ttl",
+	1: "hard_ttl",
+	2: "network",
+	3: "auto_resume",
+	4: "exposed_ports",
+}
+
+// Decode decodes SandboxUpdateConfig from json.
+func (s *SandboxUpdateConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxUpdateConfig to nil")
+	}
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "ttl":
+			if err := func() error {
+				s.TTL.Reset()
+				if err := s.TTL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ttl\"")
+			}
+		case "hard_ttl":
+			if err := func() error {
+				s.HardTTL.Reset()
+				if err := s.HardTTL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_ttl\"")
+			}
+		case "network":
+			if err := func() error {
+				s.Network.Reset()
+				if err := s.Network.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"network\"")
+			}
+		case "auto_resume":
+			if err := func() error {
+				s.AutoResume.Reset()
+				if err := s.AutoResume.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"auto_resume\"")
+			}
+		case "exposed_ports":
+			if err := func() error {
+				s.ExposedPorts = make([]ExposedPortConfig, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ExposedPortConfig
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.ExposedPorts = append(s.ExposedPorts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exposed_ports\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxUpdateConfig")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxUpdateConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxUpdateConfig) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

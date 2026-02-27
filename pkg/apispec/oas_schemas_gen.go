@@ -5158,6 +5158,52 @@ func (o OptSandboxTemplateSpecEnvVars) Or(d SandboxTemplateSpecEnvVars) SandboxT
 	return d
 }
 
+// NewOptSandboxUpdateConfig returns new OptSandboxUpdateConfig with value set to v.
+func NewOptSandboxUpdateConfig(v SandboxUpdateConfig) OptSandboxUpdateConfig {
+	return OptSandboxUpdateConfig{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxUpdateConfig is optional SandboxUpdateConfig.
+type OptSandboxUpdateConfig struct {
+	Value SandboxUpdateConfig
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxUpdateConfig was set.
+func (o OptSandboxUpdateConfig) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxUpdateConfig) Reset() {
+	var v SandboxUpdateConfig
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxUpdateConfig) SetTo(v SandboxUpdateConfig) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxUpdateConfig) Get() (v SandboxUpdateConfig, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxUpdateConfig) Or(d SandboxUpdateConfig) SandboxUpdateConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxVolume returns new OptSandboxVolume with value set to v.
 func NewOptSandboxVolume(v SandboxVolume) OptSandboxVolume {
 	return OptSandboxVolume{
@@ -8411,18 +8457,81 @@ func (s *SandboxTemplateSpecEnvVars) init() SandboxTemplateSpecEnvVars {
 	return m
 }
 
+// Subset of SandboxConfig fields that can be updated at runtime without restarting the sandbox.
+// Note: env_vars and webhook are not included as they only affect new processes or require restart.
+// Ref: #/components/schemas/SandboxUpdateConfig
+type SandboxUpdateConfig struct {
+	TTL     OptInt32                   `json:"ttl"`
+	HardTTL OptInt32                   `json:"hard_ttl"`
+	Network OptTplSandboxNetworkPolicy `json:"network"`
+	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
+	// (API or public exposure) must not auto resume the sandbox.
+	AutoResume   OptBool             `json:"auto_resume"`
+	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
+}
+
+// GetTTL returns the value of TTL.
+func (s *SandboxUpdateConfig) GetTTL() OptInt32 {
+	return s.TTL
+}
+
+// GetHardTTL returns the value of HardTTL.
+func (s *SandboxUpdateConfig) GetHardTTL() OptInt32 {
+	return s.HardTTL
+}
+
+// GetNetwork returns the value of Network.
+func (s *SandboxUpdateConfig) GetNetwork() OptTplSandboxNetworkPolicy {
+	return s.Network
+}
+
+// GetAutoResume returns the value of AutoResume.
+func (s *SandboxUpdateConfig) GetAutoResume() OptBool {
+	return s.AutoResume
+}
+
+// GetExposedPorts returns the value of ExposedPorts.
+func (s *SandboxUpdateConfig) GetExposedPorts() []ExposedPortConfig {
+	return s.ExposedPorts
+}
+
+// SetTTL sets the value of TTL.
+func (s *SandboxUpdateConfig) SetTTL(val OptInt32) {
+	s.TTL = val
+}
+
+// SetHardTTL sets the value of HardTTL.
+func (s *SandboxUpdateConfig) SetHardTTL(val OptInt32) {
+	s.HardTTL = val
+}
+
+// SetNetwork sets the value of Network.
+func (s *SandboxUpdateConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
+	s.Network = val
+}
+
+// SetAutoResume sets the value of AutoResume.
+func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
+	s.AutoResume = val
+}
+
+// SetExposedPorts sets the value of ExposedPorts.
+func (s *SandboxUpdateConfig) SetExposedPorts(val []ExposedPortConfig) {
+	s.ExposedPorts = val
+}
+
 // Ref: #/components/schemas/SandboxUpdateRequest
 type SandboxUpdateRequest struct {
-	Config OptSandboxConfig `json:"config"`
+	Config OptSandboxUpdateConfig `json:"config"`
 }
 
 // GetConfig returns the value of Config.
-func (s *SandboxUpdateRequest) GetConfig() OptSandboxConfig {
+func (s *SandboxUpdateRequest) GetConfig() OptSandboxUpdateConfig {
 	return s.Config
 }
 
 // SetConfig sets the value of Config.
-func (s *SandboxUpdateRequest) SetConfig(val OptSandboxConfig) {
+func (s *SandboxUpdateRequest) SetConfig(val OptSandboxUpdateConfig) {
 	s.Config = val
 }
 

@@ -52,7 +52,7 @@ func TestSandboxLifecycle(t *testing.T) {
 	}
 
 	updateRequest := apispec.SandboxUpdateRequest{
-		Config: apispec.NewOptSandboxConfig(apispec.SandboxConfig{
+		Config: apispec.NewOptSandboxUpdateConfig(apispec.SandboxUpdateConfig{
 			TTL:        apispec.NewOptInt32(300),
 			HardTTL:    apispec.NewOptInt32(600),
 			AutoResume: apispec.NewOptBool(false),
