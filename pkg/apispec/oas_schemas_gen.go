@@ -7339,6 +7339,8 @@ func (s *RefreshRequest) SetRefreshToken(val string) {
 type RefreshResponse struct {
 	SandboxID string    `json:"sandbox_id"`
 	ExpiresAt time.Time `json:"expires_at"`
+	// Hard expiration timestamp. Zero value means not set.
+	HardExpiresAt time.Time `json:"hard_expires_at"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -7351,6 +7353,11 @@ func (s *RefreshResponse) GetExpiresAt() time.Time {
 	return s.ExpiresAt
 }
 
+// GetHardExpiresAt returns the value of HardExpiresAt.
+func (s *RefreshResponse) GetHardExpiresAt() time.Time {
+	return s.HardExpiresAt
+}
+
 // SetSandboxID sets the value of SandboxID.
 func (s *RefreshResponse) SetSandboxID(val string) {
 	s.SandboxID = val
@@ -7359,6 +7366,11 @@ func (s *RefreshResponse) SetSandboxID(val string) {
 // SetExpiresAt sets the value of ExpiresAt.
 func (s *RefreshResponse) SetExpiresAt(val time.Time) {
 	s.ExpiresAt = val
+}
+
+// SetHardExpiresAt sets the value of HardExpiresAt.
+func (s *RefreshResponse) SetHardExpiresAt(val time.Time) {
+	s.HardExpiresAt = val
 }
 
 // Ref: #/components/schemas/RegisterRequest
@@ -7682,9 +7694,12 @@ type Sandbox struct {
 	AutoResume   bool                `json:"auto_resume"`
 	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
 	PodName      string              `json:"pod_name"`
-	ExpiresAt    time.Time           `json:"expires_at"`
-	ClaimedAt    time.Time           `json:"claimed_at"`
-	CreatedAt    time.Time           `json:"created_at"`
+	// Soft expiration timestamp. Zero value means not set.
+	ExpiresAt time.Time `json:"expires_at"`
+	// Hard expiration timestamp. Zero value means not set.
+	HardExpiresAt time.Time `json:"hard_expires_at"`
+	ClaimedAt     time.Time `json:"claimed_at"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 // GetID returns the value of ID.
@@ -7735,6 +7750,11 @@ func (s *Sandbox) GetPodName() string {
 // GetExpiresAt returns the value of ExpiresAt.
 func (s *Sandbox) GetExpiresAt() time.Time {
 	return s.ExpiresAt
+}
+
+// GetHardExpiresAt returns the value of HardExpiresAt.
+func (s *Sandbox) GetHardExpiresAt() time.Time {
+	return s.HardExpiresAt
 }
 
 // GetClaimedAt returns the value of ClaimedAt.
@@ -7795,6 +7815,11 @@ func (s *Sandbox) SetPodName(val string) {
 // SetExpiresAt sets the value of ExpiresAt.
 func (s *Sandbox) SetExpiresAt(val time.Time) {
 	s.ExpiresAt = val
+}
+
+// SetHardExpiresAt sets the value of HardExpiresAt.
+func (s *Sandbox) SetHardExpiresAt(val time.Time) {
+	s.HardExpiresAt = val
 }
 
 // SetClaimedAt sets the value of ClaimedAt.
@@ -8066,15 +8091,16 @@ func (s *SandboxResourceUsage) SetContexts(val []ContextResourceUsage) {
 
 // Ref: #/components/schemas/SandboxStatus
 type SandboxStatus struct {
-	SandboxID  OptString `json:"sandbox_id"`
-	TemplateID OptString `json:"template_id"`
-	TeamID     OptString `json:"team_id"`
-	UserID     OptString `json:"user_id"`
-	PodName    OptString `json:"pod_name"`
-	Status     OptString `json:"status"`
-	ClaimedAt  OptString `json:"claimed_at"`
-	ExpiresAt  OptString `json:"expires_at"`
-	CreatedAt  OptString `json:"created_at"`
+	SandboxID     OptString `json:"sandbox_id"`
+	TemplateID    OptString `json:"template_id"`
+	TeamID        OptString `json:"team_id"`
+	UserID        OptString `json:"user_id"`
+	PodName       OptString `json:"pod_name"`
+	Status        OptString `json:"status"`
+	ClaimedAt     OptString `json:"claimed_at"`
+	ExpiresAt     OptString `json:"expires_at"`
+	HardExpiresAt OptString `json:"hard_expires_at"`
+	CreatedAt     OptString `json:"created_at"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -8115,6 +8141,11 @@ func (s *SandboxStatus) GetClaimedAt() OptString {
 // GetExpiresAt returns the value of ExpiresAt.
 func (s *SandboxStatus) GetExpiresAt() OptString {
 	return s.ExpiresAt
+}
+
+// GetHardExpiresAt returns the value of HardExpiresAt.
+func (s *SandboxStatus) GetHardExpiresAt() OptString {
+	return s.HardExpiresAt
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -8162,6 +8193,11 @@ func (s *SandboxStatus) SetExpiresAt(val OptString) {
 	s.ExpiresAt = val
 }
 
+// SetHardExpiresAt sets the value of HardExpiresAt.
+func (s *SandboxStatus) SetHardExpiresAt(val OptString) {
+	s.HardExpiresAt = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *SandboxStatus) SetCreatedAt(val OptString) {
 	s.CreatedAt = val
@@ -8177,6 +8213,8 @@ type SandboxSummary struct {
 	ClusterID OptNilString `json:"cluster_id"`
 	CreatedAt time.Time    `json:"created_at"`
 	ExpiresAt time.Time    `json:"expires_at"`
+	// Hard expiration timestamp. Zero value means not set.
+	HardExpiresAt time.Time `json:"hard_expires_at"`
 }
 
 // GetID returns the value of ID.
@@ -8214,6 +8252,11 @@ func (s *SandboxSummary) GetExpiresAt() time.Time {
 	return s.ExpiresAt
 }
 
+// GetHardExpiresAt returns the value of HardExpiresAt.
+func (s *SandboxSummary) GetHardExpiresAt() time.Time {
+	return s.HardExpiresAt
+}
+
 // SetID sets the value of ID.
 func (s *SandboxSummary) SetID(val string) {
 	s.ID = val
@@ -8247,6 +8290,11 @@ func (s *SandboxSummary) SetCreatedAt(val time.Time) {
 // SetExpiresAt sets the value of ExpiresAt.
 func (s *SandboxSummary) SetExpiresAt(val time.Time) {
 	s.ExpiresAt = val
+}
+
+// SetHardExpiresAt sets the value of HardExpiresAt.
+func (s *SandboxSummary) SetHardExpiresAt(val time.Time) {
+	s.HardExpiresAt = val
 }
 
 type SandboxSummaryStatus string

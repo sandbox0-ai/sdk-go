@@ -12364,11 +12364,16 @@ func (s *RefreshResponse) encodeFields(e *jx.Encoder) {
 		e.FieldStart("expires_at")
 		json.EncodeDateTime(e, s.ExpiresAt)
 	}
+	{
+		e.FieldStart("hard_expires_at")
+		json.EncodeDateTime(e, s.HardExpiresAt)
+	}
 }
 
-var jsonFieldsNameOfRefreshResponse = [2]string{
+var jsonFieldsNameOfRefreshResponse = [3]string{
 	0: "sandbox_id",
 	1: "expires_at",
+	2: "hard_expires_at",
 }
 
 // Decode decodes RefreshResponse from json.
@@ -12404,6 +12409,18 @@ func (s *RefreshResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
+		case "hard_expires_at":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.HardExpiresAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_expires_at\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -12414,7 +12431,7 @@ func (s *RefreshResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -13368,6 +13385,10 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		json.EncodeDateTime(e, s.ExpiresAt)
 	}
 	{
+		e.FieldStart("hard_expires_at")
+		json.EncodeDateTime(e, s.HardExpiresAt)
+	}
+	{
 		e.FieldStart("claimed_at")
 		json.EncodeDateTime(e, s.ClaimedAt)
 	}
@@ -13377,7 +13398,7 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [12]string{
+var jsonFieldsNameOfSandbox = [13]string{
 	0:  "id",
 	1:  "template_id",
 	2:  "team_id",
@@ -13388,8 +13409,9 @@ var jsonFieldsNameOfSandbox = [12]string{
 	7:  "exposed_ports",
 	8:  "pod_name",
 	9:  "expires_at",
-	10: "claimed_at",
-	11: "created_at",
+	10: "hard_expires_at",
+	11: "claimed_at",
+	12: "created_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -13524,8 +13546,20 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
-		case "claimed_at":
+		case "hard_expires_at":
 			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.HardExpiresAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_expires_at\"")
+			}
+		case "claimed_at":
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -13537,7 +13571,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 3
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -13559,7 +13593,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b01110111,
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -14237,6 +14271,12 @@ func (s *SandboxStatus) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.HardExpiresAt.Set {
+			e.FieldStart("hard_expires_at")
+			s.HardExpiresAt.Encode(e)
+		}
+	}
+	{
 		if s.CreatedAt.Set {
 			e.FieldStart("created_at")
 			s.CreatedAt.Encode(e)
@@ -14244,7 +14284,7 @@ func (s *SandboxStatus) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxStatus = [9]string{
+var jsonFieldsNameOfSandboxStatus = [10]string{
 	0: "sandbox_id",
 	1: "template_id",
 	2: "team_id",
@@ -14253,7 +14293,8 @@ var jsonFieldsNameOfSandboxStatus = [9]string{
 	5: "status",
 	6: "claimed_at",
 	7: "expires_at",
-	8: "created_at",
+	8: "hard_expires_at",
+	9: "created_at",
 }
 
 // Decode decodes SandboxStatus from json.
@@ -14344,6 +14385,16 @@ func (s *SandboxStatus) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
+		case "hard_expires_at":
+			if err := func() error {
+				s.HardExpiresAt.Reset()
+				if err := s.HardExpiresAt.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_expires_at\"")
+			}
 		case "created_at":
 			if err := func() error {
 				s.CreatedAt.Reset()
@@ -14417,9 +14468,13 @@ func (s *SandboxSummary) encodeFields(e *jx.Encoder) {
 		e.FieldStart("expires_at")
 		json.EncodeDateTime(e, s.ExpiresAt)
 	}
+	{
+		e.FieldStart("hard_expires_at")
+		json.EncodeDateTime(e, s.HardExpiresAt)
+	}
 }
 
-var jsonFieldsNameOfSandboxSummary = [7]string{
+var jsonFieldsNameOfSandboxSummary = [8]string{
 	0: "id",
 	1: "template_id",
 	2: "status",
@@ -14427,6 +14482,7 @@ var jsonFieldsNameOfSandboxSummary = [7]string{
 	4: "cluster_id",
 	5: "created_at",
 	6: "expires_at",
+	7: "hard_expires_at",
 }
 
 // Decode decodes SandboxSummary from json.
@@ -14518,6 +14574,18 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
+		case "hard_expires_at":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.HardExpiresAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_expires_at\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -14528,7 +14596,7 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b01101111,
+		0b11101111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
