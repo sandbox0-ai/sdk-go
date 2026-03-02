@@ -5799,6 +5799,26 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 	}
 	uri.AddPathParts(u, pathParts[:]...)
 
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "force" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "force",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Force.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
 	r, err := ht.NewRequest(ctx, "DELETE", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")

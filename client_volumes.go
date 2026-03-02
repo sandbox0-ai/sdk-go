@@ -6,6 +6,11 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
+// DeleteVolumeOptions controls delete volume behavior.
+type DeleteVolumeOptions struct {
+	Force bool
+}
+
 // CreateVolume creates a sandbox volume.
 func (c *Client) CreateVolume(ctx context.Context, request apispec.CreateSandboxVolumeRequest) (*apispec.SandboxVolume, error) {
 	resp, err := c.api.APIV1SandboxvolumesPost(ctx, &request)
@@ -51,7 +56,17 @@ func (c *Client) GetVolume(ctx context.Context, volumeID string) (*apispec.Sandb
 
 // DeleteVolume deletes a sandbox volume.
 func (c *Client) DeleteVolume(ctx context.Context, volumeID string) (*apispec.SuccessDeletedResponse, error) {
-	resp, err := c.api.APIV1SandboxvolumesIDDelete(ctx, apispec.APIV1SandboxvolumesIDDeleteParams{ID: volumeID})
+	return c.DeleteVolumeWithOptions(ctx, volumeID, nil)
+}
+
+// DeleteVolumeWithOptions deletes a sandbox volume with optional behavior.
+func (c *Client) DeleteVolumeWithOptions(ctx context.Context, volumeID string, options *DeleteVolumeOptions) (*apispec.SuccessDeletedResponse, error) {
+	params := apispec.APIV1SandboxvolumesIDDeleteParams{ID: volumeID}
+	if options != nil {
+		params.Force = apispec.NewOptBool(options.Force)
+	}
+
+	resp, err := c.api.APIV1SandboxvolumesIDDelete(ctx, params)
 	if err != nil {
 		return nil, err
 	}

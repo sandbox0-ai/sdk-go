@@ -216,6 +216,8 @@ type APIV1SandboxesIDStatusGetParams struct {
 // APIV1SandboxvolumesIDDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id} operation.
 type APIV1SandboxvolumesIDDeleteParams struct {
 	ID string
+	// Force delete even if volume has active mounts.
+	Force OptBool `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxvolumesIDForkPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/fork operation.
