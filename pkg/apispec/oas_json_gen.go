@@ -11198,18 +11198,11 @@ func (s *PoolStrategy) encodeFields(e *jx.Encoder) {
 		e.FieldStart("maxIdle")
 		e.Int32(s.MaxIdle)
 	}
-	{
-		if s.AutoScale.Set {
-			e.FieldStart("autoScale")
-			s.AutoScale.Encode(e)
-		}
-	}
 }
 
-var jsonFieldsNameOfPoolStrategy = [3]string{
+var jsonFieldsNameOfPoolStrategy = [2]string{
 	0: "minIdle",
 	1: "maxIdle",
-	2: "autoScale",
 }
 
 // Decode decodes PoolStrategy from json.
@@ -11218,7 +11211,6 @@ func (s *PoolStrategy) Decode(d *jx.Decoder) error {
 		return errors.New("invalid: unable to decode PoolStrategy to nil")
 	}
 	var requiredBitSet [1]uint8
-	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -11245,16 +11237,6 @@ func (s *PoolStrategy) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"maxIdle\"")
-			}
-		case "autoScale":
-			if err := func() error {
-				s.AutoScale.Reset()
-				if err := s.AutoScale.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"autoScale\"")
 			}
 		default:
 			return d.Skip()

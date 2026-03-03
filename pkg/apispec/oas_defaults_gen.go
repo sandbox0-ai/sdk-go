@@ -3,14 +3,6 @@
 package apispec
 
 // setDefaults set default value of fields.
-func (s *PoolStrategy) setDefaults() {
-	{
-		val := bool(false)
-		s.AutoScale.SetTo(val)
-	}
-}
-
-// setDefaults set default value of fields.
 func (s *SandboxConfig) setDefaults() {
 	{
 		val := bool(true)
