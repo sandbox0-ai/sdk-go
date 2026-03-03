@@ -11199,8 +11199,10 @@ func (s *PoolStrategy) encodeFields(e *jx.Encoder) {
 		e.Int32(s.MaxIdle)
 	}
 	{
-		e.FieldStart("autoScale")
-		e.Bool(s.AutoScale)
+		if s.AutoScale.Set {
+			e.FieldStart("autoScale")
+			s.AutoScale.Encode(e)
+		}
 	}
 }
 
@@ -11216,6 +11218,7 @@ func (s *PoolStrategy) Decode(d *jx.Decoder) error {
 		return errors.New("invalid: unable to decode PoolStrategy to nil")
 	}
 	var requiredBitSet [1]uint8
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -11244,11 +11247,9 @@ func (s *PoolStrategy) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"maxIdle\"")
 			}
 		case "autoScale":
-			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				v, err := d.Bool()
-				s.AutoScale = bool(v)
-				if err != nil {
+				s.AutoScale.Reset()
+				if err := s.AutoScale.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -11265,7 +11266,7 @@ func (s *PoolStrategy) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

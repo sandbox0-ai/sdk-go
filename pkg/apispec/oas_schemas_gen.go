@@ -6931,9 +6931,9 @@ func (s *PodSpecOverrideNodeSelector) init() PodSpecOverrideNodeSelector {
 
 // Ref: #/components/schemas/PoolStrategy
 type PoolStrategy struct {
-	MinIdle   int32 `json:"minIdle"`
-	MaxIdle   int32 `json:"maxIdle"`
-	AutoScale bool  `json:"autoScale"`
+	MinIdle   int32   `json:"minIdle"`
+	MaxIdle   int32   `json:"maxIdle"`
+	AutoScale OptBool `json:"autoScale"`
 }
 
 // GetMinIdle returns the value of MinIdle.
@@ -6947,7 +6947,7 @@ func (s *PoolStrategy) GetMaxIdle() int32 {
 }
 
 // GetAutoScale returns the value of AutoScale.
-func (s *PoolStrategy) GetAutoScale() bool {
+func (s *PoolStrategy) GetAutoScale() OptBool {
 	return s.AutoScale
 }
 
@@ -6962,7 +6962,7 @@ func (s *PoolStrategy) SetMaxIdle(val int32) {
 }
 
 // SetAutoScale sets the value of AutoScale.
-func (s *PoolStrategy) SetAutoScale(val bool) {
+func (s *PoolStrategy) SetAutoScale(val OptBool) {
 	s.AutoScale = val
 }
 
