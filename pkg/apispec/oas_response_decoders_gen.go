@@ -4521,6 +4521,9 @@ func decodeAuthOidcProviderCallbackGetResponse(resp *http.Response) (res AuthOid
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
+	case 302:
+		// Code 302.
+		return &AuthOidcProviderCallbackGetFound{}, nil
 	case 400:
 		// Code 400.
 		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))

@@ -473,6 +473,11 @@ type AuthOidcProviderCallbackGetBadRequest ErrorEnvelope
 
 func (*AuthOidcProviderCallbackGetBadRequest) authOidcProviderCallbackGetRes() {}
 
+// AuthOidcProviderCallbackGetFound is response for AuthOidcProviderCallbackGet operation.
+type AuthOidcProviderCallbackGetFound struct{}
+
+func (*AuthOidcProviderCallbackGetFound) authOidcProviderCallbackGetRes() {}
+
 type AuthOidcProviderCallbackGetUnauthorized ErrorEnvelope
 
 func (*AuthOidcProviderCallbackGetUnauthorized) authOidcProviderCallbackGetRes() {}
@@ -3945,6 +3950,69 @@ func (o OptNetworkEgressPolicy) Or(d NetworkEgressPolicy) NetworkEgressPolicy {
 	return d
 }
 
+// NewOptNilDateTime returns new OptNilDateTime with value set to v.
+func NewOptNilDateTime(v time.Time) OptNilDateTime {
+	return OptNilDateTime{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilDateTime is optional nullable time.Time.
+type OptNilDateTime struct {
+	Value time.Time
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilDateTime was set.
+func (o OptNilDateTime) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilDateTime) Reset() {
+	var v time.Time
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilDateTime) SetTo(v time.Time) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilDateTime) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilDateTime) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v time.Time
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilDateTime) Get() (v time.Time, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptNilString returns new OptNilString with value set to v.
 func NewOptNilString(v string) OptNilString {
 	return OptNilString{
@@ -5152,6 +5220,52 @@ func (o OptSandboxTemplateSpecEnvVars) Get() (v SandboxTemplateSpecEnvVars, ok b
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxTemplateSpecEnvVars) Or(d SandboxTemplateSpecEnvVars) SandboxTemplateSpecEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxTemplateStatus returns new OptSandboxTemplateStatus with value set to v.
+func NewOptSandboxTemplateStatus(v SandboxTemplateStatus) OptSandboxTemplateStatus {
+	return OptSandboxTemplateStatus{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxTemplateStatus is optional SandboxTemplateStatus.
+type OptSandboxTemplateStatus struct {
+	Value SandboxTemplateStatus
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxTemplateStatus was set.
+func (o OptSandboxTemplateStatus) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxTemplateStatus) Reset() {
+	var v SandboxTemplateStatus
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxTemplateStatus) SetTo(v SandboxTemplateStatus) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxTemplateStatus) Get() (v SandboxTemplateStatus, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxTemplateStatus) Or(d SandboxTemplateStatus) SandboxTemplateStatus {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7401,11 +7515,12 @@ func (s *RegisterRequest) SetName(val string) {
 
 // Ref: #/components/schemas/RegistryCredentials
 type RegistryCredentials struct {
-	Provider  string      `json:"provider"`
-	Registry  string      `json:"registry"`
-	Username  string      `json:"username"`
-	Password  string      `json:"password"`
-	ExpiresAt OptDateTime `json:"expiresAt"`
+	Provider     string      `json:"provider"`
+	PushRegistry string      `json:"pushRegistry"`
+	PullRegistry string      `json:"pullRegistry"`
+	Username     string      `json:"username"`
+	Password     string      `json:"password"`
+	ExpiresAt    OptDateTime `json:"expiresAt"`
 }
 
 // GetProvider returns the value of Provider.
@@ -7413,9 +7528,14 @@ func (s *RegistryCredentials) GetProvider() string {
 	return s.Provider
 }
 
-// GetRegistry returns the value of Registry.
-func (s *RegistryCredentials) GetRegistry() string {
-	return s.Registry
+// GetPushRegistry returns the value of PushRegistry.
+func (s *RegistryCredentials) GetPushRegistry() string {
+	return s.PushRegistry
+}
+
+// GetPullRegistry returns the value of PullRegistry.
+func (s *RegistryCredentials) GetPullRegistry() string {
+	return s.PullRegistry
 }
 
 // GetUsername returns the value of Username.
@@ -7438,9 +7558,14 @@ func (s *RegistryCredentials) SetProvider(val string) {
 	s.Provider = val
 }
 
-// SetRegistry sets the value of Registry.
-func (s *RegistryCredentials) SetRegistry(val string) {
-	s.Registry = val
+// SetPushRegistry sets the value of PushRegistry.
+func (s *RegistryCredentials) SetPushRegistry(val string) {
+	s.PushRegistry = val
+}
+
+// SetPullRegistry sets the value of PullRegistry.
+func (s *RegistryCredentials) SetPullRegistry(val string) {
+	s.PullRegistry = val
 }
 
 // SetUsername sets the value of Username.
@@ -8341,6 +8466,65 @@ func (s *SandboxSummaryStatus) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/SandboxTemplateCondition
+type SandboxTemplateCondition struct {
+	Type               OptString   `json:"type"`
+	Status             OptString   `json:"status"`
+	LastTransitionTime OptDateTime `json:"lastTransitionTime"`
+	Reason             OptString   `json:"reason"`
+	Message            OptString   `json:"message"`
+}
+
+// GetType returns the value of Type.
+func (s *SandboxTemplateCondition) GetType() OptString {
+	return s.Type
+}
+
+// GetStatus returns the value of Status.
+func (s *SandboxTemplateCondition) GetStatus() OptString {
+	return s.Status
+}
+
+// GetLastTransitionTime returns the value of LastTransitionTime.
+func (s *SandboxTemplateCondition) GetLastTransitionTime() OptDateTime {
+	return s.LastTransitionTime
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxTemplateCondition) GetReason() OptString {
+	return s.Reason
+}
+
+// GetMessage returns the value of Message.
+func (s *SandboxTemplateCondition) GetMessage() OptString {
+	return s.Message
+}
+
+// SetType sets the value of Type.
+func (s *SandboxTemplateCondition) SetType(val OptString) {
+	s.Type = val
+}
+
+// SetStatus sets the value of Status.
+func (s *SandboxTemplateCondition) SetStatus(val OptString) {
+	s.Status = val
+}
+
+// SetLastTransitionTime sets the value of LastTransitionTime.
+func (s *SandboxTemplateCondition) SetLastTransitionTime(val OptDateTime) {
+	s.LastTransitionTime = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxTemplateCondition) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// SetMessage sets the value of Message.
+func (s *SandboxTemplateCondition) SetMessage(val OptString) {
+	s.Message = val
+}
+
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
 	Description      OptString                     `json:"description"`
@@ -8508,6 +8692,54 @@ func (s *SandboxTemplateSpecEnvVars) init() SandboxTemplateSpecEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxTemplateStatus
+type SandboxTemplateStatus struct {
+	IdleCount      OptInt32                   `json:"idleCount"`
+	ActiveCount    OptInt32                   `json:"activeCount"`
+	Conditions     []SandboxTemplateCondition `json:"conditions"`
+	LastUpdateTime OptNilDateTime             `json:"lastUpdateTime"`
+}
+
+// GetIdleCount returns the value of IdleCount.
+func (s *SandboxTemplateStatus) GetIdleCount() OptInt32 {
+	return s.IdleCount
+}
+
+// GetActiveCount returns the value of ActiveCount.
+func (s *SandboxTemplateStatus) GetActiveCount() OptInt32 {
+	return s.ActiveCount
+}
+
+// GetConditions returns the value of Conditions.
+func (s *SandboxTemplateStatus) GetConditions() []SandboxTemplateCondition {
+	return s.Conditions
+}
+
+// GetLastUpdateTime returns the value of LastUpdateTime.
+func (s *SandboxTemplateStatus) GetLastUpdateTime() OptNilDateTime {
+	return s.LastUpdateTime
+}
+
+// SetIdleCount sets the value of IdleCount.
+func (s *SandboxTemplateStatus) SetIdleCount(val OptInt32) {
+	s.IdleCount = val
+}
+
+// SetActiveCount sets the value of ActiveCount.
+func (s *SandboxTemplateStatus) SetActiveCount(val OptInt32) {
+	s.ActiveCount = val
+}
+
+// SetConditions sets the value of Conditions.
+func (s *SandboxTemplateStatus) SetConditions(val []SandboxTemplateCondition) {
+	s.Conditions = val
+}
+
+// SetLastUpdateTime sets the value of LastUpdateTime.
+func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
+	s.LastUpdateTime = val
 }
 
 // Subset of SandboxConfig fields that can be updated at runtime without restarting the sandbox.
@@ -11285,13 +11517,14 @@ func (*TeamsPostConflict) teamsPostRes() {}
 
 // Ref: #/components/schemas/Template
 type Template struct {
-	TemplateID string              `json:"template_id"`
-	Scope      string              `json:"scope"`
-	TeamID     OptString           `json:"team_id"`
-	UserID     OptString           `json:"user_id"`
-	Spec       SandboxTemplateSpec `json:"spec"`
-	CreatedAt  time.Time           `json:"created_at"`
-	UpdatedAt  time.Time           `json:"updated_at"`
+	TemplateID string                   `json:"template_id"`
+	Scope      string                   `json:"scope"`
+	TeamID     OptString                `json:"team_id"`
+	UserID     OptString                `json:"user_id"`
+	Spec       SandboxTemplateSpec      `json:"spec"`
+	Status     OptSandboxTemplateStatus `json:"status"`
+	CreatedAt  time.Time                `json:"created_at"`
+	UpdatedAt  time.Time                `json:"updated_at"`
 }
 
 // GetTemplateID returns the value of TemplateID.
@@ -11317,6 +11550,11 @@ func (s *Template) GetUserID() OptString {
 // GetSpec returns the value of Spec.
 func (s *Template) GetSpec() SandboxTemplateSpec {
 	return s.Spec
+}
+
+// GetStatus returns the value of Status.
+func (s *Template) GetStatus() OptSandboxTemplateStatus {
+	return s.Status
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -11352,6 +11590,11 @@ func (s *Template) SetUserID(val OptString) {
 // SetSpec sets the value of Spec.
 func (s *Template) SetSpec(val SandboxTemplateSpec) {
 	s.Spec = val
+}
+
+// SetStatus sets the value of Status.
+func (s *Template) SetStatus(val OptSandboxTemplateStatus) {
+	s.Status = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
