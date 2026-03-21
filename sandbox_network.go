@@ -7,7 +7,7 @@ import (
 )
 
 // GetNetworkPolicy retrieves the sandbox network policy.
-func (s *Sandbox) GetNetworkPolicy(ctx context.Context) (*apispec.TplSandboxNetworkPolicy, error) {
+func (s *Sandbox) GetNetworkPolicy(ctx context.Context) (*apispec.SandboxNetworkPolicy, error) {
 	resp, err := s.client.api.APIV1SandboxesIDNetworkGet(ctx, apispec.APIV1SandboxesIDNetworkGetParams{ID: s.ID})
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (s *Sandbox) GetNetworkPolicy(ctx context.Context) (*apispec.TplSandboxNetw
 }
 
 // UpdateNetworkPolicy updates the sandbox network policy.
-func (s *Sandbox) UpdateNetworkPolicy(ctx context.Context, policy apispec.TplSandboxNetworkPolicy) (*apispec.TplSandboxNetworkPolicy, error) {
+func (s *Sandbox) UpdateNetworkPolicy(ctx context.Context, policy apispec.SandboxNetworkPolicy) (*apispec.SandboxNetworkPolicy, error) {
 	resp, err := s.client.api.APIV1SandboxesIDNetworkPut(ctx, &policy, apispec.APIV1SandboxesIDNetworkPutParams{ID: s.ID})
 	if err != nil {
 		return nil, err

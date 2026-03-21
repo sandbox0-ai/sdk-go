@@ -17,6 +17,10 @@ type APIKeysPostRes interface {
 	aPIKeysPostRes()
 }
 
+type APIV1CredentialSourcesNameGetRes interface {
+	aPIV1CredentialSourcesNameGetRes()
+}
+
 type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
 }
@@ -129,6 +133,10 @@ type AuthRefreshPostRes interface {
 	authRefreshPostRes()
 }
 
+type AuthRegionTokenPostRes interface {
+	authRegionTokenPostRes()
+}
+
 type AuthRegisterPostRes interface {
 	authRegisterPostRes()
 }
@@ -139,6 +147,26 @@ type HealthzGetRes interface {
 
 type ReadyzGetRes interface {
 	readyzGetRes()
+}
+
+type RegionsGetRes interface {
+	regionsGetRes()
+}
+
+type RegionsIDDeleteRes interface {
+	regionsIDDeleteRes()
+}
+
+type RegionsIDGetRes interface {
+	regionsIDGetRes()
+}
+
+type RegionsIDPutRes interface {
+	regionsIDPutRes()
+}
+
+type RegionsPostRes interface {
+	regionsPostRes()
 }
 
 type TeamsGetRes interface {
@@ -177,6 +205,14 @@ type TeamsPostRes interface {
 	teamsPostRes()
 }
 
+type TenantActiveGetRes interface {
+	tenantActiveGetRes()
+}
+
+type TenantActivePutRes interface {
+	tenantActivePutRes()
+}
+
 type UsersMeGetRes interface {
 	usersMeGetRes()
 }
@@ -187,8 +223,4 @@ type UsersMeIdentitiesGetRes interface {
 
 type UsersMeIdentitiesIDDeleteRes interface {
 	usersMeIdentitiesIDDeleteRes()
-}
-
-type UsersMePutRes interface {
-	usersMePutRes()
 }

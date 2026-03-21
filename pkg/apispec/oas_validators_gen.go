@@ -64,6 +64,14 @@ func (s *APIKeysIDDeleteNotFound) Validate() error {
 	return nil
 }
 
+func (s *APIV1RegistryCredentialsPostForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *APIV1RegistryCredentialsPostInternalServerError) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -333,6 +341,38 @@ func (s *AuthRefreshPostBadRequest) Validate() error {
 }
 
 func (s *AuthRefreshPostUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthRegionTokenPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthRegionTokenPostConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthRegionTokenPostForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthRegionTokenPostUnauthorized) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -718,6 +758,239 @@ func (s *CreateSandboxVolumeRequest) Validate() error {
 	return nil
 }
 
+func (s *CredentialBinding) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Projection.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "projection",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s CredentialProjectionType) Validate() error {
+	switch s {
+	case "http_headers":
+		return nil
+	case "tls_client_certificate":
+		return nil
+	case "username_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *CredentialSourceMetadata) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.ResolverKind.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "resolverKind",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s CredentialSourceResolverKind) Validate() error {
+	switch s {
+	case "static_headers":
+		return nil
+	case "static_tls_client_certificate":
+		return nil
+	case "static_username_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *CredentialSourceWriteRequest) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.ResolverKind.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "resolverKind",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s EgressAuthFailurePolicy) Validate() error {
+	switch s {
+	case "fail-closed":
+		return nil
+	case "fail-open":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s EgressAuthProtocol) Validate() error {
+	switch s {
+	case "http":
+		return nil
+	case "https":
+		return nil
+	case "grpc":
+		return nil
+	case "tls":
+		return nil
+	case "socks5":
+		return nil
+	case "mqtt":
+		return nil
+	case "redis":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s EgressAuthRolloutMode) Validate() error {
+	switch s {
+	case "enabled":
+		return nil
+	case "disabled":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *EgressCredentialRule) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Rollout.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "rollout",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Protocol.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "protocol",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.TlsMode.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "tlsMode",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.FailurePolicy.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "failurePolicy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s EgressTLSMode) Validate() error {
+	switch s {
+	case "passthrough":
+		return nil
+	case "terminate-reoriginate":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *ErrorEnvelope) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -920,6 +1193,68 @@ func (s *LoginResponse) Validate() error {
 	return nil
 }
 
+func (s *NetworkEgressPolicy) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.TrafficRules {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "trafficRules",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.CredentialRules {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "credentialRules",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *PauseSandboxResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -959,6 +1294,29 @@ func (s ProcessType) Validate() error {
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
+}
+
+func (s *ProjectionSpec) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
 }
 
 func (s *REPLConfig) Validate() error {
@@ -1041,6 +1399,142 @@ func (s REPLReadyMode) Validate() error {
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
+}
+
+func (s *RegionsGetForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsGetUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDDeleteConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDDeleteForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDDeleteNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDDeleteUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDGetForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDGetNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDGetUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDPutBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDPutForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDPutNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsIDPutUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsPostConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsPostForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RegionsPostUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *RegisterRequest) Validate() error {
@@ -1155,10 +1649,112 @@ func (s *SandboxConfig) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.CredentialBindings {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "credential_bindings",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s *SandboxNetworkPolicy) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Mode.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "mode",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Egress.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "egress",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.CredentialBindings {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "credentialBindings",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SandboxNetworkPolicyMode) Validate() error {
+	switch s {
+	case "allow-all":
+		return nil
+	case "block-all":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *SandboxResourceUsage) Validate() error {
@@ -1260,6 +1856,31 @@ func (s *SandboxTemplateSpec) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.CredentialBindings {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "credentialBindings",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -1287,6 +1908,31 @@ func (s *SandboxUpdateConfig) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "network",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.CredentialBindings {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "credential_bindings",
 			Error: err,
 		})
 	}
@@ -1435,6 +2081,38 @@ func (s *SuccessAPIKeyListResponseData) Validate() error {
 }
 
 func (s SuccessAPIKeyListResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessActiveTeamResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessActiveTeamResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil
@@ -1808,6 +2486,113 @@ func (s SuccessCreatedResponseSuccess) Validate() error {
 	}
 }
 
+func (s *SuccessCredentialSourceListResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.Data {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessCredentialSourceListResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessCredentialSourceResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Data.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessCredentialSourceResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *SuccessDeletedResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2114,6 +2899,38 @@ func (s SuccessIdentityListResponseSuccess) Validate() error {
 	}
 }
 
+func (s *SuccessIssueRegionTokenResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessIssueRegionTokenResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *SuccessLoginResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2366,6 +3183,70 @@ func (s *SuccessRefreshResponse) Validate() error {
 }
 
 func (s SuccessRefreshResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessRegionListResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessRegionListResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessRegionResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessRegionResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil
@@ -3400,22 +4281,6 @@ func (s *TeamsIDPutNotFound) Validate() error {
 	return nil
 }
 
-func (s *TeamsPostBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *TeamsPostConflict) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *Template) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -3485,6 +4350,54 @@ func (s *TemplateUpdateRequest) Validate() error {
 	return nil
 }
 
+func (s *TenantActiveGetBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TenantActiveGetConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TenantActiveGetForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TenantActiveGetUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TenantActivePutBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TenantActivePutUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *TplSandboxNetworkPolicy) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -3502,6 +4415,24 @@ func (s *TplSandboxNetworkPolicy) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if value, ok := s.Egress.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "egress",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -3513,6 +4444,92 @@ func (s TplSandboxNetworkPolicyMode) Validate() error {
 	case "allow-all":
 		return nil
 	case "block-all":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *TrafficRule) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Action.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "action",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.AppProtocols {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "appProtocols",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s TrafficRuleAction) Validate() error {
+	switch s {
+	case "allow":
+		return nil
+	case "deny":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s TrafficRuleAppProtocol) Validate() error {
+	switch s {
+	case "http":
+		return nil
+	case "tls":
+		return nil
+	case "ssh":
+		return nil
+	case "socks5":
+		return nil
+	case "mqtt":
+		return nil
+	case "redis":
+		return nil
+	case "amqp":
+		return nil
+	case "dns":
+		return nil
+	case "mongodb":
+		return nil
+	case "udp":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
@@ -3630,22 +4647,6 @@ func (s *UsersMeIdentitiesIDDeleteNotFound) Validate() error {
 }
 
 func (s *UsersMeIdentitiesIDDeleteUnauthorized) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *UsersMePutBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *UsersMePutUnauthorized) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err

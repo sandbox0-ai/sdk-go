@@ -24,6 +24,34 @@ func encodeAPIKeysPostRequest(
 	return nil
 }
 
+func encodeAPIV1CredentialSourcesNamePutRequest(
+	req *CredentialSourceWriteRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1CredentialSourcesPostRequest(
+	req *CredentialSourceWriteRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAPIV1SandboxesIDContextsCtxIDExecPostRequest(
 	req *ContextInputRequest,
 	r *http.Request,
@@ -133,7 +161,7 @@ func encodeAPIV1SandboxesIDFilesPostRequest(
 }
 
 func encodeAPIV1SandboxesIDNetworkPutRequest(
-	req *TplSandboxNetworkPolicy,
+	req *SandboxNetworkPolicy,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -340,8 +368,56 @@ func encodeAuthRefreshPostRequest(
 	return nil
 }
 
+func encodeAuthRegionTokenPostRequest(
+	req OptIssueRegionTokenRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	if !req.Set {
+		// Keep request with empty body if value is not set.
+		return nil
+	}
+	e := new(jx.Encoder)
+	{
+		if req.Set {
+			req.Encode(e)
+		}
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAuthRegisterPostRequest(
 	req *RegisterRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeRegionsIDPutRequest(
+	req *UpdateRegionRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeRegionsPostRequest(
+	req *CreateRegionRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -410,7 +486,7 @@ func encodeTeamsPostRequest(
 	return nil
 }
 
-func encodeUsersMePutRequest(
+func encodeTenantActivePutRequest(
 	req *UpdateUserRequest,
 	r *http.Request,
 ) error {

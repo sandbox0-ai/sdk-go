@@ -45,8 +45,8 @@ func main() {
 	fmt.Println(resp.OutputRaw)
 
 	// Block all traffic
-	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
-		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
+	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.SandboxNetworkPolicy{
+		Mode: apispec.SandboxNetworkPolicyModeBlockAll,
 	})
 	must(err)
 
@@ -54,8 +54,8 @@ func main() {
 	must(err)
 	fmt.Println(resp.OutputRaw)
 
-	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
-		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
+	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.SandboxNetworkPolicy{
+		Mode: apispec.SandboxNetworkPolicyModeBlockAll,
 		Egress: apispec.NewOptNetworkEgressPolicy(apispec.NetworkEgressPolicy{
 			AllowedDomains: []string{"github.com"},
 		}),

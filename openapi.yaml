@@ -2,15 +2,17 @@ openapi: 3.0.3
 info:
   title: Sandbox0 API
   version: 0.1.0
-  description: Public HTTP APIs exposed by internal-gateway.
+  description: Public HTTP APIs exposed by Sandbox0 regional gateways and the global directory.
 servers:
   - url: https://api.sandbox0.ai
     description: Production
 tags:
   - name: health
   - name: auth
+  - name: tenant
   - name: users
   - name: teams
+  - name: regions
   - name: api-keys
   - name: sandboxes
   - name: contexts
@@ -288,6 +290,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+  /auth/region-token:
+    post:
+      tags: [tenant]
+      summary: Exchange a global user session for a region-scoped token
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IssueRegionTokenRequest"
+      responses:
+        "200":
+          description: Region token issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessIssueRegionTokenResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Active team cannot be resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: Active team is not routable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
   /users/me:
     get:
       tags: [users]
@@ -303,6 +348,49 @@ paths:
                 $ref: "#/components/schemas/SuccessUserResponse"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /tenant/active:
+    get:
+      tags: [tenant]
+      summary: Resolve the active team and its routing information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Active team
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessActiveTeamResponse"
+        "400":
+          description: No active team selected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Team not accessible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: Active team is not routable
           content:
             application/json:
               schema:
@@ -428,6 +516,182 @@ paths:
                 $ref: "#/components/schemas/SuccessTeamResponse"
         "400":
           description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /regions:
+    get:
+      tags: [regions]
+      summary: List regions in the global directory
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Region list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessRegionListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: System admin access required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      tags: [regions]
+      summary: Create a region in the global directory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRegionRequest"
+      responses:
+        "201":
+          description: Region created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessRegionResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: System admin access required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: Region already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /regions/{id}:
+    get:
+      tags: [regions]
+      summary: Get a region from the global directory
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RegionId"
+      responses:
+        "200":
+          description: Region
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessRegionResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: System admin access required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Region not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    put:
+      tags: [regions]
+      summary: Update a region in the global directory
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RegionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRegionRequest"
+      responses:
+        "200":
+          description: Region updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessRegionResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: System admin access required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Region not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    delete:
+      tags: [regions]
+      summary: Delete a region from the global directory
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RegionId"
+      responses:
+        "200":
+          description: Region deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessageResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: System admin access required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Region not found
           content:
             application/json:
               schema:
@@ -1052,7 +1316,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TplSandboxNetworkPolicy"
+              $ref: "#/components/schemas/SandboxNetworkPolicy"
       responses:
         "200":
           description: Network policy updated
@@ -1738,7 +2002,7 @@ paths:
       summary: Get registry credentials for uploads
       security:
         - bearerAuth: []
-      x-upstream-service: manager
+      x-upstream-service: edge-gateway
       x-upstream-path: /api/v1/registry/credentials
       responses:
         "200":
@@ -1753,12 +2017,126 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
         "500":
           description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+  /api/v1/credential-sources:
+    get:
+      tags: [credential-sources]
+      summary: List credential sources
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/credential-sources
+      responses:
+        "200":
+          description: Credential sources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessCredentialSourceListResponse"
+    post:
+      tags: [credential-sources]
+      summary: Create credential source
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/credential-sources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialSourceWriteRequest"
+      responses:
+        "201":
+          description: Credential source created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessCredentialSourceResponse"
+  /api/v1/credential-sources/{name}:
+    get:
+      tags: [credential-sources]
+      summary: Get credential source
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/credential-sources/{name}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Credential source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessCredentialSourceResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    put:
+      tags: [credential-sources]
+      summary: Update credential source
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/credential-sources/{name}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialSourceWriteRequest"
+      responses:
+        "200":
+          description: Credential source updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessCredentialSourceResponse"
+    delete:
+      tags: [credential-sources]
+      summary: Delete credential source
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/credential-sources/{name}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Credential source deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessageResponse"
   /api/v1/sandboxvolumes:
     post:
       tags: [sandbox-volumes]
@@ -2004,6 +2382,12 @@ components:
       required: true
       schema:
         type: string
+    RegionId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
     UserID:
       name: userId
       in: path
@@ -2115,6 +2499,22 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/RegistryCredentials"
+    SuccessCredentialSourceResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/CredentialSourceMetadata"
+    SuccessCredentialSourceListResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/CredentialSourceMetadata"
     RegistryCredentials:
       type: object
       properties:
@@ -2296,6 +2696,10 @@ components:
         default_team_id:
           type: string
           nullable: true
+        default_team:
+          allOf:
+            - $ref: "#/components/schemas/Team"
+          nullable: true
         email_verified:
           type: boolean
         is_admin:
@@ -2331,6 +2735,56 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/User"
+    ActiveTeam:
+      type: object
+      properties:
+        user_id:
+          type: string
+        team_id:
+          type: string
+        team_role:
+          type: string
+        home_region_id:
+          type: string
+        default_team:
+          type: boolean
+        edge_gateway_url:
+          type: string
+          nullable: true
+      required: [user_id, team_id, home_region_id]
+    SuccessActiveTeamResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ActiveTeam"
+    IssueRegionTokenRequest:
+      type: object
+      properties:
+        team_id:
+          type: string
+    IssueRegionTokenResponse:
+      type: object
+      properties:
+        region_id:
+          type: string
+        edge_gateway_url:
+          type: string
+          nullable: true
+        token:
+          type: string
+        expires_at:
+          type: integer
+          format: int64
+      required: [region_id, token, expires_at]
+    SuccessIssueRegionTokenResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/IssueRegionTokenResponse"
     Identity:
       type: object
       properties:
@@ -2366,6 +2820,9 @@ components:
         owner_id:
           type: string
           nullable: true
+        home_region_id:
+          type: string
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -2373,6 +2830,67 @@ components:
           type: string
           format: date-time
       required: [id, name, slug, created_at, updated_at]
+    Region:
+      type: object
+      properties:
+        id:
+          type: string
+        display_name:
+          type: string
+        edge_gateway_url:
+          type: string
+        metering_export_url:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+      required: [id, edge_gateway_url, enabled]
+    CreateRegionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        display_name:
+          type: string
+        edge_gateway_url:
+          type: string
+        metering_export_url:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+      required: [id, edge_gateway_url]
+    UpdateRegionRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+        edge_gateway_url:
+          type: string
+        metering_export_url:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+    SuccessRegionResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Region"
+    SuccessRegionListResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                regions:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Region"
     TeamMember:
       type: object
       properties:
@@ -2395,6 +2913,9 @@ components:
           type: string
         slug:
           type: string
+        home_region_id:
+          type: string
+          nullable: true
       required: [name]
     UpdateTeamRequest:
       type: object
@@ -2403,6 +2924,9 @@ components:
           type: string
         slug:
           type: string
+        home_region_id:
+          type: string
+          nullable: true
     AddTeamMemberRequest:
       type: object
       properties:
@@ -2590,6 +3114,10 @@ components:
           format: int32
         network:
           $ref: "#/components/schemas/TplSandboxNetworkPolicy"
+        credential_bindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialBinding"
         webhook:
           $ref: "#/components/schemas/WebhookConfig"
         auto_resume:
@@ -2747,6 +3275,10 @@ components:
           format: int32
         network:
           $ref: "#/components/schemas/TplSandboxNetworkPolicy"
+        credential_bindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialBinding"
         auto_resume:
           type: boolean
           default: true
@@ -3755,6 +4287,10 @@ components:
           $ref: "#/components/schemas/PodSpecOverride"
         network:
           $ref: "#/components/schemas/TplSandboxNetworkPolicy"
+        credentialBindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialBinding"
         pool:
           $ref: "#/components/schemas/PoolStrategy"
         lifecycle:
@@ -3970,6 +4506,10 @@ components:
       required: [minIdle, maxIdle]
     TplSandboxNetworkPolicy:
       type: object
+      description: |
+        Template-level outbound network policy.
+        `allow-all` permits traffic by default and applies `denied*` rules as subtractive filters.
+        `block-all` denies traffic by default and applies `allowed*` rules as additive exceptions.
       properties:
         mode:
           type: string
@@ -3977,33 +4517,283 @@ components:
         egress:
           $ref: "#/components/schemas/NetworkEgressPolicy"
       required: [mode]
+    SandboxNetworkPolicy:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [allow-all, block-all]
+        egress:
+          $ref: "#/components/schemas/NetworkEgressPolicy"
+        credentialBindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialBinding"
+      required: [mode]
     NetworkEgressPolicy:
       type: object
+      description: |
+        Egress rule set interpreted by the selected network mode.
+        In `allow-all`, only `denied*` fields are enforced.
+        In `block-all`, only `allowed*` fields are enforced.
+        `trafficRules` is a rule-based alternative and must not be combined
+        with the legacy `allowed*`/`denied*` fields.
       properties:
         allowedCidrs:
           type: array
+          deprecated: true
+          description: Legacy CIDR allowlist used only when mode is `block-all`. Use `trafficRules` instead.
           items:
             type: string
         allowedDomains:
           type: array
+          deprecated: true
+          description: Legacy domain allowlist used only when mode is `block-all`. Use `trafficRules` instead.
           items:
             type: string
         allowedPorts:
           type: array
+          deprecated: true
+          description: Legacy port/protocol allowlist used only when mode is `block-all`. Use `trafficRules` instead.
           items:
             $ref: "#/components/schemas/PortSpec"
         deniedDomains:
           type: array
+          deprecated: true
+          description: Legacy domain denylist used only when mode is `allow-all`. Use `trafficRules` instead.
           items:
             type: string
         deniedCidrs:
           type: array
+          deprecated: true
+          description: Legacy CIDR denylist used only when mode is `allow-all`. Use `trafficRules` instead.
           items:
             type: string
         deniedPorts:
           type: array
+          deprecated: true
+          description: Legacy port/protocol denylist used only when mode is `allow-all`. Use `trafficRules` instead.
           items:
             $ref: "#/components/schemas/PortSpec"
+        trafficRules:
+          type: array
+          description: |
+            Ordered egress allow/deny rules. The first matching rule wins and
+            unmatched traffic falls back to `mode`.
+          items:
+            $ref: "#/components/schemas/TrafficRule"
+        credentialRules:
+          type: array
+          description: |
+            Structured egress auth injection rules resolved by the manager runtime egress auth path.
+            These rules are orthogonal to allow/deny matching and are intended for
+            destination-scoped outbound auth behavior.
+          items:
+            $ref: "#/components/schemas/EgressCredentialRule"
+    TrafficRule:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Optional stable identifier used for merge and replacement.
+        action:
+          $ref: "#/components/schemas/TrafficRuleAction"
+        cidrs:
+          type: array
+          description: CIDR match list for the rule.
+          items:
+            type: string
+        domains:
+          type: array
+          description: Domain match list for the rule.
+          items:
+            type: string
+        ports:
+          type: array
+          description: Port/protocol constraints for the rule.
+          items:
+            $ref: "#/components/schemas/PortSpec"
+        appProtocols:
+          type: array
+          description: Classified application protocols matched by the rule.
+          items:
+            $ref: "#/components/schemas/TrafficRuleAppProtocol"
+      required: [action]
+    TrafficRuleAction:
+      type: string
+      enum: [allow, deny]
+    TrafficRuleAppProtocol:
+      type: string
+      enum: [http, tls, ssh, socks5, mqtt, redis, amqp, dns, mongodb, udp]
+    EgressCredentialRule:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Optional stable identifier used for merge and replacement.
+        credentialRef:
+          type: string
+          description: Broker-managed credential binding reference to resolve for matching traffic.
+        rollout:
+          $ref: "#/components/schemas/EgressAuthRolloutMode"
+        protocol:
+          $ref: "#/components/schemas/EgressAuthProtocol"
+        tlsMode:
+          $ref: "#/components/schemas/EgressTLSMode"
+        failurePolicy:
+          $ref: "#/components/schemas/EgressAuthFailurePolicy"
+        domains:
+          type: array
+          description: Domain match list for the rule.
+          items:
+            type: string
+        ports:
+          type: array
+          description: Port/protocol constraints for the rule.
+          items:
+            $ref: "#/components/schemas/PortSpec"
+      required: [credentialRef]
+    CredentialBinding:
+      type: object
+      properties:
+        ref:
+          type: string
+          description: Stable credential binding reference matched by `credentialRef`.
+        sourceRef:
+          type: string
+          description: Region-scoped credential source reference resolved by `manager`.
+        projection:
+          $ref: "#/components/schemas/ProjectionSpec"
+        cachePolicy:
+          $ref: "#/components/schemas/CachePolicySpec"
+      required: [ref, sourceRef, projection]
+    ProjectionSpec:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/CredentialProjectionType"
+        httpHeaders:
+          $ref: "#/components/schemas/HTTPHeadersProjection"
+        tlsClientCertificate:
+          $ref: "#/components/schemas/TLSClientCertificateProjection"
+        usernamePassword:
+          $ref: "#/components/schemas/UsernamePasswordProjection"
+      required: [type]
+    CredentialProjectionType:
+      type: string
+      enum: [http_headers, tls_client_certificate, username_password]
+    HTTPHeadersProjection:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectedHeader"
+    TLSClientCertificateProjection:
+      type: object
+      description: Client certificate projection used for TLS terminate-reoriginate auth.
+    UsernamePasswordProjection:
+      type: object
+      description: Username/password projection used for SOCKS5 and MQTT auth handshakes.
+    ProjectedHeader:
+      type: object
+      properties:
+        name:
+          type: string
+        valueTemplate:
+          type: string
+      required: [name, valueTemplate]
+    CachePolicySpec:
+      type: object
+      properties:
+        ttl:
+          type: string
+    CredentialSourceMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        resolverKind:
+          $ref: "#/components/schemas/CredentialSourceResolverKind"
+        currentVersion:
+          type: integer
+          format: int64
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required: [name, resolverKind]
+    CredentialSourceWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        resolverKind:
+          $ref: "#/components/schemas/CredentialSourceResolverKind"
+        spec:
+          $ref: "#/components/schemas/CredentialSourceWriteSpec"
+      required: [name, resolverKind, spec]
+    CredentialSourceResolverKind:
+      type: string
+      enum: [static_headers, static_tls_client_certificate, static_username_password]
+    CredentialSourceWriteSpec:
+      type: object
+      properties:
+        staticHeaders:
+          $ref: "#/components/schemas/StaticHeadersSourceSpec"
+        staticTLSClientCertificate:
+          $ref: "#/components/schemas/StaticTLSClientCertificateSourceSpec"
+        staticUsernamePassword:
+          $ref: "#/components/schemas/StaticUsernamePasswordSourceSpec"
+    StaticHeadersSourceSpec:
+      type: object
+      properties:
+        values:
+          type: object
+          writeOnly: true
+          additionalProperties:
+            type: string
+    StaticTLSClientCertificateSourceSpec:
+      type: object
+      properties:
+        certificatePem:
+          type: string
+          writeOnly: true
+        privateKeyPem:
+          type: string
+          writeOnly: true
+        caPem:
+          type: string
+          writeOnly: true
+      required: [certificatePem, privateKeyPem]
+    StaticUsernamePasswordSourceSpec:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required: [username, password]
+    EgressAuthProtocol:
+      type: string
+      enum: [http, https, grpc, tls, socks5, mqtt, redis]
+    EgressAuthRolloutMode:
+      type: string
+      enum: [enabled, disabled]
+    EgressTLSMode:
+      type: string
+      enum: [passthrough, terminate-reoriginate]
+    EgressAuthFailurePolicy:
+      type: string
+      enum: [fail-closed, fail-open]
     PortSpec:
       type: object
       properties:
@@ -4077,4 +4867,4 @@ components:
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/TplSandboxNetworkPolicy"
+              $ref: "#/components/schemas/SandboxNetworkPolicy"
