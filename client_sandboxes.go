@@ -71,10 +71,10 @@ func WithSandboxWebhookWatchDir(watchDir string) SandboxOption {
 }
 
 // WithSandboxNetworkPolicy sets the sandbox network policy at claim time.
-func WithSandboxNetworkPolicy(policy apispec.TplSandboxNetworkPolicy) SandboxOption {
+func WithSandboxNetworkPolicy(policy apispec.SandboxNetworkPolicy) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		config.Network = apispec.NewOptTplSandboxNetworkPolicy(policy)
+		config.Network = apispec.NewOptSandboxNetworkPolicy(policy)
 	}
 }
 

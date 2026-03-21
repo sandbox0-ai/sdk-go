@@ -28,8 +28,8 @@ func TestSandboxLifecycle(t *testing.T) {
 		sandbox0.WithSandboxWebhook("https://example.com/webhook", "secret"),
 		sandbox0.WithSandboxWebhookWatchDir("/workspace"),
 		sandbox0.WithSandboxAutoResume(true),
-		sandbox0.WithSandboxNetworkPolicy(apispec.TplSandboxNetworkPolicy{
-			Mode: apispec.TplSandboxNetworkPolicyModeAllowAll,
+		sandbox0.WithSandboxNetworkPolicy(apispec.SandboxNetworkPolicy{
+			Mode: apispec.SandboxNetworkPolicyModeAllowAll,
 		}),
 	)
 	if err != nil {
