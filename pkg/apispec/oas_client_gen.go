@@ -526,6 +526,12 @@ type Invoker interface {
 	//
 	// GET /healthz
 	HealthzGet(ctx context.Context, options ...RequestOption) (HealthzGetRes, error)
+	// MetadataGet invokes GET /metadata operation.
+	//
+	// Gateway metadata.
+	//
+	// GET /metadata
+	MetadataGet(ctx context.Context, options ...RequestOption) (*SuccessGatewayMetadataResponse, error)
 	// MetricsGet invokes GET /metrics operation.
 	//
 	// Prometheus metrics.
@@ -8801,6 +8807,68 @@ func (c *Client) sendHealthzGet(ctx context.Context, requestOptions ...RequestOp
 	}
 
 	result, err := decodeHealthzGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// MetadataGet invokes GET /metadata operation.
+//
+// Gateway metadata.
+//
+// GET /metadata
+func (c *Client) MetadataGet(ctx context.Context, options ...RequestOption) (*SuccessGatewayMetadataResponse, error) {
+	res, err := c.sendMetadataGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendMetadataGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessGatewayMetadataResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/metadata"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeMetadataGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

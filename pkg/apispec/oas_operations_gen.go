@@ -77,6 +77,7 @@ const (
 	AuthRegionTokenPostOperation                                 OperationName = "AuthRegionTokenPost"
 	AuthRegisterPostOperation                                    OperationName = "AuthRegisterPost"
 	HealthzGetOperation                                          OperationName = "HealthzGet"
+	MetadataGetOperation                                         OperationName = "MetadataGet"
 	MetricsGetOperation                                          OperationName = "MetricsGet"
 	ReadyzGetOperation                                           OperationName = "ReadyzGet"
 	RegionsGetOperation                                          OperationName = "RegionsGet"

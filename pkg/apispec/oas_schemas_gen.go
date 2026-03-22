@@ -2751,6 +2751,73 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
+// Ref: #/components/schemas/GatewayMetadata
+type GatewayMetadata struct {
+	GatewayMode GatewayMetadataGatewayMode `json:"gateway_mode"`
+	Service     string                     `json:"service"`
+}
+
+// GetGatewayMode returns the value of GatewayMode.
+func (s *GatewayMetadata) GetGatewayMode() GatewayMetadataGatewayMode {
+	return s.GatewayMode
+}
+
+// GetService returns the value of Service.
+func (s *GatewayMetadata) GetService() string {
+	return s.Service
+}
+
+// SetGatewayMode sets the value of GatewayMode.
+func (s *GatewayMetadata) SetGatewayMode(val GatewayMetadataGatewayMode) {
+	s.GatewayMode = val
+}
+
+// SetService sets the value of Service.
+func (s *GatewayMetadata) SetService(val string) {
+	s.Service = val
+}
+
+type GatewayMetadataGatewayMode string
+
+const (
+	GatewayMetadataGatewayModeDirect GatewayMetadataGatewayMode = "direct"
+	GatewayMetadataGatewayModeGlobal GatewayMetadataGatewayMode = "global"
+)
+
+// AllValues returns all GatewayMetadataGatewayMode values.
+func (GatewayMetadataGatewayMode) AllValues() []GatewayMetadataGatewayMode {
+	return []GatewayMetadataGatewayMode{
+		GatewayMetadataGatewayModeDirect,
+		GatewayMetadataGatewayModeGlobal,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GatewayMetadataGatewayMode) MarshalText() ([]byte, error) {
+	switch s {
+	case GatewayMetadataGatewayModeDirect:
+		return []byte(s), nil
+	case GatewayMetadataGatewayModeGlobal:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
+	switch GatewayMetadataGatewayMode(data) {
+	case GatewayMetadataGatewayModeDirect:
+		*s = GatewayMetadataGatewayModeDirect
+		return nil
+	case GatewayMetadataGatewayModeGlobal:
+		*s = GatewayMetadataGatewayModeGlobal
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/HTTPHeadersProjection
 type HTTPHeadersProjection struct {
 	// Outbound headers synthesized from the resolved credential source.
@@ -4764,6 +4831,52 @@ func (o OptForkVolumeRequest) Get() (v ForkVolumeRequest, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
+func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
+	return OptGatewayMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptGatewayMetadata is optional GatewayMetadata.
+type OptGatewayMetadata struct {
+	Value GatewayMetadata
+	Set   bool
+}
+
+// IsSet returns true if OptGatewayMetadata was set.
+func (o OptGatewayMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptGatewayMetadata) Reset() {
+	var v GatewayMetadata
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptGatewayMetadata) SetTo(v GatewayMetadata) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptGatewayMetadata) Get() (v GatewayMetadata, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11956,6 +12069,47 @@ const (
 func (SuccessFileStatResponseSuccess) AllValues() []SuccessFileStatResponseSuccess {
 	return []SuccessFileStatResponseSuccess{
 		SuccessFileStatResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessGatewayMetadataResponse
+type SuccessGatewayMetadataResponse struct {
+	Success SuccessGatewayMetadataResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptGatewayMetadata `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessGatewayMetadataResponse) GetSuccess() SuccessGatewayMetadataResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessGatewayMetadataResponse) GetData() OptGatewayMetadata {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessGatewayMetadataResponse) SetSuccess(val SuccessGatewayMetadataResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessGatewayMetadataResponse) SetData(val OptGatewayMetadata) {
+	s.Data = val
+}
+
+type SuccessGatewayMetadataResponseSuccess bool
+
+const (
+	SuccessGatewayMetadataResponseSuccessTrue SuccessGatewayMetadataResponseSuccess = true
+)
+
+// AllValues returns all SuccessGatewayMetadataResponseSuccess values.
+func (SuccessGatewayMetadataResponseSuccess) AllValues() []SuccessGatewayMetadataResponseSuccess {
+	return []SuccessGatewayMetadataResponseSuccess{
+		SuccessGatewayMetadataResponseSuccessTrue,
 	}
 }
 

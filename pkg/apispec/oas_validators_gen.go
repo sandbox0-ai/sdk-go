@@ -1135,6 +1135,40 @@ func (s *ForkVolumeRequest) Validate() error {
 	return nil
 }
 
+func (s *GatewayMetadata) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.GatewayMode.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "gateway_mode",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GatewayMetadataGatewayMode) Validate() error {
+	switch s {
+	case "direct":
+		return nil
+	case "global":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *LoginRequest) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2752,6 +2786,56 @@ func (s *SuccessFileStatResponse) Validate() error {
 }
 
 func (s SuccessFileStatResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessGatewayMetadataResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Data.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessGatewayMetadataResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil
