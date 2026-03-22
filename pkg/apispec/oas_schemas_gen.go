@@ -13951,6 +13951,10 @@ type TeamsIDPutBadRequest ErrorEnvelope
 
 func (*TeamsIDPutBadRequest) teamsIDPutRes() {}
 
+type TeamsIDPutConflict ErrorEnvelope
+
+func (*TeamsIDPutConflict) teamsIDPutRes() {}
+
 type TeamsIDPutForbidden ErrorEnvelope
 
 func (*TeamsIDPutForbidden) teamsIDPutRes() {}
@@ -14603,9 +14607,8 @@ func (s *UpdateTeamMemberRequestRole) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/UpdateTeamRequest
 type UpdateTeamRequest struct {
-	Name         OptString    `json:"name"`
-	Slug         OptString    `json:"slug"`
-	HomeRegionID OptNilString `json:"home_region_id"`
+	Name OptString `json:"name"`
+	Slug OptString `json:"slug"`
 }
 
 // GetName returns the value of Name.
@@ -14618,11 +14621,6 @@ func (s *UpdateTeamRequest) GetSlug() OptString {
 	return s.Slug
 }
 
-// GetHomeRegionID returns the value of HomeRegionID.
-func (s *UpdateTeamRequest) GetHomeRegionID() OptNilString {
-	return s.HomeRegionID
-}
-
 // SetName sets the value of Name.
 func (s *UpdateTeamRequest) SetName(val OptString) {
 	s.Name = val
@@ -14631,11 +14629,6 @@ func (s *UpdateTeamRequest) SetName(val OptString) {
 // SetSlug sets the value of Slug.
 func (s *UpdateTeamRequest) SetSlug(val OptString) {
 	s.Slug = val
-}
-
-// SetHomeRegionID sets the value of HomeRegionID.
-func (s *UpdateTeamRequest) SetHomeRegionID(val OptNilString) {
-	s.HomeRegionID = val
 }
 
 // Ref: #/components/schemas/UpdateUserRequest

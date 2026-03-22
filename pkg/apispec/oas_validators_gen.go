@@ -4265,6 +4265,14 @@ func (s *TeamsIDPutBadRequest) Validate() error {
 	return nil
 }
 
+func (s *TeamsIDPutConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *TeamsIDPutForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {

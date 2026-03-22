@@ -612,7 +612,7 @@ type Invoker interface {
 	TeamsIDMembersUserIdPut(ctx context.Context, request *UpdateTeamMemberRequest, params TeamsIDMembersUserIdPutParams, options ...RequestOption) (TeamsIDMembersUserIdPutRes, error)
 	// TeamsIDPut invokes PUT /teams/{id} operation.
 	//
-	// Update a team.
+	// Team home region is immutable after creation and cannot be changed through this endpoint.
 	//
 	// PUT /teams/{id}
 	TeamsIDPut(ctx context.Context, request *UpdateTeamRequest, params TeamsIDPutParams, options ...RequestOption) (TeamsIDPutRes, error)
@@ -10288,7 +10288,7 @@ func (c *Client) sendTeamsIDMembersUserIdPut(ctx context.Context, request *Updat
 
 // TeamsIDPut invokes PUT /teams/{id} operation.
 //
-// Update a team.
+// Team home region is immutable after creation and cannot be changed through this endpoint.
 //
 // PUT /teams/{id}
 func (c *Client) TeamsIDPut(ctx context.Context, request *UpdateTeamRequest, params TeamsIDPutParams, options ...RequestOption) (TeamsIDPutRes, error) {
