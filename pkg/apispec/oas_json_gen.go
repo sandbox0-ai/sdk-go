@@ -1757,12 +1757,19 @@ func (s *AuthProvider) encodeFields(e *jx.Encoder) {
 		e.FieldStart("type")
 		e.Str(s.Type)
 	}
+	{
+		if s.ExternalAuthPortalURL.Set {
+			e.FieldStart("external_auth_portal_url")
+			s.ExternalAuthPortalURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfAuthProvider = [3]string{
+var jsonFieldsNameOfAuthProvider = [4]string{
 	0: "id",
 	1: "name",
 	2: "type",
+	3: "external_auth_portal_url",
 }
 
 // Decode decodes AuthProvider from json.
@@ -1809,6 +1816,16 @@ func (s *AuthProvider) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "external_auth_portal_url":
+			if err := func() error {
+				s.ExternalAuthPortalURL.Reset()
+				if err := s.ExternalAuthPortalURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"external_auth_portal_url\"")
 			}
 		default:
 			return d.Skip()
@@ -13032,6 +13049,39 @@ func (s OptTemplate) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptTemplate) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TplSandboxNetworkPolicy as json.
+func (o OptTplSandboxNetworkPolicy) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes TplSandboxNetworkPolicy from json.
+func (o *OptTplSandboxNetworkPolicy) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptTplSandboxNetworkPolicy to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptTplSandboxNetworkPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptTplSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -31098,6 +31148,157 @@ func (s *Toleration) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *Toleration) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *TplSandboxNetworkPolicy) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *TplSandboxNetworkPolicy) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("mode")
+		s.Mode.Encode(e)
+	}
+	{
+		if s.Egress.Set {
+			e.FieldStart("egress")
+			s.Egress.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfTplSandboxNetworkPolicy = [2]string{
+	0: "mode",
+	1: "egress",
+}
+
+// Decode decodes TplSandboxNetworkPolicy from json.
+func (s *TplSandboxNetworkPolicy) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TplSandboxNetworkPolicy to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "mode":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Mode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mode\"")
+			}
+		case "egress":
+			if err := func() error {
+				s.Egress.Reset()
+				if err := s.Egress.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"egress\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode TplSandboxNetworkPolicy")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfTplSandboxNetworkPolicy) {
+					name = jsonFieldsNameOfTplSandboxNetworkPolicy[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TplSandboxNetworkPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TplSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TplSandboxNetworkPolicyMode as json.
+func (s TplSandboxNetworkPolicyMode) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes TplSandboxNetworkPolicyMode from json.
+func (s *TplSandboxNetworkPolicyMode) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TplSandboxNetworkPolicyMode to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch TplSandboxNetworkPolicyMode(v) {
+	case TplSandboxNetworkPolicyModeAllowAll:
+		*s = TplSandboxNetworkPolicyModeAllowAll
+	case TplSandboxNetworkPolicyModeBlockAll:
+		*s = TplSandboxNetworkPolicyModeBlockAll
+	default:
+		*s = TplSandboxNetworkPolicyMode(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s TplSandboxNetworkPolicyMode) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TplSandboxNetworkPolicyMode) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
