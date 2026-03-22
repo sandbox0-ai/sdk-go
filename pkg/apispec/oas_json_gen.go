@@ -13053,39 +13053,6 @@ func (s *OptTemplate) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes TplSandboxNetworkPolicy as json.
-func (o OptTplSandboxNetworkPolicy) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes TplSandboxNetworkPolicy from json.
-func (o *OptTplSandboxNetworkPolicy) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptTplSandboxNetworkPolicy to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptTplSandboxNetworkPolicy) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptTplSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes User as json.
 func (o OptUser) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -17452,16 +17419,6 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.CredentialBindings != nil {
-			e.FieldStart("credential_bindings")
-			e.ArrStart()
-			for _, elem := range s.CredentialBindings {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.Webhook.Set {
 			e.FieldStart("webhook")
 			s.Webhook.Encode(e)
@@ -17485,15 +17442,14 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxConfig = [8]string{
+var jsonFieldsNameOfSandboxConfig = [7]string{
 	0: "env_vars",
 	1: "ttl",
 	2: "hard_ttl",
 	3: "network",
-	4: "credential_bindings",
-	5: "webhook",
-	6: "auto_resume",
-	7: "exposed_ports",
+	4: "webhook",
+	5: "auto_resume",
+	6: "exposed_ports",
 }
 
 // Decode decodes SandboxConfig from json.
@@ -17544,23 +17500,6 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"network\"")
-			}
-		case "credential_bindings":
-			if err := func() error {
-				s.CredentialBindings = make([]CredentialBinding, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem CredentialBinding
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.CredentialBindings = append(s.CredentialBindings, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"credential_bindings\"")
 			}
 		case "webhook":
 			if err := func() error {
@@ -18863,16 +18802,6 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.CredentialBindings != nil {
-			e.FieldStart("credentialBindings")
-			e.ArrStart()
-			for _, elem := range s.CredentialBindings {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.Pool.Set {
 			e.FieldStart("pool")
 			s.Pool.Encode(e)
@@ -18920,7 +18849,7 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxTemplateSpec = [15]string{
+var jsonFieldsNameOfSandboxTemplateSpec = [14]string{
 	0:  "description",
 	1:  "displayName",
 	2:  "tags",
@@ -18928,14 +18857,13 @@ var jsonFieldsNameOfSandboxTemplateSpec = [15]string{
 	4:  "sidecars",
 	5:  "pod",
 	6:  "network",
-	7:  "credentialBindings",
-	8:  "pool",
-	9:  "lifecycle",
-	10: "envVars",
-	11: "public",
-	12: "allowedTeams",
-	13: "runtimeClassName",
-	14: "clusterId",
+	7:  "pool",
+	8:  "lifecycle",
+	9:  "envVars",
+	10: "public",
+	11: "allowedTeams",
+	12: "runtimeClassName",
+	13: "clusterId",
 }
 
 // Decode decodes SandboxTemplateSpec from json.
@@ -19031,23 +18959,6 @@ func (s *SandboxTemplateSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"network\"")
-			}
-		case "credentialBindings":
-			if err := func() error {
-				s.CredentialBindings = make([]CredentialBinding, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem CredentialBinding
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.CredentialBindings = append(s.CredentialBindings, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"credentialBindings\"")
 			}
 		case "pool":
 			if err := func() error {
@@ -19361,16 +19272,6 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.CredentialBindings != nil {
-			e.FieldStart("credential_bindings")
-			e.ArrStart()
-			for _, elem := range s.CredentialBindings {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.AutoResume.Set {
 			e.FieldStart("auto_resume")
 			s.AutoResume.Encode(e)
@@ -19388,13 +19289,12 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxUpdateConfig = [6]string{
+var jsonFieldsNameOfSandboxUpdateConfig = [5]string{
 	0: "ttl",
 	1: "hard_ttl",
 	2: "network",
-	3: "credential_bindings",
-	4: "auto_resume",
-	5: "exposed_ports",
+	3: "auto_resume",
+	4: "exposed_ports",
 }
 
 // Decode decodes SandboxUpdateConfig from json.
@@ -19435,23 +19335,6 @@ func (s *SandboxUpdateConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"network\"")
-			}
-		case "credential_bindings":
-			if err := func() error {
-				s.CredentialBindings = make([]CredentialBinding, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem CredentialBinding
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.CredentialBindings = append(s.CredentialBindings, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"credential_bindings\"")
 			}
 		case "auto_resume":
 			if err := func() error {
@@ -31186,157 +31069,6 @@ func (s *Toleration) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *Toleration) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TplSandboxNetworkPolicy) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TplSandboxNetworkPolicy) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("mode")
-		s.Mode.Encode(e)
-	}
-	{
-		if s.Egress.Set {
-			e.FieldStart("egress")
-			s.Egress.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfTplSandboxNetworkPolicy = [2]string{
-	0: "mode",
-	1: "egress",
-}
-
-// Decode decodes TplSandboxNetworkPolicy from json.
-func (s *TplSandboxNetworkPolicy) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TplSandboxNetworkPolicy to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "mode":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Mode.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"mode\"")
-			}
-		case "egress":
-			if err := func() error {
-				s.Egress.Reset()
-				if err := s.Egress.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"egress\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TplSandboxNetworkPolicy")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTplSandboxNetworkPolicy) {
-					name = jsonFieldsNameOfTplSandboxNetworkPolicy[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TplSandboxNetworkPolicy) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TplSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes TplSandboxNetworkPolicyMode as json.
-func (s TplSandboxNetworkPolicyMode) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes TplSandboxNetworkPolicyMode from json.
-func (s *TplSandboxNetworkPolicyMode) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TplSandboxNetworkPolicyMode to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch TplSandboxNetworkPolicyMode(v) {
-	case TplSandboxNetworkPolicyModeAllowAll:
-		*s = TplSandboxNetworkPolicyModeAllowAll
-	case TplSandboxNetworkPolicyModeBlockAll:
-		*s = TplSandboxNetworkPolicyModeBlockAll
-	default:
-		*s = TplSandboxNetworkPolicyMode(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s TplSandboxNetworkPolicyMode) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TplSandboxNetworkPolicyMode) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

@@ -2159,7 +2159,7 @@ type EgressCredentialRule struct {
 	// Optional stable identifier used for merge and replacement.
 	Name OptString `json:"name"`
 	// Stable binding ref to resolve when this traffic rule matches.
-	// The referenced binding must be present in `credential_bindings`.
+	// The referenced binding must be present in `network.credentialBindings`.
 	CredentialRef string                     `json:"credentialRef"`
 	Rollout       OptEgressAuthRolloutMode   `json:"rollout"`
 	Protocol      OptEgressAuthProtocol      `json:"protocol"`
@@ -8363,52 +8363,6 @@ func (o OptTemplate) Or(d Template) Template {
 	return d
 }
 
-// NewOptTplSandboxNetworkPolicy returns new OptTplSandboxNetworkPolicy with value set to v.
-func NewOptTplSandboxNetworkPolicy(v TplSandboxNetworkPolicy) OptTplSandboxNetworkPolicy {
-	return OptTplSandboxNetworkPolicy{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTplSandboxNetworkPolicy is optional TplSandboxNetworkPolicy.
-type OptTplSandboxNetworkPolicy struct {
-	Value TplSandboxNetworkPolicy
-	Set   bool
-}
-
-// IsSet returns true if OptTplSandboxNetworkPolicy was set.
-func (o OptTplSandboxNetworkPolicy) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTplSandboxNetworkPolicy) Reset() {
-	var v TplSandboxNetworkPolicy
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTplSandboxNetworkPolicy) SetTo(v TplSandboxNetworkPolicy) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTplSandboxNetworkPolicy) Get() (v TplSandboxNetworkPolicy, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTplSandboxNetworkPolicy) Or(d TplSandboxNetworkPolicy) TplSandboxNetworkPolicy {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptUser returns new OptUser with value set to v.
 func NewOptUser(v User) OptUser {
 	return OptUser{
@@ -9908,14 +9862,11 @@ func (s *Sandbox) SetCreatedAt(val time.Time) {
 
 // Ref: #/components/schemas/SandboxConfig
 type SandboxConfig struct {
-	EnvVars OptSandboxConfigEnvVars    `json:"env_vars"`
-	TTL     OptInt32                   `json:"ttl"`
-	HardTTL OptInt32                   `json:"hard_ttl"`
-	Network OptTplSandboxNetworkPolicy `json:"network"`
-	// Sandbox-scoped credential bindings that can be referenced by egress
-	// credential rules through `credentialRef`.
-	CredentialBindings []CredentialBinding `json:"credential_bindings"`
-	Webhook            OptWebhookConfig    `json:"webhook"`
+	EnvVars OptSandboxConfigEnvVars `json:"env_vars"`
+	TTL     OptInt32                `json:"ttl"`
+	HardTTL OptInt32                `json:"hard_ttl"`
+	Network OptSandboxNetworkPolicy `json:"network"`
+	Webhook OptWebhookConfig        `json:"webhook"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume   OptBool             `json:"auto_resume"`
@@ -9938,13 +9889,8 @@ func (s *SandboxConfig) GetHardTTL() OptInt32 {
 }
 
 // GetNetwork returns the value of Network.
-func (s *SandboxConfig) GetNetwork() OptTplSandboxNetworkPolicy {
+func (s *SandboxConfig) GetNetwork() OptSandboxNetworkPolicy {
 	return s.Network
-}
-
-// GetCredentialBindings returns the value of CredentialBindings.
-func (s *SandboxConfig) GetCredentialBindings() []CredentialBinding {
-	return s.CredentialBindings
 }
 
 // GetWebhook returns the value of Webhook.
@@ -9978,13 +9924,8 @@ func (s *SandboxConfig) SetHardTTL(val OptInt32) {
 }
 
 // SetNetwork sets the value of Network.
-func (s *SandboxConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
+func (s *SandboxConfig) SetNetwork(val OptSandboxNetworkPolicy) {
 	s.Network = val
-}
-
-// SetCredentialBindings sets the value of CredentialBindings.
-func (s *SandboxConfig) SetCredentialBindings(val []CredentialBinding) {
-	s.CredentialBindings = val
 }
 
 // SetWebhook sets the value of Webhook.
@@ -10578,21 +10519,20 @@ func (s *SandboxTemplateCondition) SetMessage(val OptString) {
 
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
-	Description        OptString                     `json:"description"`
-	DisplayName        OptString                     `json:"displayName"`
-	Tags               []string                      `json:"tags"`
-	MainContainer      OptContainerSpec              `json:"mainContainer"`
-	Sidecars           []ContainerSpec               `json:"sidecars"`
-	Pod                OptPodSpecOverride            `json:"pod"`
-	Network            OptTplSandboxNetworkPolicy    `json:"network"`
-	CredentialBindings []CredentialBinding           `json:"credentialBindings"`
-	Pool               OptPoolStrategy               `json:"pool"`
-	Lifecycle          OptLifecyclePolicy            `json:"lifecycle"`
-	EnvVars            OptSandboxTemplateSpecEnvVars `json:"envVars"`
-	Public             OptBool                       `json:"public"`
-	AllowedTeams       []string                      `json:"allowedTeams"`
-	RuntimeClassName   OptString                     `json:"runtimeClassName"`
-	ClusterId          OptString                     `json:"clusterId"`
+	Description      OptString                     `json:"description"`
+	DisplayName      OptString                     `json:"displayName"`
+	Tags             []string                      `json:"tags"`
+	MainContainer    OptContainerSpec              `json:"mainContainer"`
+	Sidecars         []ContainerSpec               `json:"sidecars"`
+	Pod              OptPodSpecOverride            `json:"pod"`
+	Network          OptSandboxNetworkPolicy       `json:"network"`
+	Pool             OptPoolStrategy               `json:"pool"`
+	Lifecycle        OptLifecyclePolicy            `json:"lifecycle"`
+	EnvVars          OptSandboxTemplateSpecEnvVars `json:"envVars"`
+	Public           OptBool                       `json:"public"`
+	AllowedTeams     []string                      `json:"allowedTeams"`
+	RuntimeClassName OptString                     `json:"runtimeClassName"`
+	ClusterId        OptString                     `json:"clusterId"`
 }
 
 // GetDescription returns the value of Description.
@@ -10626,13 +10566,8 @@ func (s *SandboxTemplateSpec) GetPod() OptPodSpecOverride {
 }
 
 // GetNetwork returns the value of Network.
-func (s *SandboxTemplateSpec) GetNetwork() OptTplSandboxNetworkPolicy {
+func (s *SandboxTemplateSpec) GetNetwork() OptSandboxNetworkPolicy {
 	return s.Network
-}
-
-// GetCredentialBindings returns the value of CredentialBindings.
-func (s *SandboxTemplateSpec) GetCredentialBindings() []CredentialBinding {
-	return s.CredentialBindings
 }
 
 // GetPool returns the value of Pool.
@@ -10701,13 +10636,8 @@ func (s *SandboxTemplateSpec) SetPod(val OptPodSpecOverride) {
 }
 
 // SetNetwork sets the value of Network.
-func (s *SandboxTemplateSpec) SetNetwork(val OptTplSandboxNetworkPolicy) {
+func (s *SandboxTemplateSpec) SetNetwork(val OptSandboxNetworkPolicy) {
 	s.Network = val
-}
-
-// SetCredentialBindings sets the value of CredentialBindings.
-func (s *SandboxTemplateSpec) SetCredentialBindings(val []CredentialBinding) {
-	s.CredentialBindings = val
 }
 
 // SetPool sets the value of Pool.
@@ -10808,12 +10738,9 @@ func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
 // Note: env_vars and webhook are not included as they only affect new processes or require restart.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
-	TTL     OptInt32                   `json:"ttl"`
-	HardTTL OptInt32                   `json:"hard_ttl"`
-	Network OptTplSandboxNetworkPolicy `json:"network"`
-	// Runtime-updatable credential bindings referenced by egress
-	// credential rules through `credentialRef`.
-	CredentialBindings []CredentialBinding `json:"credential_bindings"`
+	TTL     OptInt32                `json:"ttl"`
+	HardTTL OptInt32                `json:"hard_ttl"`
+	Network OptSandboxNetworkPolicy `json:"network"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume   OptBool             `json:"auto_resume"`
@@ -10831,13 +10758,8 @@ func (s *SandboxUpdateConfig) GetHardTTL() OptInt32 {
 }
 
 // GetNetwork returns the value of Network.
-func (s *SandboxUpdateConfig) GetNetwork() OptTplSandboxNetworkPolicy {
+func (s *SandboxUpdateConfig) GetNetwork() OptSandboxNetworkPolicy {
 	return s.Network
-}
-
-// GetCredentialBindings returns the value of CredentialBindings.
-func (s *SandboxUpdateConfig) GetCredentialBindings() []CredentialBinding {
-	return s.CredentialBindings
 }
 
 // GetAutoResume returns the value of AutoResume.
@@ -10861,13 +10783,8 @@ func (s *SandboxUpdateConfig) SetHardTTL(val OptInt32) {
 }
 
 // SetNetwork sets the value of Network.
-func (s *SandboxUpdateConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
+func (s *SandboxUpdateConfig) SetNetwork(val OptSandboxNetworkPolicy) {
 	s.Network = val
-}
-
-// SetCredentialBindings sets the value of CredentialBindings.
-func (s *SandboxUpdateConfig) SetCredentialBindings(val []CredentialBinding) {
-	s.CredentialBindings = val
 }
 
 // SetAutoResume sets the value of AutoResume.
@@ -14166,76 +14083,6 @@ func (s *Toleration) SetValue(val OptString) {
 // SetEffect sets the value of Effect.
 func (s *Toleration) SetEffect(val OptString) {
 	s.Effect = val
-}
-
-// Template-level outbound network policy.
-// `allow-all` permits traffic by default and applies `denied*` rules as subtractive filters.
-// `block-all` denies traffic by default and applies `allowed*` rules as additive exceptions.
-// Ref: #/components/schemas/TplSandboxNetworkPolicy
-type TplSandboxNetworkPolicy struct {
-	Mode   TplSandboxNetworkPolicyMode `json:"mode"`
-	Egress OptNetworkEgressPolicy      `json:"egress"`
-}
-
-// GetMode returns the value of Mode.
-func (s *TplSandboxNetworkPolicy) GetMode() TplSandboxNetworkPolicyMode {
-	return s.Mode
-}
-
-// GetEgress returns the value of Egress.
-func (s *TplSandboxNetworkPolicy) GetEgress() OptNetworkEgressPolicy {
-	return s.Egress
-}
-
-// SetMode sets the value of Mode.
-func (s *TplSandboxNetworkPolicy) SetMode(val TplSandboxNetworkPolicyMode) {
-	s.Mode = val
-}
-
-// SetEgress sets the value of Egress.
-func (s *TplSandboxNetworkPolicy) SetEgress(val OptNetworkEgressPolicy) {
-	s.Egress = val
-}
-
-type TplSandboxNetworkPolicyMode string
-
-const (
-	TplSandboxNetworkPolicyModeAllowAll TplSandboxNetworkPolicyMode = "allow-all"
-	TplSandboxNetworkPolicyModeBlockAll TplSandboxNetworkPolicyMode = "block-all"
-)
-
-// AllValues returns all TplSandboxNetworkPolicyMode values.
-func (TplSandboxNetworkPolicyMode) AllValues() []TplSandboxNetworkPolicyMode {
-	return []TplSandboxNetworkPolicyMode{
-		TplSandboxNetworkPolicyModeAllowAll,
-		TplSandboxNetworkPolicyModeBlockAll,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s TplSandboxNetworkPolicyMode) MarshalText() ([]byte, error) {
-	switch s {
-	case TplSandboxNetworkPolicyModeAllowAll:
-		return []byte(s), nil
-	case TplSandboxNetworkPolicyModeBlockAll:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *TplSandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
-	switch TplSandboxNetworkPolicyMode(data) {
-	case TplSandboxNetworkPolicyModeAllowAll:
-		*s = TplSandboxNetworkPolicyModeAllowAll
-		return nil
-	case TplSandboxNetworkPolicyModeBlockAll:
-		*s = TplSandboxNetworkPolicyModeBlockAll
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
 }
 
 // Ref: #/components/schemas/TrafficRule
