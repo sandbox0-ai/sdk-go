@@ -184,6 +184,10 @@ type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
 
+type APIV1RegistryCredentialsPostForbidden ErrorEnvelope
+
+func (*APIV1RegistryCredentialsPostForbidden) aPIV1RegistryCredentialsPostRes() {}
+
 type APIV1RegistryCredentialsPostInternalServerError ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostInternalServerError) aPIV1RegistryCredentialsPostRes() {}
@@ -349,6 +353,76 @@ type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
+// Ref: #/components/schemas/ActiveTeam
+type ActiveTeam struct {
+	UserID         string       `json:"user_id"`
+	TeamID         string       `json:"team_id"`
+	TeamRole       OptString    `json:"team_role"`
+	HomeRegionID   string       `json:"home_region_id"`
+	DefaultTeam    OptBool      `json:"default_team"`
+	EdgeGatewayURL OptNilString `json:"edge_gateway_url"`
+}
+
+// GetUserID returns the value of UserID.
+func (s *ActiveTeam) GetUserID() string {
+	return s.UserID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *ActiveTeam) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetTeamRole returns the value of TeamRole.
+func (s *ActiveTeam) GetTeamRole() OptString {
+	return s.TeamRole
+}
+
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *ActiveTeam) GetHomeRegionID() string {
+	return s.HomeRegionID
+}
+
+// GetDefaultTeam returns the value of DefaultTeam.
+func (s *ActiveTeam) GetDefaultTeam() OptBool {
+	return s.DefaultTeam
+}
+
+// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
+func (s *ActiveTeam) GetEdgeGatewayURL() OptNilString {
+	return s.EdgeGatewayURL
+}
+
+// SetUserID sets the value of UserID.
+func (s *ActiveTeam) SetUserID(val string) {
+	s.UserID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *ActiveTeam) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetTeamRole sets the value of TeamRole.
+func (s *ActiveTeam) SetTeamRole(val OptString) {
+	s.TeamRole = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *ActiveTeam) SetHomeRegionID(val string) {
+	s.HomeRegionID = val
+}
+
+// SetDefaultTeam sets the value of DefaultTeam.
+func (s *ActiveTeam) SetDefaultTeam(val OptBool) {
+	s.DefaultTeam = val
+}
+
+// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
+func (s *ActiveTeam) SetEdgeGatewayURL(val OptNilString) {
+	s.EdgeGatewayURL = val
+}
+
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
 	Email string                   `json:"email"`
@@ -500,6 +574,9 @@ type AuthProvider struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
+	// When set, browser login for this provider should redirect to this external URL instead of
+	// initiating the OIDC flow directly. Used for deployments that host their own authorization portal.
+	ExternalAuthPortalURL OptString `json:"external_auth_portal_url"`
 }
 
 // GetID returns the value of ID.
@@ -517,6 +594,11 @@ func (s *AuthProvider) GetType() string {
 	return s.Type
 }
 
+// GetExternalAuthPortalURL returns the value of ExternalAuthPortalURL.
+func (s *AuthProvider) GetExternalAuthPortalURL() OptString {
+	return s.ExternalAuthPortalURL
+}
+
 // SetID sets the value of ID.
 func (s *AuthProvider) SetID(val string) {
 	s.ID = val
@@ -532,6 +614,11 @@ func (s *AuthProvider) SetType(val string) {
 	s.Type = val
 }
 
+// SetExternalAuthPortalURL sets the value of ExternalAuthPortalURL.
+func (s *AuthProvider) SetExternalAuthPortalURL(val OptString) {
+	s.ExternalAuthPortalURL = val
+}
+
 type AuthRefreshPostBadRequest ErrorEnvelope
 
 func (*AuthRefreshPostBadRequest) authRefreshPostRes() {}
@@ -539,6 +626,22 @@ func (*AuthRefreshPostBadRequest) authRefreshPostRes() {}
 type AuthRefreshPostUnauthorized ErrorEnvelope
 
 func (*AuthRefreshPostUnauthorized) authRefreshPostRes() {}
+
+type AuthRegionTokenPostBadRequest ErrorEnvelope
+
+func (*AuthRegionTokenPostBadRequest) authRegionTokenPostRes() {}
+
+type AuthRegionTokenPostConflict ErrorEnvelope
+
+func (*AuthRegionTokenPostConflict) authRegionTokenPostRes() {}
+
+type AuthRegionTokenPostForbidden ErrorEnvelope
+
+func (*AuthRegionTokenPostForbidden) authRegionTokenPostRes() {}
+
+type AuthRegionTokenPostUnauthorized ErrorEnvelope
+
+func (*AuthRegionTokenPostUnauthorized) authRegionTokenPostRes() {}
 
 type AuthRegisterPostBadRequest ErrorEnvelope
 
@@ -575,6 +678,22 @@ func (s *BearerAuth) SetToken(val string) {
 // SetRoles sets the value of Roles.
 func (s *BearerAuth) SetRoles(val []string) {
 	s.Roles = val
+}
+
+// Ref: #/components/schemas/CachePolicySpec
+type CachePolicySpec struct {
+	// Override for the broker-side cache TTL of resolved auth material.
+	TTL OptString `json:"ttl"`
+}
+
+// GetTTL returns the value of TTL.
+func (s *CachePolicySpec) GetTTL() OptString {
+	return s.TTL
+}
+
+// SetTTL sets the value of TTL.
+func (s *CachePolicySpec) SetTTL(val OptString) {
+	s.TTL = val
 }
 
 // Ref: #/components/schemas/Capabilities
@@ -1400,6 +1519,65 @@ func (s *CreateREPLContextRequest) SetReplConfig(val OptREPLConfig) {
 	s.ReplConfig = val
 }
 
+// Ref: #/components/schemas/CreateRegionRequest
+type CreateRegionRequest struct {
+	ID                string       `json:"id"`
+	DisplayName       OptString    `json:"display_name"`
+	EdgeGatewayURL    string       `json:"edge_gateway_url"`
+	MeteringExportURL OptNilString `json:"metering_export_url"`
+	Enabled           OptBool      `json:"enabled"`
+}
+
+// GetID returns the value of ID.
+func (s *CreateRegionRequest) GetID() string {
+	return s.ID
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *CreateRegionRequest) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
+func (s *CreateRegionRequest) GetEdgeGatewayURL() string {
+	return s.EdgeGatewayURL
+}
+
+// GetMeteringExportURL returns the value of MeteringExportURL.
+func (s *CreateRegionRequest) GetMeteringExportURL() OptNilString {
+	return s.MeteringExportURL
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *CreateRegionRequest) GetEnabled() OptBool {
+	return s.Enabled
+}
+
+// SetID sets the value of ID.
+func (s *CreateRegionRequest) SetID(val string) {
+	s.ID = val
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *CreateRegionRequest) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
+func (s *CreateRegionRequest) SetEdgeGatewayURL(val string) {
+	s.EdgeGatewayURL = val
+}
+
+// SetMeteringExportURL sets the value of MeteringExportURL.
+func (s *CreateRegionRequest) SetMeteringExportURL(val OptNilString) {
+	s.MeteringExportURL = val
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *CreateRegionRequest) SetEnabled(val OptBool) {
+	s.Enabled = val
+}
+
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
 type CreateSandboxVolumeRequest struct {
 	CacheSize  OptString `json:"cache_size"`
@@ -1488,8 +1666,9 @@ func (s *CreateSnapshotRequest) SetDescription(val OptString) {
 
 // Ref: #/components/schemas/CreateTeamRequest
 type CreateTeamRequest struct {
-	Name string    `json:"name"`
-	Slug OptString `json:"slug"`
+	Name         string       `json:"name"`
+	Slug         OptString    `json:"slug"`
+	HomeRegionID OptNilString `json:"home_region_id"`
 }
 
 // GetName returns the value of Name.
@@ -1502,6 +1681,11 @@ func (s *CreateTeamRequest) GetSlug() OptString {
 	return s.Slug
 }
 
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *CreateTeamRequest) GetHomeRegionID() OptNilString {
+	return s.HomeRegionID
+}
+
 // SetName sets the value of Name.
 func (s *CreateTeamRequest) SetName(val string) {
 	s.Name = val
@@ -1510,6 +1694,603 @@ func (s *CreateTeamRequest) SetName(val string) {
 // SetSlug sets the value of Slug.
 func (s *CreateTeamRequest) SetSlug(val OptString) {
 	s.Slug = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *CreateTeamRequest) SetHomeRegionID(val OptNilString) {
+	s.HomeRegionID = val
+}
+
+// Ref: #/components/schemas/CredentialBinding
+type CredentialBinding struct {
+	// Stable binding identifier matched by `credentialRef`.
+	Ref string `json:"ref"`
+	// Region-scoped credential source reference resolved by `manager`.
+	SourceRef   string             `json:"sourceRef"`
+	Projection  ProjectionSpec     `json:"projection"`
+	CachePolicy OptCachePolicySpec `json:"cachePolicy"`
+}
+
+// GetRef returns the value of Ref.
+func (s *CredentialBinding) GetRef() string {
+	return s.Ref
+}
+
+// GetSourceRef returns the value of SourceRef.
+func (s *CredentialBinding) GetSourceRef() string {
+	return s.SourceRef
+}
+
+// GetProjection returns the value of Projection.
+func (s *CredentialBinding) GetProjection() ProjectionSpec {
+	return s.Projection
+}
+
+// GetCachePolicy returns the value of CachePolicy.
+func (s *CredentialBinding) GetCachePolicy() OptCachePolicySpec {
+	return s.CachePolicy
+}
+
+// SetRef sets the value of Ref.
+func (s *CredentialBinding) SetRef(val string) {
+	s.Ref = val
+}
+
+// SetSourceRef sets the value of SourceRef.
+func (s *CredentialBinding) SetSourceRef(val string) {
+	s.SourceRef = val
+}
+
+// SetProjection sets the value of Projection.
+func (s *CredentialBinding) SetProjection(val ProjectionSpec) {
+	s.Projection = val
+}
+
+// SetCachePolicy sets the value of CachePolicy.
+func (s *CredentialBinding) SetCachePolicy(val OptCachePolicySpec) {
+	s.CachePolicy = val
+}
+
+// Ref: #/components/schemas/CredentialProjectionType
+type CredentialProjectionType string
+
+const (
+	CredentialProjectionTypeHTTPHeaders          CredentialProjectionType = "http_headers"
+	CredentialProjectionTypeTLSClientCertificate CredentialProjectionType = "tls_client_certificate"
+	CredentialProjectionTypeUsernamePassword     CredentialProjectionType = "username_password"
+)
+
+// AllValues returns all CredentialProjectionType values.
+func (CredentialProjectionType) AllValues() []CredentialProjectionType {
+	return []CredentialProjectionType{
+		CredentialProjectionTypeHTTPHeaders,
+		CredentialProjectionTypeTLSClientCertificate,
+		CredentialProjectionTypeUsernamePassword,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CredentialProjectionType) MarshalText() ([]byte, error) {
+	switch s {
+	case CredentialProjectionTypeHTTPHeaders:
+		return []byte(s), nil
+	case CredentialProjectionTypeTLSClientCertificate:
+		return []byte(s), nil
+	case CredentialProjectionTypeUsernamePassword:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CredentialProjectionType) UnmarshalText(data []byte) error {
+	switch CredentialProjectionType(data) {
+	case CredentialProjectionTypeHTTPHeaders:
+		*s = CredentialProjectionTypeHTTPHeaders
+		return nil
+	case CredentialProjectionTypeTLSClientCertificate:
+		*s = CredentialProjectionTypeTLSClientCertificate
+		return nil
+	case CredentialProjectionTypeUsernamePassword:
+		*s = CredentialProjectionTypeUsernamePassword
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/CredentialSourceMetadata
+type CredentialSourceMetadata struct {
+	Name           string                       `json:"name"`
+	ResolverKind   CredentialSourceResolverKind `json:"resolverKind"`
+	CurrentVersion OptInt64                     `json:"currentVersion"`
+	Status         OptString                    `json:"status"`
+	CreatedAt      OptNilDateTime               `json:"createdAt"`
+	UpdatedAt      OptNilDateTime               `json:"updatedAt"`
+}
+
+// GetName returns the value of Name.
+func (s *CredentialSourceMetadata) GetName() string {
+	return s.Name
+}
+
+// GetResolverKind returns the value of ResolverKind.
+func (s *CredentialSourceMetadata) GetResolverKind() CredentialSourceResolverKind {
+	return s.ResolverKind
+}
+
+// GetCurrentVersion returns the value of CurrentVersion.
+func (s *CredentialSourceMetadata) GetCurrentVersion() OptInt64 {
+	return s.CurrentVersion
+}
+
+// GetStatus returns the value of Status.
+func (s *CredentialSourceMetadata) GetStatus() OptString {
+	return s.Status
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *CredentialSourceMetadata) GetCreatedAt() OptNilDateTime {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *CredentialSourceMetadata) GetUpdatedAt() OptNilDateTime {
+	return s.UpdatedAt
+}
+
+// SetName sets the value of Name.
+func (s *CredentialSourceMetadata) SetName(val string) {
+	s.Name = val
+}
+
+// SetResolverKind sets the value of ResolverKind.
+func (s *CredentialSourceMetadata) SetResolverKind(val CredentialSourceResolverKind) {
+	s.ResolverKind = val
+}
+
+// SetCurrentVersion sets the value of CurrentVersion.
+func (s *CredentialSourceMetadata) SetCurrentVersion(val OptInt64) {
+	s.CurrentVersion = val
+}
+
+// SetStatus sets the value of Status.
+func (s *CredentialSourceMetadata) SetStatus(val OptString) {
+	s.Status = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *CredentialSourceMetadata) SetCreatedAt(val OptNilDateTime) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *CredentialSourceMetadata) SetUpdatedAt(val OptNilDateTime) {
+	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/CredentialSourceResolverKind
+type CredentialSourceResolverKind string
+
+const (
+	CredentialSourceResolverKindStaticHeaders              CredentialSourceResolverKind = "static_headers"
+	CredentialSourceResolverKindStaticTLSClientCertificate CredentialSourceResolverKind = "static_tls_client_certificate"
+	CredentialSourceResolverKindStaticUsernamePassword     CredentialSourceResolverKind = "static_username_password"
+)
+
+// AllValues returns all CredentialSourceResolverKind values.
+func (CredentialSourceResolverKind) AllValues() []CredentialSourceResolverKind {
+	return []CredentialSourceResolverKind{
+		CredentialSourceResolverKindStaticHeaders,
+		CredentialSourceResolverKindStaticTLSClientCertificate,
+		CredentialSourceResolverKindStaticUsernamePassword,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CredentialSourceResolverKind) MarshalText() ([]byte, error) {
+	switch s {
+	case CredentialSourceResolverKindStaticHeaders:
+		return []byte(s), nil
+	case CredentialSourceResolverKindStaticTLSClientCertificate:
+		return []byte(s), nil
+	case CredentialSourceResolverKindStaticUsernamePassword:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CredentialSourceResolverKind) UnmarshalText(data []byte) error {
+	switch CredentialSourceResolverKind(data) {
+	case CredentialSourceResolverKindStaticHeaders:
+		*s = CredentialSourceResolverKindStaticHeaders
+		return nil
+	case CredentialSourceResolverKindStaticTLSClientCertificate:
+		*s = CredentialSourceResolverKindStaticTLSClientCertificate
+		return nil
+	case CredentialSourceResolverKindStaticUsernamePassword:
+		*s = CredentialSourceResolverKindStaticUsernamePassword
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/CredentialSourceWriteRequest
+type CredentialSourceWriteRequest struct {
+	Name         string                       `json:"name"`
+	ResolverKind CredentialSourceResolverKind `json:"resolverKind"`
+	Spec         CredentialSourceWriteSpec    `json:"spec"`
+}
+
+// GetName returns the value of Name.
+func (s *CredentialSourceWriteRequest) GetName() string {
+	return s.Name
+}
+
+// GetResolverKind returns the value of ResolverKind.
+func (s *CredentialSourceWriteRequest) GetResolverKind() CredentialSourceResolverKind {
+	return s.ResolverKind
+}
+
+// GetSpec returns the value of Spec.
+func (s *CredentialSourceWriteRequest) GetSpec() CredentialSourceWriteSpec {
+	return s.Spec
+}
+
+// SetName sets the value of Name.
+func (s *CredentialSourceWriteRequest) SetName(val string) {
+	s.Name = val
+}
+
+// SetResolverKind sets the value of ResolverKind.
+func (s *CredentialSourceWriteRequest) SetResolverKind(val CredentialSourceResolverKind) {
+	s.ResolverKind = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *CredentialSourceWriteRequest) SetSpec(val CredentialSourceWriteSpec) {
+	s.Spec = val
+}
+
+// Ref: #/components/schemas/CredentialSourceWriteSpec
+type CredentialSourceWriteSpec struct {
+	StaticHeaders              OptStaticHeadersSourceSpec              `json:"staticHeaders"`
+	StaticTLSClientCertificate OptStaticTLSClientCertificateSourceSpec `json:"staticTLSClientCertificate"`
+	StaticUsernamePassword     OptStaticUsernamePasswordSourceSpec     `json:"staticUsernamePassword"`
+}
+
+// GetStaticHeaders returns the value of StaticHeaders.
+func (s *CredentialSourceWriteSpec) GetStaticHeaders() OptStaticHeadersSourceSpec {
+	return s.StaticHeaders
+}
+
+// GetStaticTLSClientCertificate returns the value of StaticTLSClientCertificate.
+func (s *CredentialSourceWriteSpec) GetStaticTLSClientCertificate() OptStaticTLSClientCertificateSourceSpec {
+	return s.StaticTLSClientCertificate
+}
+
+// GetStaticUsernamePassword returns the value of StaticUsernamePassword.
+func (s *CredentialSourceWriteSpec) GetStaticUsernamePassword() OptStaticUsernamePasswordSourceSpec {
+	return s.StaticUsernamePassword
+}
+
+// SetStaticHeaders sets the value of StaticHeaders.
+func (s *CredentialSourceWriteSpec) SetStaticHeaders(val OptStaticHeadersSourceSpec) {
+	s.StaticHeaders = val
+}
+
+// SetStaticTLSClientCertificate sets the value of StaticTLSClientCertificate.
+func (s *CredentialSourceWriteSpec) SetStaticTLSClientCertificate(val OptStaticTLSClientCertificateSourceSpec) {
+	s.StaticTLSClientCertificate = val
+}
+
+// SetStaticUsernamePassword sets the value of StaticUsernamePassword.
+func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsernamePasswordSourceSpec) {
+	s.StaticUsernamePassword = val
+}
+
+// Ref: #/components/schemas/EgressAuthFailurePolicy
+type EgressAuthFailurePolicy string
+
+const (
+	EgressAuthFailurePolicyFailClosed EgressAuthFailurePolicy = "fail-closed"
+	EgressAuthFailurePolicyFailOpen   EgressAuthFailurePolicy = "fail-open"
+)
+
+// AllValues returns all EgressAuthFailurePolicy values.
+func (EgressAuthFailurePolicy) AllValues() []EgressAuthFailurePolicy {
+	return []EgressAuthFailurePolicy{
+		EgressAuthFailurePolicyFailClosed,
+		EgressAuthFailurePolicyFailOpen,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressAuthFailurePolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressAuthFailurePolicyFailClosed:
+		return []byte(s), nil
+	case EgressAuthFailurePolicyFailOpen:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressAuthFailurePolicy) UnmarshalText(data []byte) error {
+	switch EgressAuthFailurePolicy(data) {
+	case EgressAuthFailurePolicyFailClosed:
+		*s = EgressAuthFailurePolicyFailClosed
+		return nil
+	case EgressAuthFailurePolicyFailOpen:
+		*s = EgressAuthFailurePolicyFailOpen
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/EgressAuthProtocol
+type EgressAuthProtocol string
+
+const (
+	EgressAuthProtocolHTTP   EgressAuthProtocol = "http"
+	EgressAuthProtocolHTTPS  EgressAuthProtocol = "https"
+	EgressAuthProtocolGrpc   EgressAuthProtocol = "grpc"
+	EgressAuthProtocolTLS    EgressAuthProtocol = "tls"
+	EgressAuthProtocolSocks5 EgressAuthProtocol = "socks5"
+	EgressAuthProtocolMqtt   EgressAuthProtocol = "mqtt"
+	EgressAuthProtocolRedis  EgressAuthProtocol = "redis"
+)
+
+// AllValues returns all EgressAuthProtocol values.
+func (EgressAuthProtocol) AllValues() []EgressAuthProtocol {
+	return []EgressAuthProtocol{
+		EgressAuthProtocolHTTP,
+		EgressAuthProtocolHTTPS,
+		EgressAuthProtocolGrpc,
+		EgressAuthProtocolTLS,
+		EgressAuthProtocolSocks5,
+		EgressAuthProtocolMqtt,
+		EgressAuthProtocolRedis,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressAuthProtocol) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressAuthProtocolHTTP:
+		return []byte(s), nil
+	case EgressAuthProtocolHTTPS:
+		return []byte(s), nil
+	case EgressAuthProtocolGrpc:
+		return []byte(s), nil
+	case EgressAuthProtocolTLS:
+		return []byte(s), nil
+	case EgressAuthProtocolSocks5:
+		return []byte(s), nil
+	case EgressAuthProtocolMqtt:
+		return []byte(s), nil
+	case EgressAuthProtocolRedis:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressAuthProtocol) UnmarshalText(data []byte) error {
+	switch EgressAuthProtocol(data) {
+	case EgressAuthProtocolHTTP:
+		*s = EgressAuthProtocolHTTP
+		return nil
+	case EgressAuthProtocolHTTPS:
+		*s = EgressAuthProtocolHTTPS
+		return nil
+	case EgressAuthProtocolGrpc:
+		*s = EgressAuthProtocolGrpc
+		return nil
+	case EgressAuthProtocolTLS:
+		*s = EgressAuthProtocolTLS
+		return nil
+	case EgressAuthProtocolSocks5:
+		*s = EgressAuthProtocolSocks5
+		return nil
+	case EgressAuthProtocolMqtt:
+		*s = EgressAuthProtocolMqtt
+		return nil
+	case EgressAuthProtocolRedis:
+		*s = EgressAuthProtocolRedis
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/EgressAuthRolloutMode
+type EgressAuthRolloutMode string
+
+const (
+	EgressAuthRolloutModeEnabled  EgressAuthRolloutMode = "enabled"
+	EgressAuthRolloutModeDisabled EgressAuthRolloutMode = "disabled"
+)
+
+// AllValues returns all EgressAuthRolloutMode values.
+func (EgressAuthRolloutMode) AllValues() []EgressAuthRolloutMode {
+	return []EgressAuthRolloutMode{
+		EgressAuthRolloutModeEnabled,
+		EgressAuthRolloutModeDisabled,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressAuthRolloutMode) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressAuthRolloutModeEnabled:
+		return []byte(s), nil
+	case EgressAuthRolloutModeDisabled:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressAuthRolloutMode) UnmarshalText(data []byte) error {
+	switch EgressAuthRolloutMode(data) {
+	case EgressAuthRolloutModeEnabled:
+		*s = EgressAuthRolloutModeEnabled
+		return nil
+	case EgressAuthRolloutModeDisabled:
+		*s = EgressAuthRolloutModeDisabled
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/EgressCredentialRule
+type EgressCredentialRule struct {
+	// Optional stable identifier used for merge and replacement.
+	Name OptString `json:"name"`
+	// Stable binding ref to resolve when this traffic rule matches.
+	// The referenced binding must be present in `credential_bindings`.
+	CredentialRef string                     `json:"credentialRef"`
+	Rollout       OptEgressAuthRolloutMode   `json:"rollout"`
+	Protocol      OptEgressAuthProtocol      `json:"protocol"`
+	TlsMode       OptEgressTLSMode           `json:"tlsMode"`
+	FailurePolicy OptEgressAuthFailurePolicy `json:"failurePolicy"`
+	// Domain match list for the rule.
+	Domains []string `json:"domains"`
+	// Port/protocol constraints for the rule.
+	Ports []PortSpec `json:"ports"`
+}
+
+// GetName returns the value of Name.
+func (s *EgressCredentialRule) GetName() OptString {
+	return s.Name
+}
+
+// GetCredentialRef returns the value of CredentialRef.
+func (s *EgressCredentialRule) GetCredentialRef() string {
+	return s.CredentialRef
+}
+
+// GetRollout returns the value of Rollout.
+func (s *EgressCredentialRule) GetRollout() OptEgressAuthRolloutMode {
+	return s.Rollout
+}
+
+// GetProtocol returns the value of Protocol.
+func (s *EgressCredentialRule) GetProtocol() OptEgressAuthProtocol {
+	return s.Protocol
+}
+
+// GetTlsMode returns the value of TlsMode.
+func (s *EgressCredentialRule) GetTlsMode() OptEgressTLSMode {
+	return s.TlsMode
+}
+
+// GetFailurePolicy returns the value of FailurePolicy.
+func (s *EgressCredentialRule) GetFailurePolicy() OptEgressAuthFailurePolicy {
+	return s.FailurePolicy
+}
+
+// GetDomains returns the value of Domains.
+func (s *EgressCredentialRule) GetDomains() []string {
+	return s.Domains
+}
+
+// GetPorts returns the value of Ports.
+func (s *EgressCredentialRule) GetPorts() []PortSpec {
+	return s.Ports
+}
+
+// SetName sets the value of Name.
+func (s *EgressCredentialRule) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetCredentialRef sets the value of CredentialRef.
+func (s *EgressCredentialRule) SetCredentialRef(val string) {
+	s.CredentialRef = val
+}
+
+// SetRollout sets the value of Rollout.
+func (s *EgressCredentialRule) SetRollout(val OptEgressAuthRolloutMode) {
+	s.Rollout = val
+}
+
+// SetProtocol sets the value of Protocol.
+func (s *EgressCredentialRule) SetProtocol(val OptEgressAuthProtocol) {
+	s.Protocol = val
+}
+
+// SetTlsMode sets the value of TlsMode.
+func (s *EgressCredentialRule) SetTlsMode(val OptEgressTLSMode) {
+	s.TlsMode = val
+}
+
+// SetFailurePolicy sets the value of FailurePolicy.
+func (s *EgressCredentialRule) SetFailurePolicy(val OptEgressAuthFailurePolicy) {
+	s.FailurePolicy = val
+}
+
+// SetDomains sets the value of Domains.
+func (s *EgressCredentialRule) SetDomains(val []string) {
+	s.Domains = val
+}
+
+// SetPorts sets the value of Ports.
+func (s *EgressCredentialRule) SetPorts(val []PortSpec) {
+	s.Ports = val
+}
+
+// Ref: #/components/schemas/EgressTLSMode
+type EgressTLSMode string
+
+const (
+	EgressTLSModePassthrough          EgressTLSMode = "passthrough"
+	EgressTLSModeTerminateReoriginate EgressTLSMode = "terminate-reoriginate"
+)
+
+// AllValues returns all EgressTLSMode values.
+func (EgressTLSMode) AllValues() []EgressTLSMode {
+	return []EgressTLSMode{
+		EgressTLSModePassthrough,
+		EgressTLSModeTerminateReoriginate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressTLSMode) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressTLSModePassthrough:
+		return []byte(s), nil
+	case EgressTLSModeTerminateReoriginate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressTLSMode) UnmarshalText(data []byte) error {
+	switch EgressTLSMode(data) {
+	case EgressTLSModePassthrough:
+		*s = EgressTLSModePassthrough
+		return nil
+	case EgressTLSModeTerminateReoriginate:
+		*s = EgressTLSModeTerminateReoriginate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/EnvVar
@@ -1603,6 +2384,7 @@ func (s *ErrorEnvelope) SetError(val Error) {
 
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIKeysPostRes()                                 {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()          {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()             {}
@@ -1624,6 +2406,7 @@ func (*ErrorEnvelope) healthzGetRes()                                  {}
 func (*ErrorEnvelope) readyzGetRes()                                   {}
 func (*ErrorEnvelope) teamsGetRes()                                    {}
 func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
+func (*ErrorEnvelope) teamsPostRes()                                   {}
 func (*ErrorEnvelope) usersMeGetRes()                                  {}
 func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
 
@@ -1968,6 +2751,22 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
+// Ref: #/components/schemas/HTTPHeadersProjection
+type HTTPHeadersProjection struct {
+	// Outbound headers synthesized from the resolved credential source.
+	Headers []ProjectedHeader `json:"headers"`
+}
+
+// GetHeaders returns the value of Headers.
+func (s *HTTPHeadersProjection) GetHeaders() []ProjectedHeader {
+	return s.Headers
+}
+
+// SetHeaders sets the value of Headers.
+func (s *HTTPHeadersProjection) SetHeaders(val []ProjectedHeader) {
+	s.Headers = val
+}
+
 // Ref: #/components/schemas/Identity
 type Identity struct {
 	ID        string `json:"id"`
@@ -2003,6 +2802,69 @@ func (s *Identity) SetProvider(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *Identity) SetCreatedAt(val int64) {
 	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/IssueRegionTokenRequest
+type IssueRegionTokenRequest struct {
+	TeamID OptString `json:"team_id"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *IssueRegionTokenRequest) GetTeamID() OptString {
+	return s.TeamID
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *IssueRegionTokenRequest) SetTeamID(val OptString) {
+	s.TeamID = val
+}
+
+// Ref: #/components/schemas/IssueRegionTokenResponse
+type IssueRegionTokenResponse struct {
+	RegionID       string       `json:"region_id"`
+	EdgeGatewayURL OptNilString `json:"edge_gateway_url"`
+	Token          string       `json:"token"`
+	ExpiresAt      int64        `json:"expires_at"`
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *IssueRegionTokenResponse) GetRegionID() string {
+	return s.RegionID
+}
+
+// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
+func (s *IssueRegionTokenResponse) GetEdgeGatewayURL() OptNilString {
+	return s.EdgeGatewayURL
+}
+
+// GetToken returns the value of Token.
+func (s *IssueRegionTokenResponse) GetToken() string {
+	return s.Token
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *IssueRegionTokenResponse) GetExpiresAt() int64 {
+	return s.ExpiresAt
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *IssueRegionTokenResponse) SetRegionID(val string) {
+	s.RegionID = val
+}
+
+// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
+func (s *IssueRegionTokenResponse) SetEdgeGatewayURL(val OptNilString) {
+	s.EdgeGatewayURL = val
+}
+
+// SetToken sets the value of Token.
+func (s *IssueRegionTokenResponse) SetToken(val string) {
+	s.Token = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *IssueRegionTokenResponse) SetExpiresAt(val int64) {
+	s.ExpiresAt = val
 }
 
 // Ref: #/components/schemas/LabelSelector
@@ -2396,14 +3258,44 @@ func (s *MoveFileRequest) SetDestination(val string) {
 	s.Destination = val
 }
 
+// Egress rule set interpreted by the selected network mode.
+// In `allow-all`, only `denied*` fields are enforced.
+// In `block-all`, only `allowed*` fields are enforced.
+// `trafficRules` is a rule-based alternative and must not be combined
+// with the legacy `allowed*`/`denied*` fields.
 // Ref: #/components/schemas/NetworkEgressPolicy
 type NetworkEgressPolicy struct {
-	AllowedCidrs   []string   `json:"allowedCidrs"`
-	AllowedDomains []string   `json:"allowedDomains"`
-	AllowedPorts   []PortSpec `json:"allowedPorts"`
-	DeniedDomains  []string   `json:"deniedDomains"`
-	DeniedCidrs    []string   `json:"deniedCidrs"`
-	DeniedPorts    []PortSpec `json:"deniedPorts"`
+	// Legacy CIDR allowlist used only when mode is `block-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	AllowedCidrs []string `json:"allowedCidrs"`
+	// Legacy domain allowlist used only when mode is `block-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	AllowedDomains []string `json:"allowedDomains"`
+	// Legacy port/protocol allowlist used only when mode is `block-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	AllowedPorts []PortSpec `json:"allowedPorts"`
+	// Legacy domain denylist used only when mode is `allow-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	DeniedDomains []string `json:"deniedDomains"`
+	// Legacy CIDR denylist used only when mode is `allow-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	DeniedCidrs []string `json:"deniedCidrs"`
+	// Legacy port/protocol denylist used only when mode is `allow-all`. Use `trafficRules` instead.
+	//
+	// Deprecated: schema marks this property as deprecated.
+	DeniedPorts []PortSpec `json:"deniedPorts"`
+	// Ordered egress allow/deny rules. The first matching rule wins and
+	// unmatched traffic falls back to `mode`.
+	TrafficRules []TrafficRule `json:"trafficRules"`
+	// Structured egress auth injection rules resolved by the manager runtime egress auth path.
+	// These rules are orthogonal to allow/deny matching and are intended for
+	// destination-scoped outbound auth behavior.
+	CredentialRules []EgressCredentialRule `json:"credentialRules"`
 }
 
 // GetAllowedCidrs returns the value of AllowedCidrs.
@@ -2436,6 +3328,16 @@ func (s *NetworkEgressPolicy) GetDeniedPorts() []PortSpec {
 	return s.DeniedPorts
 }
 
+// GetTrafficRules returns the value of TrafficRules.
+func (s *NetworkEgressPolicy) GetTrafficRules() []TrafficRule {
+	return s.TrafficRules
+}
+
+// GetCredentialRules returns the value of CredentialRules.
+func (s *NetworkEgressPolicy) GetCredentialRules() []EgressCredentialRule {
+	return s.CredentialRules
+}
+
 // SetAllowedCidrs sets the value of AllowedCidrs.
 func (s *NetworkEgressPolicy) SetAllowedCidrs(val []string) {
 	s.AllowedCidrs = val
@@ -2464,6 +3366,16 @@ func (s *NetworkEgressPolicy) SetDeniedCidrs(val []string) {
 // SetDeniedPorts sets the value of DeniedPorts.
 func (s *NetworkEgressPolicy) SetDeniedPorts(val []PortSpec) {
 	s.DeniedPorts = val
+}
+
+// SetTrafficRules sets the value of TrafficRules.
+func (s *NetworkEgressPolicy) SetTrafficRules(val []TrafficRule) {
+	s.TrafficRules = val
+}
+
+// SetCredentialRules sets the value of CredentialRules.
+func (s *NetworkEgressPolicy) SetCredentialRules(val []EgressCredentialRule) {
+	s.CredentialRules = val
 }
 
 // Ref: #/components/schemas/NodeAffinity
@@ -2616,6 +3528,52 @@ func (o OptAPIV1SandboxesGetStatus) Or(d APIV1SandboxesGetStatus) APIV1Sandboxes
 	return d
 }
 
+// NewOptActiveTeam returns new OptActiveTeam with value set to v.
+func NewOptActiveTeam(v ActiveTeam) OptActiveTeam {
+	return OptActiveTeam{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptActiveTeam is optional ActiveTeam.
+type OptActiveTeam struct {
+	Value ActiveTeam
+	Set   bool
+}
+
+// IsSet returns true if OptActiveTeam was set.
+func (o OptActiveTeam) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptActiveTeam) Reset() {
+	var v ActiveTeam
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptActiveTeam) SetTo(v ActiveTeam) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptActiveTeam) Get() (v ActiveTeam, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptActiveTeam) Or(d ActiveTeam) ActiveTeam {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptAffinity returns new OptAffinity with value set to v.
 func NewOptAffinity(v Affinity) OptAffinity {
 	return OptAffinity{
@@ -2702,6 +3660,52 @@ func (o OptBool) Get() (v bool, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptBool) Or(d bool) bool {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCachePolicySpec returns new OptCachePolicySpec with value set to v.
+func NewOptCachePolicySpec(v CachePolicySpec) OptCachePolicySpec {
+	return OptCachePolicySpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCachePolicySpec is optional CachePolicySpec.
+type OptCachePolicySpec struct {
+	Value CachePolicySpec
+	Set   bool
+}
+
+// IsSet returns true if OptCachePolicySpec was set.
+func (o OptCachePolicySpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCachePolicySpec) Reset() {
+	var v CachePolicySpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCachePolicySpec) SetTo(v CachePolicySpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCachePolicySpec) Get() (v CachePolicySpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCachePolicySpec) Or(d CachePolicySpec) CachePolicySpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -3214,6 +4218,52 @@ func (o OptCreateREPLContextRequest) Or(d CreateREPLContextRequest) CreateREPLCo
 	return d
 }
 
+// NewOptCredentialSourceMetadata returns new OptCredentialSourceMetadata with value set to v.
+func NewOptCredentialSourceMetadata(v CredentialSourceMetadata) OptCredentialSourceMetadata {
+	return OptCredentialSourceMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCredentialSourceMetadata is optional CredentialSourceMetadata.
+type OptCredentialSourceMetadata struct {
+	Value CredentialSourceMetadata
+	Set   bool
+}
+
+// IsSet returns true if OptCredentialSourceMetadata was set.
+func (o OptCredentialSourceMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCredentialSourceMetadata) Reset() {
+	var v CredentialSourceMetadata
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCredentialSourceMetadata) SetTo(v CredentialSourceMetadata) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCredentialSourceMetadata) Get() (v CredentialSourceMetadata, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCredentialSourceMetadata) Or(d CredentialSourceMetadata) CredentialSourceMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
 	return OptDateTime{
@@ -3254,6 +4304,190 @@ func (o OptDateTime) Get() (v time.Time, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressAuthFailurePolicy returns new OptEgressAuthFailurePolicy with value set to v.
+func NewOptEgressAuthFailurePolicy(v EgressAuthFailurePolicy) OptEgressAuthFailurePolicy {
+	return OptEgressAuthFailurePolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressAuthFailurePolicy is optional EgressAuthFailurePolicy.
+type OptEgressAuthFailurePolicy struct {
+	Value EgressAuthFailurePolicy
+	Set   bool
+}
+
+// IsSet returns true if OptEgressAuthFailurePolicy was set.
+func (o OptEgressAuthFailurePolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressAuthFailurePolicy) Reset() {
+	var v EgressAuthFailurePolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressAuthFailurePolicy) SetTo(v EgressAuthFailurePolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressAuthFailurePolicy) Get() (v EgressAuthFailurePolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressAuthFailurePolicy) Or(d EgressAuthFailurePolicy) EgressAuthFailurePolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressAuthProtocol returns new OptEgressAuthProtocol with value set to v.
+func NewOptEgressAuthProtocol(v EgressAuthProtocol) OptEgressAuthProtocol {
+	return OptEgressAuthProtocol{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressAuthProtocol is optional EgressAuthProtocol.
+type OptEgressAuthProtocol struct {
+	Value EgressAuthProtocol
+	Set   bool
+}
+
+// IsSet returns true if OptEgressAuthProtocol was set.
+func (o OptEgressAuthProtocol) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressAuthProtocol) Reset() {
+	var v EgressAuthProtocol
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressAuthProtocol) SetTo(v EgressAuthProtocol) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressAuthProtocol) Get() (v EgressAuthProtocol, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressAuthProtocol) Or(d EgressAuthProtocol) EgressAuthProtocol {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressAuthRolloutMode returns new OptEgressAuthRolloutMode with value set to v.
+func NewOptEgressAuthRolloutMode(v EgressAuthRolloutMode) OptEgressAuthRolloutMode {
+	return OptEgressAuthRolloutMode{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressAuthRolloutMode is optional EgressAuthRolloutMode.
+type OptEgressAuthRolloutMode struct {
+	Value EgressAuthRolloutMode
+	Set   bool
+}
+
+// IsSet returns true if OptEgressAuthRolloutMode was set.
+func (o OptEgressAuthRolloutMode) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressAuthRolloutMode) Reset() {
+	var v EgressAuthRolloutMode
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressAuthRolloutMode) SetTo(v EgressAuthRolloutMode) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressAuthRolloutMode) Get() (v EgressAuthRolloutMode, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressAuthRolloutMode) Or(d EgressAuthRolloutMode) EgressAuthRolloutMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressTLSMode returns new OptEgressTLSMode with value set to v.
+func NewOptEgressTLSMode(v EgressTLSMode) OptEgressTLSMode {
+	return OptEgressTLSMode{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressTLSMode is optional EgressTLSMode.
+type OptEgressTLSMode struct {
+	Value EgressTLSMode
+	Set   bool
+}
+
+// IsSet returns true if OptEgressTLSMode was set.
+func (o OptEgressTLSMode) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressTLSMode) Reset() {
+	var v EgressTLSMode
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressTLSMode) SetTo(v EgressTLSMode) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressTLSMode) Get() (v EgressTLSMode, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -3536,6 +4770,52 @@ func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
 	return d
 }
 
+// NewOptHTTPHeadersProjection returns new OptHTTPHeadersProjection with value set to v.
+func NewOptHTTPHeadersProjection(v HTTPHeadersProjection) OptHTTPHeadersProjection {
+	return OptHTTPHeadersProjection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPHeadersProjection is optional HTTPHeadersProjection.
+type OptHTTPHeadersProjection struct {
+	Value HTTPHeadersProjection
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPHeadersProjection was set.
+func (o OptHTTPHeadersProjection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPHeadersProjection) Reset() {
+	var v HTTPHeadersProjection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPHeadersProjection) SetTo(v HTTPHeadersProjection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPHeadersProjection) Get() (v HTTPHeadersProjection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPHeadersProjection) Or(d HTTPHeadersProjection) HTTPHeadersProjection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
 	return OptInt{
@@ -3668,6 +4948,98 @@ func (o OptInt64) Get() (v int64, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptInt64) Or(d int64) int64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptIssueRegionTokenRequest returns new OptIssueRegionTokenRequest with value set to v.
+func NewOptIssueRegionTokenRequest(v IssueRegionTokenRequest) OptIssueRegionTokenRequest {
+	return OptIssueRegionTokenRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptIssueRegionTokenRequest is optional IssueRegionTokenRequest.
+type OptIssueRegionTokenRequest struct {
+	Value IssueRegionTokenRequest
+	Set   bool
+}
+
+// IsSet returns true if OptIssueRegionTokenRequest was set.
+func (o OptIssueRegionTokenRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptIssueRegionTokenRequest) Reset() {
+	var v IssueRegionTokenRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptIssueRegionTokenRequest) SetTo(v IssueRegionTokenRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptIssueRegionTokenRequest) Get() (v IssueRegionTokenRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptIssueRegionTokenRequest) Or(d IssueRegionTokenRequest) IssueRegionTokenRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptIssueRegionTokenResponse returns new OptIssueRegionTokenResponse with value set to v.
+func NewOptIssueRegionTokenResponse(v IssueRegionTokenResponse) OptIssueRegionTokenResponse {
+	return OptIssueRegionTokenResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptIssueRegionTokenResponse is optional IssueRegionTokenResponse.
+type OptIssueRegionTokenResponse struct {
+	Value IssueRegionTokenResponse
+	Set   bool
+}
+
+// IsSet returns true if OptIssueRegionTokenResponse was set.
+func (o OptIssueRegionTokenResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptIssueRegionTokenResponse) Reset() {
+	var v IssueRegionTokenResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptIssueRegionTokenResponse) SetTo(v IssueRegionTokenResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptIssueRegionTokenResponse) Get() (v IssueRegionTokenResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptIssueRegionTokenResponse) Or(d IssueRegionTokenResponse) IssueRegionTokenResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -4070,6 +5442,69 @@ func (o OptNilString) Get() (v string, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptNilString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilTeam returns new OptNilTeam with value set to v.
+func NewOptNilTeam(v Team) OptNilTeam {
+	return OptNilTeam{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilTeam is optional nullable Team.
+type OptNilTeam struct {
+	Value Team
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilTeam was set.
+func (o OptNilTeam) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilTeam) Reset() {
+	var v Team
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilTeam) SetTo(v Team) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilTeam) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilTeam) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v Team
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilTeam) Get() (v Team, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilTeam) Or(d Team) Team {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -4766,6 +6201,52 @@ func (o OptRefreshResponse) Or(d RefreshResponse) RefreshResponse {
 	return d
 }
 
+// NewOptRegion returns new OptRegion with value set to v.
+func NewOptRegion(v Region) OptRegion {
+	return OptRegion{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRegion is optional Region.
+type OptRegion struct {
+	Value Region
+	Set   bool
+}
+
+// IsSet returns true if OptRegion was set.
+func (o OptRegion) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRegion) Reset() {
+	var v Region
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRegion) SetTo(v Region) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRegion) Get() (v Region, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRegion) Or(d Region) Region {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptRegistryCredentials returns new OptRegistryCredentials with value set to v.
 func NewOptRegistryCredentials(v RegistryCredentials) OptRegistryCredentials {
 	return OptRegistryCredentials{
@@ -5036,6 +6517,52 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxNetworkPolicy returns new OptSandboxNetworkPolicy with value set to v.
+func NewOptSandboxNetworkPolicy(v SandboxNetworkPolicy) OptSandboxNetworkPolicy {
+	return OptSandboxNetworkPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxNetworkPolicy is optional SandboxNetworkPolicy.
+type OptSandboxNetworkPolicy struct {
+	Value SandboxNetworkPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxNetworkPolicy was set.
+func (o OptSandboxNetworkPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxNetworkPolicy) Reset() {
+	var v SandboxNetworkPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxNetworkPolicy) SetTo(v SandboxNetworkPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxNetworkPolicy) Get() (v SandboxNetworkPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxNetworkPolicy) Or(d SandboxNetworkPolicy) SandboxNetworkPolicy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -5450,6 +6977,190 @@ func (o OptSnapshot) Get() (v Snapshot, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSnapshot) Or(d Snapshot) Snapshot {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptStaticHeadersSourceSpec returns new OptStaticHeadersSourceSpec with value set to v.
+func NewOptStaticHeadersSourceSpec(v StaticHeadersSourceSpec) OptStaticHeadersSourceSpec {
+	return OptStaticHeadersSourceSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticHeadersSourceSpec is optional StaticHeadersSourceSpec.
+type OptStaticHeadersSourceSpec struct {
+	Value StaticHeadersSourceSpec
+	Set   bool
+}
+
+// IsSet returns true if OptStaticHeadersSourceSpec was set.
+func (o OptStaticHeadersSourceSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticHeadersSourceSpec) Reset() {
+	var v StaticHeadersSourceSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticHeadersSourceSpec) SetTo(v StaticHeadersSourceSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticHeadersSourceSpec) Get() (v StaticHeadersSourceSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticHeadersSourceSpec) Or(d StaticHeadersSourceSpec) StaticHeadersSourceSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptStaticHeadersSourceSpecValues returns new OptStaticHeadersSourceSpecValues with value set to v.
+func NewOptStaticHeadersSourceSpecValues(v StaticHeadersSourceSpecValues) OptStaticHeadersSourceSpecValues {
+	return OptStaticHeadersSourceSpecValues{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticHeadersSourceSpecValues is optional StaticHeadersSourceSpecValues.
+type OptStaticHeadersSourceSpecValues struct {
+	Value StaticHeadersSourceSpecValues
+	Set   bool
+}
+
+// IsSet returns true if OptStaticHeadersSourceSpecValues was set.
+func (o OptStaticHeadersSourceSpecValues) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticHeadersSourceSpecValues) Reset() {
+	var v StaticHeadersSourceSpecValues
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticHeadersSourceSpecValues) SetTo(v StaticHeadersSourceSpecValues) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticHeadersSourceSpecValues) Get() (v StaticHeadersSourceSpecValues, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticHeadersSourceSpecValues) Or(d StaticHeadersSourceSpecValues) StaticHeadersSourceSpecValues {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptStaticTLSClientCertificateSourceSpec returns new OptStaticTLSClientCertificateSourceSpec with value set to v.
+func NewOptStaticTLSClientCertificateSourceSpec(v StaticTLSClientCertificateSourceSpec) OptStaticTLSClientCertificateSourceSpec {
+	return OptStaticTLSClientCertificateSourceSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticTLSClientCertificateSourceSpec is optional StaticTLSClientCertificateSourceSpec.
+type OptStaticTLSClientCertificateSourceSpec struct {
+	Value StaticTLSClientCertificateSourceSpec
+	Set   bool
+}
+
+// IsSet returns true if OptStaticTLSClientCertificateSourceSpec was set.
+func (o OptStaticTLSClientCertificateSourceSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticTLSClientCertificateSourceSpec) Reset() {
+	var v StaticTLSClientCertificateSourceSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticTLSClientCertificateSourceSpec) SetTo(v StaticTLSClientCertificateSourceSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticTLSClientCertificateSourceSpec) Get() (v StaticTLSClientCertificateSourceSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticTLSClientCertificateSourceSpec) Or(d StaticTLSClientCertificateSourceSpec) StaticTLSClientCertificateSourceSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptStaticUsernamePasswordSourceSpec returns new OptStaticUsernamePasswordSourceSpec with value set to v.
+func NewOptStaticUsernamePasswordSourceSpec(v StaticUsernamePasswordSourceSpec) OptStaticUsernamePasswordSourceSpec {
+	return OptStaticUsernamePasswordSourceSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticUsernamePasswordSourceSpec is optional StaticUsernamePasswordSourceSpec.
+type OptStaticUsernamePasswordSourceSpec struct {
+	Value StaticUsernamePasswordSourceSpec
+	Set   bool
+}
+
+// IsSet returns true if OptStaticUsernamePasswordSourceSpec was set.
+func (o OptStaticUsernamePasswordSourceSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticUsernamePasswordSourceSpec) Reset() {
+	var v StaticUsernamePasswordSourceSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticUsernamePasswordSourceSpec) SetTo(v StaticUsernamePasswordSourceSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticUsernamePasswordSourceSpec) Get() (v StaticUsernamePasswordSourceSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticUsernamePasswordSourceSpec) Or(d StaticUsernamePasswordSourceSpec) StaticUsernamePasswordSourceSpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -6048,6 +7759,52 @@ func (o OptSuccessMovedResponseData) Get() (v SuccessMovedResponseData, ok bool)
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessMovedResponseData) Or(d SuccessMovedResponseData) SuccessMovedResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessRegionListResponseData returns new OptSuccessRegionListResponseData with value set to v.
+func NewOptSuccessRegionListResponseData(v SuccessRegionListResponseData) OptSuccessRegionListResponseData {
+	return OptSuccessRegionListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessRegionListResponseData is optional SuccessRegionListResponseData.
+type OptSuccessRegionListResponseData struct {
+	Value SuccessRegionListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessRegionListResponseData was set.
+func (o OptSuccessRegionListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessRegionListResponseData) Reset() {
+	var v SuccessRegionListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessRegionListResponseData) SetTo(v SuccessRegionListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessRegionListResponseData) Get() (v SuccessRegionListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessRegionListResponseData) Or(d SuccessRegionListResponseData) SuccessRegionListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7200,6 +8957,82 @@ func (s *ProcessType) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/ProjectedHeader
+type ProjectedHeader struct {
+	// Outbound header name.
+	Name string `json:"name"`
+	// Template rendered against the resolved credential source payload.
+	ValueTemplate string `json:"valueTemplate"`
+}
+
+// GetName returns the value of Name.
+func (s *ProjectedHeader) GetName() string {
+	return s.Name
+}
+
+// GetValueTemplate returns the value of ValueTemplate.
+func (s *ProjectedHeader) GetValueTemplate() string {
+	return s.ValueTemplate
+}
+
+// SetName sets the value of Name.
+func (s *ProjectedHeader) SetName(val string) {
+	s.Name = val
+}
+
+// SetValueTemplate sets the value of ValueTemplate.
+func (s *ProjectedHeader) SetValueTemplate(val string) {
+	s.ValueTemplate = val
+}
+
+// Ref: #/components/schemas/ProjectionSpec
+type ProjectionSpec struct {
+	Type                 CredentialProjectionType        `json:"type"`
+	HttpHeaders          OptHTTPHeadersProjection        `json:"httpHeaders"`
+	TlsClientCertificate *TLSClientCertificateProjection `json:"tlsClientCertificate"`
+	UsernamePassword     *UsernamePasswordProjection     `json:"usernamePassword"`
+}
+
+// GetType returns the value of Type.
+func (s *ProjectionSpec) GetType() CredentialProjectionType {
+	return s.Type
+}
+
+// GetHttpHeaders returns the value of HttpHeaders.
+func (s *ProjectionSpec) GetHttpHeaders() OptHTTPHeadersProjection {
+	return s.HttpHeaders
+}
+
+// GetTlsClientCertificate returns the value of TlsClientCertificate.
+func (s *ProjectionSpec) GetTlsClientCertificate() *TLSClientCertificateProjection {
+	return s.TlsClientCertificate
+}
+
+// GetUsernamePassword returns the value of UsernamePassword.
+func (s *ProjectionSpec) GetUsernamePassword() *UsernamePasswordProjection {
+	return s.UsernamePassword
+}
+
+// SetType sets the value of Type.
+func (s *ProjectionSpec) SetType(val CredentialProjectionType) {
+	s.Type = val
+}
+
+// SetHttpHeaders sets the value of HttpHeaders.
+func (s *ProjectionSpec) SetHttpHeaders(val OptHTTPHeadersProjection) {
+	s.HttpHeaders = val
+}
+
+// SetTlsClientCertificate sets the value of TlsClientCertificate.
+func (s *ProjectionSpec) SetTlsClientCertificate(val *TLSClientCertificateProjection) {
+	s.TlsClientCertificate = val
+}
+
+// SetUsernamePassword sets the value of UsernamePassword.
+func (s *ProjectionSpec) SetUsernamePassword(val *UsernamePasswordProjection) {
+	s.UsernamePassword = val
+}
+
 // Ref: #/components/schemas/REPLConfig
 type REPLConfig struct {
 	Name        string              `json:"name"`
@@ -7475,6 +9308,133 @@ func (s *RefreshResponse) SetExpiresAt(val time.Time) {
 func (s *RefreshResponse) SetHardExpiresAt(val time.Time) {
 	s.HardExpiresAt = val
 }
+
+// Ref: #/components/schemas/Region
+type Region struct {
+	ID                string       `json:"id"`
+	DisplayName       OptString    `json:"display_name"`
+	EdgeGatewayURL    string       `json:"edge_gateway_url"`
+	MeteringExportURL OptNilString `json:"metering_export_url"`
+	Enabled           bool         `json:"enabled"`
+}
+
+// GetID returns the value of ID.
+func (s *Region) GetID() string {
+	return s.ID
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *Region) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
+func (s *Region) GetEdgeGatewayURL() string {
+	return s.EdgeGatewayURL
+}
+
+// GetMeteringExportURL returns the value of MeteringExportURL.
+func (s *Region) GetMeteringExportURL() OptNilString {
+	return s.MeteringExportURL
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *Region) GetEnabled() bool {
+	return s.Enabled
+}
+
+// SetID sets the value of ID.
+func (s *Region) SetID(val string) {
+	s.ID = val
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *Region) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
+func (s *Region) SetEdgeGatewayURL(val string) {
+	s.EdgeGatewayURL = val
+}
+
+// SetMeteringExportURL sets the value of MeteringExportURL.
+func (s *Region) SetMeteringExportURL(val OptNilString) {
+	s.MeteringExportURL = val
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *Region) SetEnabled(val bool) {
+	s.Enabled = val
+}
+
+type RegionsGetForbidden ErrorEnvelope
+
+func (*RegionsGetForbidden) regionsGetRes() {}
+
+type RegionsGetUnauthorized ErrorEnvelope
+
+func (*RegionsGetUnauthorized) regionsGetRes() {}
+
+type RegionsIDDeleteConflict ErrorEnvelope
+
+func (*RegionsIDDeleteConflict) regionsIDDeleteRes() {}
+
+type RegionsIDDeleteForbidden ErrorEnvelope
+
+func (*RegionsIDDeleteForbidden) regionsIDDeleteRes() {}
+
+type RegionsIDDeleteNotFound ErrorEnvelope
+
+func (*RegionsIDDeleteNotFound) regionsIDDeleteRes() {}
+
+type RegionsIDDeleteUnauthorized ErrorEnvelope
+
+func (*RegionsIDDeleteUnauthorized) regionsIDDeleteRes() {}
+
+type RegionsIDGetForbidden ErrorEnvelope
+
+func (*RegionsIDGetForbidden) regionsIDGetRes() {}
+
+type RegionsIDGetNotFound ErrorEnvelope
+
+func (*RegionsIDGetNotFound) regionsIDGetRes() {}
+
+type RegionsIDGetUnauthorized ErrorEnvelope
+
+func (*RegionsIDGetUnauthorized) regionsIDGetRes() {}
+
+type RegionsIDPutBadRequest ErrorEnvelope
+
+func (*RegionsIDPutBadRequest) regionsIDPutRes() {}
+
+type RegionsIDPutForbidden ErrorEnvelope
+
+func (*RegionsIDPutForbidden) regionsIDPutRes() {}
+
+type RegionsIDPutNotFound ErrorEnvelope
+
+func (*RegionsIDPutNotFound) regionsIDPutRes() {}
+
+type RegionsIDPutUnauthorized ErrorEnvelope
+
+func (*RegionsIDPutUnauthorized) regionsIDPutRes() {}
+
+type RegionsPostBadRequest ErrorEnvelope
+
+func (*RegionsPostBadRequest) regionsPostRes() {}
+
+type RegionsPostConflict ErrorEnvelope
+
+func (*RegionsPostConflict) regionsPostRes() {}
+
+type RegionsPostForbidden ErrorEnvelope
+
+func (*RegionsPostForbidden) regionsPostRes() {}
+
+type RegionsPostUnauthorized ErrorEnvelope
+
+func (*RegionsPostUnauthorized) regionsPostRes() {}
 
 // Ref: #/components/schemas/RegisterRequest
 type RegisterRequest struct {
@@ -7952,7 +9912,10 @@ type SandboxConfig struct {
 	TTL     OptInt32                   `json:"ttl"`
 	HardTTL OptInt32                   `json:"hard_ttl"`
 	Network OptTplSandboxNetworkPolicy `json:"network"`
-	Webhook OptWebhookConfig           `json:"webhook"`
+	// Sandbox-scoped credential bindings that can be referenced by egress
+	// credential rules through `credentialRef`.
+	CredentialBindings []CredentialBinding `json:"credential_bindings"`
+	Webhook            OptWebhookConfig    `json:"webhook"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume   OptBool             `json:"auto_resume"`
@@ -7977,6 +9940,11 @@ func (s *SandboxConfig) GetHardTTL() OptInt32 {
 // GetNetwork returns the value of Network.
 func (s *SandboxConfig) GetNetwork() OptTplSandboxNetworkPolicy {
 	return s.Network
+}
+
+// GetCredentialBindings returns the value of CredentialBindings.
+func (s *SandboxConfig) GetCredentialBindings() []CredentialBinding {
+	return s.CredentialBindings
 }
 
 // GetWebhook returns the value of Webhook.
@@ -8014,6 +9982,11 @@ func (s *SandboxConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
 	s.Network = val
 }
 
+// SetCredentialBindings sets the value of CredentialBindings.
+func (s *SandboxConfig) SetCredentialBindings(val []CredentialBinding) {
+	s.CredentialBindings = val
+}
+
 // SetWebhook sets the value of Webhook.
 func (s *SandboxConfig) SetWebhook(val OptWebhookConfig) {
 	s.Webhook = val
@@ -8038,6 +10011,84 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxNetworkPolicy
+type SandboxNetworkPolicy struct {
+	Mode               SandboxNetworkPolicyMode `json:"mode"`
+	Egress             OptNetworkEgressPolicy   `json:"egress"`
+	CredentialBindings []CredentialBinding      `json:"credentialBindings"`
+}
+
+// GetMode returns the value of Mode.
+func (s *SandboxNetworkPolicy) GetMode() SandboxNetworkPolicyMode {
+	return s.Mode
+}
+
+// GetEgress returns the value of Egress.
+func (s *SandboxNetworkPolicy) GetEgress() OptNetworkEgressPolicy {
+	return s.Egress
+}
+
+// GetCredentialBindings returns the value of CredentialBindings.
+func (s *SandboxNetworkPolicy) GetCredentialBindings() []CredentialBinding {
+	return s.CredentialBindings
+}
+
+// SetMode sets the value of Mode.
+func (s *SandboxNetworkPolicy) SetMode(val SandboxNetworkPolicyMode) {
+	s.Mode = val
+}
+
+// SetEgress sets the value of Egress.
+func (s *SandboxNetworkPolicy) SetEgress(val OptNetworkEgressPolicy) {
+	s.Egress = val
+}
+
+// SetCredentialBindings sets the value of CredentialBindings.
+func (s *SandboxNetworkPolicy) SetCredentialBindings(val []CredentialBinding) {
+	s.CredentialBindings = val
+}
+
+type SandboxNetworkPolicyMode string
+
+const (
+	SandboxNetworkPolicyModeAllowAll SandboxNetworkPolicyMode = "allow-all"
+	SandboxNetworkPolicyModeBlockAll SandboxNetworkPolicyMode = "block-all"
+)
+
+// AllValues returns all SandboxNetworkPolicyMode values.
+func (SandboxNetworkPolicyMode) AllValues() []SandboxNetworkPolicyMode {
+	return []SandboxNetworkPolicyMode{
+		SandboxNetworkPolicyModeAllowAll,
+		SandboxNetworkPolicyModeBlockAll,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxNetworkPolicyMode) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxNetworkPolicyModeAllowAll:
+		return []byte(s), nil
+	case SandboxNetworkPolicyModeBlockAll:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
+	switch SandboxNetworkPolicyMode(data) {
+	case SandboxNetworkPolicyModeAllowAll:
+		*s = SandboxNetworkPolicyModeAllowAll
+		return nil
+	case SandboxNetworkPolicyModeBlockAll:
+		*s = SandboxNetworkPolicyModeBlockAll
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/SandboxRefreshRequest
@@ -8527,20 +10578,21 @@ func (s *SandboxTemplateCondition) SetMessage(val OptString) {
 
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
-	Description      OptString                     `json:"description"`
-	DisplayName      OptString                     `json:"displayName"`
-	Tags             []string                      `json:"tags"`
-	MainContainer    OptContainerSpec              `json:"mainContainer"`
-	Sidecars         []ContainerSpec               `json:"sidecars"`
-	Pod              OptPodSpecOverride            `json:"pod"`
-	Network          OptTplSandboxNetworkPolicy    `json:"network"`
-	Pool             OptPoolStrategy               `json:"pool"`
-	Lifecycle        OptLifecyclePolicy            `json:"lifecycle"`
-	EnvVars          OptSandboxTemplateSpecEnvVars `json:"envVars"`
-	Public           OptBool                       `json:"public"`
-	AllowedTeams     []string                      `json:"allowedTeams"`
-	RuntimeClassName OptString                     `json:"runtimeClassName"`
-	ClusterId        OptString                     `json:"clusterId"`
+	Description        OptString                     `json:"description"`
+	DisplayName        OptString                     `json:"displayName"`
+	Tags               []string                      `json:"tags"`
+	MainContainer      OptContainerSpec              `json:"mainContainer"`
+	Sidecars           []ContainerSpec               `json:"sidecars"`
+	Pod                OptPodSpecOverride            `json:"pod"`
+	Network            OptTplSandboxNetworkPolicy    `json:"network"`
+	CredentialBindings []CredentialBinding           `json:"credentialBindings"`
+	Pool               OptPoolStrategy               `json:"pool"`
+	Lifecycle          OptLifecyclePolicy            `json:"lifecycle"`
+	EnvVars            OptSandboxTemplateSpecEnvVars `json:"envVars"`
+	Public             OptBool                       `json:"public"`
+	AllowedTeams       []string                      `json:"allowedTeams"`
+	RuntimeClassName   OptString                     `json:"runtimeClassName"`
+	ClusterId          OptString                     `json:"clusterId"`
 }
 
 // GetDescription returns the value of Description.
@@ -8576,6 +10628,11 @@ func (s *SandboxTemplateSpec) GetPod() OptPodSpecOverride {
 // GetNetwork returns the value of Network.
 func (s *SandboxTemplateSpec) GetNetwork() OptTplSandboxNetworkPolicy {
 	return s.Network
+}
+
+// GetCredentialBindings returns the value of CredentialBindings.
+func (s *SandboxTemplateSpec) GetCredentialBindings() []CredentialBinding {
+	return s.CredentialBindings
 }
 
 // GetPool returns the value of Pool.
@@ -8646,6 +10703,11 @@ func (s *SandboxTemplateSpec) SetPod(val OptPodSpecOverride) {
 // SetNetwork sets the value of Network.
 func (s *SandboxTemplateSpec) SetNetwork(val OptTplSandboxNetworkPolicy) {
 	s.Network = val
+}
+
+// SetCredentialBindings sets the value of CredentialBindings.
+func (s *SandboxTemplateSpec) SetCredentialBindings(val []CredentialBinding) {
+	s.CredentialBindings = val
 }
 
 // SetPool sets the value of Pool.
@@ -8749,6 +10811,9 @@ type SandboxUpdateConfig struct {
 	TTL     OptInt32                   `json:"ttl"`
 	HardTTL OptInt32                   `json:"hard_ttl"`
 	Network OptTplSandboxNetworkPolicy `json:"network"`
+	// Runtime-updatable credential bindings referenced by egress
+	// credential rules through `credentialRef`.
+	CredentialBindings []CredentialBinding `json:"credential_bindings"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume   OptBool             `json:"auto_resume"`
@@ -8768,6 +10833,11 @@ func (s *SandboxUpdateConfig) GetHardTTL() OptInt32 {
 // GetNetwork returns the value of Network.
 func (s *SandboxUpdateConfig) GetNetwork() OptTplSandboxNetworkPolicy {
 	return s.Network
+}
+
+// GetCredentialBindings returns the value of CredentialBindings.
+func (s *SandboxUpdateConfig) GetCredentialBindings() []CredentialBinding {
+	return s.CredentialBindings
 }
 
 // GetAutoResume returns the value of AutoResume.
@@ -8793,6 +10863,11 @@ func (s *SandboxUpdateConfig) SetHardTTL(val OptInt32) {
 // SetNetwork sets the value of Network.
 func (s *SandboxUpdateConfig) SetNetwork(val OptTplSandboxNetworkPolicy) {
 	s.Network = val
+}
+
+// SetCredentialBindings sets the value of CredentialBindings.
+func (s *SandboxUpdateConfig) SetCredentialBindings(val []CredentialBinding) {
+	s.CredentialBindings = val
 }
 
 // SetAutoResume sets the value of AutoResume.
@@ -9079,6 +11154,95 @@ func (s *Snapshot) SetExpiresAt(val OptNilString) {
 	s.ExpiresAt = val
 }
 
+// Ref: #/components/schemas/StaticHeadersSourceSpec
+type StaticHeadersSourceSpec struct {
+	Values OptStaticHeadersSourceSpecValues `json:"values"`
+}
+
+// GetValues returns the value of Values.
+func (s *StaticHeadersSourceSpec) GetValues() OptStaticHeadersSourceSpecValues {
+	return s.Values
+}
+
+// SetValues sets the value of Values.
+func (s *StaticHeadersSourceSpec) SetValues(val OptStaticHeadersSourceSpecValues) {
+	s.Values = val
+}
+
+type StaticHeadersSourceSpecValues map[string]string
+
+func (s *StaticHeadersSourceSpecValues) init() StaticHeadersSourceSpecValues {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/StaticTLSClientCertificateSourceSpec
+type StaticTLSClientCertificateSourceSpec struct {
+	CertificatePem string    `json:"certificatePem"`
+	PrivateKeyPem  string    `json:"privateKeyPem"`
+	CaPem          OptString `json:"caPem"`
+}
+
+// GetCertificatePem returns the value of CertificatePem.
+func (s *StaticTLSClientCertificateSourceSpec) GetCertificatePem() string {
+	return s.CertificatePem
+}
+
+// GetPrivateKeyPem returns the value of PrivateKeyPem.
+func (s *StaticTLSClientCertificateSourceSpec) GetPrivateKeyPem() string {
+	return s.PrivateKeyPem
+}
+
+// GetCaPem returns the value of CaPem.
+func (s *StaticTLSClientCertificateSourceSpec) GetCaPem() OptString {
+	return s.CaPem
+}
+
+// SetCertificatePem sets the value of CertificatePem.
+func (s *StaticTLSClientCertificateSourceSpec) SetCertificatePem(val string) {
+	s.CertificatePem = val
+}
+
+// SetPrivateKeyPem sets the value of PrivateKeyPem.
+func (s *StaticTLSClientCertificateSourceSpec) SetPrivateKeyPem(val string) {
+	s.PrivateKeyPem = val
+}
+
+// SetCaPem sets the value of CaPem.
+func (s *StaticTLSClientCertificateSourceSpec) SetCaPem(val OptString) {
+	s.CaPem = val
+}
+
+// Ref: #/components/schemas/StaticUsernamePasswordSourceSpec
+type StaticUsernamePasswordSourceSpec struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// GetUsername returns the value of Username.
+func (s *StaticUsernamePasswordSourceSpec) GetUsername() string {
+	return s.Username
+}
+
+// GetPassword returns the value of Password.
+func (s *StaticUsernamePasswordSourceSpec) GetPassword() string {
+	return s.Password
+}
+
+// SetUsername sets the value of Username.
+func (s *StaticUsernamePasswordSourceSpec) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetPassword sets the value of Password.
+func (s *StaticUsernamePasswordSourceSpec) SetPassword(val string) {
+	s.Password = val
+}
+
 // Merged schema.
 // Ref: #/components/schemas/SuccessAPIKeyListResponse
 type SuccessAPIKeyListResponse struct {
@@ -9133,6 +11297,49 @@ const (
 func (SuccessAPIKeyListResponseSuccess) AllValues() []SuccessAPIKeyListResponseSuccess {
 	return []SuccessAPIKeyListResponseSuccess{
 		SuccessAPIKeyListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessActiveTeamResponse
+type SuccessActiveTeamResponse struct {
+	Success SuccessActiveTeamResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptActiveTeam `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessActiveTeamResponse) GetSuccess() SuccessActiveTeamResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessActiveTeamResponse) GetData() OptActiveTeam {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessActiveTeamResponse) SetSuccess(val SuccessActiveTeamResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessActiveTeamResponse) SetData(val OptActiveTeam) {
+	s.Data = val
+}
+
+func (*SuccessActiveTeamResponse) tenantActiveGetRes() {}
+
+type SuccessActiveTeamResponseSuccess bool
+
+const (
+	SuccessActiveTeamResponseSuccessTrue SuccessActiveTeamResponseSuccess = true
+)
+
+// AllValues returns all SuccessActiveTeamResponseSuccess values.
+func (SuccessActiveTeamResponseSuccess) AllValues() []SuccessActiveTeamResponseSuccess {
+	return []SuccessActiveTeamResponseSuccess{
+		SuccessActiveTeamResponseSuccessTrue,
 	}
 }
 
@@ -9515,6 +11722,90 @@ func (SuccessCreatedResponseSuccess) AllValues() []SuccessCreatedResponseSuccess
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessCredentialSourceListResponse
+type SuccessCredentialSourceListResponse struct {
+	Success SuccessCredentialSourceListResponseSuccess `json:"success"`
+	// Merged property.
+	Data []CredentialSourceMetadata `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessCredentialSourceListResponse) GetSuccess() SuccessCredentialSourceListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessCredentialSourceListResponse) GetData() []CredentialSourceMetadata {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessCredentialSourceListResponse) SetSuccess(val SuccessCredentialSourceListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessCredentialSourceListResponse) SetData(val []CredentialSourceMetadata) {
+	s.Data = val
+}
+
+type SuccessCredentialSourceListResponseSuccess bool
+
+const (
+	SuccessCredentialSourceListResponseSuccessTrue SuccessCredentialSourceListResponseSuccess = true
+)
+
+// AllValues returns all SuccessCredentialSourceListResponseSuccess values.
+func (SuccessCredentialSourceListResponseSuccess) AllValues() []SuccessCredentialSourceListResponseSuccess {
+	return []SuccessCredentialSourceListResponseSuccess{
+		SuccessCredentialSourceListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessCredentialSourceResponse
+type SuccessCredentialSourceResponse struct {
+	Success SuccessCredentialSourceResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptCredentialSourceMetadata `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessCredentialSourceResponse) GetSuccess() SuccessCredentialSourceResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessCredentialSourceResponse) GetData() OptCredentialSourceMetadata {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessCredentialSourceResponse) SetSuccess(val SuccessCredentialSourceResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessCredentialSourceResponse) SetData(val OptCredentialSourceMetadata) {
+	s.Data = val
+}
+
+func (*SuccessCredentialSourceResponse) aPIV1CredentialSourcesNameGetRes() {}
+
+type SuccessCredentialSourceResponseSuccess bool
+
+const (
+	SuccessCredentialSourceResponseSuccessTrue SuccessCredentialSourceResponseSuccess = true
+)
+
+// AllValues returns all SuccessCredentialSourceResponseSuccess values.
+func (SuccessCredentialSourceResponseSuccess) AllValues() []SuccessCredentialSourceResponseSuccess {
+	return []SuccessCredentialSourceResponseSuccess{
+		SuccessCredentialSourceResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessDeletedResponse
 type SuccessDeletedResponse struct {
 	Success SuccessDeletedResponseSuccess `json:"success"`
@@ -9878,6 +12169,49 @@ func (SuccessIdentityListResponseSuccess) AllValues() []SuccessIdentityListRespo
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessIssueRegionTokenResponse
+type SuccessIssueRegionTokenResponse struct {
+	Success SuccessIssueRegionTokenResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptIssueRegionTokenResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessIssueRegionTokenResponse) GetSuccess() SuccessIssueRegionTokenResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessIssueRegionTokenResponse) GetData() OptIssueRegionTokenResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessIssueRegionTokenResponse) SetSuccess(val SuccessIssueRegionTokenResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessIssueRegionTokenResponse) SetData(val OptIssueRegionTokenResponse) {
+	s.Data = val
+}
+
+func (*SuccessIssueRegionTokenResponse) authRegionTokenPostRes() {}
+
+type SuccessIssueRegionTokenResponseSuccess bool
+
+const (
+	SuccessIssueRegionTokenResponseSuccessTrue SuccessIssueRegionTokenResponseSuccess = true
+)
+
+// AllValues returns all SuccessIssueRegionTokenResponseSuccess values.
+func (SuccessIssueRegionTokenResponseSuccess) AllValues() []SuccessIssueRegionTokenResponseSuccess {
+	return []SuccessIssueRegionTokenResponseSuccess{
+		SuccessIssueRegionTokenResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessLoginResponse
 type SuccessLoginResponse struct {
 	Success SuccessLoginResponseSuccess `json:"success"`
@@ -9955,6 +12289,7 @@ func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()    {}
 func (*SuccessMessageResponse) aPIKeysIDDeleteRes()            {}
 func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()     {}
 func (*SuccessMessageResponse) authChangePasswordPostRes()     {}
+func (*SuccessMessageResponse) regionsIDDeleteRes()            {}
 func (*SuccessMessageResponse) teamsIDDeleteRes()              {}
 func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes() {}
 func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()    {}
@@ -10221,6 +12556,108 @@ const (
 func (SuccessRefreshResponseSuccess) AllValues() []SuccessRefreshResponseSuccess {
 	return []SuccessRefreshResponseSuccess{
 		SuccessRefreshResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessRegionListResponse
+type SuccessRegionListResponse struct {
+	Success SuccessRegionListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessRegionListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessRegionListResponse) GetSuccess() SuccessRegionListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessRegionListResponse) GetData() OptSuccessRegionListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessRegionListResponse) SetSuccess(val SuccessRegionListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessRegionListResponse) SetData(val OptSuccessRegionListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessRegionListResponse) regionsGetRes() {}
+
+type SuccessRegionListResponseData struct {
+	Regions []Region `json:"regions"`
+}
+
+// GetRegions returns the value of Regions.
+func (s *SuccessRegionListResponseData) GetRegions() []Region {
+	return s.Regions
+}
+
+// SetRegions sets the value of Regions.
+func (s *SuccessRegionListResponseData) SetRegions(val []Region) {
+	s.Regions = val
+}
+
+type SuccessRegionListResponseSuccess bool
+
+const (
+	SuccessRegionListResponseSuccessTrue SuccessRegionListResponseSuccess = true
+)
+
+// AllValues returns all SuccessRegionListResponseSuccess values.
+func (SuccessRegionListResponseSuccess) AllValues() []SuccessRegionListResponseSuccess {
+	return []SuccessRegionListResponseSuccess{
+		SuccessRegionListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessRegionResponse
+type SuccessRegionResponse struct {
+	Success SuccessRegionResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptRegion `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessRegionResponse) GetSuccess() SuccessRegionResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessRegionResponse) GetData() OptRegion {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessRegionResponse) SetSuccess(val SuccessRegionResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessRegionResponse) SetData(val OptRegion) {
+	s.Data = val
+}
+
+func (*SuccessRegionResponse) regionsIDGetRes() {}
+func (*SuccessRegionResponse) regionsIDPutRes() {}
+func (*SuccessRegionResponse) regionsPostRes()  {}
+
+type SuccessRegionResponseSuccess bool
+
+const (
+	SuccessRegionResponseSuccessTrue SuccessRegionResponseSuccess = true
+)
+
+// AllValues returns all SuccessRegionResponseSuccess values.
+func (SuccessRegionResponseSuccess) AllValues() []SuccessRegionResponseSuccess {
+	return []SuccessRegionResponseSuccess{
+		SuccessRegionResponseSuccessTrue,
 	}
 }
 
@@ -10506,7 +12943,7 @@ func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListRespons
 type SuccessSandboxNetworkPolicyResponse struct {
 	Success SuccessSandboxNetworkPolicyResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTplSandboxNetworkPolicy `json:"data"`
+	Data OptSandboxNetworkPolicy `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -10515,7 +12952,7 @@ func (s *SuccessSandboxNetworkPolicyResponse) GetSuccess() SuccessSandboxNetwork
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxNetworkPolicyResponse) GetData() OptTplSandboxNetworkPolicy {
+func (s *SuccessSandboxNetworkPolicyResponse) GetData() OptSandboxNetworkPolicy {
 	return s.Data
 }
 
@@ -10525,7 +12962,7 @@ func (s *SuccessSandboxNetworkPolicyResponse) SetSuccess(val SuccessSandboxNetwo
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxNetworkPolicyResponse) SetData(val OptTplSandboxNetworkPolicy) {
+func (s *SuccessSandboxNetworkPolicyResponse) SetData(val OptSandboxNetworkPolicy) {
 	s.Data = val
 }
 
@@ -11249,8 +13686,8 @@ func (s *SuccessUserResponse) SetData(val OptUser) {
 	s.Data = val
 }
 
-func (*SuccessUserResponse) usersMeGetRes() {}
-func (*SuccessUserResponse) usersMePutRes() {}
+func (*SuccessUserResponse) tenantActivePutRes() {}
+func (*SuccessUserResponse) usersMeGetRes()      {}
 
 type SuccessUserResponseSuccess bool
 
@@ -11322,14 +13759,19 @@ func (SuccessWrittenResponseSuccess) AllValues() []SuccessWrittenResponseSuccess
 	}
 }
 
+// Client certificate projection used for TLS terminate-reoriginate auth.
+// Ref: #/components/schemas/TLSClientCertificateProjection
+type TLSClientCertificateProjection struct{}
+
 // Ref: #/components/schemas/Team
 type Team struct {
-	ID        string       `json:"id"`
-	Name      string       `json:"name"`
-	Slug      string       `json:"slug"`
-	OwnerID   OptNilString `json:"owner_id"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
+	ID           string       `json:"id"`
+	Name         string       `json:"name"`
+	Slug         string       `json:"slug"`
+	OwnerID      OptNilString `json:"owner_id"`
+	HomeRegionID OptNilString `json:"home_region_id"`
+	CreatedAt    time.Time    `json:"created_at"`
+	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -11350,6 +13792,11 @@ func (s *Team) GetSlug() string {
 // GetOwnerID returns the value of OwnerID.
 func (s *Team) GetOwnerID() OptNilString {
 	return s.OwnerID
+}
+
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *Team) GetHomeRegionID() OptNilString {
+	return s.HomeRegionID
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -11380,6 +13827,11 @@ func (s *Team) SetSlug(val string) {
 // SetOwnerID sets the value of OwnerID.
 func (s *Team) SetOwnerID(val OptNilString) {
 	s.OwnerID = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *Team) SetHomeRegionID(val OptNilString) {
+	s.HomeRegionID = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
@@ -11499,6 +13951,10 @@ type TeamsIDPutBadRequest ErrorEnvelope
 
 func (*TeamsIDPutBadRequest) teamsIDPutRes() {}
 
+type TeamsIDPutConflict ErrorEnvelope
+
+func (*TeamsIDPutConflict) teamsIDPutRes() {}
+
 type TeamsIDPutForbidden ErrorEnvelope
 
 func (*TeamsIDPutForbidden) teamsIDPutRes() {}
@@ -11506,14 +13962,6 @@ func (*TeamsIDPutForbidden) teamsIDPutRes() {}
 type TeamsIDPutNotFound ErrorEnvelope
 
 func (*TeamsIDPutNotFound) teamsIDPutRes() {}
-
-type TeamsPostBadRequest ErrorEnvelope
-
-func (*TeamsPostBadRequest) teamsPostRes() {}
-
-type TeamsPostConflict ErrorEnvelope
-
-func (*TeamsPostConflict) teamsPostRes() {}
 
 // Ref: #/components/schemas/Template
 type Template struct {
@@ -11648,6 +14096,30 @@ func (s *TemplateUpdateRequest) SetSpec(val SandboxTemplateSpec) {
 	s.Spec = val
 }
 
+type TenantActiveGetBadRequest ErrorEnvelope
+
+func (*TenantActiveGetBadRequest) tenantActiveGetRes() {}
+
+type TenantActiveGetConflict ErrorEnvelope
+
+func (*TenantActiveGetConflict) tenantActiveGetRes() {}
+
+type TenantActiveGetForbidden ErrorEnvelope
+
+func (*TenantActiveGetForbidden) tenantActiveGetRes() {}
+
+type TenantActiveGetUnauthorized ErrorEnvelope
+
+func (*TenantActiveGetUnauthorized) tenantActiveGetRes() {}
+
+type TenantActivePutBadRequest ErrorEnvelope
+
+func (*TenantActivePutBadRequest) tenantActivePutRes() {}
+
+type TenantActivePutUnauthorized ErrorEnvelope
+
+func (*TenantActivePutUnauthorized) tenantActivePutRes() {}
+
 // Ref: #/components/schemas/Toleration
 type Toleration struct {
 	Key      OptString `json:"key"`
@@ -11696,6 +14168,9 @@ func (s *Toleration) SetEffect(val OptString) {
 	s.Effect = val
 }
 
+// Template-level outbound network policy.
+// `allow-all` permits traffic by default and applies `denied*` rules as subtractive filters.
+// `block-all` denies traffic by default and applies `allowed*` rules as additive exceptions.
 // Ref: #/components/schemas/TplSandboxNetworkPolicy
 type TplSandboxNetworkPolicy struct {
 	Mode   TplSandboxNetworkPolicyMode `json:"mode"`
@@ -11763,6 +14238,221 @@ func (s *TplSandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/TrafficRule
+type TrafficRule struct {
+	// Optional stable identifier used for merge and replacement.
+	Name   OptString         `json:"name"`
+	Action TrafficRuleAction `json:"action"`
+	// CIDR match list for the rule.
+	Cidrs []string `json:"cidrs"`
+	// Domain match list for the rule.
+	Domains []string `json:"domains"`
+	// Port/protocol constraints for the rule.
+	Ports []PortSpec `json:"ports"`
+	// Classified application protocols matched by the rule.
+	AppProtocols []TrafficRuleAppProtocol `json:"appProtocols"`
+}
+
+// GetName returns the value of Name.
+func (s *TrafficRule) GetName() OptString {
+	return s.Name
+}
+
+// GetAction returns the value of Action.
+func (s *TrafficRule) GetAction() TrafficRuleAction {
+	return s.Action
+}
+
+// GetCidrs returns the value of Cidrs.
+func (s *TrafficRule) GetCidrs() []string {
+	return s.Cidrs
+}
+
+// GetDomains returns the value of Domains.
+func (s *TrafficRule) GetDomains() []string {
+	return s.Domains
+}
+
+// GetPorts returns the value of Ports.
+func (s *TrafficRule) GetPorts() []PortSpec {
+	return s.Ports
+}
+
+// GetAppProtocols returns the value of AppProtocols.
+func (s *TrafficRule) GetAppProtocols() []TrafficRuleAppProtocol {
+	return s.AppProtocols
+}
+
+// SetName sets the value of Name.
+func (s *TrafficRule) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetAction sets the value of Action.
+func (s *TrafficRule) SetAction(val TrafficRuleAction) {
+	s.Action = val
+}
+
+// SetCidrs sets the value of Cidrs.
+func (s *TrafficRule) SetCidrs(val []string) {
+	s.Cidrs = val
+}
+
+// SetDomains sets the value of Domains.
+func (s *TrafficRule) SetDomains(val []string) {
+	s.Domains = val
+}
+
+// SetPorts sets the value of Ports.
+func (s *TrafficRule) SetPorts(val []PortSpec) {
+	s.Ports = val
+}
+
+// SetAppProtocols sets the value of AppProtocols.
+func (s *TrafficRule) SetAppProtocols(val []TrafficRuleAppProtocol) {
+	s.AppProtocols = val
+}
+
+// Ref: #/components/schemas/TrafficRuleAction
+type TrafficRuleAction string
+
+const (
+	TrafficRuleActionAllow TrafficRuleAction = "allow"
+	TrafficRuleActionDeny  TrafficRuleAction = "deny"
+)
+
+// AllValues returns all TrafficRuleAction values.
+func (TrafficRuleAction) AllValues() []TrafficRuleAction {
+	return []TrafficRuleAction{
+		TrafficRuleActionAllow,
+		TrafficRuleActionDeny,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TrafficRuleAction) MarshalText() ([]byte, error) {
+	switch s {
+	case TrafficRuleActionAllow:
+		return []byte(s), nil
+	case TrafficRuleActionDeny:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TrafficRuleAction) UnmarshalText(data []byte) error {
+	switch TrafficRuleAction(data) {
+	case TrafficRuleActionAllow:
+		*s = TrafficRuleActionAllow
+		return nil
+	case TrafficRuleActionDeny:
+		*s = TrafficRuleActionDeny
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/TrafficRuleAppProtocol
+type TrafficRuleAppProtocol string
+
+const (
+	TrafficRuleAppProtocolHTTP    TrafficRuleAppProtocol = "http"
+	TrafficRuleAppProtocolTLS     TrafficRuleAppProtocol = "tls"
+	TrafficRuleAppProtocolSSH     TrafficRuleAppProtocol = "ssh"
+	TrafficRuleAppProtocolSocks5  TrafficRuleAppProtocol = "socks5"
+	TrafficRuleAppProtocolMqtt    TrafficRuleAppProtocol = "mqtt"
+	TrafficRuleAppProtocolRedis   TrafficRuleAppProtocol = "redis"
+	TrafficRuleAppProtocolAmqp    TrafficRuleAppProtocol = "amqp"
+	TrafficRuleAppProtocolDNS     TrafficRuleAppProtocol = "dns"
+	TrafficRuleAppProtocolMongodb TrafficRuleAppProtocol = "mongodb"
+	TrafficRuleAppProtocolUDP     TrafficRuleAppProtocol = "udp"
+)
+
+// AllValues returns all TrafficRuleAppProtocol values.
+func (TrafficRuleAppProtocol) AllValues() []TrafficRuleAppProtocol {
+	return []TrafficRuleAppProtocol{
+		TrafficRuleAppProtocolHTTP,
+		TrafficRuleAppProtocolTLS,
+		TrafficRuleAppProtocolSSH,
+		TrafficRuleAppProtocolSocks5,
+		TrafficRuleAppProtocolMqtt,
+		TrafficRuleAppProtocolRedis,
+		TrafficRuleAppProtocolAmqp,
+		TrafficRuleAppProtocolDNS,
+		TrafficRuleAppProtocolMongodb,
+		TrafficRuleAppProtocolUDP,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TrafficRuleAppProtocol) MarshalText() ([]byte, error) {
+	switch s {
+	case TrafficRuleAppProtocolHTTP:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolTLS:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolSSH:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolSocks5:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolMqtt:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolRedis:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolAmqp:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolDNS:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolMongodb:
+		return []byte(s), nil
+	case TrafficRuleAppProtocolUDP:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TrafficRuleAppProtocol) UnmarshalText(data []byte) error {
+	switch TrafficRuleAppProtocol(data) {
+	case TrafficRuleAppProtocolHTTP:
+		*s = TrafficRuleAppProtocolHTTP
+		return nil
+	case TrafficRuleAppProtocolTLS:
+		*s = TrafficRuleAppProtocolTLS
+		return nil
+	case TrafficRuleAppProtocolSSH:
+		*s = TrafficRuleAppProtocolSSH
+		return nil
+	case TrafficRuleAppProtocolSocks5:
+		*s = TrafficRuleAppProtocolSocks5
+		return nil
+	case TrafficRuleAppProtocolMqtt:
+		*s = TrafficRuleAppProtocolMqtt
+		return nil
+	case TrafficRuleAppProtocolRedis:
+		*s = TrafficRuleAppProtocolRedis
+		return nil
+	case TrafficRuleAppProtocolAmqp:
+		*s = TrafficRuleAppProtocolAmqp
+		return nil
+	case TrafficRuleAppProtocolDNS:
+		*s = TrafficRuleAppProtocolDNS
+		return nil
+	case TrafficRuleAppProtocolMongodb:
+		*s = TrafficRuleAppProtocolMongodb
+		return nil
+	case TrafficRuleAppProtocolUDP:
+		*s = TrafficRuleAppProtocolUDP
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/UnmountRequest
 type UnmountRequest struct {
 	SandboxvolumeID string `json:"sandboxvolume_id"`
@@ -11802,6 +14492,54 @@ func (s *UpdateExposedPortsRequest) GetPorts() []ExposedPortConfig {
 // SetPorts sets the value of Ports.
 func (s *UpdateExposedPortsRequest) SetPorts(val []ExposedPortConfig) {
 	s.Ports = val
+}
+
+// Ref: #/components/schemas/UpdateRegionRequest
+type UpdateRegionRequest struct {
+	DisplayName       OptString    `json:"display_name"`
+	EdgeGatewayURL    OptString    `json:"edge_gateway_url"`
+	MeteringExportURL OptNilString `json:"metering_export_url"`
+	Enabled           OptBool      `json:"enabled"`
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *UpdateRegionRequest) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
+func (s *UpdateRegionRequest) GetEdgeGatewayURL() OptString {
+	return s.EdgeGatewayURL
+}
+
+// GetMeteringExportURL returns the value of MeteringExportURL.
+func (s *UpdateRegionRequest) GetMeteringExportURL() OptNilString {
+	return s.MeteringExportURL
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *UpdateRegionRequest) GetEnabled() OptBool {
+	return s.Enabled
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *UpdateRegionRequest) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
+func (s *UpdateRegionRequest) SetEdgeGatewayURL(val OptString) {
+	s.EdgeGatewayURL = val
+}
+
+// SetMeteringExportURL sets the value of MeteringExportURL.
+func (s *UpdateRegionRequest) SetMeteringExportURL(val OptNilString) {
+	s.MeteringExportURL = val
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *UpdateRegionRequest) SetEnabled(val OptBool) {
+	s.Enabled = val
 }
 
 // Ref: #/components/schemas/UpdateTeamMemberRequest
@@ -11937,6 +14675,7 @@ type User struct {
 	Name          string       `json:"name"`
 	AvatarURL     OptNilString `json:"avatar_url"`
 	DefaultTeamID OptNilString `json:"default_team_id"`
+	DefaultTeam   OptNilTeam   `json:"default_team"`
 	EmailVerified bool         `json:"email_verified"`
 	IsAdmin       bool         `json:"is_admin"`
 	CreatedAt     time.Time    `json:"created_at"`
@@ -11966,6 +14705,11 @@ func (s *User) GetAvatarURL() OptNilString {
 // GetDefaultTeamID returns the value of DefaultTeamID.
 func (s *User) GetDefaultTeamID() OptNilString {
 	return s.DefaultTeamID
+}
+
+// GetDefaultTeam returns the value of DefaultTeam.
+func (s *User) GetDefaultTeam() OptNilTeam {
+	return s.DefaultTeam
 }
 
 // GetEmailVerified returns the value of EmailVerified.
@@ -12013,6 +14757,11 @@ func (s *User) SetDefaultTeamID(val OptNilString) {
 	s.DefaultTeamID = val
 }
 
+// SetDefaultTeam sets the value of DefaultTeam.
+func (s *User) SetDefaultTeam(val OptNilTeam) {
+	s.DefaultTeam = val
+}
+
 // SetEmailVerified sets the value of EmailVerified.
 func (s *User) SetEmailVerified(val bool) {
 	s.EmailVerified = val
@@ -12033,6 +14782,10 @@ func (s *User) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
+// Username/password projection used for SOCKS5 and MQTT auth handshakes.
+// Ref: #/components/schemas/UsernamePasswordProjection
+type UsernamePasswordProjection struct{}
+
 type UsersMeIdentitiesIDDeleteBadRequest ErrorEnvelope
 
 func (*UsersMeIdentitiesIDDeleteBadRequest) usersMeIdentitiesIDDeleteRes() {}
@@ -12044,14 +14797,6 @@ func (*UsersMeIdentitiesIDDeleteNotFound) usersMeIdentitiesIDDeleteRes() {}
 type UsersMeIdentitiesIDDeleteUnauthorized ErrorEnvelope
 
 func (*UsersMeIdentitiesIDDeleteUnauthorized) usersMeIdentitiesIDDeleteRes() {}
-
-type UsersMePutBadRequest ErrorEnvelope
-
-func (*UsersMePutBadRequest) usersMePutRes() {}
-
-type UsersMePutUnauthorized ErrorEnvelope
-
-func (*UsersMePutUnauthorized) usersMePutRes() {}
 
 // Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows
 // read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows

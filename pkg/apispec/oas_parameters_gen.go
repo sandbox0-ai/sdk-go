@@ -12,6 +12,21 @@ type APIKeysIDDeleteParams struct {
 	ID string
 }
 
+// APIV1CredentialSourcesNameDeleteParams is parameters of DELETE /api/v1/credential-sources/{name} operation.
+type APIV1CredentialSourcesNameDeleteParams struct {
+	Name string
+}
+
+// APIV1CredentialSourcesNameGetParams is parameters of GET /api/v1/credential-sources/{name} operation.
+type APIV1CredentialSourcesNameGetParams struct {
+	Name string
+}
+
+// APIV1CredentialSourcesNamePutParams is parameters of PUT /api/v1/credential-sources/{name} operation.
+type APIV1CredentialSourcesNamePutParams struct {
+	Name string
+}
+
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
 type APIV1SandboxesGetParams struct {
 	// Filter by sandbox status.
@@ -286,6 +301,21 @@ type AuthOidcProviderLoginGetParams struct {
 	ReturnURL OptString `json:",omitempty,omitzero"`
 }
 
+// RegionsIDDeleteParams is parameters of DELETE /regions/{id} operation.
+type RegionsIDDeleteParams struct {
+	ID string
+}
+
+// RegionsIDGetParams is parameters of GET /regions/{id} operation.
+type RegionsIDGetParams struct {
+	ID string
+}
+
+// RegionsIDPutParams is parameters of PUT /regions/{id} operation.
+type RegionsIDPutParams struct {
+	ID string
+}
+
 // TeamsIDDeleteParams is parameters of DELETE /teams/{id} operation.
 type TeamsIDDeleteParams struct {
 	ID string
@@ -321,6 +351,11 @@ type TeamsIDMembersUserIdPutParams struct {
 // TeamsIDPutParams is parameters of PUT /teams/{id} operation.
 type TeamsIDPutParams struct {
 	ID string
+}
+
+// TenantActiveGetParams is parameters of GET /tenant/active operation.
+type TenantActiveGetParams struct {
+	TeamID OptString `json:",omitempty,omitzero"`
 }
 
 // UsersMeIdentitiesIDDeleteParams is parameters of DELETE /users/me/identities/{id} operation.

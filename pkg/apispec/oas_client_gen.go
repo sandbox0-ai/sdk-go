@@ -104,6 +104,36 @@ type Invoker interface {
 	//
 	// POST /api-keys
 	APIKeysPost(ctx context.Context, request *CreateAPIKeyRequest, options ...RequestOption) (APIKeysPostRes, error)
+	// APIV1CredentialSourcesGet invokes GET /api/v1/credential-sources operation.
+	//
+	// List credential sources.
+	//
+	// GET /api/v1/credential-sources
+	APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (*SuccessCredentialSourceListResponse, error)
+	// APIV1CredentialSourcesNameDelete invokes DELETE /api/v1/credential-sources/{name} operation.
+	//
+	// Delete credential source.
+	//
+	// DELETE /api/v1/credential-sources/{name}
+	APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error)
+	// APIV1CredentialSourcesNameGet invokes GET /api/v1/credential-sources/{name} operation.
+	//
+	// Get credential source.
+	//
+	// GET /api/v1/credential-sources/{name}
+	APIV1CredentialSourcesNameGet(ctx context.Context, params APIV1CredentialSourcesNameGetParams, options ...RequestOption) (APIV1CredentialSourcesNameGetRes, error)
+	// APIV1CredentialSourcesNamePut invokes PUT /api/v1/credential-sources/{name} operation.
+	//
+	// Update credential source.
+	//
+	// PUT /api/v1/credential-sources/{name}
+	APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (*SuccessCredentialSourceResponse, error)
+	// APIV1CredentialSourcesPost invokes POST /api/v1/credential-sources operation.
+	//
+	// Create credential source.
+	//
+	// POST /api/v1/credential-sources
+	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (*SuccessCredentialSourceResponse, error)
 	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
 	//
 	// Get registry credentials for uploads.
@@ -291,7 +321,7 @@ type Invoker interface {
 	// Update sandbox network policy.
 	//
 	// PUT /api/v1/sandboxes/{id}/network
-	APIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
+	APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
 	// APIV1SandboxesIDPausePost invokes POST /api/v1/sandboxes/{id}/pause operation.
 	//
 	// Pause a sandbox.
@@ -478,6 +508,12 @@ type Invoker interface {
 	//
 	// POST /auth/refresh
 	AuthRefreshPost(ctx context.Context, request *RefreshRequest, options ...RequestOption) (AuthRefreshPostRes, error)
+	// AuthRegionTokenPost invokes POST /auth/region-token operation.
+	//
+	// Exchange a global user session for a region-scoped token.
+	//
+	// POST /auth/region-token
+	AuthRegionTokenPost(ctx context.Context, request OptIssueRegionTokenRequest, options ...RequestOption) (AuthRegionTokenPostRes, error)
 	// AuthRegisterPost invokes POST /auth/register operation.
 	//
 	// Register a new user.
@@ -502,6 +538,36 @@ type Invoker interface {
 	//
 	// GET /readyz
 	ReadyzGet(ctx context.Context, options ...RequestOption) (ReadyzGetRes, error)
+	// RegionsGet invokes GET /regions operation.
+	//
+	// List regions in the global directory.
+	//
+	// GET /regions
+	RegionsGet(ctx context.Context, options ...RequestOption) (RegionsGetRes, error)
+	// RegionsIDDelete invokes DELETE /regions/{id} operation.
+	//
+	// Delete a region from the global directory.
+	//
+	// DELETE /regions/{id}
+	RegionsIDDelete(ctx context.Context, params RegionsIDDeleteParams, options ...RequestOption) (RegionsIDDeleteRes, error)
+	// RegionsIDGet invokes GET /regions/{id} operation.
+	//
+	// Get a region from the global directory.
+	//
+	// GET /regions/{id}
+	RegionsIDGet(ctx context.Context, params RegionsIDGetParams, options ...RequestOption) (RegionsIDGetRes, error)
+	// RegionsIDPut invokes PUT /regions/{id} operation.
+	//
+	// Update a region in the global directory.
+	//
+	// PUT /regions/{id}
+	RegionsIDPut(ctx context.Context, request *UpdateRegionRequest, params RegionsIDPutParams, options ...RequestOption) (RegionsIDPutRes, error)
+	// RegionsPost invokes POST /regions operation.
+	//
+	// Create a region in the global directory.
+	//
+	// POST /regions
+	RegionsPost(ctx context.Context, request *CreateRegionRequest, options ...RequestOption) (RegionsPostRes, error)
 	// TeamsGet invokes GET /teams operation.
 	//
 	// List teams.
@@ -546,7 +612,7 @@ type Invoker interface {
 	TeamsIDMembersUserIdPut(ctx context.Context, request *UpdateTeamMemberRequest, params TeamsIDMembersUserIdPutParams, options ...RequestOption) (TeamsIDMembersUserIdPutRes, error)
 	// TeamsIDPut invokes PUT /teams/{id} operation.
 	//
-	// Update a team.
+	// Team home region is immutable after creation and cannot be changed through this endpoint.
 	//
 	// PUT /teams/{id}
 	TeamsIDPut(ctx context.Context, request *UpdateTeamRequest, params TeamsIDPutParams, options ...RequestOption) (TeamsIDPutRes, error)
@@ -556,6 +622,18 @@ type Invoker interface {
 	//
 	// POST /teams
 	TeamsPost(ctx context.Context, request *CreateTeamRequest, options ...RequestOption) (TeamsPostRes, error)
+	// TenantActiveGet invokes GET /tenant/active operation.
+	//
+	// Resolve the active team and its routing information.
+	//
+	// GET /tenant/active
+	TenantActiveGet(ctx context.Context, params TenantActiveGetParams, options ...RequestOption) (TenantActiveGetRes, error)
+	// TenantActivePut invokes PUT /tenant/active operation.
+	//
+	// Update current user.
+	//
+	// PUT /tenant/active
+	TenantActivePut(ctx context.Context, request *UpdateUserRequest, options ...RequestOption) (TenantActivePutRes, error)
 	// UsersMeGet invokes GET /users/me operation.
 	//
 	// Get current user.
@@ -574,12 +652,6 @@ type Invoker interface {
 	//
 	// DELETE /users/me/identities/{id}
 	UsersMeIdentitiesIDDelete(ctx context.Context, params UsersMeIdentitiesIDDeleteParams, options ...RequestOption) (UsersMeIdentitiesIDDeleteRes, error)
-	// UsersMePut invokes PUT /users/me operation.
-	//
-	// Update current user.
-	//
-	// PUT /users/me
-	UsersMePut(ctx context.Context, request *UpdateUserRequest, options ...RequestOption) (UsersMePutRes, error)
 }
 
 // Client implements OAS client.
@@ -1038,6 +1110,541 @@ func (c *Client) sendAPIKeysPost(ctx context.Context, request *CreateAPIKeyReque
 	}
 
 	result, err := decodeAPIKeysPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1CredentialSourcesGet invokes GET /api/v1/credential-sources operation.
+//
+// List credential sources.
+//
+// GET /api/v1/credential-sources
+func (c *Client) APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (*SuccessCredentialSourceListResponse, error) {
+	res, err := c.sendAPIV1CredentialSourcesGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1CredentialSourcesGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessCredentialSourceListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/credential-sources"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1CredentialSourcesGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1CredentialSourcesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1CredentialSourcesNameDelete invokes DELETE /api/v1/credential-sources/{name} operation.
+//
+// Delete credential source.
+//
+// DELETE /api/v1/credential-sources/{name}
+func (c *Client) APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error) {
+	res, err := c.sendAPIV1CredentialSourcesNameDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, requestOptions ...RequestOption) (res *SuccessMessageResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/credential-sources/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1CredentialSourcesNameDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1CredentialSourcesNameDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1CredentialSourcesNameGet invokes GET /api/v1/credential-sources/{name} operation.
+//
+// Get credential source.
+//
+// GET /api/v1/credential-sources/{name}
+func (c *Client) APIV1CredentialSourcesNameGet(ctx context.Context, params APIV1CredentialSourcesNameGetParams, options ...RequestOption) (APIV1CredentialSourcesNameGetRes, error) {
+	res, err := c.sendAPIV1CredentialSourcesNameGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1CredentialSourcesNameGet(ctx context.Context, params APIV1CredentialSourcesNameGetParams, requestOptions ...RequestOption) (res APIV1CredentialSourcesNameGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/credential-sources/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1CredentialSourcesNameGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1CredentialSourcesNameGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1CredentialSourcesNamePut invokes PUT /api/v1/credential-sources/{name} operation.
+//
+// Update credential source.
+//
+// PUT /api/v1/credential-sources/{name}
+func (c *Client) APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (*SuccessCredentialSourceResponse, error) {
+	res, err := c.sendAPIV1CredentialSourcesNamePut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, requestOptions ...RequestOption) (res *SuccessCredentialSourceResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/credential-sources/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1CredentialSourcesNamePutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1CredentialSourcesNamePutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1CredentialSourcesNamePutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1CredentialSourcesPost invokes POST /api/v1/credential-sources operation.
+//
+// Create credential source.
+//
+// POST /api/v1/credential-sources
+func (c *Client) APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (*SuccessCredentialSourceResponse, error) {
+	res, err := c.sendAPIV1CredentialSourcesPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, requestOptions ...RequestOption) (res *SuccessCredentialSourceResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/credential-sources"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1CredentialSourcesPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1CredentialSourcesPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1CredentialSourcesPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -4526,12 +5133,12 @@ func (c *Client) sendAPIV1SandboxesIDNetworkGet(ctx context.Context, params APIV
 // Update sandbox network policy.
 //
 // PUT /api/v1/sandboxes/{id}/network
-func (c *Client) APIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error) {
+func (c *Client) APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error) {
 	res, err := c.sendAPIV1SandboxesIDNetworkPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *TplSandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, requestOptions ...RequestOption) (res *SuccessSandboxNetworkPolicyResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, requestOptions ...RequestOption) (res *SuccessSandboxNetworkPolicyResponse, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7976,6 +8583,104 @@ func (c *Client) sendAuthRefreshPost(ctx context.Context, request *RefreshReques
 	return result, nil
 }
 
+// AuthRegionTokenPost invokes POST /auth/region-token operation.
+//
+// Exchange a global user session for a region-scoped token.
+//
+// POST /auth/region-token
+func (c *Client) AuthRegionTokenPost(ctx context.Context, request OptIssueRegionTokenRequest, options ...RequestOption) (AuthRegionTokenPostRes, error) {
+	res, err := c.sendAuthRegionTokenPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAuthRegionTokenPost(ctx context.Context, request OptIssueRegionTokenRequest, requestOptions ...RequestOption) (res AuthRegionTokenPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/auth/region-token"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAuthRegionTokenPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, AuthRegionTokenPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAuthRegionTokenPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // AuthRegisterPost invokes POST /auth/register operation.
 //
 // Register a new user.
@@ -8220,6 +8925,541 @@ func (c *Client) sendReadyzGet(ctx context.Context, requestOptions ...RequestOpt
 	}
 
 	result, err := decodeReadyzGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RegionsGet invokes GET /regions operation.
+//
+// List regions in the global directory.
+//
+// GET /regions
+func (c *Client) RegionsGet(ctx context.Context, options ...RequestOption) (RegionsGetRes, error) {
+	res, err := c.sendRegionsGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendRegionsGet(ctx context.Context, requestOptions ...RequestOption) (res RegionsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/regions"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RegionsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRegionsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RegionsIDDelete invokes DELETE /regions/{id} operation.
+//
+// Delete a region from the global directory.
+//
+// DELETE /regions/{id}
+func (c *Client) RegionsIDDelete(ctx context.Context, params RegionsIDDeleteParams, options ...RequestOption) (RegionsIDDeleteRes, error) {
+	res, err := c.sendRegionsIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendRegionsIDDelete(ctx context.Context, params RegionsIDDeleteParams, requestOptions ...RequestOption) (res RegionsIDDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/regions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RegionsIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRegionsIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RegionsIDGet invokes GET /regions/{id} operation.
+//
+// Get a region from the global directory.
+//
+// GET /regions/{id}
+func (c *Client) RegionsIDGet(ctx context.Context, params RegionsIDGetParams, options ...RequestOption) (RegionsIDGetRes, error) {
+	res, err := c.sendRegionsIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendRegionsIDGet(ctx context.Context, params RegionsIDGetParams, requestOptions ...RequestOption) (res RegionsIDGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/regions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RegionsIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRegionsIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RegionsIDPut invokes PUT /regions/{id} operation.
+//
+// Update a region in the global directory.
+//
+// PUT /regions/{id}
+func (c *Client) RegionsIDPut(ctx context.Context, request *UpdateRegionRequest, params RegionsIDPutParams, options ...RequestOption) (RegionsIDPutRes, error) {
+	res, err := c.sendRegionsIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendRegionsIDPut(ctx context.Context, request *UpdateRegionRequest, params RegionsIDPutParams, requestOptions ...RequestOption) (res RegionsIDPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/regions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeRegionsIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RegionsIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRegionsIDPutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RegionsPost invokes POST /regions operation.
+//
+// Create a region in the global directory.
+//
+// POST /regions
+func (c *Client) RegionsPost(ctx context.Context, request *CreateRegionRequest, options ...RequestOption) (RegionsPostRes, error) {
+	res, err := c.sendRegionsPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendRegionsPost(ctx context.Context, request *CreateRegionRequest, requestOptions ...RequestOption) (res RegionsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/regions"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeRegionsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RegionsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRegionsPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -9048,7 +10288,7 @@ func (c *Client) sendTeamsIDMembersUserIdPut(ctx context.Context, request *Updat
 
 // TeamsIDPut invokes PUT /teams/{id} operation.
 //
-// Update a team.
+// Team home region is immutable after creation and cannot be changed through this endpoint.
 //
 // PUT /teams/{id}
 func (c *Client) TeamsIDPut(ctx context.Context, request *UpdateTeamRequest, params TeamsIDPutParams, options ...RequestOption) (TeamsIDPutRes, error) {
@@ -9253,6 +10493,219 @@ func (c *Client) sendTeamsPost(ctx context.Context, request *CreateTeamRequest, 
 	}
 
 	result, err := decodeTeamsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// TenantActiveGet invokes GET /tenant/active operation.
+//
+// Resolve the active team and its routing information.
+//
+// GET /tenant/active
+func (c *Client) TenantActiveGet(ctx context.Context, params TenantActiveGetParams, options ...RequestOption) (TenantActiveGetRes, error) {
+	res, err := c.sendTenantActiveGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendTenantActiveGet(ctx context.Context, params TenantActiveGetParams, requestOptions ...RequestOption) (res TenantActiveGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/tenant/active"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "team_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "team_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.TeamID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, TenantActiveGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeTenantActiveGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// TenantActivePut invokes PUT /tenant/active operation.
+//
+// Update current user.
+//
+// PUT /tenant/active
+func (c *Client) TenantActivePut(ctx context.Context, request *UpdateUserRequest, options ...RequestOption) (TenantActivePutRes, error) {
+	res, err := c.sendTenantActivePut(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendTenantActivePut(ctx context.Context, request *UpdateUserRequest, requestOptions ...RequestOption) (res TenantActivePutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/tenant/active"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeTenantActivePutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, TenantActivePutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeTenantActivePutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -9556,104 +11009,6 @@ func (c *Client) sendUsersMeIdentitiesIDDelete(ctx context.Context, params Users
 	}
 
 	result, err := decodeUsersMeIdentitiesIDDeleteResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// UsersMePut invokes PUT /users/me operation.
-//
-// Update current user.
-//
-// PUT /users/me
-func (c *Client) UsersMePut(ctx context.Context, request *UpdateUserRequest, options ...RequestOption) (UsersMePutRes, error) {
-	res, err := c.sendUsersMePut(ctx, request, options...)
-	return res, err
-}
-
-func (c *Client) sendUsersMePut(ctx context.Context, request *UpdateUserRequest, requestOptions ...RequestOption) (res UsersMePutRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [1]string
-	pathParts[0] = "/users/me"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "PUT", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeUsersMePutRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, UsersMePutOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeUsersMePutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

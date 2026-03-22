@@ -24,8 +24,8 @@ func main() {
 	// Claim a sandbox from a template and ensure cleanup.
 	sandbox, err := client.ClaimSandbox(ctx, "default",
 		sandbox0.WithSandboxHardTTL(600),
-		sandbox0.WithSandboxNetworkPolicy(apispec.TplSandboxNetworkPolicy{
-			Mode: apispec.TplSandboxNetworkPolicyModeAllowAll,
+		sandbox0.WithSandboxNetworkPolicy(apispec.SandboxNetworkPolicy{
+			Mode: apispec.SandboxNetworkPolicyModeAllowAll,
 		}),
 	)
 	must(err)
@@ -45,8 +45,8 @@ func main() {
 	fmt.Println(resp.OutputRaw)
 
 	// Block all traffic
-	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
-		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
+	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.SandboxNetworkPolicy{
+		Mode: apispec.SandboxNetworkPolicyModeBlockAll,
 	})
 	must(err)
 
@@ -54,8 +54,8 @@ func main() {
 	must(err)
 	fmt.Println(resp.OutputRaw)
 
-	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.TplSandboxNetworkPolicy{
-		Mode: apispec.TplSandboxNetworkPolicyModeBlockAll,
+	_, err = sandbox.UpdateNetworkPolicy(ctx, apispec.SandboxNetworkPolicy{
+		Mode: apispec.SandboxNetworkPolicyModeBlockAll,
 		Egress: apispec.NewOptNetworkEgressPolicy(apispec.NetworkEgressPolicy{
 			AllowedDomains: []string{"github.com"},
 		}),
