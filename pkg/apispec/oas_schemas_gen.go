@@ -355,12 +355,12 @@ func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
 // Ref: #/components/schemas/ActiveTeam
 type ActiveTeam struct {
-	UserID         string       `json:"user_id"`
-	TeamID         string       `json:"team_id"`
-	TeamRole       OptString    `json:"team_role"`
-	HomeRegionID   string       `json:"home_region_id"`
-	DefaultTeam    OptBool      `json:"default_team"`
-	EdgeGatewayURL OptNilString `json:"edge_gateway_url"`
+	UserID             string       `json:"user_id"`
+	TeamID             string       `json:"team_id"`
+	TeamRole           OptString    `json:"team_role"`
+	HomeRegionID       string       `json:"home_region_id"`
+	DefaultTeam        OptBool      `json:"default_team"`
+	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
 }
 
 // GetUserID returns the value of UserID.
@@ -388,9 +388,9 @@ func (s *ActiveTeam) GetDefaultTeam() OptBool {
 	return s.DefaultTeam
 }
 
-// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
-func (s *ActiveTeam) GetEdgeGatewayURL() OptNilString {
-	return s.EdgeGatewayURL
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *ActiveTeam) GetRegionalGatewayURL() OptNilString {
+	return s.RegionalGatewayURL
 }
 
 // SetUserID sets the value of UserID.
@@ -418,9 +418,9 @@ func (s *ActiveTeam) SetDefaultTeam(val OptBool) {
 	s.DefaultTeam = val
 }
 
-// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
-func (s *ActiveTeam) SetEdgeGatewayURL(val OptNilString) {
-	s.EdgeGatewayURL = val
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *ActiveTeam) SetRegionalGatewayURL(val OptNilString) {
+	s.RegionalGatewayURL = val
 }
 
 // Ref: #/components/schemas/AddTeamMemberRequest
@@ -1521,11 +1521,11 @@ func (s *CreateREPLContextRequest) SetReplConfig(val OptREPLConfig) {
 
 // Ref: #/components/schemas/CreateRegionRequest
 type CreateRegionRequest struct {
-	ID                string       `json:"id"`
-	DisplayName       OptString    `json:"display_name"`
-	EdgeGatewayURL    string       `json:"edge_gateway_url"`
-	MeteringExportURL OptNilString `json:"metering_export_url"`
-	Enabled           OptBool      `json:"enabled"`
+	ID                 string       `json:"id"`
+	DisplayName        OptString    `json:"display_name"`
+	RegionalGatewayURL string       `json:"regional_gateway_url"`
+	MeteringExportURL  OptNilString `json:"metering_export_url"`
+	Enabled            OptBool      `json:"enabled"`
 }
 
 // GetID returns the value of ID.
@@ -1538,9 +1538,9 @@ func (s *CreateRegionRequest) GetDisplayName() OptString {
 	return s.DisplayName
 }
 
-// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
-func (s *CreateRegionRequest) GetEdgeGatewayURL() string {
-	return s.EdgeGatewayURL
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *CreateRegionRequest) GetRegionalGatewayURL() string {
+	return s.RegionalGatewayURL
 }
 
 // GetMeteringExportURL returns the value of MeteringExportURL.
@@ -1563,9 +1563,9 @@ func (s *CreateRegionRequest) SetDisplayName(val OptString) {
 	s.DisplayName = val
 }
 
-// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
-func (s *CreateRegionRequest) SetEdgeGatewayURL(val string) {
-	s.EdgeGatewayURL = val
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *CreateRegionRequest) SetRegionalGatewayURL(val string) {
+	s.RegionalGatewayURL = val
 }
 
 // SetMeteringExportURL sets the value of MeteringExportURL.
@@ -2821,10 +2821,10 @@ func (s *IssueRegionTokenRequest) SetTeamID(val OptString) {
 
 // Ref: #/components/schemas/IssueRegionTokenResponse
 type IssueRegionTokenResponse struct {
-	RegionID       string       `json:"region_id"`
-	EdgeGatewayURL OptNilString `json:"edge_gateway_url"`
-	Token          string       `json:"token"`
-	ExpiresAt      int64        `json:"expires_at"`
+	RegionID           string       `json:"region_id"`
+	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
+	Token              string       `json:"token"`
+	ExpiresAt          int64        `json:"expires_at"`
 }
 
 // GetRegionID returns the value of RegionID.
@@ -2832,9 +2832,9 @@ func (s *IssueRegionTokenResponse) GetRegionID() string {
 	return s.RegionID
 }
 
-// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
-func (s *IssueRegionTokenResponse) GetEdgeGatewayURL() OptNilString {
-	return s.EdgeGatewayURL
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *IssueRegionTokenResponse) GetRegionalGatewayURL() OptNilString {
+	return s.RegionalGatewayURL
 }
 
 // GetToken returns the value of Token.
@@ -2852,9 +2852,9 @@ func (s *IssueRegionTokenResponse) SetRegionID(val string) {
 	s.RegionID = val
 }
 
-// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
-func (s *IssueRegionTokenResponse) SetEdgeGatewayURL(val OptNilString) {
-	s.EdgeGatewayURL = val
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *IssueRegionTokenResponse) SetRegionalGatewayURL(val OptNilString) {
+	s.RegionalGatewayURL = val
 }
 
 // SetToken sets the value of Token.
@@ -9265,11 +9265,11 @@ func (s *RefreshResponse) SetHardExpiresAt(val time.Time) {
 
 // Ref: #/components/schemas/Region
 type Region struct {
-	ID                string       `json:"id"`
-	DisplayName       OptString    `json:"display_name"`
-	EdgeGatewayURL    string       `json:"edge_gateway_url"`
-	MeteringExportURL OptNilString `json:"metering_export_url"`
-	Enabled           bool         `json:"enabled"`
+	ID                 string       `json:"id"`
+	DisplayName        OptString    `json:"display_name"`
+	RegionalGatewayURL string       `json:"regional_gateway_url"`
+	MeteringExportURL  OptNilString `json:"metering_export_url"`
+	Enabled            bool         `json:"enabled"`
 }
 
 // GetID returns the value of ID.
@@ -9282,9 +9282,9 @@ func (s *Region) GetDisplayName() OptString {
 	return s.DisplayName
 }
 
-// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
-func (s *Region) GetEdgeGatewayURL() string {
-	return s.EdgeGatewayURL
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *Region) GetRegionalGatewayURL() string {
+	return s.RegionalGatewayURL
 }
 
 // GetMeteringExportURL returns the value of MeteringExportURL.
@@ -9307,9 +9307,9 @@ func (s *Region) SetDisplayName(val OptString) {
 	s.DisplayName = val
 }
 
-// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
-func (s *Region) SetEdgeGatewayURL(val string) {
-	s.EdgeGatewayURL = val
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *Region) SetRegionalGatewayURL(val string) {
+	s.RegionalGatewayURL = val
 }
 
 // SetMeteringExportURL sets the value of MeteringExportURL.
@@ -14343,10 +14343,10 @@ func (s *UpdateExposedPortsRequest) SetPorts(val []ExposedPortConfig) {
 
 // Ref: #/components/schemas/UpdateRegionRequest
 type UpdateRegionRequest struct {
-	DisplayName       OptString    `json:"display_name"`
-	EdgeGatewayURL    OptString    `json:"edge_gateway_url"`
-	MeteringExportURL OptNilString `json:"metering_export_url"`
-	Enabled           OptBool      `json:"enabled"`
+	DisplayName        OptString    `json:"display_name"`
+	RegionalGatewayURL OptString    `json:"regional_gateway_url"`
+	MeteringExportURL  OptNilString `json:"metering_export_url"`
+	Enabled            OptBool      `json:"enabled"`
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -14354,9 +14354,9 @@ func (s *UpdateRegionRequest) GetDisplayName() OptString {
 	return s.DisplayName
 }
 
-// GetEdgeGatewayURL returns the value of EdgeGatewayURL.
-func (s *UpdateRegionRequest) GetEdgeGatewayURL() OptString {
-	return s.EdgeGatewayURL
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *UpdateRegionRequest) GetRegionalGatewayURL() OptString {
+	return s.RegionalGatewayURL
 }
 
 // GetMeteringExportURL returns the value of MeteringExportURL.
@@ -14374,9 +14374,9 @@ func (s *UpdateRegionRequest) SetDisplayName(val OptString) {
 	s.DisplayName = val
 }
 
-// SetEdgeGatewayURL sets the value of EdgeGatewayURL.
-func (s *UpdateRegionRequest) SetEdgeGatewayURL(val OptString) {
-	s.EdgeGatewayURL = val
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *UpdateRegionRequest) SetRegionalGatewayURL(val OptString) {
+	s.RegionalGatewayURL = val
 }
 
 // SetMeteringExportURL sets the value of MeteringExportURL.

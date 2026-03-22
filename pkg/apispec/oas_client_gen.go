@@ -540,31 +540,31 @@ type Invoker interface {
 	ReadyzGet(ctx context.Context, options ...RequestOption) (ReadyzGetRes, error)
 	// RegionsGet invokes GET /regions operation.
 	//
-	// List regions in the global directory.
+	// List regions in the global gateway.
 	//
 	// GET /regions
 	RegionsGet(ctx context.Context, options ...RequestOption) (RegionsGetRes, error)
 	// RegionsIDDelete invokes DELETE /regions/{id} operation.
 	//
-	// Delete a region from the global directory.
+	// Delete a region from the global gateway.
 	//
 	// DELETE /regions/{id}
 	RegionsIDDelete(ctx context.Context, params RegionsIDDeleteParams, options ...RequestOption) (RegionsIDDeleteRes, error)
 	// RegionsIDGet invokes GET /regions/{id} operation.
 	//
-	// Get a region from the global directory.
+	// Get a region from the global gateway.
 	//
 	// GET /regions/{id}
 	RegionsIDGet(ctx context.Context, params RegionsIDGetParams, options ...RequestOption) (RegionsIDGetRes, error)
 	// RegionsIDPut invokes PUT /regions/{id} operation.
 	//
-	// Update a region in the global directory.
+	// Update a region in the global gateway.
 	//
 	// PUT /regions/{id}
 	RegionsIDPut(ctx context.Context, request *UpdateRegionRequest, params RegionsIDPutParams, options ...RequestOption) (RegionsIDPutRes, error)
 	// RegionsPost invokes POST /regions operation.
 	//
-	// Create a region in the global directory.
+	// Create a region in the global gateway.
 	//
 	// POST /regions
 	RegionsPost(ctx context.Context, request *CreateRegionRequest, options ...RequestOption) (RegionsPostRes, error)
@@ -8934,7 +8934,7 @@ func (c *Client) sendReadyzGet(ctx context.Context, requestOptions ...RequestOpt
 
 // RegionsGet invokes GET /regions operation.
 //
-// List regions in the global directory.
+// List regions in the global gateway.
 //
 // GET /regions
 func (c *Client) RegionsGet(ctx context.Context, options ...RequestOption) (RegionsGetRes, error) {
@@ -9029,7 +9029,7 @@ func (c *Client) sendRegionsGet(ctx context.Context, requestOptions ...RequestOp
 
 // RegionsIDDelete invokes DELETE /regions/{id} operation.
 //
-// Delete a region from the global directory.
+// Delete a region from the global gateway.
 //
 // DELETE /regions/{id}
 func (c *Client) RegionsIDDelete(ctx context.Context, params RegionsIDDeleteParams, options ...RequestOption) (RegionsIDDeleteRes, error) {
@@ -9142,7 +9142,7 @@ func (c *Client) sendRegionsIDDelete(ctx context.Context, params RegionsIDDelete
 
 // RegionsIDGet invokes GET /regions/{id} operation.
 //
-// Get a region from the global directory.
+// Get a region from the global gateway.
 //
 // GET /regions/{id}
 func (c *Client) RegionsIDGet(ctx context.Context, params RegionsIDGetParams, options ...RequestOption) (RegionsIDGetRes, error) {
@@ -9255,7 +9255,7 @@ func (c *Client) sendRegionsIDGet(ctx context.Context, params RegionsIDGetParams
 
 // RegionsIDPut invokes PUT /regions/{id} operation.
 //
-// Update a region in the global directory.
+// Update a region in the global gateway.
 //
 // PUT /regions/{id}
 func (c *Client) RegionsIDPut(ctx context.Context, request *UpdateRegionRequest, params RegionsIDPutParams, options ...RequestOption) (RegionsIDPutRes, error) {
@@ -9371,7 +9371,7 @@ func (c *Client) sendRegionsIDPut(ctx context.Context, request *UpdateRegionRequ
 
 // RegionsPost invokes POST /regions operation.
 //
-// Create a region in the global directory.
+// Create a region in the global gateway.
 //
 // POST /regions
 func (c *Client) RegionsPost(ctx context.Context, request *CreateRegionRequest, options ...RequestOption) (RegionsPostRes, error) {

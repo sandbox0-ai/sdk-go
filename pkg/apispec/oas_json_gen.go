@@ -1014,9 +1014,9 @@ func (s *ActiveTeam) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.EdgeGatewayURL.Set {
-			e.FieldStart("edge_gateway_url")
-			s.EdgeGatewayURL.Encode(e)
+		if s.RegionalGatewayURL.Set {
+			e.FieldStart("regional_gateway_url")
+			s.RegionalGatewayURL.Encode(e)
 		}
 	}
 }
@@ -1027,7 +1027,7 @@ var jsonFieldsNameOfActiveTeam = [6]string{
 	2: "team_role",
 	3: "home_region_id",
 	4: "default_team",
-	5: "edge_gateway_url",
+	5: "regional_gateway_url",
 }
 
 // Decode decodes ActiveTeam from json.
@@ -1095,15 +1095,15 @@ func (s *ActiveTeam) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"default_team\"")
 			}
-		case "edge_gateway_url":
+		case "regional_gateway_url":
 			if err := func() error {
-				s.EdgeGatewayURL.Reset()
-				if err := s.EdgeGatewayURL.Decode(d); err != nil {
+				s.RegionalGatewayURL.Reset()
+				if err := s.RegionalGatewayURL.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"edge_gateway_url\"")
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
 			}
 		default:
 			return d.Skip()
@@ -4574,8 +4574,8 @@ func (s *CreateRegionRequest) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("edge_gateway_url")
-		e.Str(s.EdgeGatewayURL)
+		e.FieldStart("regional_gateway_url")
+		e.Str(s.RegionalGatewayURL)
 	}
 	{
 		if s.MeteringExportURL.Set {
@@ -4594,7 +4594,7 @@ func (s *CreateRegionRequest) encodeFields(e *jx.Encoder) {
 var jsonFieldsNameOfCreateRegionRequest = [5]string{
 	0: "id",
 	1: "display_name",
-	2: "edge_gateway_url",
+	2: "regional_gateway_url",
 	3: "metering_export_url",
 	4: "enabled",
 }
@@ -4630,17 +4630,17 @@ func (s *CreateRegionRequest) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
-		case "edge_gateway_url":
+		case "regional_gateway_url":
 			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
-				s.EdgeGatewayURL = string(v)
+				s.RegionalGatewayURL = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"edge_gateway_url\"")
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
 			}
 		case "metering_export_url":
 			if err := func() error {
@@ -7527,9 +7527,9 @@ func (s *IssueRegionTokenResponse) encodeFields(e *jx.Encoder) {
 		e.Str(s.RegionID)
 	}
 	{
-		if s.EdgeGatewayURL.Set {
-			e.FieldStart("edge_gateway_url")
-			s.EdgeGatewayURL.Encode(e)
+		if s.RegionalGatewayURL.Set {
+			e.FieldStart("regional_gateway_url")
+			s.RegionalGatewayURL.Encode(e)
 		}
 	}
 	{
@@ -7544,7 +7544,7 @@ func (s *IssueRegionTokenResponse) encodeFields(e *jx.Encoder) {
 
 var jsonFieldsNameOfIssueRegionTokenResponse = [4]string{
 	0: "region_id",
-	1: "edge_gateway_url",
+	1: "regional_gateway_url",
 	2: "token",
 	3: "expires_at",
 }
@@ -7570,15 +7570,15 @@ func (s *IssueRegionTokenResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"region_id\"")
 			}
-		case "edge_gateway_url":
+		case "regional_gateway_url":
 			if err := func() error {
-				s.EdgeGatewayURL.Reset()
-				if err := s.EdgeGatewayURL.Decode(d); err != nil {
+				s.RegionalGatewayURL.Reset()
+				if err := s.RegionalGatewayURL.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"edge_gateway_url\"")
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
 			}
 		case "token":
 			requiredBitSet[0] |= 1 << 2
@@ -15416,8 +15416,8 @@ func (s *Region) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("edge_gateway_url")
-		e.Str(s.EdgeGatewayURL)
+		e.FieldStart("regional_gateway_url")
+		e.Str(s.RegionalGatewayURL)
 	}
 	{
 		if s.MeteringExportURL.Set {
@@ -15434,7 +15434,7 @@ func (s *Region) encodeFields(e *jx.Encoder) {
 var jsonFieldsNameOfRegion = [5]string{
 	0: "id",
 	1: "display_name",
-	2: "edge_gateway_url",
+	2: "regional_gateway_url",
 	3: "metering_export_url",
 	4: "enabled",
 }
@@ -15470,17 +15470,17 @@ func (s *Region) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
-		case "edge_gateway_url":
+		case "regional_gateway_url":
 			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
-				s.EdgeGatewayURL = string(v)
+				s.RegionalGatewayURL = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"edge_gateway_url\"")
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
 			}
 		case "metering_export_url":
 			if err := func() error {
@@ -31631,9 +31631,9 @@ func (s *UpdateRegionRequest) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.EdgeGatewayURL.Set {
-			e.FieldStart("edge_gateway_url")
-			s.EdgeGatewayURL.Encode(e)
+		if s.RegionalGatewayURL.Set {
+			e.FieldStart("regional_gateway_url")
+			s.RegionalGatewayURL.Encode(e)
 		}
 	}
 	{
@@ -31652,7 +31652,7 @@ func (s *UpdateRegionRequest) encodeFields(e *jx.Encoder) {
 
 var jsonFieldsNameOfUpdateRegionRequest = [4]string{
 	0: "display_name",
-	1: "edge_gateway_url",
+	1: "regional_gateway_url",
 	2: "metering_export_url",
 	3: "enabled",
 }
@@ -31675,15 +31675,15 @@ func (s *UpdateRegionRequest) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
-		case "edge_gateway_url":
+		case "regional_gateway_url":
 			if err := func() error {
-				s.EdgeGatewayURL.Reset()
-				if err := s.EdgeGatewayURL.Decode(d); err != nil {
+				s.RegionalGatewayURL.Reset()
+				if err := s.RegionalGatewayURL.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"edge_gateway_url\"")
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
 			}
 		case "metering_export_url":
 			if err := func() error {
