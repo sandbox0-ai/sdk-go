@@ -7665,153 +7665,6 @@ func (s *IssueRegionTokenRequest) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *IssueRegionTokenResponse) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *IssueRegionTokenResponse) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("region_id")
-		e.Str(s.RegionID)
-	}
-	{
-		if s.RegionalGatewayURL.Set {
-			e.FieldStart("regional_gateway_url")
-			s.RegionalGatewayURL.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("token")
-		e.Str(s.Token)
-	}
-	{
-		e.FieldStart("expires_at")
-		e.Int64(s.ExpiresAt)
-	}
-}
-
-var jsonFieldsNameOfIssueRegionTokenResponse = [4]string{
-	0: "region_id",
-	1: "regional_gateway_url",
-	2: "token",
-	3: "expires_at",
-}
-
-// Decode decodes IssueRegionTokenResponse from json.
-func (s *IssueRegionTokenResponse) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode IssueRegionTokenResponse to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "region_id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.RegionID = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"region_id\"")
-			}
-		case "regional_gateway_url":
-			if err := func() error {
-				s.RegionalGatewayURL.Reset()
-				if err := s.RegionalGatewayURL.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
-			}
-		case "token":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := d.Str()
-				s.Token = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"token\"")
-			}
-		case "expires_at":
-			requiredBitSet[0] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int64()
-				s.ExpiresAt = int64(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"expires_at\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode IssueRegionTokenResponse")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00001101,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfIssueRegionTokenResponse) {
-					name = jsonFieldsNameOfIssueRegionTokenResponse[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *IssueRegionTokenResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *IssueRegionTokenResponse) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
 func (s *LabelSelector) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -8353,13 +8206,20 @@ func (s *LoginResponse) encodeFields(e *jx.Encoder) {
 		e.FieldStart("user")
 		s.User.Encode(e)
 	}
+	{
+		if s.RegionalSession.Set {
+			e.FieldStart("regional_session")
+			s.RegionalSession.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfLoginResponse = [4]string{
+var jsonFieldsNameOfLoginResponse = [5]string{
 	0: "access_token",
 	1: "refresh_token",
 	2: "expires_at",
 	3: "user",
+	4: "regional_session",
 }
 
 // Decode decodes LoginResponse from json.
@@ -8416,6 +8276,16 @@ func (s *LoginResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"user\"")
+			}
+		case "regional_session":
+			if err := func() error {
+				s.RegionalSession.Reset()
+				if err := s.RegionalSession.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"regional_session\"")
 			}
 		default:
 			return d.Skip()
@@ -10802,39 +10672,6 @@ func (s *OptIssueRegionTokenRequest) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes IssueRegionTokenResponse as json.
-func (o OptIssueRegionTokenResponse) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes IssueRegionTokenResponse from json.
-func (o *OptIssueRegionTokenResponse) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptIssueRegionTokenResponse to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptIssueRegionTokenResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptIssueRegionTokenResponse) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes LabelSelector as json.
 func (o OptLabelSelector) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -11710,6 +11547,39 @@ func (s OptRegion) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptRegion) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes RegionalSession as json.
+func (o OptRegionalSession) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes RegionalSession from json.
+func (o *OptRegionalSession) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptRegionalSession to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptRegionalSession) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptRegionalSession) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -15744,6 +15614,153 @@ func (s *Region) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *RegionalSession) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RegionalSession) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("region_id")
+		e.Str(s.RegionID)
+	}
+	{
+		if s.RegionalGatewayURL.Set {
+			e.FieldStart("regional_gateway_url")
+			s.RegionalGatewayURL.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("expires_at")
+		e.Int64(s.ExpiresAt)
+	}
+}
+
+var jsonFieldsNameOfRegionalSession = [4]string{
+	0: "region_id",
+	1: "regional_gateway_url",
+	2: "token",
+	3: "expires_at",
+}
+
+// Decode decodes RegionalSession from json.
+func (s *RegionalSession) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RegionalSession to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "region_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.RegionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region_id\"")
+			}
+		case "regional_gateway_url":
+			if err := func() error {
+				s.RegionalGatewayURL.Reset()
+				if err := s.RegionalGatewayURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"regional_gateway_url\"")
+			}
+		case "token":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "expires_at":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int64()
+				s.ExpiresAt = int64(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"expires_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RegionalSession")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001101,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRegionalSession) {
+					name = jsonFieldsNameOfRegionalSession[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RegionalSession) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RegionalSession) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes RegionsGetForbidden as json.
 func (s *RegionsGetForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -16411,12 +16428,19 @@ func (s *RegisterRequest) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.HomeRegionID.Set {
+			e.FieldStart("home_region_id")
+			s.HomeRegionID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfRegisterRequest = [3]string{
+var jsonFieldsNameOfRegisterRequest = [4]string{
 	0: "email",
 	1: "password",
 	2: "name",
+	3: "home_region_id",
 }
 
 // Decode decodes RegisterRequest from json.
@@ -16463,6 +16487,16 @@ func (s *RegisterRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "home_region_id":
+			if err := func() error {
+				s.HomeRegionID.Reset()
+				if err := s.HomeRegionID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"home_region_id\"")
 			}
 		default:
 			return d.Skip()

@@ -2886,54 +2886,6 @@ func (s *IssueRegionTokenRequest) SetTeamID(val OptString) {
 	s.TeamID = val
 }
 
-// Ref: #/components/schemas/IssueRegionTokenResponse
-type IssueRegionTokenResponse struct {
-	RegionID           string       `json:"region_id"`
-	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
-	Token              string       `json:"token"`
-	ExpiresAt          int64        `json:"expires_at"`
-}
-
-// GetRegionID returns the value of RegionID.
-func (s *IssueRegionTokenResponse) GetRegionID() string {
-	return s.RegionID
-}
-
-// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
-func (s *IssueRegionTokenResponse) GetRegionalGatewayURL() OptNilString {
-	return s.RegionalGatewayURL
-}
-
-// GetToken returns the value of Token.
-func (s *IssueRegionTokenResponse) GetToken() string {
-	return s.Token
-}
-
-// GetExpiresAt returns the value of ExpiresAt.
-func (s *IssueRegionTokenResponse) GetExpiresAt() int64 {
-	return s.ExpiresAt
-}
-
-// SetRegionID sets the value of RegionID.
-func (s *IssueRegionTokenResponse) SetRegionID(val string) {
-	s.RegionID = val
-}
-
-// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
-func (s *IssueRegionTokenResponse) SetRegionalGatewayURL(val OptNilString) {
-	s.RegionalGatewayURL = val
-}
-
-// SetToken sets the value of Token.
-func (s *IssueRegionTokenResponse) SetToken(val string) {
-	s.Token = val
-}
-
-// SetExpiresAt sets the value of ExpiresAt.
-func (s *IssueRegionTokenResponse) SetExpiresAt(val int64) {
-	s.ExpiresAt = val
-}
-
 // Ref: #/components/schemas/LabelSelector
 type LabelSelector struct {
 	MatchLabels      OptLabelSelectorMatchLabels `json:"matchLabels"`
@@ -3084,10 +3036,11 @@ func (s *LoginRequest) SetPassword(val string) {
 
 // Ref: #/components/schemas/LoginResponse
 type LoginResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresAt    int64  `json:"expires_at"`
-	User         User   `json:"user"`
+	AccessToken     string             `json:"access_token"`
+	RefreshToken    string             `json:"refresh_token"`
+	ExpiresAt       int64              `json:"expires_at"`
+	User            User               `json:"user"`
+	RegionalSession OptRegionalSession `json:"regional_session"`
 }
 
 // GetAccessToken returns the value of AccessToken.
@@ -3110,6 +3063,11 @@ func (s *LoginResponse) GetUser() User {
 	return s.User
 }
 
+// GetRegionalSession returns the value of RegionalSession.
+func (s *LoginResponse) GetRegionalSession() OptRegionalSession {
+	return s.RegionalSession
+}
+
 // SetAccessToken sets the value of AccessToken.
 func (s *LoginResponse) SetAccessToken(val string) {
 	s.AccessToken = val
@@ -3128,6 +3086,11 @@ func (s *LoginResponse) SetExpiresAt(val int64) {
 // SetUser sets the value of User.
 func (s *LoginResponse) SetUser(val User) {
 	s.User = val
+}
+
+// SetRegionalSession sets the value of RegionalSession.
+func (s *LoginResponse) SetRegionalSession(val OptRegionalSession) {
+	s.RegionalSession = val
 }
 
 type MetricsGetOK struct {
@@ -5113,52 +5076,6 @@ func (o OptIssueRegionTokenRequest) Or(d IssueRegionTokenRequest) IssueRegionTok
 	return d
 }
 
-// NewOptIssueRegionTokenResponse returns new OptIssueRegionTokenResponse with value set to v.
-func NewOptIssueRegionTokenResponse(v IssueRegionTokenResponse) OptIssueRegionTokenResponse {
-	return OptIssueRegionTokenResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptIssueRegionTokenResponse is optional IssueRegionTokenResponse.
-type OptIssueRegionTokenResponse struct {
-	Value IssueRegionTokenResponse
-	Set   bool
-}
-
-// IsSet returns true if OptIssueRegionTokenResponse was set.
-func (o OptIssueRegionTokenResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptIssueRegionTokenResponse) Reset() {
-	var v IssueRegionTokenResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptIssueRegionTokenResponse) SetTo(v IssueRegionTokenResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptIssueRegionTokenResponse) Get() (v IssueRegionTokenResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptIssueRegionTokenResponse) Or(d IssueRegionTokenResponse) IssueRegionTokenResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptLabelSelector returns new OptLabelSelector with value set to v.
 func NewOptLabelSelector(v LabelSelector) OptLabelSelector {
 	return OptLabelSelector{
@@ -6354,6 +6271,52 @@ func (o OptRegion) Get() (v Region, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptRegion) Or(d Region) Region {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptRegionalSession returns new OptRegionalSession with value set to v.
+func NewOptRegionalSession(v RegionalSession) OptRegionalSession {
+	return OptRegionalSession{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRegionalSession is optional RegionalSession.
+type OptRegionalSession struct {
+	Value RegionalSession
+	Set   bool
+}
+
+// IsSet returns true if OptRegionalSession was set.
+func (o OptRegionalSession) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRegionalSession) Reset() {
+	var v RegionalSession
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRegionalSession) SetTo(v RegionalSession) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRegionalSession) Get() (v RegionalSession, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRegionalSession) Or(d RegionalSession) RegionalSession {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9435,6 +9398,54 @@ func (s *Region) SetEnabled(val bool) {
 	s.Enabled = val
 }
 
+// Ref: #/components/schemas/RegionalSession
+type RegionalSession struct {
+	RegionID           string       `json:"region_id"`
+	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
+	Token              string       `json:"token"`
+	ExpiresAt          int64        `json:"expires_at"`
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *RegionalSession) GetRegionID() string {
+	return s.RegionID
+}
+
+// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
+func (s *RegionalSession) GetRegionalGatewayURL() OptNilString {
+	return s.RegionalGatewayURL
+}
+
+// GetToken returns the value of Token.
+func (s *RegionalSession) GetToken() string {
+	return s.Token
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *RegionalSession) GetExpiresAt() int64 {
+	return s.ExpiresAt
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *RegionalSession) SetRegionID(val string) {
+	s.RegionID = val
+}
+
+// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
+func (s *RegionalSession) SetRegionalGatewayURL(val OptNilString) {
+	s.RegionalGatewayURL = val
+}
+
+// SetToken sets the value of Token.
+func (s *RegionalSession) SetToken(val string) {
+	s.Token = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *RegionalSession) SetExpiresAt(val int64) {
+	s.ExpiresAt = val
+}
+
 type RegionsGetForbidden ErrorEnvelope
 
 func (*RegionsGetForbidden) regionsGetRes() {}
@@ -9508,6 +9519,8 @@ type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
+	// Required in global-gateway mode because registration creates the user's default team.
+	HomeRegionID OptNilString `json:"home_region_id"`
 }
 
 // GetEmail returns the value of Email.
@@ -9525,6 +9538,11 @@ func (s *RegisterRequest) GetName() string {
 	return s.Name
 }
 
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *RegisterRequest) GetHomeRegionID() OptNilString {
+	return s.HomeRegionID
+}
+
 // SetEmail sets the value of Email.
 func (s *RegisterRequest) SetEmail(val string) {
 	s.Email = val
@@ -9538,6 +9556,11 @@ func (s *RegisterRequest) SetPassword(val string) {
 // SetName sets the value of Name.
 func (s *RegisterRequest) SetName(val string) {
 	s.Name = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *RegisterRequest) SetHomeRegionID(val OptNilString) {
+	s.HomeRegionID = val
 }
 
 // Ref: #/components/schemas/RegistryCredentials
@@ -12244,7 +12267,7 @@ func (SuccessIdentityListResponseSuccess) AllValues() []SuccessIdentityListRespo
 type SuccessIssueRegionTokenResponse struct {
 	Success SuccessIssueRegionTokenResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptIssueRegionTokenResponse `json:"data"`
+	Data OptRegionalSession `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -12253,7 +12276,7 @@ func (s *SuccessIssueRegionTokenResponse) GetSuccess() SuccessIssueRegionTokenRe
 }
 
 // GetData returns the value of Data.
-func (s *SuccessIssueRegionTokenResponse) GetData() OptIssueRegionTokenResponse {
+func (s *SuccessIssueRegionTokenResponse) GetData() OptRegionalSession {
 	return s.Data
 }
 
@@ -12263,7 +12286,7 @@ func (s *SuccessIssueRegionTokenResponse) SetSuccess(val SuccessIssueRegionToken
 }
 
 // SetData sets the value of Data.
-func (s *SuccessIssueRegionTokenResponse) SetData(val OptIssueRegionTokenResponse) {
+func (s *SuccessIssueRegionTokenResponse) SetData(val OptRegionalSession) {
 	s.Data = val
 }
 
