@@ -8425,23 +8425,6 @@ func (c *Client) sendAuthOidcProviderLoginGet(ctx context.Context, params AuthOi
 			return res, errors.Wrap(err, "encode query")
 		}
 	}
-	{
-		// Encode "home_region_id" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "home_region_id",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.HomeRegionID.Get(); ok {
-				return e.EncodeValue(conv.StringToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
 	u.RawQuery = q.Values().Encode()
 
 	r, err := ht.NewRequest(ctx, "GET", u)

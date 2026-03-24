@@ -299,9 +299,6 @@ type AuthOidcProviderCallbackGetParams struct {
 type AuthOidcProviderLoginGetParams struct {
 	Provider  string
 	ReturnURL OptString `json:",omitempty,omitzero"`
-	// Required for first-time OIDC auto-provisioning in global-gateway mode so the bootstrap team is
-	// created with an explicit home region.
-	HomeRegionID OptString `json:",omitempty,omitzero"`
 }
 
 // RegionsIDDeleteParams is parameters of DELETE /regions/{id} operation.
