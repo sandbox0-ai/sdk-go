@@ -205,6 +205,12 @@ paths:
           schema:
             type: string
           required: false
+        - name: home_region_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Required for first-time OIDC auto-provisioning in global-gateway mode so the bootstrap team is created with an explicit home region.
       responses:
         "302":
           description: Redirect to OIDC provider
@@ -2684,6 +2690,10 @@ components:
           minLength: 8
         name:
           type: string
+        home_region_id:
+          type: string
+          nullable: true
+          description: Required in global-gateway mode because registration creates the user's default team.
       required: [email, password, name]
     RefreshRequest:
       type: object
@@ -2712,6 +2722,9 @@ components:
           format: int64
         user:
           $ref: "#/components/schemas/User"
+        regional_session:
+          $ref: "#/components/schemas/RegionalSession"
+          nullable: true
       required: [access_token, refresh_token, expires_at, user]
     SuccessLoginResponse:
       allOf:
@@ -2804,7 +2817,7 @@ components:
       properties:
         team_id:
           type: string
-    IssueRegionTokenResponse:
+    RegionalSession:
       type: object
       properties:
         region_id:
@@ -2818,6 +2831,9 @@ components:
           type: integer
           format: int64
       required: [region_id, token, expires_at]
+    IssueRegionTokenResponse:
+      allOf:
+        - $ref: "#/components/schemas/RegionalSession"
     SuccessIssueRegionTokenResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
