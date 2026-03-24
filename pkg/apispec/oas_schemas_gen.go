@@ -2404,6 +2404,7 @@ func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
 func (*ErrorEnvelope) authProvidersGetRes()                            {}
 func (*ErrorEnvelope) healthzGetRes()                                  {}
 func (*ErrorEnvelope) readyzGetRes()                                   {}
+func (*ErrorEnvelope) regionsGetRes()                                  {}
 func (*ErrorEnvelope) teamsGetRes()                                    {}
 func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
 func (*ErrorEnvelope) teamsPostRes()                                   {}
@@ -9445,14 +9446,6 @@ func (s *RegionalSession) SetToken(val string) {
 func (s *RegionalSession) SetExpiresAt(val int64) {
 	s.ExpiresAt = val
 }
-
-type RegionsGetForbidden ErrorEnvelope
-
-func (*RegionsGetForbidden) regionsGetRes() {}
-
-type RegionsGetUnauthorized ErrorEnvelope
-
-func (*RegionsGetUnauthorized) regionsGetRes() {}
 
 type RegionsIDDeleteConflict ErrorEnvelope
 

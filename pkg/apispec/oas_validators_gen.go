@@ -1435,22 +1435,6 @@ func (s REPLReadyMode) Validate() error {
 	}
 }
 
-func (s *RegionsGetForbidden) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *RegionsGetUnauthorized) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *RegionsIDDeleteConflict) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
