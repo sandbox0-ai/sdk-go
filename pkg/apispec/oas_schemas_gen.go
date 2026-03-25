@@ -12277,32 +12277,32 @@ func (s *SandboxUpdateRequest) SetConfig(val OptSandboxUpdateConfig) {
 
 // Ref: #/components/schemas/SandboxVolume
 type SandboxVolume struct {
-	ID             OptString    `json:"id"`
-	TeamID         OptString    `json:"team_id"`
-	UserID         OptString    `json:"user_id"`
+	ID             string       `json:"id"`
+	TeamID         string       `json:"team_id"`
+	UserID         string       `json:"user_id"`
 	SourceVolumeID OptNilString `json:"source_volume_id"`
-	CacheSize      OptString    `json:"cache_size"`
+	CacheSize      string       `json:"cache_size"`
 	Prefetch       OptInt       `json:"prefetch"`
-	BufferSize     OptString    `json:"buffer_size"`
+	BufferSize     string       `json:"buffer_size"`
 	Writeback      OptBool      `json:"writeback"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
-	CreatedAt  OptDateTime         `json:"created_at"`
-	UpdatedAt  OptDateTime         `json:"updated_at"`
+	CreatedAt  time.Time           `json:"created_at"`
+	UpdatedAt  time.Time           `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
-func (s *SandboxVolume) GetID() OptString {
+func (s *SandboxVolume) GetID() string {
 	return s.ID
 }
 
 // GetTeamID returns the value of TeamID.
-func (s *SandboxVolume) GetTeamID() OptString {
+func (s *SandboxVolume) GetTeamID() string {
 	return s.TeamID
 }
 
 // GetUserID returns the value of UserID.
-func (s *SandboxVolume) GetUserID() OptString {
+func (s *SandboxVolume) GetUserID() string {
 	return s.UserID
 }
 
@@ -12312,7 +12312,7 @@ func (s *SandboxVolume) GetSourceVolumeID() OptNilString {
 }
 
 // GetCacheSize returns the value of CacheSize.
-func (s *SandboxVolume) GetCacheSize() OptString {
+func (s *SandboxVolume) GetCacheSize() string {
 	return s.CacheSize
 }
 
@@ -12322,7 +12322,7 @@ func (s *SandboxVolume) GetPrefetch() OptInt {
 }
 
 // GetBufferSize returns the value of BufferSize.
-func (s *SandboxVolume) GetBufferSize() OptString {
+func (s *SandboxVolume) GetBufferSize() string {
 	return s.BufferSize
 }
 
@@ -12337,27 +12337,27 @@ func (s *SandboxVolume) GetAccessMode() OptVolumeAccessMode {
 }
 
 // GetCreatedAt returns the value of CreatedAt.
-func (s *SandboxVolume) GetCreatedAt() OptDateTime {
+func (s *SandboxVolume) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
 // GetUpdatedAt returns the value of UpdatedAt.
-func (s *SandboxVolume) GetUpdatedAt() OptDateTime {
+func (s *SandboxVolume) GetUpdatedAt() time.Time {
 	return s.UpdatedAt
 }
 
 // SetID sets the value of ID.
-func (s *SandboxVolume) SetID(val OptString) {
+func (s *SandboxVolume) SetID(val string) {
 	s.ID = val
 }
 
 // SetTeamID sets the value of TeamID.
-func (s *SandboxVolume) SetTeamID(val OptString) {
+func (s *SandboxVolume) SetTeamID(val string) {
 	s.TeamID = val
 }
 
 // SetUserID sets the value of UserID.
-func (s *SandboxVolume) SetUserID(val OptString) {
+func (s *SandboxVolume) SetUserID(val string) {
 	s.UserID = val
 }
 
@@ -12367,7 +12367,7 @@ func (s *SandboxVolume) SetSourceVolumeID(val OptNilString) {
 }
 
 // SetCacheSize sets the value of CacheSize.
-func (s *SandboxVolume) SetCacheSize(val OptString) {
+func (s *SandboxVolume) SetCacheSize(val string) {
 	s.CacheSize = val
 }
 
@@ -12377,7 +12377,7 @@ func (s *SandboxVolume) SetPrefetch(val OptInt) {
 }
 
 // SetBufferSize sets the value of BufferSize.
-func (s *SandboxVolume) SetBufferSize(val OptString) {
+func (s *SandboxVolume) SetBufferSize(val string) {
 	s.BufferSize = val
 }
 
@@ -12392,12 +12392,12 @@ func (s *SandboxVolume) SetAccessMode(val OptVolumeAccessMode) {
 }
 
 // SetCreatedAt sets the value of CreatedAt.
-func (s *SandboxVolume) SetCreatedAt(val OptDateTime) {
+func (s *SandboxVolume) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
 // SetUpdatedAt sets the value of UpdatedAt.
-func (s *SandboxVolume) SetUpdatedAt(val OptDateTime) {
+func (s *SandboxVolume) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 

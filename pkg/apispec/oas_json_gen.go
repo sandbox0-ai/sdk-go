@@ -21490,22 +21490,16 @@ func (s *SandboxVolume) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 	{
-		if s.ID.Set {
-			e.FieldStart("id")
-			s.ID.Encode(e)
-		}
+		e.FieldStart("id")
+		e.Str(s.ID)
 	}
 	{
-		if s.TeamID.Set {
-			e.FieldStart("team_id")
-			s.TeamID.Encode(e)
-		}
+		e.FieldStart("team_id")
+		e.Str(s.TeamID)
 	}
 	{
-		if s.UserID.Set {
-			e.FieldStart("user_id")
-			s.UserID.Encode(e)
-		}
+		e.FieldStart("user_id")
+		e.Str(s.UserID)
 	}
 	{
 		if s.SourceVolumeID.Set {
@@ -21514,10 +21508,8 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.CacheSize.Set {
-			e.FieldStart("cache_size")
-			s.CacheSize.Encode(e)
-		}
+		e.FieldStart("cache_size")
+		e.Str(s.CacheSize)
 	}
 	{
 		if s.Prefetch.Set {
@@ -21526,10 +21518,8 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.BufferSize.Set {
-			e.FieldStart("buffer_size")
-			s.BufferSize.Encode(e)
-		}
+		e.FieldStart("buffer_size")
+		e.Str(s.BufferSize)
 	}
 	{
 		if s.Writeback.Set {
@@ -21544,16 +21534,12 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
 	}
 	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
 	}
 }
 
@@ -21576,13 +21562,16 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode SandboxVolume to nil")
 	}
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
 		case "id":
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				s.ID.Reset()
-				if err := s.ID.Decode(d); err != nil {
+				v, err := d.Str()
+				s.ID = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21590,9 +21579,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
 		case "team_id":
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.TeamID.Reset()
-				if err := s.TeamID.Decode(d); err != nil {
+				v, err := d.Str()
+				s.TeamID = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21600,9 +21591,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"team_id\"")
 			}
 		case "user_id":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.UserID.Reset()
-				if err := s.UserID.Decode(d); err != nil {
+				v, err := d.Str()
+				s.UserID = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21620,9 +21613,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"source_volume_id\"")
 			}
 		case "cache_size":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				s.CacheSize.Reset()
-				if err := s.CacheSize.Decode(d); err != nil {
+				v, err := d.Str()
+				s.CacheSize = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21640,9 +21635,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"prefetch\"")
 			}
 		case "buffer_size":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
-				s.BufferSize.Reset()
-				if err := s.BufferSize.Decode(d); err != nil {
+				v, err := d.Str()
+				s.BufferSize = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21670,9 +21667,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"access_mode\"")
 			}
 		case "created_at":
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21680,9 +21679,11 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -21695,6 +21696,39 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 		return nil
 	}); err != nil {
 		return errors.Wrap(err, "decode SandboxVolume")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b01010111,
+		0b00000110,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxVolume) {
+					name = jsonFieldsNameOfSandboxVolume[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 
 	return nil
