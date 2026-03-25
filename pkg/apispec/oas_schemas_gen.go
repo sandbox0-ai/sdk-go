@@ -353,6 +353,33 @@ type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
+type APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK) aPIV1SandboxvolumesIDSyncBootstrapArchiveGetRes() {
+}
+
+type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest) aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes() {
+}
+
+type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostConflict ErrorEnvelope
+
+func (*APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostConflict) aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes() {
+}
+
 // Ref: #/components/schemas/ActiveTeam
 type ActiveTeam struct {
 	UserID             string       `json:"user_id"`
@@ -521,6 +548,80 @@ func (s *Affinity) SetNodeAffinity(val OptNodeAffinity) {
 // SetPodAffinity sets the value of PodAffinity.
 func (s *Affinity) SetPodAffinity(val OptPodAffinity) {
 	s.PodAffinity = val
+}
+
+// Ref: #/components/schemas/AppendReplicaChangesRequest
+type AppendReplicaChangesRequest struct {
+	RequestID string          `json:"request_id"`
+	BaseSeq   int64           `json:"base_seq"`
+	Changes   []ChangeRequest `json:"changes"`
+}
+
+// GetRequestID returns the value of RequestID.
+func (s *AppendReplicaChangesRequest) GetRequestID() string {
+	return s.RequestID
+}
+
+// GetBaseSeq returns the value of BaseSeq.
+func (s *AppendReplicaChangesRequest) GetBaseSeq() int64 {
+	return s.BaseSeq
+}
+
+// GetChanges returns the value of Changes.
+func (s *AppendReplicaChangesRequest) GetChanges() []ChangeRequest {
+	return s.Changes
+}
+
+// SetRequestID sets the value of RequestID.
+func (s *AppendReplicaChangesRequest) SetRequestID(val string) {
+	s.RequestID = val
+}
+
+// SetBaseSeq sets the value of BaseSeq.
+func (s *AppendReplicaChangesRequest) SetBaseSeq(val int64) {
+	s.BaseSeq = val
+}
+
+// SetChanges sets the value of Changes.
+func (s *AppendReplicaChangesRequest) SetChanges(val []ChangeRequest) {
+	s.Changes = val
+}
+
+// Ref: #/components/schemas/AppendReplicaChangesResponse
+type AppendReplicaChangesResponse struct {
+	HeadSeq   int64              `json:"head_seq"`
+	Accepted  []SyncJournalEntry `json:"accepted"`
+	Conflicts []SyncConflict     `json:"conflicts"`
+}
+
+// GetHeadSeq returns the value of HeadSeq.
+func (s *AppendReplicaChangesResponse) GetHeadSeq() int64 {
+	return s.HeadSeq
+}
+
+// GetAccepted returns the value of Accepted.
+func (s *AppendReplicaChangesResponse) GetAccepted() []SyncJournalEntry {
+	return s.Accepted
+}
+
+// GetConflicts returns the value of Conflicts.
+func (s *AppendReplicaChangesResponse) GetConflicts() []SyncConflict {
+	return s.Conflicts
+}
+
+// SetHeadSeq sets the value of HeadSeq.
+func (s *AppendReplicaChangesResponse) SetHeadSeq(val int64) {
+	s.HeadSeq = val
+}
+
+// SetAccepted sets the value of Accepted.
+func (s *AppendReplicaChangesResponse) SetAccepted(val []SyncJournalEntry) {
+	s.Accepted = val
+}
+
+// SetConflicts sets the value of Conflicts.
+func (s *AppendReplicaChangesResponse) SetConflicts(val []SyncConflict) {
+	s.Conflicts = val
 }
 
 type AuthChangePasswordPostBadRequest ErrorEnvelope
@@ -735,6 +836,161 @@ func (s *ChangePasswordRequest) SetOldPassword(val string) {
 // SetNewPassword sets the value of NewPassword.
 func (s *ChangePasswordRequest) SetNewPassword(val string) {
 	s.NewPassword = val
+}
+
+// Ref: #/components/schemas/ChangeRequest
+type ChangeRequest struct {
+	EventType     SyncEventType             `json:"event_type"`
+	Path          OptString                 `json:"path"`
+	OldPath       OptString                 `json:"old_path"`
+	EntryKind     OptChangeRequestEntryKind `json:"entry_kind"`
+	ContentBase64 OptNilString              `json:"content_base64"`
+	Mode          OptNilInt64               `json:"mode"`
+	ContentSHA256 OptString                 `json:"content_sha256"`
+	SizeBytes     OptInt64                  `json:"size_bytes"`
+	Metadata      OptChangeRequestMetadata  `json:"metadata"`
+}
+
+// GetEventType returns the value of EventType.
+func (s *ChangeRequest) GetEventType() SyncEventType {
+	return s.EventType
+}
+
+// GetPath returns the value of Path.
+func (s *ChangeRequest) GetPath() OptString {
+	return s.Path
+}
+
+// GetOldPath returns the value of OldPath.
+func (s *ChangeRequest) GetOldPath() OptString {
+	return s.OldPath
+}
+
+// GetEntryKind returns the value of EntryKind.
+func (s *ChangeRequest) GetEntryKind() OptChangeRequestEntryKind {
+	return s.EntryKind
+}
+
+// GetContentBase64 returns the value of ContentBase64.
+func (s *ChangeRequest) GetContentBase64() OptNilString {
+	return s.ContentBase64
+}
+
+// GetMode returns the value of Mode.
+func (s *ChangeRequest) GetMode() OptNilInt64 {
+	return s.Mode
+}
+
+// GetContentSHA256 returns the value of ContentSHA256.
+func (s *ChangeRequest) GetContentSHA256() OptString {
+	return s.ContentSHA256
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *ChangeRequest) GetSizeBytes() OptInt64 {
+	return s.SizeBytes
+}
+
+// GetMetadata returns the value of Metadata.
+func (s *ChangeRequest) GetMetadata() OptChangeRequestMetadata {
+	return s.Metadata
+}
+
+// SetEventType sets the value of EventType.
+func (s *ChangeRequest) SetEventType(val SyncEventType) {
+	s.EventType = val
+}
+
+// SetPath sets the value of Path.
+func (s *ChangeRequest) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetOldPath sets the value of OldPath.
+func (s *ChangeRequest) SetOldPath(val OptString) {
+	s.OldPath = val
+}
+
+// SetEntryKind sets the value of EntryKind.
+func (s *ChangeRequest) SetEntryKind(val OptChangeRequestEntryKind) {
+	s.EntryKind = val
+}
+
+// SetContentBase64 sets the value of ContentBase64.
+func (s *ChangeRequest) SetContentBase64(val OptNilString) {
+	s.ContentBase64 = val
+}
+
+// SetMode sets the value of Mode.
+func (s *ChangeRequest) SetMode(val OptNilInt64) {
+	s.Mode = val
+}
+
+// SetContentSHA256 sets the value of ContentSHA256.
+func (s *ChangeRequest) SetContentSHA256(val OptString) {
+	s.ContentSHA256 = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *ChangeRequest) SetSizeBytes(val OptInt64) {
+	s.SizeBytes = val
+}
+
+// SetMetadata sets the value of Metadata.
+func (s *ChangeRequest) SetMetadata(val OptChangeRequestMetadata) {
+	s.Metadata = val
+}
+
+type ChangeRequestEntryKind string
+
+const (
+	ChangeRequestEntryKindFile      ChangeRequestEntryKind = "file"
+	ChangeRequestEntryKindDirectory ChangeRequestEntryKind = "directory"
+)
+
+// AllValues returns all ChangeRequestEntryKind values.
+func (ChangeRequestEntryKind) AllValues() []ChangeRequestEntryKind {
+	return []ChangeRequestEntryKind{
+		ChangeRequestEntryKindFile,
+		ChangeRequestEntryKindDirectory,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ChangeRequestEntryKind) MarshalText() ([]byte, error) {
+	switch s {
+	case ChangeRequestEntryKindFile:
+		return []byte(s), nil
+	case ChangeRequestEntryKindDirectory:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ChangeRequestEntryKind) UnmarshalText(data []byte) error {
+	switch ChangeRequestEntryKind(data) {
+	case ChangeRequestEntryKindFile:
+		*s = ChangeRequestEntryKindFile
+		return nil
+	case ChangeRequestEntryKindDirectory:
+		*s = ChangeRequestEntryKindDirectory
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type ChangeRequestMetadata map[string]jx.Raw
+
+func (s *ChangeRequestMetadata) init() ChangeRequestMetadata {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
 }
 
 // Ref: #/components/schemas/ClaimRequest
@@ -1701,6 +1957,54 @@ func (s *CreateTeamRequest) SetHomeRegionID(val OptNilString) {
 	s.HomeRegionID = val
 }
 
+// Ref: #/components/schemas/CreateVolumeSyncBootstrapRequest
+type CreateVolumeSyncBootstrapRequest struct {
+	SnapshotName        OptString                           `json:"snapshot_name"`
+	SnapshotDescription OptString                           `json:"snapshot_description"`
+	CaseSensitive       OptNilBool                          `json:"case_sensitive"`
+	Capabilities        OptVolumeSyncFilesystemCapabilities `json:"capabilities"`
+}
+
+// GetSnapshotName returns the value of SnapshotName.
+func (s *CreateVolumeSyncBootstrapRequest) GetSnapshotName() OptString {
+	return s.SnapshotName
+}
+
+// GetSnapshotDescription returns the value of SnapshotDescription.
+func (s *CreateVolumeSyncBootstrapRequest) GetSnapshotDescription() OptString {
+	return s.SnapshotDescription
+}
+
+// GetCaseSensitive returns the value of CaseSensitive.
+func (s *CreateVolumeSyncBootstrapRequest) GetCaseSensitive() OptNilBool {
+	return s.CaseSensitive
+}
+
+// GetCapabilities returns the value of Capabilities.
+func (s *CreateVolumeSyncBootstrapRequest) GetCapabilities() OptVolumeSyncFilesystemCapabilities {
+	return s.Capabilities
+}
+
+// SetSnapshotName sets the value of SnapshotName.
+func (s *CreateVolumeSyncBootstrapRequest) SetSnapshotName(val OptString) {
+	s.SnapshotName = val
+}
+
+// SetSnapshotDescription sets the value of SnapshotDescription.
+func (s *CreateVolumeSyncBootstrapRequest) SetSnapshotDescription(val OptString) {
+	s.SnapshotDescription = val
+}
+
+// SetCaseSensitive sets the value of CaseSensitive.
+func (s *CreateVolumeSyncBootstrapRequest) SetCaseSensitive(val OptNilBool) {
+	s.CaseSensitive = val
+}
+
+// SetCapabilities sets the value of Capabilities.
+func (s *CreateVolumeSyncBootstrapRequest) SetCapabilities(val OptVolumeSyncFilesystemCapabilities) {
+	s.Capabilities = val
+}
+
 // Ref: #/components/schemas/CredentialBinding
 type CredentialBinding struct {
 	// Stable binding identifier matched by `credentialRef`.
@@ -2382,34 +2686,38 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
-func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
-func (*ErrorEnvelope) aPIKeysPostRes()                                 {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
-func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()          {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()             {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()      {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPutRes()             {}
-func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDPausePostRes()                   {}
-func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDResumePostRes()                  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
-func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
-func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
-func (*ErrorEnvelope) authProvidersGetRes()                            {}
-func (*ErrorEnvelope) healthzGetRes()                                  {}
-func (*ErrorEnvelope) readyzGetRes()                                   {}
-func (*ErrorEnvelope) regionsGetRes()                                  {}
-func (*ErrorEnvelope) teamsGetRes()                                    {}
-func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
-func (*ErrorEnvelope) teamsPostRes()                                   {}
-func (*ErrorEnvelope) usersMeGetRes()                                  {}
-func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
+func (*ErrorEnvelope) aPIKeysGetRes()                                          {}
+func (*ErrorEnvelope) aPIKeysPostRes()                                         {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                       {}
+func (*ErrorEnvelope) aPIV1SandboxesGetRes()                                   {}
+func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()              {}
+func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPutRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                          {}
+func (*ErrorEnvelope) aPIV1SandboxesIDPausePostRes()                           {}
+func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                         {}
+func (*ErrorEnvelope) aPIV1SandboxesIDResumePostRes()                          {}
+func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                           {}
+func (*ErrorEnvelope) aPIV1SandboxesPostRes()                                  {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                         {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()                       {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                            {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()         {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncBootstrapArchiveGetRes()        {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncConflictsConflictIDPutRes()     {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes() {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes()       {}
+func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                                 {}
+func (*ErrorEnvelope) authProvidersGetRes()                                    {}
+func (*ErrorEnvelope) healthzGetRes()                                          {}
+func (*ErrorEnvelope) readyzGetRes()                                           {}
+func (*ErrorEnvelope) regionsGetRes()                                          {}
+func (*ErrorEnvelope) teamsGetRes()                                            {}
+func (*ErrorEnvelope) teamsIDMembersGetRes()                                   {}
+func (*ErrorEnvelope) teamsPostRes()                                           {}
+func (*ErrorEnvelope) usersMeGetRes()                                          {}
+func (*ErrorEnvelope) usersMeIdentitiesGetRes()                                {}
 
 type ErrorEnvelopeSuccess bool
 
@@ -3007,6 +3315,58 @@ func (s *LifecyclePolicy) SetIdleTimeout(val OptInt32) {
 // SetPreStop sets the value of PreStop.
 func (s *LifecyclePolicy) SetPreStop(val OptPreStopHook) {
 	s.PreStop = val
+}
+
+// Ref: #/components/schemas/ListVolumeSyncChangesResponse
+type ListVolumeSyncChangesResponse struct {
+	HeadSeq          int64              `json:"head_seq"`
+	RetainedAfterSeq int64              `json:"retained_after_seq"`
+	Changes          []SyncJournalEntry `json:"changes"`
+}
+
+// GetHeadSeq returns the value of HeadSeq.
+func (s *ListVolumeSyncChangesResponse) GetHeadSeq() int64 {
+	return s.HeadSeq
+}
+
+// GetRetainedAfterSeq returns the value of RetainedAfterSeq.
+func (s *ListVolumeSyncChangesResponse) GetRetainedAfterSeq() int64 {
+	return s.RetainedAfterSeq
+}
+
+// GetChanges returns the value of Changes.
+func (s *ListVolumeSyncChangesResponse) GetChanges() []SyncJournalEntry {
+	return s.Changes
+}
+
+// SetHeadSeq sets the value of HeadSeq.
+func (s *ListVolumeSyncChangesResponse) SetHeadSeq(val int64) {
+	s.HeadSeq = val
+}
+
+// SetRetainedAfterSeq sets the value of RetainedAfterSeq.
+func (s *ListVolumeSyncChangesResponse) SetRetainedAfterSeq(val int64) {
+	s.RetainedAfterSeq = val
+}
+
+// SetChanges sets the value of Changes.
+func (s *ListVolumeSyncChangesResponse) SetChanges(val []SyncJournalEntry) {
+	s.Changes = val
+}
+
+// Ref: #/components/schemas/ListVolumeSyncConflictsResponse
+type ListVolumeSyncConflictsResponse struct {
+	Conflicts []SyncConflict `json:"conflicts"`
+}
+
+// GetConflicts returns the value of Conflicts.
+func (s *ListVolumeSyncConflictsResponse) GetConflicts() []SyncConflict {
+	return s.Conflicts
+}
+
+// SetConflicts sets the value of Conflicts.
+func (s *ListVolumeSyncConflictsResponse) SetConflicts(val []SyncConflict) {
+	s.Conflicts = val
 }
 
 // Ref: #/components/schemas/LoginRequest
@@ -3651,6 +4011,52 @@ func (o OptAffinity) Or(d Affinity) Affinity {
 	return d
 }
 
+// NewOptAppendReplicaChangesResponse returns new OptAppendReplicaChangesResponse with value set to v.
+func NewOptAppendReplicaChangesResponse(v AppendReplicaChangesResponse) OptAppendReplicaChangesResponse {
+	return OptAppendReplicaChangesResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptAppendReplicaChangesResponse is optional AppendReplicaChangesResponse.
+type OptAppendReplicaChangesResponse struct {
+	Value AppendReplicaChangesResponse
+	Set   bool
+}
+
+// IsSet returns true if OptAppendReplicaChangesResponse was set.
+func (o OptAppendReplicaChangesResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptAppendReplicaChangesResponse) Reset() {
+	var v AppendReplicaChangesResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptAppendReplicaChangesResponse) SetTo(v AppendReplicaChangesResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptAppendReplicaChangesResponse) Get() (v AppendReplicaChangesResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptAppendReplicaChangesResponse) Or(d AppendReplicaChangesResponse) AppendReplicaChangesResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptBool returns new OptBool with value set to v.
 func NewOptBool(v bool) OptBool {
 	return OptBool{
@@ -3783,6 +4189,98 @@ func (o OptCapabilities) Get() (v Capabilities, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptCapabilities) Or(d Capabilities) Capabilities {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptChangeRequestEntryKind returns new OptChangeRequestEntryKind with value set to v.
+func NewOptChangeRequestEntryKind(v ChangeRequestEntryKind) OptChangeRequestEntryKind {
+	return OptChangeRequestEntryKind{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptChangeRequestEntryKind is optional ChangeRequestEntryKind.
+type OptChangeRequestEntryKind struct {
+	Value ChangeRequestEntryKind
+	Set   bool
+}
+
+// IsSet returns true if OptChangeRequestEntryKind was set.
+func (o OptChangeRequestEntryKind) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptChangeRequestEntryKind) Reset() {
+	var v ChangeRequestEntryKind
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptChangeRequestEntryKind) SetTo(v ChangeRequestEntryKind) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptChangeRequestEntryKind) Get() (v ChangeRequestEntryKind, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptChangeRequestEntryKind) Or(d ChangeRequestEntryKind) ChangeRequestEntryKind {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptChangeRequestMetadata returns new OptChangeRequestMetadata with value set to v.
+func NewOptChangeRequestMetadata(v ChangeRequestMetadata) OptChangeRequestMetadata {
+	return OptChangeRequestMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptChangeRequestMetadata is optional ChangeRequestMetadata.
+type OptChangeRequestMetadata struct {
+	Value ChangeRequestMetadata
+	Set   bool
+}
+
+// IsSet returns true if OptChangeRequestMetadata was set.
+func (o OptChangeRequestMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptChangeRequestMetadata) Reset() {
+	var v ChangeRequestMetadata
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptChangeRequestMetadata) SetTo(v ChangeRequestMetadata) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptChangeRequestMetadata) Get() (v ChangeRequestMetadata, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptChangeRequestMetadata) Or(d ChangeRequestMetadata) ChangeRequestMetadata {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -4243,6 +4741,52 @@ func (o OptCreateREPLContextRequest) Get() (v CreateREPLContextRequest, ok bool)
 
 // Or returns value if set, or given parameter if does not.
 func (o OptCreateREPLContextRequest) Or(d CreateREPLContextRequest) CreateREPLContextRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCreateVolumeSyncBootstrapRequest returns new OptCreateVolumeSyncBootstrapRequest with value set to v.
+func NewOptCreateVolumeSyncBootstrapRequest(v CreateVolumeSyncBootstrapRequest) OptCreateVolumeSyncBootstrapRequest {
+	return OptCreateVolumeSyncBootstrapRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateVolumeSyncBootstrapRequest is optional CreateVolumeSyncBootstrapRequest.
+type OptCreateVolumeSyncBootstrapRequest struct {
+	Value CreateVolumeSyncBootstrapRequest
+	Set   bool
+}
+
+// IsSet returns true if OptCreateVolumeSyncBootstrapRequest was set.
+func (o OptCreateVolumeSyncBootstrapRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateVolumeSyncBootstrapRequest) Reset() {
+	var v CreateVolumeSyncBootstrapRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateVolumeSyncBootstrapRequest) SetTo(v CreateVolumeSyncBootstrapRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateVolumeSyncBootstrapRequest) Get() (v CreateVolumeSyncBootstrapRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateVolumeSyncBootstrapRequest) Or(d CreateVolumeSyncBootstrapRequest) CreateVolumeSyncBootstrapRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -5215,6 +5759,98 @@ func (o OptLifecyclePolicy) Or(d LifecyclePolicy) LifecyclePolicy {
 	return d
 }
 
+// NewOptListVolumeSyncChangesResponse returns new OptListVolumeSyncChangesResponse with value set to v.
+func NewOptListVolumeSyncChangesResponse(v ListVolumeSyncChangesResponse) OptListVolumeSyncChangesResponse {
+	return OptListVolumeSyncChangesResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptListVolumeSyncChangesResponse is optional ListVolumeSyncChangesResponse.
+type OptListVolumeSyncChangesResponse struct {
+	Value ListVolumeSyncChangesResponse
+	Set   bool
+}
+
+// IsSet returns true if OptListVolumeSyncChangesResponse was set.
+func (o OptListVolumeSyncChangesResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptListVolumeSyncChangesResponse) Reset() {
+	var v ListVolumeSyncChangesResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptListVolumeSyncChangesResponse) SetTo(v ListVolumeSyncChangesResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptListVolumeSyncChangesResponse) Get() (v ListVolumeSyncChangesResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptListVolumeSyncChangesResponse) Or(d ListVolumeSyncChangesResponse) ListVolumeSyncChangesResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptListVolumeSyncConflictsResponse returns new OptListVolumeSyncConflictsResponse with value set to v.
+func NewOptListVolumeSyncConflictsResponse(v ListVolumeSyncConflictsResponse) OptListVolumeSyncConflictsResponse {
+	return OptListVolumeSyncConflictsResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptListVolumeSyncConflictsResponse is optional ListVolumeSyncConflictsResponse.
+type OptListVolumeSyncConflictsResponse struct {
+	Value ListVolumeSyncConflictsResponse
+	Set   bool
+}
+
+// IsSet returns true if OptListVolumeSyncConflictsResponse was set.
+func (o OptListVolumeSyncConflictsResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptListVolumeSyncConflictsResponse) Reset() {
+	var v ListVolumeSyncConflictsResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptListVolumeSyncConflictsResponse) SetTo(v ListVolumeSyncConflictsResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptListVolumeSyncConflictsResponse) Get() (v ListVolumeSyncConflictsResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptListVolumeSyncConflictsResponse) Or(d ListVolumeSyncConflictsResponse) ListVolumeSyncConflictsResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptLoginResponse returns new OptLoginResponse with value set to v.
 func NewOptLoginResponse(v LoginResponse) OptLoginResponse {
 	return OptLoginResponse{
@@ -5353,6 +5989,69 @@ func (o OptNetworkEgressPolicy) Or(d NetworkEgressPolicy) NetworkEgressPolicy {
 	return d
 }
 
+// NewOptNilBool returns new OptNilBool with value set to v.
+func NewOptNilBool(v bool) OptNilBool {
+	return OptNilBool{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilBool is optional nullable bool.
+type OptNilBool struct {
+	Value bool
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilBool was set.
+func (o OptNilBool) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilBool) Reset() {
+	var v bool
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilBool) SetTo(v bool) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilBool) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilBool) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v bool
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilBool) Get() (v bool, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilBool) Or(d bool) bool {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptNilDateTime returns new OptNilDateTime with value set to v.
 func NewOptNilDateTime(v time.Time) OptNilDateTime {
 	return OptNilDateTime{
@@ -5416,6 +6115,69 @@ func (o OptNilDateTime) Or(d time.Time) time.Time {
 	return d
 }
 
+// NewOptNilInt64 returns new OptNilInt64 with value set to v.
+func NewOptNilInt64(v int64) OptNilInt64 {
+	return OptNilInt64{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilInt64 is optional nullable int64.
+type OptNilInt64 struct {
+	Value int64
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilInt64 was set.
+func (o OptNilInt64) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilInt64) Reset() {
+	var v int64
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilInt64) SetTo(v int64) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilInt64) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilInt64) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v int64
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilInt64) Get() (v int64, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilInt64) Or(d int64) int64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptNilString returns new OptNilString with value set to v.
 func NewOptNilString(v string) OptNilString {
 	return OptNilString{
@@ -5473,6 +6235,132 @@ func (o OptNilString) Get() (v string, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptNilString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilSyncConflictMetadata returns new OptNilSyncConflictMetadata with value set to v.
+func NewOptNilSyncConflictMetadata(v SyncConflictMetadata) OptNilSyncConflictMetadata {
+	return OptNilSyncConflictMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilSyncConflictMetadata is optional nullable SyncConflictMetadata.
+type OptNilSyncConflictMetadata struct {
+	Value SyncConflictMetadata
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilSyncConflictMetadata was set.
+func (o OptNilSyncConflictMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilSyncConflictMetadata) Reset() {
+	var v SyncConflictMetadata
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilSyncConflictMetadata) SetTo(v SyncConflictMetadata) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilSyncConflictMetadata) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilSyncConflictMetadata) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v SyncConflictMetadata
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilSyncConflictMetadata) Get() (v SyncConflictMetadata, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilSyncConflictMetadata) Or(d SyncConflictMetadata) SyncConflictMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilSyncJournalEntryMetadata returns new OptNilSyncJournalEntryMetadata with value set to v.
+func NewOptNilSyncJournalEntryMetadata(v SyncJournalEntryMetadata) OptNilSyncJournalEntryMetadata {
+	return OptNilSyncJournalEntryMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilSyncJournalEntryMetadata is optional nullable SyncJournalEntryMetadata.
+type OptNilSyncJournalEntryMetadata struct {
+	Value SyncJournalEntryMetadata
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilSyncJournalEntryMetadata was set.
+func (o OptNilSyncJournalEntryMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilSyncJournalEntryMetadata) Reset() {
+	var v SyncJournalEntryMetadata
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilSyncJournalEntryMetadata) SetTo(v SyncJournalEntryMetadata) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilSyncJournalEntryMetadata) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilSyncJournalEntryMetadata) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v SyncJournalEntryMetadata
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilSyncJournalEntryMetadata) Get() (v SyncJournalEntryMetadata, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilSyncJournalEntryMetadata) Or(d SyncJournalEntryMetadata) SyncJournalEntryMetadata {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8302,6 +9190,144 @@ func (o OptSuccessWrittenResponseData) Or(d SuccessWrittenResponseData) SuccessW
 	return d
 }
 
+// NewOptSyncConflict returns new OptSyncConflict with value set to v.
+func NewOptSyncConflict(v SyncConflict) OptSyncConflict {
+	return OptSyncConflict{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSyncConflict is optional SyncConflict.
+type OptSyncConflict struct {
+	Value SyncConflict
+	Set   bool
+}
+
+// IsSet returns true if OptSyncConflict was set.
+func (o OptSyncConflict) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSyncConflict) Reset() {
+	var v SyncConflict
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSyncConflict) SetTo(v SyncConflict) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSyncConflict) Get() (v SyncConflict, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSyncConflict) Or(d SyncConflict) SyncConflict {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSyncEventType returns new OptSyncEventType with value set to v.
+func NewOptSyncEventType(v SyncEventType) OptSyncEventType {
+	return OptSyncEventType{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSyncEventType is optional SyncEventType.
+type OptSyncEventType struct {
+	Value SyncEventType
+	Set   bool
+}
+
+// IsSet returns true if OptSyncEventType was set.
+func (o OptSyncEventType) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSyncEventType) Reset() {
+	var v SyncEventType
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSyncEventType) SetTo(v SyncEventType) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSyncEventType) Get() (v SyncEventType, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSyncEventType) Or(d SyncEventType) SyncEventType {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSyncJournalEntrySource returns new OptSyncJournalEntrySource with value set to v.
+func NewOptSyncJournalEntrySource(v SyncJournalEntrySource) OptSyncJournalEntrySource {
+	return OptSyncJournalEntrySource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSyncJournalEntrySource is optional SyncJournalEntrySource.
+type OptSyncJournalEntrySource struct {
+	Value SyncJournalEntrySource
+	Set   bool
+}
+
+// IsSet returns true if OptSyncJournalEntrySource was set.
+func (o OptSyncJournalEntrySource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSyncJournalEntrySource) Reset() {
+	var v SyncJournalEntrySource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSyncJournalEntrySource) SetTo(v SyncJournalEntrySource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSyncJournalEntrySource) Get() (v SyncJournalEntrySource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSyncJournalEntrySource) Or(d SyncJournalEntrySource) SyncJournalEntrySource {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptTeam returns new OptTeam with value set to v.
 func NewOptTeam(v Team) OptTeam {
 	return OptTeam{
@@ -8572,6 +9598,236 @@ func (o OptVolumeConfig) Get() (v VolumeConfig, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptVolumeConfig) Or(d VolumeConfig) VolumeConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeSyncBootstrap returns new OptVolumeSyncBootstrap with value set to v.
+func NewOptVolumeSyncBootstrap(v VolumeSyncBootstrap) OptVolumeSyncBootstrap {
+	return OptVolumeSyncBootstrap{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeSyncBootstrap is optional VolumeSyncBootstrap.
+type OptVolumeSyncBootstrap struct {
+	Value VolumeSyncBootstrap
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeSyncBootstrap was set.
+func (o OptVolumeSyncBootstrap) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeSyncBootstrap) Reset() {
+	var v VolumeSyncBootstrap
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeSyncBootstrap) SetTo(v VolumeSyncBootstrap) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeSyncBootstrap) Get() (v VolumeSyncBootstrap, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeSyncBootstrap) Or(d VolumeSyncBootstrap) VolumeSyncBootstrap {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeSyncBootstrapCompatibilityConflictDetails returns new OptVolumeSyncBootstrapCompatibilityConflictDetails with value set to v.
+func NewOptVolumeSyncBootstrapCompatibilityConflictDetails(v VolumeSyncBootstrapCompatibilityConflictDetails) OptVolumeSyncBootstrapCompatibilityConflictDetails {
+	return OptVolumeSyncBootstrapCompatibilityConflictDetails{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeSyncBootstrapCompatibilityConflictDetails is optional VolumeSyncBootstrapCompatibilityConflictDetails.
+type OptVolumeSyncBootstrapCompatibilityConflictDetails struct {
+	Value VolumeSyncBootstrapCompatibilityConflictDetails
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeSyncBootstrapCompatibilityConflictDetails was set.
+func (o OptVolumeSyncBootstrapCompatibilityConflictDetails) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeSyncBootstrapCompatibilityConflictDetails) Reset() {
+	var v VolumeSyncBootstrapCompatibilityConflictDetails
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeSyncBootstrapCompatibilityConflictDetails) SetTo(v VolumeSyncBootstrapCompatibilityConflictDetails) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeSyncBootstrapCompatibilityConflictDetails) Get() (v VolumeSyncBootstrapCompatibilityConflictDetails, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeSyncBootstrapCompatibilityConflictDetails) Or(d VolumeSyncBootstrapCompatibilityConflictDetails) VolumeSyncBootstrapCompatibilityConflictDetails {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeSyncFilesystemCapabilities returns new OptVolumeSyncFilesystemCapabilities with value set to v.
+func NewOptVolumeSyncFilesystemCapabilities(v VolumeSyncFilesystemCapabilities) OptVolumeSyncFilesystemCapabilities {
+	return OptVolumeSyncFilesystemCapabilities{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeSyncFilesystemCapabilities is optional VolumeSyncFilesystemCapabilities.
+type OptVolumeSyncFilesystemCapabilities struct {
+	Value VolumeSyncFilesystemCapabilities
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeSyncFilesystemCapabilities was set.
+func (o OptVolumeSyncFilesystemCapabilities) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeSyncFilesystemCapabilities) Reset() {
+	var v VolumeSyncFilesystemCapabilities
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeSyncFilesystemCapabilities) SetTo(v VolumeSyncFilesystemCapabilities) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeSyncFilesystemCapabilities) Get() (v VolumeSyncFilesystemCapabilities, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeSyncFilesystemCapabilities) Or(d VolumeSyncFilesystemCapabilities) VolumeSyncFilesystemCapabilities {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeSyncReplicaEnvelope returns new OptVolumeSyncReplicaEnvelope with value set to v.
+func NewOptVolumeSyncReplicaEnvelope(v VolumeSyncReplicaEnvelope) OptVolumeSyncReplicaEnvelope {
+	return OptVolumeSyncReplicaEnvelope{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeSyncReplicaEnvelope is optional VolumeSyncReplicaEnvelope.
+type OptVolumeSyncReplicaEnvelope struct {
+	Value VolumeSyncReplicaEnvelope
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeSyncReplicaEnvelope was set.
+func (o OptVolumeSyncReplicaEnvelope) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeSyncReplicaEnvelope) Reset() {
+	var v VolumeSyncReplicaEnvelope
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeSyncReplicaEnvelope) SetTo(v VolumeSyncReplicaEnvelope) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeSyncReplicaEnvelope) Get() (v VolumeSyncReplicaEnvelope, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeSyncReplicaEnvelope) Or(d VolumeSyncReplicaEnvelope) VolumeSyncReplicaEnvelope {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeSyncReseedRequiredDetails returns new OptVolumeSyncReseedRequiredDetails with value set to v.
+func NewOptVolumeSyncReseedRequiredDetails(v VolumeSyncReseedRequiredDetails) OptVolumeSyncReseedRequiredDetails {
+	return OptVolumeSyncReseedRequiredDetails{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeSyncReseedRequiredDetails is optional VolumeSyncReseedRequiredDetails.
+type OptVolumeSyncReseedRequiredDetails struct {
+	Value VolumeSyncReseedRequiredDetails
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeSyncReseedRequiredDetails was set.
+func (o OptVolumeSyncReseedRequiredDetails) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeSyncReseedRequiredDetails) Reset() {
+	var v VolumeSyncReseedRequiredDetails
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeSyncReseedRequiredDetails) SetTo(v VolumeSyncReseedRequiredDetails) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeSyncReseedRequiredDetails) Get() (v VolumeSyncReseedRequiredDetails, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeSyncReseedRequiredDetails) Or(d VolumeSyncReseedRequiredDetails) VolumeSyncReseedRequiredDetails {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9650,6 +10906,84 @@ func (s *ResizeContextRequest) SetRows(val int32) {
 // SetCols sets the value of Cols.
 func (s *ResizeContextRequest) SetCols(val int32) {
 	s.Cols = val
+}
+
+// Ref: #/components/schemas/ResolveVolumeSyncConflictRequest
+type ResolveVolumeSyncConflictRequest struct {
+	Status     ResolveVolumeSyncConflictRequestStatus `json:"status"`
+	Resolution OptString                              `json:"resolution"`
+	Note       OptString                              `json:"note"`
+}
+
+// GetStatus returns the value of Status.
+func (s *ResolveVolumeSyncConflictRequest) GetStatus() ResolveVolumeSyncConflictRequestStatus {
+	return s.Status
+}
+
+// GetResolution returns the value of Resolution.
+func (s *ResolveVolumeSyncConflictRequest) GetResolution() OptString {
+	return s.Resolution
+}
+
+// GetNote returns the value of Note.
+func (s *ResolveVolumeSyncConflictRequest) GetNote() OptString {
+	return s.Note
+}
+
+// SetStatus sets the value of Status.
+func (s *ResolveVolumeSyncConflictRequest) SetStatus(val ResolveVolumeSyncConflictRequestStatus) {
+	s.Status = val
+}
+
+// SetResolution sets the value of Resolution.
+func (s *ResolveVolumeSyncConflictRequest) SetResolution(val OptString) {
+	s.Resolution = val
+}
+
+// SetNote sets the value of Note.
+func (s *ResolveVolumeSyncConflictRequest) SetNote(val OptString) {
+	s.Note = val
+}
+
+type ResolveVolumeSyncConflictRequestStatus string
+
+const (
+	ResolveVolumeSyncConflictRequestStatusResolved ResolveVolumeSyncConflictRequestStatus = "resolved"
+	ResolveVolumeSyncConflictRequestStatusIgnored  ResolveVolumeSyncConflictRequestStatus = "ignored"
+)
+
+// AllValues returns all ResolveVolumeSyncConflictRequestStatus values.
+func (ResolveVolumeSyncConflictRequestStatus) AllValues() []ResolveVolumeSyncConflictRequestStatus {
+	return []ResolveVolumeSyncConflictRequestStatus{
+		ResolveVolumeSyncConflictRequestStatusResolved,
+		ResolveVolumeSyncConflictRequestStatusIgnored,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ResolveVolumeSyncConflictRequestStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case ResolveVolumeSyncConflictRequestStatusResolved:
+		return []byte(s), nil
+	case ResolveVolumeSyncConflictRequestStatusIgnored:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ResolveVolumeSyncConflictRequestStatus) UnmarshalText(data []byte) error {
+	switch ResolveVolumeSyncConflictRequestStatus(data) {
+	case ResolveVolumeSyncConflictRequestStatusResolved:
+		*s = ResolveVolumeSyncConflictRequestStatusResolved
+		return nil
+	case ResolveVolumeSyncConflictRequestStatusIgnored:
+		*s = ResolveVolumeSyncConflictRequestStatusIgnored
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/ResourceQuota
@@ -10943,32 +12277,32 @@ func (s *SandboxUpdateRequest) SetConfig(val OptSandboxUpdateConfig) {
 
 // Ref: #/components/schemas/SandboxVolume
 type SandboxVolume struct {
-	ID             string       `json:"id"`
-	TeamID         string       `json:"team_id"`
-	UserID         string       `json:"user_id"`
+	ID             OptString    `json:"id"`
+	TeamID         OptString    `json:"team_id"`
+	UserID         OptString    `json:"user_id"`
 	SourceVolumeID OptNilString `json:"source_volume_id"`
-	CacheSize      string       `json:"cache_size"`
+	CacheSize      OptString    `json:"cache_size"`
 	Prefetch       OptInt       `json:"prefetch"`
-	BufferSize     string       `json:"buffer_size"`
+	BufferSize     OptString    `json:"buffer_size"`
 	Writeback      OptBool      `json:"writeback"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
-	CreatedAt  time.Time           `json:"created_at"`
-	UpdatedAt  time.Time           `json:"updated_at"`
+	CreatedAt  OptDateTime         `json:"created_at"`
+	UpdatedAt  OptDateTime         `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
-func (s *SandboxVolume) GetID() string {
+func (s *SandboxVolume) GetID() OptString {
 	return s.ID
 }
 
 // GetTeamID returns the value of TeamID.
-func (s *SandboxVolume) GetTeamID() string {
+func (s *SandboxVolume) GetTeamID() OptString {
 	return s.TeamID
 }
 
 // GetUserID returns the value of UserID.
-func (s *SandboxVolume) GetUserID() string {
+func (s *SandboxVolume) GetUserID() OptString {
 	return s.UserID
 }
 
@@ -10978,7 +12312,7 @@ func (s *SandboxVolume) GetSourceVolumeID() OptNilString {
 }
 
 // GetCacheSize returns the value of CacheSize.
-func (s *SandboxVolume) GetCacheSize() string {
+func (s *SandboxVolume) GetCacheSize() OptString {
 	return s.CacheSize
 }
 
@@ -10988,7 +12322,7 @@ func (s *SandboxVolume) GetPrefetch() OptInt {
 }
 
 // GetBufferSize returns the value of BufferSize.
-func (s *SandboxVolume) GetBufferSize() string {
+func (s *SandboxVolume) GetBufferSize() OptString {
 	return s.BufferSize
 }
 
@@ -11003,27 +12337,27 @@ func (s *SandboxVolume) GetAccessMode() OptVolumeAccessMode {
 }
 
 // GetCreatedAt returns the value of CreatedAt.
-func (s *SandboxVolume) GetCreatedAt() time.Time {
+func (s *SandboxVolume) GetCreatedAt() OptDateTime {
 	return s.CreatedAt
 }
 
 // GetUpdatedAt returns the value of UpdatedAt.
-func (s *SandboxVolume) GetUpdatedAt() time.Time {
+func (s *SandboxVolume) GetUpdatedAt() OptDateTime {
 	return s.UpdatedAt
 }
 
 // SetID sets the value of ID.
-func (s *SandboxVolume) SetID(val string) {
+func (s *SandboxVolume) SetID(val OptString) {
 	s.ID = val
 }
 
 // SetTeamID sets the value of TeamID.
-func (s *SandboxVolume) SetTeamID(val string) {
+func (s *SandboxVolume) SetTeamID(val OptString) {
 	s.TeamID = val
 }
 
 // SetUserID sets the value of UserID.
-func (s *SandboxVolume) SetUserID(val string) {
+func (s *SandboxVolume) SetUserID(val OptString) {
 	s.UserID = val
 }
 
@@ -11033,7 +12367,7 @@ func (s *SandboxVolume) SetSourceVolumeID(val OptNilString) {
 }
 
 // SetCacheSize sets the value of CacheSize.
-func (s *SandboxVolume) SetCacheSize(val string) {
+func (s *SandboxVolume) SetCacheSize(val OptString) {
 	s.CacheSize = val
 }
 
@@ -11043,7 +12377,7 @@ func (s *SandboxVolume) SetPrefetch(val OptInt) {
 }
 
 // SetBufferSize sets the value of BufferSize.
-func (s *SandboxVolume) SetBufferSize(val string) {
+func (s *SandboxVolume) SetBufferSize(val OptString) {
 	s.BufferSize = val
 }
 
@@ -11058,12 +12392,12 @@ func (s *SandboxVolume) SetAccessMode(val OptVolumeAccessMode) {
 }
 
 // SetCreatedAt sets the value of CreatedAt.
-func (s *SandboxVolume) SetCreatedAt(val time.Time) {
+func (s *SandboxVolume) SetCreatedAt(val OptDateTime) {
 	s.CreatedAt = val
 }
 
 // SetUpdatedAt sets the value of UpdatedAt.
-func (s *SandboxVolume) SetUpdatedAt(val time.Time) {
+func (s *SandboxVolume) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
 }
 
@@ -13790,6 +15124,263 @@ func (SuccessUserResponseSuccess) AllValues() []SuccessUserResponseSuccess {
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncAppendResponse
+type SuccessVolumeSyncAppendResponse struct {
+	Success SuccessVolumeSyncAppendResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptAppendReplicaChangesResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncAppendResponse) GetSuccess() SuccessVolumeSyncAppendResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncAppendResponse) GetData() OptAppendReplicaChangesResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncAppendResponse) SetSuccess(val SuccessVolumeSyncAppendResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncAppendResponse) SetData(val OptAppendReplicaChangesResponse) {
+	s.Data = val
+}
+
+func (*SuccessVolumeSyncAppendResponse) aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes() {}
+
+type SuccessVolumeSyncAppendResponseSuccess bool
+
+const (
+	SuccessVolumeSyncAppendResponseSuccessTrue SuccessVolumeSyncAppendResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncAppendResponseSuccess values.
+func (SuccessVolumeSyncAppendResponseSuccess) AllValues() []SuccessVolumeSyncAppendResponseSuccess {
+	return []SuccessVolumeSyncAppendResponseSuccess{
+		SuccessVolumeSyncAppendResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncBootstrapResponse
+type SuccessVolumeSyncBootstrapResponse struct {
+	Success SuccessVolumeSyncBootstrapResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptVolumeSyncBootstrap `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncBootstrapResponse) GetSuccess() SuccessVolumeSyncBootstrapResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncBootstrapResponse) GetData() OptVolumeSyncBootstrap {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncBootstrapResponse) SetSuccess(val SuccessVolumeSyncBootstrapResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncBootstrapResponse) SetData(val OptVolumeSyncBootstrap) {
+	s.Data = val
+}
+
+func (*SuccessVolumeSyncBootstrapResponse) aPIV1SandboxvolumesIDSyncBootstrapPostRes() {}
+
+type SuccessVolumeSyncBootstrapResponseSuccess bool
+
+const (
+	SuccessVolumeSyncBootstrapResponseSuccessTrue SuccessVolumeSyncBootstrapResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncBootstrapResponseSuccess values.
+func (SuccessVolumeSyncBootstrapResponseSuccess) AllValues() []SuccessVolumeSyncBootstrapResponseSuccess {
+	return []SuccessVolumeSyncBootstrapResponseSuccess{
+		SuccessVolumeSyncBootstrapResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncChangeListResponse
+type SuccessVolumeSyncChangeListResponse struct {
+	Success SuccessVolumeSyncChangeListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptListVolumeSyncChangesResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncChangeListResponse) GetSuccess() SuccessVolumeSyncChangeListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncChangeListResponse) GetData() OptListVolumeSyncChangesResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncChangeListResponse) SetSuccess(val SuccessVolumeSyncChangeListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncChangeListResponse) SetData(val OptListVolumeSyncChangesResponse) {
+	s.Data = val
+}
+
+func (*SuccessVolumeSyncChangeListResponse) aPIV1SandboxvolumesIDSyncChangesGetRes() {}
+
+type SuccessVolumeSyncChangeListResponseSuccess bool
+
+const (
+	SuccessVolumeSyncChangeListResponseSuccessTrue SuccessVolumeSyncChangeListResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncChangeListResponseSuccess values.
+func (SuccessVolumeSyncChangeListResponseSuccess) AllValues() []SuccessVolumeSyncChangeListResponseSuccess {
+	return []SuccessVolumeSyncChangeListResponseSuccess{
+		SuccessVolumeSyncChangeListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncConflictListResponse
+type SuccessVolumeSyncConflictListResponse struct {
+	Success SuccessVolumeSyncConflictListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptListVolumeSyncConflictsResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncConflictListResponse) GetSuccess() SuccessVolumeSyncConflictListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncConflictListResponse) GetData() OptListVolumeSyncConflictsResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncConflictListResponse) SetSuccess(val SuccessVolumeSyncConflictListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncConflictListResponse) SetData(val OptListVolumeSyncConflictsResponse) {
+	s.Data = val
+}
+
+type SuccessVolumeSyncConflictListResponseSuccess bool
+
+const (
+	SuccessVolumeSyncConflictListResponseSuccessTrue SuccessVolumeSyncConflictListResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncConflictListResponseSuccess values.
+func (SuccessVolumeSyncConflictListResponseSuccess) AllValues() []SuccessVolumeSyncConflictListResponseSuccess {
+	return []SuccessVolumeSyncConflictListResponseSuccess{
+		SuccessVolumeSyncConflictListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncConflictResponse
+type SuccessVolumeSyncConflictResponse struct {
+	Success SuccessVolumeSyncConflictResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSyncConflict `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncConflictResponse) GetSuccess() SuccessVolumeSyncConflictResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncConflictResponse) GetData() OptSyncConflict {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncConflictResponse) SetSuccess(val SuccessVolumeSyncConflictResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncConflictResponse) SetData(val OptSyncConflict) {
+	s.Data = val
+}
+
+func (*SuccessVolumeSyncConflictResponse) aPIV1SandboxvolumesIDSyncConflictsConflictIDPutRes() {}
+
+type SuccessVolumeSyncConflictResponseSuccess bool
+
+const (
+	SuccessVolumeSyncConflictResponseSuccessTrue SuccessVolumeSyncConflictResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncConflictResponseSuccess values.
+func (SuccessVolumeSyncConflictResponseSuccess) AllValues() []SuccessVolumeSyncConflictResponseSuccess {
+	return []SuccessVolumeSyncConflictResponseSuccess{
+		SuccessVolumeSyncConflictResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessVolumeSyncReplicaResponse
+type SuccessVolumeSyncReplicaResponse struct {
+	Success SuccessVolumeSyncReplicaResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptVolumeSyncReplicaEnvelope `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeSyncReplicaResponse) GetSuccess() SuccessVolumeSyncReplicaResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeSyncReplicaResponse) GetData() OptVolumeSyncReplicaEnvelope {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeSyncReplicaResponse) SetSuccess(val SuccessVolumeSyncReplicaResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeSyncReplicaResponse) SetData(val OptVolumeSyncReplicaEnvelope) {
+	s.Data = val
+}
+
+func (*SuccessVolumeSyncReplicaResponse) aPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes() {}
+func (*SuccessVolumeSyncReplicaResponse) aPIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes()       {}
+
+type SuccessVolumeSyncReplicaResponseSuccess bool
+
+const (
+	SuccessVolumeSyncReplicaResponseSuccessTrue SuccessVolumeSyncReplicaResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeSyncReplicaResponseSuccess values.
+func (SuccessVolumeSyncReplicaResponseSuccess) AllValues() []SuccessVolumeSyncReplicaResponseSuccess {
+	return []SuccessVolumeSyncReplicaResponseSuccess{
+		SuccessVolumeSyncReplicaResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessWrittenResponse
 type SuccessWrittenResponse struct {
 	Success SuccessWrittenResponseSuccess `json:"success"`
@@ -13844,6 +15435,613 @@ func (SuccessWrittenResponseSuccess) AllValues() []SuccessWrittenResponseSuccess
 	return []SuccessWrittenResponseSuccess{
 		SuccessWrittenResponseSuccessTrue,
 	}
+}
+
+// Ref: #/components/schemas/SyncConflict
+type SyncConflict struct {
+	ID              OptString                  `json:"id"`
+	VolumeID        OptString                  `json:"volume_id"`
+	TeamID          OptString                  `json:"team_id"`
+	ReplicaID       OptNilString               `json:"replica_id"`
+	Path            OptString                  `json:"path"`
+	NormalizedPath  OptString                  `json:"normalized_path"`
+	ArtifactPath    OptString                  `json:"artifact_path"`
+	IncomingPath    OptNilString               `json:"incoming_path"`
+	IncomingOldPath OptNilString               `json:"incoming_old_path"`
+	ExistingSeq     OptNilInt64                `json:"existing_seq"`
+	Reason          OptString                  `json:"reason"`
+	Status          OptString                  `json:"status"`
+	Metadata        OptNilSyncConflictMetadata `json:"metadata"`
+	CreatedAt       OptDateTime                `json:"created_at"`
+	UpdatedAt       OptDateTime                `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SyncConflict) GetID() OptString {
+	return s.ID
+}
+
+// GetVolumeID returns the value of VolumeID.
+func (s *SyncConflict) GetVolumeID() OptString {
+	return s.VolumeID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SyncConflict) GetTeamID() OptString {
+	return s.TeamID
+}
+
+// GetReplicaID returns the value of ReplicaID.
+func (s *SyncConflict) GetReplicaID() OptNilString {
+	return s.ReplicaID
+}
+
+// GetPath returns the value of Path.
+func (s *SyncConflict) GetPath() OptString {
+	return s.Path
+}
+
+// GetNormalizedPath returns the value of NormalizedPath.
+func (s *SyncConflict) GetNormalizedPath() OptString {
+	return s.NormalizedPath
+}
+
+// GetArtifactPath returns the value of ArtifactPath.
+func (s *SyncConflict) GetArtifactPath() OptString {
+	return s.ArtifactPath
+}
+
+// GetIncomingPath returns the value of IncomingPath.
+func (s *SyncConflict) GetIncomingPath() OptNilString {
+	return s.IncomingPath
+}
+
+// GetIncomingOldPath returns the value of IncomingOldPath.
+func (s *SyncConflict) GetIncomingOldPath() OptNilString {
+	return s.IncomingOldPath
+}
+
+// GetExistingSeq returns the value of ExistingSeq.
+func (s *SyncConflict) GetExistingSeq() OptNilInt64 {
+	return s.ExistingSeq
+}
+
+// GetReason returns the value of Reason.
+func (s *SyncConflict) GetReason() OptString {
+	return s.Reason
+}
+
+// GetStatus returns the value of Status.
+func (s *SyncConflict) GetStatus() OptString {
+	return s.Status
+}
+
+// GetMetadata returns the value of Metadata.
+func (s *SyncConflict) GetMetadata() OptNilSyncConflictMetadata {
+	return s.Metadata
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SyncConflict) GetCreatedAt() OptDateTime {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SyncConflict) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *SyncConflict) SetID(val OptString) {
+	s.ID = val
+}
+
+// SetVolumeID sets the value of VolumeID.
+func (s *SyncConflict) SetVolumeID(val OptString) {
+	s.VolumeID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SyncConflict) SetTeamID(val OptString) {
+	s.TeamID = val
+}
+
+// SetReplicaID sets the value of ReplicaID.
+func (s *SyncConflict) SetReplicaID(val OptNilString) {
+	s.ReplicaID = val
+}
+
+// SetPath sets the value of Path.
+func (s *SyncConflict) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetNormalizedPath sets the value of NormalizedPath.
+func (s *SyncConflict) SetNormalizedPath(val OptString) {
+	s.NormalizedPath = val
+}
+
+// SetArtifactPath sets the value of ArtifactPath.
+func (s *SyncConflict) SetArtifactPath(val OptString) {
+	s.ArtifactPath = val
+}
+
+// SetIncomingPath sets the value of IncomingPath.
+func (s *SyncConflict) SetIncomingPath(val OptNilString) {
+	s.IncomingPath = val
+}
+
+// SetIncomingOldPath sets the value of IncomingOldPath.
+func (s *SyncConflict) SetIncomingOldPath(val OptNilString) {
+	s.IncomingOldPath = val
+}
+
+// SetExistingSeq sets the value of ExistingSeq.
+func (s *SyncConflict) SetExistingSeq(val OptNilInt64) {
+	s.ExistingSeq = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SyncConflict) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// SetStatus sets the value of Status.
+func (s *SyncConflict) SetStatus(val OptString) {
+	s.Status = val
+}
+
+// SetMetadata sets the value of Metadata.
+func (s *SyncConflict) SetMetadata(val OptNilSyncConflictMetadata) {
+	s.Metadata = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SyncConflict) SetCreatedAt(val OptDateTime) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SyncConflict) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
+}
+
+type SyncConflictMetadata map[string]jx.Raw
+
+func (s *SyncConflictMetadata) init() SyncConflictMetadata {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SyncEventType
+type SyncEventType string
+
+const (
+	SyncEventTypeCreate     SyncEventType = "create"
+	SyncEventTypeWrite      SyncEventType = "write"
+	SyncEventTypeRemove     SyncEventType = "remove"
+	SyncEventTypeRename     SyncEventType = "rename"
+	SyncEventTypeChmod      SyncEventType = "chmod"
+	SyncEventTypeInvalidate SyncEventType = "invalidate"
+)
+
+// AllValues returns all SyncEventType values.
+func (SyncEventType) AllValues() []SyncEventType {
+	return []SyncEventType{
+		SyncEventTypeCreate,
+		SyncEventTypeWrite,
+		SyncEventTypeRemove,
+		SyncEventTypeRename,
+		SyncEventTypeChmod,
+		SyncEventTypeInvalidate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SyncEventType) MarshalText() ([]byte, error) {
+	switch s {
+	case SyncEventTypeCreate:
+		return []byte(s), nil
+	case SyncEventTypeWrite:
+		return []byte(s), nil
+	case SyncEventTypeRemove:
+		return []byte(s), nil
+	case SyncEventTypeRename:
+		return []byte(s), nil
+	case SyncEventTypeChmod:
+		return []byte(s), nil
+	case SyncEventTypeInvalidate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SyncEventType) UnmarshalText(data []byte) error {
+	switch SyncEventType(data) {
+	case SyncEventTypeCreate:
+		*s = SyncEventTypeCreate
+		return nil
+	case SyncEventTypeWrite:
+		*s = SyncEventTypeWrite
+		return nil
+	case SyncEventTypeRemove:
+		*s = SyncEventTypeRemove
+		return nil
+	case SyncEventTypeRename:
+		*s = SyncEventTypeRename
+		return nil
+	case SyncEventTypeChmod:
+		*s = SyncEventTypeChmod
+		return nil
+	case SyncEventTypeInvalidate:
+		*s = SyncEventTypeInvalidate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SyncJournalEntry
+type SyncJournalEntry struct {
+	Seq               OptInt64                       `json:"seq"`
+	VolumeID          OptString                      `json:"volume_id"`
+	TeamID            OptString                      `json:"team_id"`
+	Source            OptSyncJournalEntrySource      `json:"source"`
+	ReplicaID         OptNilString                   `json:"replica_id"`
+	EventType         OptSyncEventType               `json:"event_type"`
+	Path              OptString                      `json:"path"`
+	NormalizedPath    OptString                      `json:"normalized_path"`
+	OldPath           OptNilString                   `json:"old_path"`
+	NormalizedOldPath OptNilString                   `json:"normalized_old_path"`
+	Tombstone         OptBool                        `json:"tombstone"`
+	ContentSHA256     OptNilString                   `json:"content_sha256"`
+	SizeBytes         OptNilInt64                    `json:"size_bytes"`
+	Metadata          OptNilSyncJournalEntryMetadata `json:"metadata"`
+	CreatedAt         OptDateTime                    `json:"created_at"`
+}
+
+// GetSeq returns the value of Seq.
+func (s *SyncJournalEntry) GetSeq() OptInt64 {
+	return s.Seq
+}
+
+// GetVolumeID returns the value of VolumeID.
+func (s *SyncJournalEntry) GetVolumeID() OptString {
+	return s.VolumeID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SyncJournalEntry) GetTeamID() OptString {
+	return s.TeamID
+}
+
+// GetSource returns the value of Source.
+func (s *SyncJournalEntry) GetSource() OptSyncJournalEntrySource {
+	return s.Source
+}
+
+// GetReplicaID returns the value of ReplicaID.
+func (s *SyncJournalEntry) GetReplicaID() OptNilString {
+	return s.ReplicaID
+}
+
+// GetEventType returns the value of EventType.
+func (s *SyncJournalEntry) GetEventType() OptSyncEventType {
+	return s.EventType
+}
+
+// GetPath returns the value of Path.
+func (s *SyncJournalEntry) GetPath() OptString {
+	return s.Path
+}
+
+// GetNormalizedPath returns the value of NormalizedPath.
+func (s *SyncJournalEntry) GetNormalizedPath() OptString {
+	return s.NormalizedPath
+}
+
+// GetOldPath returns the value of OldPath.
+func (s *SyncJournalEntry) GetOldPath() OptNilString {
+	return s.OldPath
+}
+
+// GetNormalizedOldPath returns the value of NormalizedOldPath.
+func (s *SyncJournalEntry) GetNormalizedOldPath() OptNilString {
+	return s.NormalizedOldPath
+}
+
+// GetTombstone returns the value of Tombstone.
+func (s *SyncJournalEntry) GetTombstone() OptBool {
+	return s.Tombstone
+}
+
+// GetContentSHA256 returns the value of ContentSHA256.
+func (s *SyncJournalEntry) GetContentSHA256() OptNilString {
+	return s.ContentSHA256
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *SyncJournalEntry) GetSizeBytes() OptNilInt64 {
+	return s.SizeBytes
+}
+
+// GetMetadata returns the value of Metadata.
+func (s *SyncJournalEntry) GetMetadata() OptNilSyncJournalEntryMetadata {
+	return s.Metadata
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SyncJournalEntry) GetCreatedAt() OptDateTime {
+	return s.CreatedAt
+}
+
+// SetSeq sets the value of Seq.
+func (s *SyncJournalEntry) SetSeq(val OptInt64) {
+	s.Seq = val
+}
+
+// SetVolumeID sets the value of VolumeID.
+func (s *SyncJournalEntry) SetVolumeID(val OptString) {
+	s.VolumeID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SyncJournalEntry) SetTeamID(val OptString) {
+	s.TeamID = val
+}
+
+// SetSource sets the value of Source.
+func (s *SyncJournalEntry) SetSource(val OptSyncJournalEntrySource) {
+	s.Source = val
+}
+
+// SetReplicaID sets the value of ReplicaID.
+func (s *SyncJournalEntry) SetReplicaID(val OptNilString) {
+	s.ReplicaID = val
+}
+
+// SetEventType sets the value of EventType.
+func (s *SyncJournalEntry) SetEventType(val OptSyncEventType) {
+	s.EventType = val
+}
+
+// SetPath sets the value of Path.
+func (s *SyncJournalEntry) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetNormalizedPath sets the value of NormalizedPath.
+func (s *SyncJournalEntry) SetNormalizedPath(val OptString) {
+	s.NormalizedPath = val
+}
+
+// SetOldPath sets the value of OldPath.
+func (s *SyncJournalEntry) SetOldPath(val OptNilString) {
+	s.OldPath = val
+}
+
+// SetNormalizedOldPath sets the value of NormalizedOldPath.
+func (s *SyncJournalEntry) SetNormalizedOldPath(val OptNilString) {
+	s.NormalizedOldPath = val
+}
+
+// SetTombstone sets the value of Tombstone.
+func (s *SyncJournalEntry) SetTombstone(val OptBool) {
+	s.Tombstone = val
+}
+
+// SetContentSHA256 sets the value of ContentSHA256.
+func (s *SyncJournalEntry) SetContentSHA256(val OptNilString) {
+	s.ContentSHA256 = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *SyncJournalEntry) SetSizeBytes(val OptNilInt64) {
+	s.SizeBytes = val
+}
+
+// SetMetadata sets the value of Metadata.
+func (s *SyncJournalEntry) SetMetadata(val OptNilSyncJournalEntryMetadata) {
+	s.Metadata = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SyncJournalEntry) SetCreatedAt(val OptDateTime) {
+	s.CreatedAt = val
+}
+
+type SyncJournalEntryMetadata map[string]jx.Raw
+
+func (s *SyncJournalEntryMetadata) init() SyncJournalEntryMetadata {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+type SyncJournalEntrySource string
+
+const (
+	SyncJournalEntrySourceReplica SyncJournalEntrySource = "replica"
+	SyncJournalEntrySourceSandbox SyncJournalEntrySource = "sandbox"
+)
+
+// AllValues returns all SyncJournalEntrySource values.
+func (SyncJournalEntrySource) AllValues() []SyncJournalEntrySource {
+	return []SyncJournalEntrySource{
+		SyncJournalEntrySourceReplica,
+		SyncJournalEntrySourceSandbox,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SyncJournalEntrySource) MarshalText() ([]byte, error) {
+	switch s {
+	case SyncJournalEntrySourceReplica:
+		return []byte(s), nil
+	case SyncJournalEntrySourceSandbox:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SyncJournalEntrySource) UnmarshalText(data []byte) error {
+	switch SyncJournalEntrySource(data) {
+	case SyncJournalEntrySourceReplica:
+		*s = SyncJournalEntrySourceReplica
+		return nil
+	case SyncJournalEntrySourceSandbox:
+		*s = SyncJournalEntrySourceSandbox
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SyncReplica
+type SyncReplica struct {
+	ID             OptString                           `json:"id"`
+	VolumeID       OptString                           `json:"volume_id"`
+	TeamID         OptString                           `json:"team_id"`
+	DisplayName    OptString                           `json:"display_name"`
+	Platform       OptString                           `json:"platform"`
+	RootPath       OptString                           `json:"root_path"`
+	CaseSensitive  OptBool                             `json:"case_sensitive"`
+	Capabilities   OptVolumeSyncFilesystemCapabilities `json:"capabilities"`
+	LastSeenAt     OptDateTime                         `json:"last_seen_at"`
+	LastAppliedSeq OptInt64                            `json:"last_applied_seq"`
+	CreatedAt      OptDateTime                         `json:"created_at"`
+	UpdatedAt      OptDateTime                         `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SyncReplica) GetID() OptString {
+	return s.ID
+}
+
+// GetVolumeID returns the value of VolumeID.
+func (s *SyncReplica) GetVolumeID() OptString {
+	return s.VolumeID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SyncReplica) GetTeamID() OptString {
+	return s.TeamID
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *SyncReplica) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetPlatform returns the value of Platform.
+func (s *SyncReplica) GetPlatform() OptString {
+	return s.Platform
+}
+
+// GetRootPath returns the value of RootPath.
+func (s *SyncReplica) GetRootPath() OptString {
+	return s.RootPath
+}
+
+// GetCaseSensitive returns the value of CaseSensitive.
+func (s *SyncReplica) GetCaseSensitive() OptBool {
+	return s.CaseSensitive
+}
+
+// GetCapabilities returns the value of Capabilities.
+func (s *SyncReplica) GetCapabilities() OptVolumeSyncFilesystemCapabilities {
+	return s.Capabilities
+}
+
+// GetLastSeenAt returns the value of LastSeenAt.
+func (s *SyncReplica) GetLastSeenAt() OptDateTime {
+	return s.LastSeenAt
+}
+
+// GetLastAppliedSeq returns the value of LastAppliedSeq.
+func (s *SyncReplica) GetLastAppliedSeq() OptInt64 {
+	return s.LastAppliedSeq
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SyncReplica) GetCreatedAt() OptDateTime {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SyncReplica) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *SyncReplica) SetID(val OptString) {
+	s.ID = val
+}
+
+// SetVolumeID sets the value of VolumeID.
+func (s *SyncReplica) SetVolumeID(val OptString) {
+	s.VolumeID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SyncReplica) SetTeamID(val OptString) {
+	s.TeamID = val
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *SyncReplica) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetPlatform sets the value of Platform.
+func (s *SyncReplica) SetPlatform(val OptString) {
+	s.Platform = val
+}
+
+// SetRootPath sets the value of RootPath.
+func (s *SyncReplica) SetRootPath(val OptString) {
+	s.RootPath = val
+}
+
+// SetCaseSensitive sets the value of CaseSensitive.
+func (s *SyncReplica) SetCaseSensitive(val OptBool) {
+	s.CaseSensitive = val
+}
+
+// SetCapabilities sets the value of Capabilities.
+func (s *SyncReplica) SetCapabilities(val OptVolumeSyncFilesystemCapabilities) {
+	s.Capabilities = val
+}
+
+// SetLastSeenAt sets the value of LastSeenAt.
+func (s *SyncReplica) SetLastSeenAt(val OptDateTime) {
+	s.LastSeenAt = val
+}
+
+// SetLastAppliedSeq sets the value of LastAppliedSeq.
+func (s *SyncReplica) SetLastAppliedSeq(val OptInt64) {
+	s.LastAppliedSeq = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SyncReplica) SetCreatedAt(val OptDateTime) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SyncReplica) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
 }
 
 // Client certificate projection used for TLS terminate-reoriginate auth.
@@ -14559,6 +16757,21 @@ func (s *UpdateRegionRequest) SetEnabled(val OptBool) {
 	s.Enabled = val
 }
 
+// Ref: #/components/schemas/UpdateSyncReplicaCursorRequest
+type UpdateSyncReplicaCursorRequest struct {
+	LastAppliedSeq int64 `json:"last_applied_seq"`
+}
+
+// GetLastAppliedSeq returns the value of LastAppliedSeq.
+func (s *UpdateSyncReplicaCursorRequest) GetLastAppliedSeq() int64 {
+	return s.LastAppliedSeq
+}
+
+// SetLastAppliedSeq sets the value of LastAppliedSeq.
+func (s *UpdateSyncReplicaCursorRequest) SetLastAppliedSeq(val int64) {
+	s.LastAppliedSeq = val
+}
+
 // Ref: #/components/schemas/UpdateTeamMemberRequest
 type UpdateTeamMemberRequest struct {
 	Role UpdateTeamMemberRequestRole `json:"role"`
@@ -14683,6 +16896,65 @@ func (s *UpdateUserRequest) SetAvatarURL(val OptString) {
 // SetDefaultTeamID sets the value of DefaultTeamID.
 func (s *UpdateUserRequest) SetDefaultTeamID(val OptNilString) {
 	s.DefaultTeamID = val
+}
+
+// Ref: #/components/schemas/UpsertSyncReplicaRequest
+type UpsertSyncReplicaRequest struct {
+	DisplayName   OptString                           `json:"display_name"`
+	Platform      OptString                           `json:"platform"`
+	RootPath      OptString                           `json:"root_path"`
+	CaseSensitive OptBool                             `json:"case_sensitive"`
+	Capabilities  OptVolumeSyncFilesystemCapabilities `json:"capabilities"`
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *UpsertSyncReplicaRequest) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetPlatform returns the value of Platform.
+func (s *UpsertSyncReplicaRequest) GetPlatform() OptString {
+	return s.Platform
+}
+
+// GetRootPath returns the value of RootPath.
+func (s *UpsertSyncReplicaRequest) GetRootPath() OptString {
+	return s.RootPath
+}
+
+// GetCaseSensitive returns the value of CaseSensitive.
+func (s *UpsertSyncReplicaRequest) GetCaseSensitive() OptBool {
+	return s.CaseSensitive
+}
+
+// GetCapabilities returns the value of Capabilities.
+func (s *UpsertSyncReplicaRequest) GetCapabilities() OptVolumeSyncFilesystemCapabilities {
+	return s.Capabilities
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *UpsertSyncReplicaRequest) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetPlatform sets the value of Platform.
+func (s *UpsertSyncReplicaRequest) SetPlatform(val OptString) {
+	s.Platform = val
+}
+
+// SetRootPath sets the value of RootPath.
+func (s *UpsertSyncReplicaRequest) SetRootPath(val OptString) {
+	s.RootPath = val
+}
+
+// SetCaseSensitive sets the value of CaseSensitive.
+func (s *UpsertSyncReplicaRequest) SetCaseSensitive(val OptBool) {
+	s.CaseSensitive = val
+}
+
+// SetCapabilities sets the value of Capabilities.
+func (s *UpsertSyncReplicaRequest) SetCapabilities(val OptVolumeSyncFilesystemCapabilities) {
+	s.Capabilities = val
 }
 
 // Ref: #/components/schemas/User
@@ -14913,6 +17185,495 @@ func (s *VolumeConfig) SetBufferSize(val OptString) {
 // SetWriteback sets the value of Writeback.
 func (s *VolumeConfig) SetWriteback(val OptBool) {
 	s.Writeback = val
+}
+
+// Ref: #/components/schemas/VolumeSyncBootstrap
+type VolumeSyncBootstrap struct {
+	Snapshot            Snapshot `json:"snapshot"`
+	ReplayAfterSeq      int64    `json:"replay_after_seq"`
+	ArchiveDownloadPath string   `json:"archive_download_path"`
+}
+
+// GetSnapshot returns the value of Snapshot.
+func (s *VolumeSyncBootstrap) GetSnapshot() Snapshot {
+	return s.Snapshot
+}
+
+// GetReplayAfterSeq returns the value of ReplayAfterSeq.
+func (s *VolumeSyncBootstrap) GetReplayAfterSeq() int64 {
+	return s.ReplayAfterSeq
+}
+
+// GetArchiveDownloadPath returns the value of ArchiveDownloadPath.
+func (s *VolumeSyncBootstrap) GetArchiveDownloadPath() string {
+	return s.ArchiveDownloadPath
+}
+
+// SetSnapshot sets the value of Snapshot.
+func (s *VolumeSyncBootstrap) SetSnapshot(val Snapshot) {
+	s.Snapshot = val
+}
+
+// SetReplayAfterSeq sets the value of ReplayAfterSeq.
+func (s *VolumeSyncBootstrap) SetReplayAfterSeq(val int64) {
+	s.ReplayAfterSeq = val
+}
+
+// SetArchiveDownloadPath sets the value of ArchiveDownloadPath.
+func (s *VolumeSyncBootstrap) SetArchiveDownloadPath(val string) {
+	s.ArchiveDownloadPath = val
+}
+
+// Ref: #/components/schemas/VolumeSyncBootstrapCompatibilityConflictDetails
+type VolumeSyncBootstrapCompatibilityConflictDetails struct {
+	Reason       VolumeSyncBootstrapCompatibilityConflictDetailsReason `json:"reason"`
+	SnapshotID   string                                                `json:"snapshot_id"`
+	Capabilities VolumeSyncFilesystemCapabilities                      `json:"capabilities"`
+	Issues       []VolumeSyncCompatibilityIssue                        `json:"issues"`
+}
+
+// GetReason returns the value of Reason.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) GetReason() VolumeSyncBootstrapCompatibilityConflictDetailsReason {
+	return s.Reason
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetCapabilities returns the value of Capabilities.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) GetCapabilities() VolumeSyncFilesystemCapabilities {
+	return s.Capabilities
+}
+
+// GetIssues returns the value of Issues.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) GetIssues() []VolumeSyncCompatibilityIssue {
+	return s.Issues
+}
+
+// SetReason sets the value of Reason.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) SetReason(val VolumeSyncBootstrapCompatibilityConflictDetailsReason) {
+	s.Reason = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetCapabilities sets the value of Capabilities.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) SetCapabilities(val VolumeSyncFilesystemCapabilities) {
+	s.Capabilities = val
+}
+
+// SetIssues sets the value of Issues.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetails) SetIssues(val []VolumeSyncCompatibilityIssue) {
+	s.Issues = val
+}
+
+type VolumeSyncBootstrapCompatibilityConflictDetailsReason string
+
+const (
+	VolumeSyncBootstrapCompatibilityConflictDetailsReasonNamespaceIncompatible VolumeSyncBootstrapCompatibilityConflictDetailsReason = "namespace_incompatible"
+)
+
+// AllValues returns all VolumeSyncBootstrapCompatibilityConflictDetailsReason values.
+func (VolumeSyncBootstrapCompatibilityConflictDetailsReason) AllValues() []VolumeSyncBootstrapCompatibilityConflictDetailsReason {
+	return []VolumeSyncBootstrapCompatibilityConflictDetailsReason{
+		VolumeSyncBootstrapCompatibilityConflictDetailsReasonNamespaceIncompatible,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s VolumeSyncBootstrapCompatibilityConflictDetailsReason) MarshalText() ([]byte, error) {
+	switch s {
+	case VolumeSyncBootstrapCompatibilityConflictDetailsReasonNamespaceIncompatible:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *VolumeSyncBootstrapCompatibilityConflictDetailsReason) UnmarshalText(data []byte) error {
+	switch VolumeSyncBootstrapCompatibilityConflictDetailsReason(data) {
+	case VolumeSyncBootstrapCompatibilityConflictDetailsReasonNamespaceIncompatible:
+		*s = VolumeSyncBootstrapCompatibilityConflictDetailsReasonNamespaceIncompatible
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/VolumeSyncBootstrapConflictErrorEnvelope
+type VolumeSyncBootstrapConflictErrorEnvelope struct {
+	Success VolumeSyncBootstrapConflictErrorEnvelopeSuccess `json:"success"`
+	// Merged property.
+	Error VolumeSyncBootstrapConflictErrorEnvelopeError `json:"error"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *VolumeSyncBootstrapConflictErrorEnvelope) GetSuccess() VolumeSyncBootstrapConflictErrorEnvelopeSuccess {
+	return s.Success
+}
+
+// GetError returns the value of Error.
+func (s *VolumeSyncBootstrapConflictErrorEnvelope) GetError() VolumeSyncBootstrapConflictErrorEnvelopeError {
+	return s.Error
+}
+
+// SetSuccess sets the value of Success.
+func (s *VolumeSyncBootstrapConflictErrorEnvelope) SetSuccess(val VolumeSyncBootstrapConflictErrorEnvelopeSuccess) {
+	s.Success = val
+}
+
+// SetError sets the value of Error.
+func (s *VolumeSyncBootstrapConflictErrorEnvelope) SetError(val VolumeSyncBootstrapConflictErrorEnvelopeError) {
+	s.Error = val
+}
+
+func (*VolumeSyncBootstrapConflictErrorEnvelope) aPIV1SandboxvolumesIDSyncBootstrapPostRes() {}
+
+// Merged schema.
+type VolumeSyncBootstrapConflictErrorEnvelopeError struct {
+	// Merged property.
+	Code string `json:"code"`
+	// Merged property.
+	Message string `json:"message"`
+	// Merged property.
+	Details OptVolumeSyncBootstrapCompatibilityConflictDetails `json:"details"`
+}
+
+// GetCode returns the value of Code.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) GetCode() string {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) GetMessage() string {
+	return s.Message
+}
+
+// GetDetails returns the value of Details.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) GetDetails() OptVolumeSyncBootstrapCompatibilityConflictDetails {
+	return s.Details
+}
+
+// SetCode sets the value of Code.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) SetCode(val string) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) SetMessage(val string) {
+	s.Message = val
+}
+
+// SetDetails sets the value of Details.
+func (s *VolumeSyncBootstrapConflictErrorEnvelopeError) SetDetails(val OptVolumeSyncBootstrapCompatibilityConflictDetails) {
+	s.Details = val
+}
+
+type VolumeSyncBootstrapConflictErrorEnvelopeSuccess bool
+
+const (
+	VolumeSyncBootstrapConflictErrorEnvelopeSuccessFalse VolumeSyncBootstrapConflictErrorEnvelopeSuccess = false
+)
+
+// AllValues returns all VolumeSyncBootstrapConflictErrorEnvelopeSuccess values.
+func (VolumeSyncBootstrapConflictErrorEnvelopeSuccess) AllValues() []VolumeSyncBootstrapConflictErrorEnvelopeSuccess {
+	return []VolumeSyncBootstrapConflictErrorEnvelopeSuccess{
+		VolumeSyncBootstrapConflictErrorEnvelopeSuccessFalse,
+	}
+}
+
+// Ref: #/components/schemas/VolumeSyncCompatibilityIssue
+type VolumeSyncCompatibilityIssue struct {
+	Code           string    `json:"code"`
+	Path           OptString `json:"path"`
+	NormalizedPath OptString `json:"normalized_path"`
+	Paths          []string  `json:"paths"`
+	Segment        OptString `json:"segment"`
+	Message        OptString `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *VolumeSyncCompatibilityIssue) GetCode() string {
+	return s.Code
+}
+
+// GetPath returns the value of Path.
+func (s *VolumeSyncCompatibilityIssue) GetPath() OptString {
+	return s.Path
+}
+
+// GetNormalizedPath returns the value of NormalizedPath.
+func (s *VolumeSyncCompatibilityIssue) GetNormalizedPath() OptString {
+	return s.NormalizedPath
+}
+
+// GetPaths returns the value of Paths.
+func (s *VolumeSyncCompatibilityIssue) GetPaths() []string {
+	return s.Paths
+}
+
+// GetSegment returns the value of Segment.
+func (s *VolumeSyncCompatibilityIssue) GetSegment() OptString {
+	return s.Segment
+}
+
+// GetMessage returns the value of Message.
+func (s *VolumeSyncCompatibilityIssue) GetMessage() OptString {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *VolumeSyncCompatibilityIssue) SetCode(val string) {
+	s.Code = val
+}
+
+// SetPath sets the value of Path.
+func (s *VolumeSyncCompatibilityIssue) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetNormalizedPath sets the value of NormalizedPath.
+func (s *VolumeSyncCompatibilityIssue) SetNormalizedPath(val OptString) {
+	s.NormalizedPath = val
+}
+
+// SetPaths sets the value of Paths.
+func (s *VolumeSyncCompatibilityIssue) SetPaths(val []string) {
+	s.Paths = val
+}
+
+// SetSegment sets the value of Segment.
+func (s *VolumeSyncCompatibilityIssue) SetSegment(val OptString) {
+	s.Segment = val
+}
+
+// SetMessage sets the value of Message.
+func (s *VolumeSyncCompatibilityIssue) SetMessage(val OptString) {
+	s.Message = val
+}
+
+// Ref: #/components/schemas/VolumeSyncFilesystemCapabilities
+type VolumeSyncFilesystemCapabilities struct {
+	CaseSensitive                   bool `json:"case_sensitive"`
+	UnicodeNormalizationInsensitive bool `json:"unicode_normalization_insensitive"`
+	WindowsCompatiblePaths          bool `json:"windows_compatible_paths"`
+}
+
+// GetCaseSensitive returns the value of CaseSensitive.
+func (s *VolumeSyncFilesystemCapabilities) GetCaseSensitive() bool {
+	return s.CaseSensitive
+}
+
+// GetUnicodeNormalizationInsensitive returns the value of UnicodeNormalizationInsensitive.
+func (s *VolumeSyncFilesystemCapabilities) GetUnicodeNormalizationInsensitive() bool {
+	return s.UnicodeNormalizationInsensitive
+}
+
+// GetWindowsCompatiblePaths returns the value of WindowsCompatiblePaths.
+func (s *VolumeSyncFilesystemCapabilities) GetWindowsCompatiblePaths() bool {
+	return s.WindowsCompatiblePaths
+}
+
+// SetCaseSensitive sets the value of CaseSensitive.
+func (s *VolumeSyncFilesystemCapabilities) SetCaseSensitive(val bool) {
+	s.CaseSensitive = val
+}
+
+// SetUnicodeNormalizationInsensitive sets the value of UnicodeNormalizationInsensitive.
+func (s *VolumeSyncFilesystemCapabilities) SetUnicodeNormalizationInsensitive(val bool) {
+	s.UnicodeNormalizationInsensitive = val
+}
+
+// SetWindowsCompatiblePaths sets the value of WindowsCompatiblePaths.
+func (s *VolumeSyncFilesystemCapabilities) SetWindowsCompatiblePaths(val bool) {
+	s.WindowsCompatiblePaths = val
+}
+
+// Ref: #/components/schemas/VolumeSyncReplicaEnvelope
+type VolumeSyncReplicaEnvelope struct {
+	Replica SyncReplica `json:"replica"`
+	HeadSeq int64       `json:"head_seq"`
+}
+
+// GetReplica returns the value of Replica.
+func (s *VolumeSyncReplicaEnvelope) GetReplica() SyncReplica {
+	return s.Replica
+}
+
+// GetHeadSeq returns the value of HeadSeq.
+func (s *VolumeSyncReplicaEnvelope) GetHeadSeq() int64 {
+	return s.HeadSeq
+}
+
+// SetReplica sets the value of Replica.
+func (s *VolumeSyncReplicaEnvelope) SetReplica(val SyncReplica) {
+	s.Replica = val
+}
+
+// SetHeadSeq sets the value of HeadSeq.
+func (s *VolumeSyncReplicaEnvelope) SetHeadSeq(val int64) {
+	s.HeadSeq = val
+}
+
+// Ref: #/components/schemas/VolumeSyncReseedRequiredDetails
+type VolumeSyncReseedRequiredDetails struct {
+	Reason           VolumeSyncReseedRequiredDetailsReason `json:"reason"`
+	RetainedAfterSeq int64                                 `json:"retained_after_seq"`
+	HeadSeq          int64                                 `json:"head_seq"`
+}
+
+// GetReason returns the value of Reason.
+func (s *VolumeSyncReseedRequiredDetails) GetReason() VolumeSyncReseedRequiredDetailsReason {
+	return s.Reason
+}
+
+// GetRetainedAfterSeq returns the value of RetainedAfterSeq.
+func (s *VolumeSyncReseedRequiredDetails) GetRetainedAfterSeq() int64 {
+	return s.RetainedAfterSeq
+}
+
+// GetHeadSeq returns the value of HeadSeq.
+func (s *VolumeSyncReseedRequiredDetails) GetHeadSeq() int64 {
+	return s.HeadSeq
+}
+
+// SetReason sets the value of Reason.
+func (s *VolumeSyncReseedRequiredDetails) SetReason(val VolumeSyncReseedRequiredDetailsReason) {
+	s.Reason = val
+}
+
+// SetRetainedAfterSeq sets the value of RetainedAfterSeq.
+func (s *VolumeSyncReseedRequiredDetails) SetRetainedAfterSeq(val int64) {
+	s.RetainedAfterSeq = val
+}
+
+// SetHeadSeq sets the value of HeadSeq.
+func (s *VolumeSyncReseedRequiredDetails) SetHeadSeq(val int64) {
+	s.HeadSeq = val
+}
+
+type VolumeSyncReseedRequiredDetailsReason string
+
+const (
+	VolumeSyncReseedRequiredDetailsReasonReseedRequired VolumeSyncReseedRequiredDetailsReason = "reseed_required"
+)
+
+// AllValues returns all VolumeSyncReseedRequiredDetailsReason values.
+func (VolumeSyncReseedRequiredDetailsReason) AllValues() []VolumeSyncReseedRequiredDetailsReason {
+	return []VolumeSyncReseedRequiredDetailsReason{
+		VolumeSyncReseedRequiredDetailsReasonReseedRequired,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s VolumeSyncReseedRequiredDetailsReason) MarshalText() ([]byte, error) {
+	switch s {
+	case VolumeSyncReseedRequiredDetailsReasonReseedRequired:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *VolumeSyncReseedRequiredDetailsReason) UnmarshalText(data []byte) error {
+	switch VolumeSyncReseedRequiredDetailsReason(data) {
+	case VolumeSyncReseedRequiredDetailsReasonReseedRequired:
+		*s = VolumeSyncReseedRequiredDetailsReasonReseedRequired
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/VolumeSyncReseedRequiredErrorEnvelope
+type VolumeSyncReseedRequiredErrorEnvelope struct {
+	Success VolumeSyncReseedRequiredErrorEnvelopeSuccess `json:"success"`
+	// Merged property.
+	Error VolumeSyncReseedRequiredErrorEnvelopeError `json:"error"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *VolumeSyncReseedRequiredErrorEnvelope) GetSuccess() VolumeSyncReseedRequiredErrorEnvelopeSuccess {
+	return s.Success
+}
+
+// GetError returns the value of Error.
+func (s *VolumeSyncReseedRequiredErrorEnvelope) GetError() VolumeSyncReseedRequiredErrorEnvelopeError {
+	return s.Error
+}
+
+// SetSuccess sets the value of Success.
+func (s *VolumeSyncReseedRequiredErrorEnvelope) SetSuccess(val VolumeSyncReseedRequiredErrorEnvelopeSuccess) {
+	s.Success = val
+}
+
+// SetError sets the value of Error.
+func (s *VolumeSyncReseedRequiredErrorEnvelope) SetError(val VolumeSyncReseedRequiredErrorEnvelopeError) {
+	s.Error = val
+}
+
+func (*VolumeSyncReseedRequiredErrorEnvelope) aPIV1SandboxvolumesIDSyncChangesGetRes() {}
+
+// Merged schema.
+type VolumeSyncReseedRequiredErrorEnvelopeError struct {
+	// Merged property.
+	Code string `json:"code"`
+	// Merged property.
+	Message string `json:"message"`
+	// Merged property.
+	Details OptVolumeSyncReseedRequiredDetails `json:"details"`
+}
+
+// GetCode returns the value of Code.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) GetCode() string {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) GetMessage() string {
+	return s.Message
+}
+
+// GetDetails returns the value of Details.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) GetDetails() OptVolumeSyncReseedRequiredDetails {
+	return s.Details
+}
+
+// SetCode sets the value of Code.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) SetCode(val string) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) SetMessage(val string) {
+	s.Message = val
+}
+
+// SetDetails sets the value of Details.
+func (s *VolumeSyncReseedRequiredErrorEnvelopeError) SetDetails(val OptVolumeSyncReseedRequiredDetails) {
+	s.Details = val
+}
+
+type VolumeSyncReseedRequiredErrorEnvelopeSuccess bool
+
+const (
+	VolumeSyncReseedRequiredErrorEnvelopeSuccessFalse VolumeSyncReseedRequiredErrorEnvelopeSuccess = false
+)
+
+// AllValues returns all VolumeSyncReseedRequiredErrorEnvelopeSuccess values.
+func (VolumeSyncReseedRequiredErrorEnvelopeSuccess) AllValues() []VolumeSyncReseedRequiredErrorEnvelopeSuccess {
+	return []VolumeSyncReseedRequiredErrorEnvelopeSuccess{
+		VolumeSyncReseedRequiredErrorEnvelopeSuccessFalse,
+	}
 }
 
 // Ref: #/components/schemas/WebhookConfig

@@ -430,6 +430,60 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id}/restore
 	APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (*SuccessRestoreResponse, error)
+	// APIV1SandboxvolumesIDSyncBootstrapArchiveGet invokes GET /api/v1/sandboxvolumes/{id}/sync/bootstrap/archive operation.
+	//
+	// Download a bootstrap snapshot archive for local-first sync.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/sync/bootstrap/archive
+	APIV1SandboxvolumesIDSyncBootstrapArchiveGet(ctx context.Context, params APIV1SandboxvolumesIDSyncBootstrapArchiveGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncBootstrapArchiveGetRes, error)
+	// APIV1SandboxvolumesIDSyncBootstrapPost invokes POST /api/v1/sandboxvolumes/{id}/sync/bootstrap operation.
+	//
+	// Create a bootstrap snapshot and journal anchor for local-first sync.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/sync/bootstrap
+	APIV1SandboxvolumesIDSyncBootstrapPost(ctx context.Context, request OptCreateVolumeSyncBootstrapRequest, params APIV1SandboxvolumesIDSyncBootstrapPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncBootstrapPostRes, error)
+	// APIV1SandboxvolumesIDSyncChangesGet invokes GET /api/v1/sandboxvolumes/{id}/sync/changes operation.
+	//
+	// List volume sync journal entries.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/sync/changes
+	APIV1SandboxvolumesIDSyncChangesGet(ctx context.Context, params APIV1SandboxvolumesIDSyncChangesGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncChangesGetRes, error)
+	// APIV1SandboxvolumesIDSyncConflictsConflictIDPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/conflicts/{conflict_id} operation.
+	//
+	// Resolve or ignore a volume sync conflict.
+	//
+	// PUT /api/v1/sandboxvolumes/{id}/sync/conflicts/{conflict_id}
+	APIV1SandboxvolumesIDSyncConflictsConflictIDPut(ctx context.Context, request *ResolveVolumeSyncConflictRequest, params APIV1SandboxvolumesIDSyncConflictsConflictIDPutParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncConflictsConflictIDPutRes, error)
+	// APIV1SandboxvolumesIDSyncConflictsGet invokes GET /api/v1/sandboxvolumes/{id}/sync/conflicts operation.
+	//
+	// List volume sync conflicts.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/sync/conflicts
+	APIV1SandboxvolumesIDSyncConflictsGet(ctx context.Context, params APIV1SandboxvolumesIDSyncConflictsGetParams, options ...RequestOption) (*SuccessVolumeSyncConflictListResponse, error)
+	// APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost invokes POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes operation.
+	//
+	// Append replica-originated sync journal entries.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes
+	APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost(ctx context.Context, request *AppendReplicaChangesRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes, error)
+	// APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/cursor operation.
+	//
+	// Advance a volume sync replica cursor.
+	//
+	// PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/cursor
+	APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut(ctx context.Context, request *UpdateSyncReplicaCursorRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes, error)
+	// APIV1SandboxvolumesIDSyncReplicasReplicaIDGet invokes GET /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
+	//
+	// Get a volume sync replica.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}
+	APIV1SandboxvolumesIDSyncReplicasReplicaIDGet(ctx context.Context, params APIV1SandboxvolumesIDSyncReplicasReplicaIDGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes, error)
+	// APIV1SandboxvolumesIDSyncReplicasReplicaIDPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
+	//
+	// Register or update a volume sync replica.
+	//
+	// PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}
+	APIV1SandboxvolumesIDSyncReplicasReplicaIDPut(ctx context.Context, request *UpsertSyncReplicaRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDPutParams, options ...RequestOption) (*SuccessVolumeSyncReplicaResponse, error)
 	// APIV1SandboxvolumesPost invokes POST /api/v1/sandboxvolumes operation.
 	//
 	// Create sandbox volume.
@@ -7351,6 +7405,1230 @@ func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx con
 	}
 
 	result, err := decodeAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncBootstrapArchiveGet invokes GET /api/v1/sandboxvolumes/{id}/sync/bootstrap/archive operation.
+//
+// Download a bootstrap snapshot archive for local-first sync.
+//
+// GET /api/v1/sandboxvolumes/{id}/sync/bootstrap/archive
+func (c *Client) APIV1SandboxvolumesIDSyncBootstrapArchiveGet(ctx context.Context, params APIV1SandboxvolumesIDSyncBootstrapArchiveGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncBootstrapArchiveGetRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncBootstrapArchiveGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncBootstrapArchiveGet(ctx context.Context, params APIV1SandboxvolumesIDSyncBootstrapArchiveGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncBootstrapArchiveGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/bootstrap/archive"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "snapshot_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "snapshot_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.SnapshotID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncBootstrapArchiveGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncBootstrapArchiveGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncBootstrapPost invokes POST /api/v1/sandboxvolumes/{id}/sync/bootstrap operation.
+//
+// Create a bootstrap snapshot and journal anchor for local-first sync.
+//
+// POST /api/v1/sandboxvolumes/{id}/sync/bootstrap
+func (c *Client) APIV1SandboxvolumesIDSyncBootstrapPost(ctx context.Context, request OptCreateVolumeSyncBootstrapRequest, params APIV1SandboxvolumesIDSyncBootstrapPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncBootstrapPostRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncBootstrapPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncBootstrapPost(ctx context.Context, request OptCreateVolumeSyncBootstrapRequest, params APIV1SandboxvolumesIDSyncBootstrapPostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncBootstrapPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/bootstrap"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDSyncBootstrapPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncBootstrapPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncBootstrapPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncChangesGet invokes GET /api/v1/sandboxvolumes/{id}/sync/changes operation.
+//
+// List volume sync journal entries.
+//
+// GET /api/v1/sandboxvolumes/{id}/sync/changes
+func (c *Client) APIV1SandboxvolumesIDSyncChangesGet(ctx context.Context, params APIV1SandboxvolumesIDSyncChangesGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncChangesGetRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncChangesGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncChangesGet(ctx context.Context, params APIV1SandboxvolumesIDSyncChangesGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncChangesGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/changes"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "after" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "after",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.After.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.Int32ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncChangesGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncChangesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncConflictsConflictIDPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/conflicts/{conflict_id} operation.
+//
+// Resolve or ignore a volume sync conflict.
+//
+// PUT /api/v1/sandboxvolumes/{id}/sync/conflicts/{conflict_id}
+func (c *Client) APIV1SandboxvolumesIDSyncConflictsConflictIDPut(ctx context.Context, request *ResolveVolumeSyncConflictRequest, params APIV1SandboxvolumesIDSyncConflictsConflictIDPutParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncConflictsConflictIDPutRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncConflictsConflictIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncConflictsConflictIDPut(ctx context.Context, request *ResolveVolumeSyncConflictRequest, params APIV1SandboxvolumesIDSyncConflictsConflictIDPutParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncConflictsConflictIDPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/conflicts/"
+	{
+		// Encode "conflict_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "conflict_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ConflictID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDSyncConflictsConflictIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncConflictsConflictIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncConflictsConflictIDPutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncConflictsGet invokes GET /api/v1/sandboxvolumes/{id}/sync/conflicts operation.
+//
+// List volume sync conflicts.
+//
+// GET /api/v1/sandboxvolumes/{id}/sync/conflicts
+func (c *Client) APIV1SandboxvolumesIDSyncConflictsGet(ctx context.Context, params APIV1SandboxvolumesIDSyncConflictsGetParams, options ...RequestOption) (*SuccessVolumeSyncConflictListResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncConflictsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncConflictsGet(ctx context.Context, params APIV1SandboxvolumesIDSyncConflictsGetParams, requestOptions ...RequestOption) (res *SuccessVolumeSyncConflictListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/conflicts"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "status" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "status",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Status.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.Int32ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncConflictsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncConflictsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost invokes POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes operation.
+//
+// Append replica-originated sync journal entries.
+//
+// POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes
+func (c *Client) APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost(ctx context.Context, request *AppendReplicaChangesRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost(ctx context.Context, request *AppendReplicaChangesRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/replicas/"
+	{
+		// Encode "replica_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "replica_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ReplicaID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/changes"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/cursor operation.
+//
+// Advance a volume sync replica cursor.
+//
+// PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/cursor
+func (c *Client) APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut(ctx context.Context, request *UpdateSyncReplicaCursorRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut(ctx context.Context, request *UpdateSyncReplicaCursorRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/replicas/"
+	{
+		// Encode "replica_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "replica_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ReplicaID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/cursor"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncReplicasReplicaIDGet invokes GET /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
+//
+// Get a volume sync replica.
+//
+// GET /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}
+func (c *Client) APIV1SandboxvolumesIDSyncReplicasReplicaIDGet(ctx context.Context, params APIV1SandboxvolumesIDSyncReplicasReplicaIDGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDGet(ctx context.Context, params APIV1SandboxvolumesIDSyncReplicasReplicaIDGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/replicas/"
+	{
+		// Encode "replica_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "replica_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ReplicaID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncReplicasReplicaIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDSyncReplicasReplicaIDPut invokes PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
+//
+// Register or update a volume sync replica.
+//
+// PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}
+func (c *Client) APIV1SandboxvolumesIDSyncReplicasReplicaIDPut(ctx context.Context, request *UpsertSyncReplicaRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDPutParams, options ...RequestOption) (*SuccessVolumeSyncReplicaResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDSyncReplicasReplicaIDPut(ctx context.Context, request *UpsertSyncReplicaRequest, params APIV1SandboxvolumesIDSyncReplicasReplicaIDPutParams, requestOptions ...RequestOption) (res *SuccessVolumeSyncReplicaResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sync/replicas/"
+	{
+		// Encode "replica_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "replica_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ReplicaID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDSyncReplicasReplicaIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDSyncReplicasReplicaIDPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
