@@ -304,6 +304,12 @@ type APIV1SandboxvolumesIDSyncConflictsGetParams struct {
 	Limit  OptInt32  `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxvolumesIDSyncReplayPayloadGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/replay-payload operation.
+type APIV1SandboxvolumesIDSyncReplayPayloadGetParams struct {
+	ID         string
+	ContentRef string
+}
+
 // APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes operation.
 type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams struct {
 	ID        string

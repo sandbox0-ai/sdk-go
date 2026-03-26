@@ -121,6 +121,10 @@ type APIV1SandboxvolumesIDSyncConflictsConflictIDPutRes interface {
 	aPIV1SandboxvolumesIDSyncConflictsConflictIDPutRes()
 }
 
+type APIV1SandboxvolumesIDSyncReplayPayloadGetRes interface {
+	aPIV1SandboxvolumesIDSyncReplayPayloadGetRes()
+}
+
 type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes interface {
 	aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes()
 }
