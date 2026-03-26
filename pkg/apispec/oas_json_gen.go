@@ -980,6 +980,82 @@ func (s *APIV1SandboxesIDPutNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest as json.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest from json.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound as json.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound from json.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest as json.
 func (s *APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -12375,6 +12451,55 @@ func (s OptNilSyncConflictMetadata) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptNilSyncConflictMetadata) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SyncJournalEntryEntryKind as json.
+func (o OptNilSyncJournalEntryEntryKind) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	if o.Null {
+		e.Null()
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SyncJournalEntryEntryKind from json.
+func (o *OptNilSyncJournalEntryEntryKind) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptNilSyncJournalEntryEntryKind to nil")
+	}
+	if d.Next() == jx.Null {
+		if err := d.Null(); err != nil {
+			return err
+		}
+
+		var v SyncJournalEntryEntryKind
+		o.Value = v
+		o.Set = true
+		o.Null = true
+		return nil
+	}
+	o.Set = true
+	o.Null = false
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptNilSyncJournalEntryEntryKind) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptNilSyncJournalEntryEntryKind) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -32851,6 +32976,24 @@ func (s *SyncJournalEntry) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.EntryKind.Set {
+			e.FieldStart("entry_kind")
+			s.EntryKind.Encode(e)
+		}
+	}
+	{
+		if s.Mode.Set {
+			e.FieldStart("mode")
+			s.Mode.Encode(e)
+		}
+	}
+	{
+		if s.ContentRef.Set {
+			e.FieldStart("content_ref")
+			s.ContentRef.Encode(e)
+		}
+	}
+	{
 		if s.ContentSHA256.Set {
 			e.FieldStart("content_sha256")
 			s.ContentSHA256.Encode(e)
@@ -32876,7 +33019,7 @@ func (s *SyncJournalEntry) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSyncJournalEntry = [15]string{
+var jsonFieldsNameOfSyncJournalEntry = [18]string{
 	0:  "seq",
 	1:  "volume_id",
 	2:  "team_id",
@@ -32888,10 +33031,13 @@ var jsonFieldsNameOfSyncJournalEntry = [15]string{
 	8:  "old_path",
 	9:  "normalized_old_path",
 	10: "tombstone",
-	11: "content_sha256",
-	12: "size_bytes",
-	13: "metadata",
-	14: "created_at",
+	11: "entry_kind",
+	12: "mode",
+	13: "content_ref",
+	14: "content_sha256",
+	15: "size_bytes",
+	16: "metadata",
+	17: "created_at",
 }
 
 // Decode decodes SyncJournalEntry from json.
@@ -33012,6 +33158,36 @@ func (s *SyncJournalEntry) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"tombstone\"")
 			}
+		case "entry_kind":
+			if err := func() error {
+				s.EntryKind.Reset()
+				if err := s.EntryKind.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"entry_kind\"")
+			}
+		case "mode":
+			if err := func() error {
+				s.Mode.Reset()
+				if err := s.Mode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mode\"")
+			}
+		case "content_ref":
+			if err := func() error {
+				s.ContentRef.Reset()
+				if err := s.ContentRef.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"content_ref\"")
+			}
 		case "content_sha256":
 			if err := func() error {
 				s.ContentSHA256.Reset()
@@ -33072,6 +33248,46 @@ func (s *SyncJournalEntry) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SyncJournalEntry) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SyncJournalEntryEntryKind as json.
+func (s SyncJournalEntryEntryKind) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SyncJournalEntryEntryKind from json.
+func (s *SyncJournalEntryEntryKind) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SyncJournalEntryEntryKind to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SyncJournalEntryEntryKind(v) {
+	case SyncJournalEntryEntryKindFile:
+		*s = SyncJournalEntryEntryKindFile
+	case SyncJournalEntryEntryKindDirectory:
+		*s = SyncJournalEntryEntryKindDirectory
+	default:
+		*s = SyncJournalEntryEntryKind(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SyncJournalEntryEntryKind) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SyncJournalEntryEntryKind) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

@@ -66,6 +66,7 @@ const (
 	APIV1SandboxvolumesIDSyncChangesGetOperation                   OperationName = "APIV1SandboxvolumesIDSyncChangesGet"
 	APIV1SandboxvolumesIDSyncConflictsConflictIDPutOperation       OperationName = "APIV1SandboxvolumesIDSyncConflictsConflictIDPut"
 	APIV1SandboxvolumesIDSyncConflictsGetOperation                 OperationName = "APIV1SandboxvolumesIDSyncConflictsGet"
+	APIV1SandboxvolumesIDSyncReplayPayloadGetOperation             OperationName = "APIV1SandboxvolumesIDSyncReplayPayloadGet"
 	APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostOperation OperationName = "APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPost"
 	APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutOperation   OperationName = "APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPut"
 	APIV1SandboxvolumesIDSyncReplicasReplicaIDGetOperation         OperationName = "APIV1SandboxvolumesIDSyncReplicasReplicaIDGet"

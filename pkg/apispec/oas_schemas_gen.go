@@ -370,6 +370,32 @@ func (s APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK) Read(p []byte) (n int, e
 func (*APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK) aPIV1SandboxvolumesIDSyncBootstrapArchiveGetRes() {
 }
 
+type APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxvolumesIDSyncReplayPayloadGetBadRequest) aPIV1SandboxvolumesIDSyncReplayPayloadGetRes() {
+}
+
+type APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxvolumesIDSyncReplayPayloadGetNotFound) aPIV1SandboxvolumesIDSyncReplayPayloadGetRes() {
+}
+
+type APIV1SandboxvolumesIDSyncReplayPayloadGetOK struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDSyncReplayPayloadGetOK) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDSyncReplayPayloadGetOK) aPIV1SandboxvolumesIDSyncReplayPayloadGetRes() {}
+
 type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest ErrorEnvelope
 
 func (*APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostBadRequest) aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes() {
@@ -6298,6 +6324,69 @@ func (o OptNilSyncConflictMetadata) Get() (v SyncConflictMetadata, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptNilSyncConflictMetadata) Or(d SyncConflictMetadata) SyncConflictMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilSyncJournalEntryEntryKind returns new OptNilSyncJournalEntryEntryKind with value set to v.
+func NewOptNilSyncJournalEntryEntryKind(v SyncJournalEntryEntryKind) OptNilSyncJournalEntryEntryKind {
+	return OptNilSyncJournalEntryEntryKind{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilSyncJournalEntryEntryKind is optional nullable SyncJournalEntryEntryKind.
+type OptNilSyncJournalEntryEntryKind struct {
+	Value SyncJournalEntryEntryKind
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilSyncJournalEntryEntryKind was set.
+func (o OptNilSyncJournalEntryEntryKind) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilSyncJournalEntryEntryKind) Reset() {
+	var v SyncJournalEntryEntryKind
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilSyncJournalEntryEntryKind) SetTo(v SyncJournalEntryEntryKind) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilSyncJournalEntryEntryKind) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilSyncJournalEntryEntryKind) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v SyncJournalEntryEntryKind
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilSyncJournalEntryEntryKind) Get() (v SyncJournalEntryEntryKind, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilSyncJournalEntryEntryKind) Or(d SyncJournalEntryEntryKind) SyncJournalEntryEntryKind {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -15689,21 +15778,24 @@ func (s *SyncEventType) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/SyncJournalEntry
 type SyncJournalEntry struct {
-	Seq               OptInt64                       `json:"seq"`
-	VolumeID          OptString                      `json:"volume_id"`
-	TeamID            OptString                      `json:"team_id"`
-	Source            OptSyncJournalEntrySource      `json:"source"`
-	ReplicaID         OptNilString                   `json:"replica_id"`
-	EventType         OptSyncEventType               `json:"event_type"`
-	Path              OptString                      `json:"path"`
-	NormalizedPath    OptString                      `json:"normalized_path"`
-	OldPath           OptNilString                   `json:"old_path"`
-	NormalizedOldPath OptNilString                   `json:"normalized_old_path"`
-	Tombstone         OptBool                        `json:"tombstone"`
-	ContentSHA256     OptNilString                   `json:"content_sha256"`
-	SizeBytes         OptNilInt64                    `json:"size_bytes"`
-	Metadata          OptNilSyncJournalEntryMetadata `json:"metadata"`
-	CreatedAt         OptDateTime                    `json:"created_at"`
+	Seq               OptInt64                        `json:"seq"`
+	VolumeID          OptString                       `json:"volume_id"`
+	TeamID            OptString                       `json:"team_id"`
+	Source            OptSyncJournalEntrySource       `json:"source"`
+	ReplicaID         OptNilString                    `json:"replica_id"`
+	EventType         OptSyncEventType                `json:"event_type"`
+	Path              OptString                       `json:"path"`
+	NormalizedPath    OptString                       `json:"normalized_path"`
+	OldPath           OptNilString                    `json:"old_path"`
+	NormalizedOldPath OptNilString                    `json:"normalized_old_path"`
+	Tombstone         OptBool                         `json:"tombstone"`
+	EntryKind         OptNilSyncJournalEntryEntryKind `json:"entry_kind"`
+	Mode              OptNilInt64                     `json:"mode"`
+	ContentRef        OptNilString                    `json:"content_ref"`
+	ContentSHA256     OptNilString                    `json:"content_sha256"`
+	SizeBytes         OptNilInt64                     `json:"size_bytes"`
+	Metadata          OptNilSyncJournalEntryMetadata  `json:"metadata"`
+	CreatedAt         OptDateTime                     `json:"created_at"`
 }
 
 // GetSeq returns the value of Seq.
@@ -15759,6 +15851,21 @@ func (s *SyncJournalEntry) GetNormalizedOldPath() OptNilString {
 // GetTombstone returns the value of Tombstone.
 func (s *SyncJournalEntry) GetTombstone() OptBool {
 	return s.Tombstone
+}
+
+// GetEntryKind returns the value of EntryKind.
+func (s *SyncJournalEntry) GetEntryKind() OptNilSyncJournalEntryEntryKind {
+	return s.EntryKind
+}
+
+// GetMode returns the value of Mode.
+func (s *SyncJournalEntry) GetMode() OptNilInt64 {
+	return s.Mode
+}
+
+// GetContentRef returns the value of ContentRef.
+func (s *SyncJournalEntry) GetContentRef() OptNilString {
+	return s.ContentRef
 }
 
 // GetContentSHA256 returns the value of ContentSHA256.
@@ -15836,6 +15943,21 @@ func (s *SyncJournalEntry) SetTombstone(val OptBool) {
 	s.Tombstone = val
 }
 
+// SetEntryKind sets the value of EntryKind.
+func (s *SyncJournalEntry) SetEntryKind(val OptNilSyncJournalEntryEntryKind) {
+	s.EntryKind = val
+}
+
+// SetMode sets the value of Mode.
+func (s *SyncJournalEntry) SetMode(val OptNilInt64) {
+	s.Mode = val
+}
+
+// SetContentRef sets the value of ContentRef.
+func (s *SyncJournalEntry) SetContentRef(val OptNilString) {
+	s.ContentRef = val
+}
+
 // SetContentSHA256 sets the value of ContentSHA256.
 func (s *SyncJournalEntry) SetContentSHA256(val OptNilString) {
 	s.ContentSHA256 = val
@@ -15854,6 +15976,47 @@ func (s *SyncJournalEntry) SetMetadata(val OptNilSyncJournalEntryMetadata) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *SyncJournalEntry) SetCreatedAt(val OptDateTime) {
 	s.CreatedAt = val
+}
+
+type SyncJournalEntryEntryKind string
+
+const (
+	SyncJournalEntryEntryKindFile      SyncJournalEntryEntryKind = "file"
+	SyncJournalEntryEntryKindDirectory SyncJournalEntryEntryKind = "directory"
+)
+
+// AllValues returns all SyncJournalEntryEntryKind values.
+func (SyncJournalEntryEntryKind) AllValues() []SyncJournalEntryEntryKind {
+	return []SyncJournalEntryEntryKind{
+		SyncJournalEntryEntryKindFile,
+		SyncJournalEntryEntryKindDirectory,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SyncJournalEntryEntryKind) MarshalText() ([]byte, error) {
+	switch s {
+	case SyncJournalEntryEntryKindFile:
+		return []byte(s), nil
+	case SyncJournalEntryEntryKindDirectory:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SyncJournalEntryEntryKind) UnmarshalText(data []byte) error {
+	switch SyncJournalEntryEntryKind(data) {
+	case SyncJournalEntryEntryKindFile:
+		*s = SyncJournalEntryEntryKindFile
+		return nil
+	case SyncJournalEntryEntryKindDirectory:
+		*s = SyncJournalEntryEntryKindDirectory
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 type SyncJournalEntryMetadata map[string]jx.Raw
