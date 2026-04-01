@@ -105,8 +105,8 @@ const (
 	TeamsIDPutOperation                                            OperationName = "TeamsIDPut"
 	TeamsPostOperation                                             OperationName = "TeamsPost"
 	TenantActiveGetOperation                                       OperationName = "TenantActiveGet"
-	TenantActivePutOperation                                       OperationName = "TenantActivePut"
 	UsersMeGetOperation                                            OperationName = "UsersMeGet"
 	UsersMeIdentitiesGetOperation                                  OperationName = "UsersMeIdentitiesGet"
 	UsersMeIdentitiesIDDeleteOperation                             OperationName = "UsersMeIdentitiesIDDelete"
+	UsersMePutOperation                                            OperationName = "UsersMePut"
 )

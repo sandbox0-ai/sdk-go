@@ -5008,22 +5008,6 @@ func (s *TenantActiveGetUnauthorized) Validate() error {
 	return nil
 }
 
-func (s *TenantActivePutBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *TenantActivePutUnauthorized) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *TrafficRule) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -5221,6 +5205,22 @@ func (s *UsersMeIdentitiesIDDeleteNotFound) Validate() error {
 }
 
 func (s *UsersMeIdentitiesIDDeleteUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMePutBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMePutUnauthorized) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
