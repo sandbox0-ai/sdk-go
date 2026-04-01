@@ -15196,8 +15196,8 @@ func (s *SuccessUserResponse) SetData(val OptUser) {
 	s.Data = val
 }
 
-func (*SuccessUserResponse) tenantActivePutRes() {}
-func (*SuccessUserResponse) usersMeGetRes()      {}
+func (*SuccessUserResponse) usersMeGetRes() {}
+func (*SuccessUserResponse) usersMePutRes() {}
 
 type SuccessUserResponseSuccess bool
 
@@ -16560,14 +16560,6 @@ type TenantActiveGetUnauthorized ErrorEnvelope
 
 func (*TenantActiveGetUnauthorized) tenantActiveGetRes() {}
 
-type TenantActivePutBadRequest ErrorEnvelope
-
-func (*TenantActivePutBadRequest) tenantActivePutRes() {}
-
-type TenantActivePutUnauthorized ErrorEnvelope
-
-func (*TenantActivePutUnauthorized) tenantActivePutRes() {}
-
 // Ref: #/components/schemas/Toleration
 type Toleration struct {
 	Key      OptString `json:"key"`
@@ -17249,6 +17241,14 @@ func (*UsersMeIdentitiesIDDeleteNotFound) usersMeIdentitiesIDDeleteRes() {}
 type UsersMeIdentitiesIDDeleteUnauthorized ErrorEnvelope
 
 func (*UsersMeIdentitiesIDDeleteUnauthorized) usersMeIdentitiesIDDeleteRes() {}
+
+type UsersMePutBadRequest ErrorEnvelope
+
+func (*UsersMePutBadRequest) usersMePutRes() {}
+
+type UsersMePutUnauthorized ErrorEnvelope
+
+func (*UsersMePutUnauthorized) usersMePutRes() {}
 
 // Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows
 // read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows

@@ -562,7 +562,7 @@ func encodeTeamsPostRequest(
 	return nil
 }
 
-func encodeTenantActivePutRequest(
+func encodeUsersMePutRequest(
 	req *UpdateUserRequest,
 	r *http.Request,
 ) error {

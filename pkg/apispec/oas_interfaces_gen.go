@@ -241,10 +241,6 @@ type TenantActiveGetRes interface {
 	tenantActiveGetRes()
 }
 
-type TenantActivePutRes interface {
-	tenantActivePutRes()
-}
-
 type UsersMeGetRes interface {
 	usersMeGetRes()
 }
@@ -255,4 +251,8 @@ type UsersMeIdentitiesGetRes interface {
 
 type UsersMeIdentitiesIDDeleteRes interface {
 	usersMeIdentitiesIDDeleteRes()
+}
+
+type UsersMePutRes interface {
+	usersMePutRes()
 }
