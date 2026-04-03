@@ -235,6 +235,48 @@ type APIV1SandboxvolumesIDDeleteParams struct {
 	Force OptBool `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxvolumesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id}/files operation.
+type APIV1SandboxvolumesIDFilesDeleteParams struct {
+	ID   string
+	Path string
+}
+
+// APIV1SandboxvolumesIDFilesGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/files operation.
+type APIV1SandboxvolumesIDFilesGetParams struct {
+	ID   string
+	Path string
+}
+
+// APIV1SandboxvolumesIDFilesListGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/files/list operation.
+type APIV1SandboxvolumesIDFilesListGetParams struct {
+	ID   string
+	Path string
+}
+
+// APIV1SandboxvolumesIDFilesMovePostParams is parameters of POST /api/v1/sandboxvolumes/{id}/files/move operation.
+type APIV1SandboxvolumesIDFilesMovePostParams struct {
+	ID string
+}
+
+// APIV1SandboxvolumesIDFilesPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/files operation.
+type APIV1SandboxvolumesIDFilesPostParams struct {
+	ID        string
+	Path      string
+	Mkdir     OptBool `json:",omitempty,omitzero"`
+	Recursive OptBool `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxvolumesIDFilesStatGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/files/stat operation.
+type APIV1SandboxvolumesIDFilesStatGetParams struct {
+	ID   string
+	Path string
+}
+
+// APIV1SandboxvolumesIDFilesWatchGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/files/watch operation.
+type APIV1SandboxvolumesIDFilesWatchGetParams struct {
+	ID string
+}
+
 // APIV1SandboxvolumesIDForkPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/fork operation.
 type APIV1SandboxvolumesIDForkPostParams struct {
 	ID string

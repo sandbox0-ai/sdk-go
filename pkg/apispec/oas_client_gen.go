@@ -388,6 +388,60 @@ type Invoker interface {
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}
 	APIV1SandboxvolumesIDDelete(ctx context.Context, params APIV1SandboxvolumesIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDDeleteRes, error)
+	// APIV1SandboxvolumesIDFilesDelete invokes DELETE /api/v1/sandboxvolumes/{id}/files operation.
+	//
+	// Delete volume file or directory.
+	//
+	// DELETE /api/v1/sandboxvolumes/{id}/files
+	APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	// APIV1SandboxvolumesIDFilesGet invokes GET /api/v1/sandboxvolumes/{id}/files operation.
+	//
+	// Use query params:
+	// - path=/tmp/a.txt: target file path relative to the volume root
+	// When `Accept` or `Content-Type` is `application/json`, returns a base64 JSON payload.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/files
+	APIV1SandboxvolumesIDFilesGet(ctx context.Context, params APIV1SandboxvolumesIDFilesGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesGetRes, error)
+	// APIV1SandboxvolumesIDFilesListGet invokes GET /api/v1/sandboxvolumes/{id}/files/list operation.
+	//
+	// Use query params:
+	// - path=/tmp: target directory path relative to the volume root.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/files/list
+	APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error)
+	// APIV1SandboxvolumesIDFilesMovePost invokes POST /api/v1/sandboxvolumes/{id}/files/move operation.
+	//
+	// Move a volume file or directory.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/files/move
+	APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error)
+	// APIV1SandboxvolumesIDFilesPost invokes POST /api/v1/sandboxvolumes/{id}/files operation.
+	//
+	// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/files
+	APIV1SandboxvolumesIDFilesPost(ctx context.Context, request APIV1SandboxvolumesIDFilesPostReq, params APIV1SandboxvolumesIDFilesPostParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesPostRes, error)
+	// APIV1SandboxvolumesIDFilesStatGet invokes GET /api/v1/sandboxvolumes/{id}/files/stat operation.
+	//
+	// Use query params:
+	// - path=/tmp/a.txt: target file path relative to the volume root.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/files/stat
+	APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error)
+	// APIV1SandboxvolumesIDFilesWatchGet invokes GET /api/v1/sandboxvolumes/{id}/files/watch operation.
+	//
+	// Upgrades to WebSocket for volume file watch events.
+	// Client messages:
+	// - { "action": "subscribe", "path": "/tmp", "recursive": false }
+	// - { "action": "unsubscribe", "watch_id": "watch-id" }
+	// Server messages:
+	// - { "type": "subscribed", "watch_id": "watch-id", "path": "/tmp" }
+	// - { "type": "event", "watch_id": "watch-id", "event": "write", "path": "/tmp/a.txt" }
+	// - { "type": "unsubscribed", "watch_id": "watch-id" }
+	// - { "type": "error", "error": "message" }.
+	//
+	// GET /api/v1/sandboxvolumes/{id}/files/watch
+	APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) error
 	// APIV1SandboxvolumesIDForkPost invokes POST /api/v1/sandboxvolumes/{id}/fork operation.
 	//
 	// Fork sandbox volume.
@@ -6553,6 +6607,941 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 	}
 
 	result, err := decodeAPIV1SandboxvolumesIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesDelete invokes DELETE /api/v1/sandboxvolumes/{id}/files operation.
+//
+// Delete volume file or directory.
+//
+// DELETE /api/v1/sandboxvolumes/{id}/files
+func (c *Client) APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesGet invokes GET /api/v1/sandboxvolumes/{id}/files operation.
+//
+// Use query params:
+// - path=/tmp/a.txt: target file path relative to the volume root
+// When `Accept` or `Content-Type` is `application/json`, returns a base64 JSON payload.
+//
+// GET /api/v1/sandboxvolumes/{id}/files
+func (c *Client) APIV1SandboxvolumesIDFilesGet(ctx context.Context, params APIV1SandboxvolumesIDFilesGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesGetRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesGet(ctx context.Context, params APIV1SandboxvolumesIDFilesGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesListGet invokes GET /api/v1/sandboxvolumes/{id}/files/list operation.
+//
+// Use query params:
+// - path=/tmp: target directory path relative to the volume root.
+//
+// GET /api/v1/sandboxvolumes/{id}/files/list
+func (c *Client) APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesListGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, requestOptions ...RequestOption) (res *SuccessFileListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/list"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesListGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesListGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesMovePost invokes POST /api/v1/sandboxvolumes/{id}/files/move operation.
+//
+// Move a volume file or directory.
+//
+// POST /api/v1/sandboxvolumes/{id}/files/move
+func (c *Client) APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesMovePost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, requestOptions ...RequestOption) (res *SuccessMovedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/move"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDFilesMovePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesMovePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesMovePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesPost invokes POST /api/v1/sandboxvolumes/{id}/files operation.
+//
+// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
+//
+// POST /api/v1/sandboxvolumes/{id}/files
+func (c *Client) APIV1SandboxvolumesIDFilesPost(ctx context.Context, request APIV1SandboxvolumesIDFilesPostReq, params APIV1SandboxvolumesIDFilesPostParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesPostRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesPost(ctx context.Context, request APIV1SandboxvolumesIDFilesPostReq, params APIV1SandboxvolumesIDFilesPostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "mkdir" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "mkdir",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Mkdir.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "recursive" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "recursive",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Recursive.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDFilesPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesStatGet invokes GET /api/v1/sandboxvolumes/{id}/files/stat operation.
+//
+// Use query params:
+// - path=/tmp/a.txt: target file path relative to the volume root.
+//
+// GET /api/v1/sandboxvolumes/{id}/files/stat
+func (c *Client) APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesStatGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, requestOptions ...RequestOption) (res *SuccessFileStatResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/stat"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesStatGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesStatGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesWatchGet invokes GET /api/v1/sandboxvolumes/{id}/files/watch operation.
+//
+// Upgrades to WebSocket for volume file watch events.
+// Client messages:
+// - { "action": "subscribe", "path": "/tmp", "recursive": false }
+// - { "action": "unsubscribe", "watch_id": "watch-id" }
+// Server messages:
+// - { "type": "subscribed", "watch_id": "watch-id", "path": "/tmp" }
+// - { "type": "event", "watch_id": "watch-id", "event": "write", "path": "/tmp/a.txt" }
+// - { "type": "unsubscribed", "watch_id": "watch-id" }
+// - { "type": "error", "error": "message" }.
+//
+// GET /api/v1/sandboxvolumes/{id}/files/watch
+func (c *Client) APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) error {
+	_, err := c.sendAPIV1SandboxvolumesIDFilesWatchGet(ctx, params, options...)
+	return err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, requestOptions ...RequestOption) (res *APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/watch"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesWatchGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesWatchGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
