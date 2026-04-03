@@ -250,6 +250,30 @@ func encodeAPIV1SandboxesPostRequest(
 	return nil
 }
 
+func encodeAPIV1SandboxvolumesIDFilesMovePostRequest(
+	req *MoveFileRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1SandboxvolumesIDFilesPostRequest(
+	req APIV1SandboxvolumesIDFilesPostReq,
+	r *http.Request,
+) error {
+	const contentType = "application/octet-stream"
+	body := req
+	ht.SetBody(r, body, contentType)
+	return nil
+}
+
 func encodeAPIV1SandboxvolumesIDForkPostRequest(
 	req OptForkVolumeRequest,
 	r *http.Request,

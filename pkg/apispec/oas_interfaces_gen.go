@@ -93,6 +93,14 @@ type APIV1SandboxvolumesIDDeleteRes interface {
 	aPIV1SandboxvolumesIDDeleteRes()
 }
 
+type APIV1SandboxvolumesIDFilesGetRes interface {
+	aPIV1SandboxvolumesIDFilesGetRes()
+}
+
+type APIV1SandboxvolumesIDFilesPostRes interface {
+	aPIV1SandboxvolumesIDFilesPostRes()
+}
+
 type APIV1SandboxvolumesIDForkPostRes interface {
 	aPIV1SandboxvolumesIDForkPostRes()
 }

@@ -353,6 +353,81 @@ type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
+// Merged schema.
+type APIV1SandboxvolumesIDFilesGetOKApplicationJSON struct {
+	Success APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess `json:"success"`
+	// Merged property.
+	Data OptFileContentResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *APIV1SandboxvolumesIDFilesGetOKApplicationJSON) GetSuccess() APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *APIV1SandboxvolumesIDFilesGetOKApplicationJSON) GetData() OptFileContentResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *APIV1SandboxvolumesIDFilesGetOKApplicationJSON) SetSuccess(val APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *APIV1SandboxvolumesIDFilesGetOKApplicationJSON) SetData(val OptFileContentResponse) {
+	s.Data = val
+}
+
+func (*APIV1SandboxvolumesIDFilesGetOKApplicationJSON) aPIV1SandboxvolumesIDFilesGetRes() {}
+
+type APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess bool
+
+const (
+	APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccessTrue APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess = true
+)
+
+// AllValues returns all APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess values.
+func (APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess) AllValues() []APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess {
+	return []APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess{
+		APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccessTrue,
+	}
+}
+
+type APIV1SandboxvolumesIDFilesGetOKApplicationOctetStream struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesGetOKApplicationOctetStream) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDFilesGetOKApplicationOctetStream) aPIV1SandboxvolumesIDFilesGetRes() {}
+
+type APIV1SandboxvolumesIDFilesPostReq struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesPostReq) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+// APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxvolumesIDFilesWatchGet operation.
+type APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols struct{}
+
 type APIV1SandboxvolumesIDSyncBootstrapArchiveGetOK struct {
 	Data io.Reader
 }
@@ -13161,7 +13236,8 @@ func (s *SuccessCreatedResponse) SetData(val OptSuccessCreatedResponseData) {
 	s.Data = val
 }
 
-func (*SuccessCreatedResponse) aPIV1SandboxesIDFilesPostRes() {}
+func (*SuccessCreatedResponse) aPIV1SandboxesIDFilesPostRes()      {}
+func (*SuccessCreatedResponse) aPIV1SandboxvolumesIDFilesPostRes() {}
 
 type SuccessCreatedResponseData struct {
 	Created OptBool `json:"created"`
@@ -15497,7 +15573,8 @@ func (s *SuccessWrittenResponse) SetData(val OptSuccessWrittenResponseData) {
 	s.Data = val
 }
 
-func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes() {}
+func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes()      {}
+func (*SuccessWrittenResponse) aPIV1SandboxvolumesIDFilesPostRes() {}
 
 type SuccessWrittenResponseData struct {
 	Written OptBool `json:"written"`
