@@ -2833,6 +2833,21 @@ func (ErrorEnvelopeSuccess) AllValues() []ErrorEnvelopeSuccess {
 	}
 }
 
+// Ref: #/components/schemas/ExecAction
+type ExecAction struct {
+	Command []string `json:"command"`
+}
+
+// GetCommand returns the value of Command.
+func (s *ExecAction) GetCommand() []string {
+	return s.Command
+}
+
+// SetCommand sets the value of Command.
+func (s *ExecAction) SetCommand(val []string) {
+	s.Command = val
+}
+
 // Ref: #/components/schemas/ExecCandidate
 type ExecCandidate struct {
 	Name string   `json:"name"`
@@ -3161,6 +3176,32 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
+// Ref: #/components/schemas/GRPCAction
+type GRPCAction struct {
+	Port    int32     `json:"port"`
+	Service OptString `json:"service"`
+}
+
+// GetPort returns the value of Port.
+func (s *GRPCAction) GetPort() int32 {
+	return s.Port
+}
+
+// GetService returns the value of Service.
+func (s *GRPCAction) GetService() OptString {
+	return s.Service
+}
+
+// SetPort sets the value of Port.
+func (s *GRPCAction) SetPort(val int32) {
+	s.Port = val
+}
+
+// SetService sets the value of Service.
+func (s *GRPCAction) SetService(val OptString) {
+	s.Service = val
+}
+
 // Ref: #/components/schemas/GatewayMetadata
 type GatewayMetadata struct {
 	GatewayMode GatewayMetadataGatewayMode `json:"gateway_mode"`
@@ -3226,6 +3267,91 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/HTTPGetAction
+type HTTPGetAction struct {
+	Path        OptString    `json:"path"`
+	Port        ProbePort    `json:"port"`
+	Host        OptString    `json:"host"`
+	Scheme      OptString    `json:"scheme"`
+	HttpHeaders []HTTPHeader `json:"httpHeaders"`
+}
+
+// GetPath returns the value of Path.
+func (s *HTTPGetAction) GetPath() OptString {
+	return s.Path
+}
+
+// GetPort returns the value of Port.
+func (s *HTTPGetAction) GetPort() ProbePort {
+	return s.Port
+}
+
+// GetHost returns the value of Host.
+func (s *HTTPGetAction) GetHost() OptString {
+	return s.Host
+}
+
+// GetScheme returns the value of Scheme.
+func (s *HTTPGetAction) GetScheme() OptString {
+	return s.Scheme
+}
+
+// GetHttpHeaders returns the value of HttpHeaders.
+func (s *HTTPGetAction) GetHttpHeaders() []HTTPHeader {
+	return s.HttpHeaders
+}
+
+// SetPath sets the value of Path.
+func (s *HTTPGetAction) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetPort sets the value of Port.
+func (s *HTTPGetAction) SetPort(val ProbePort) {
+	s.Port = val
+}
+
+// SetHost sets the value of Host.
+func (s *HTTPGetAction) SetHost(val OptString) {
+	s.Host = val
+}
+
+// SetScheme sets the value of Scheme.
+func (s *HTTPGetAction) SetScheme(val OptString) {
+	s.Scheme = val
+}
+
+// SetHttpHeaders sets the value of HttpHeaders.
+func (s *HTTPGetAction) SetHttpHeaders(val []HTTPHeader) {
+	s.HttpHeaders = val
+}
+
+// Ref: #/components/schemas/HTTPHeader
+type HTTPHeader struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// GetName returns the value of Name.
+func (s *HTTPHeader) GetName() string {
+	return s.Name
+}
+
+// GetValue returns the value of Value.
+func (s *HTTPHeader) GetValue() string {
+	return s.Value
+}
+
+// SetName sets the value of Name.
+func (s *HTTPHeader) SetName(val string) {
+	s.Name = val
+}
+
+// SetValue sets the value of Value.
+func (s *HTTPHeader) SetValue(val string) {
+	s.Value = val
 }
 
 // Ref: #/components/schemas/HTTPHeadersProjection
@@ -5170,6 +5296,52 @@ func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
 	return d
 }
 
+// NewOptExecAction returns new OptExecAction with value set to v.
+func NewOptExecAction(v ExecAction) OptExecAction {
+	return OptExecAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecAction is optional ExecAction.
+type OptExecAction struct {
+	Value ExecAction
+	Set   bool
+}
+
+// IsSet returns true if OptExecAction was set.
+func (o OptExecAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecAction) Reset() {
+	var v ExecAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecAction) SetTo(v ExecAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecAction) Get() (v ExecAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecAction) Or(d ExecAction) ExecAction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptFileContentResponse returns new OptFileContentResponse with value set to v.
 func NewOptFileContentResponse(v FileContentResponse) OptFileContentResponse {
 	return OptFileContentResponse{
@@ -5446,6 +5618,52 @@ func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
 	return d
 }
 
+// NewOptGRPCAction returns new OptGRPCAction with value set to v.
+func NewOptGRPCAction(v GRPCAction) OptGRPCAction {
+	return OptGRPCAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptGRPCAction is optional GRPCAction.
+type OptGRPCAction struct {
+	Value GRPCAction
+	Set   bool
+}
+
+// IsSet returns true if OptGRPCAction was set.
+func (o OptGRPCAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptGRPCAction) Reset() {
+	var v GRPCAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptGRPCAction) SetTo(v GRPCAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptGRPCAction) Get() (v GRPCAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptGRPCAction) Or(d GRPCAction) GRPCAction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
 func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
 	return OptGatewayMetadata{
@@ -5486,6 +5704,52 @@ func (o OptGatewayMetadata) Get() (v GatewayMetadata, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPGetAction returns new OptHTTPGetAction with value set to v.
+func NewOptHTTPGetAction(v HTTPGetAction) OptHTTPGetAction {
+	return OptHTTPGetAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPGetAction is optional HTTPGetAction.
+type OptHTTPGetAction struct {
+	Value HTTPGetAction
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPGetAction was set.
+func (o OptHTTPGetAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPGetAction) Reset() {
+	var v HTTPGetAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPGetAction) SetTo(v HTTPGetAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPGetAction) Get() (v HTTPGetAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPGetAction) Or(d HTTPGetAction) HTTPGetAction {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7008,6 +7272,52 @@ func (o OptPreStopHook) Or(d PreStopHook) PreStopHook {
 	return d
 }
 
+// NewOptProbe returns new OptProbe with value set to v.
+func NewOptProbe(v Probe) OptProbe {
+	return OptProbe{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProbe is optional Probe.
+type OptProbe struct {
+	Value Probe
+	Set   bool
+}
+
+// IsSet returns true if OptProbe was set.
+func (o OptProbe) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProbe) Reset() {
+	var v Probe
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProbe) SetTo(v Probe) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProbe) Get() (v Probe, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProbe) Or(d Probe) Probe {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptProcessType returns new OptProcessType with value set to v.
 func NewOptProcessType(v ProcessType) OptProcessType {
 	return OptProcessType{
@@ -7416,6 +7726,52 @@ func (o OptRegistryCredentials) Get() (v RegistryCredentials, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptRegistryCredentials) Or(d RegistryCredentials) RegistryCredentials {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptResourceQuota returns new OptResourceQuota with value set to v.
+func NewOptResourceQuota(v ResourceQuota) OptResourceQuota {
+	return OptResourceQuota{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptResourceQuota is optional ResourceQuota.
+type OptResourceQuota struct {
+	Value ResourceQuota
+	Set   bool
+}
+
+// IsSet returns true if OptResourceQuota was set.
+func (o OptResourceQuota) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptResourceQuota) Reset() {
+	var v ResourceQuota
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptResourceQuota) SetTo(v ResourceQuota) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptResourceQuota) Get() (v ResourceQuota, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptResourceQuota) Or(d ResourceQuota) ResourceQuota {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9492,6 +9848,52 @@ func (o OptSyncJournalEntrySource) Or(d SyncJournalEntrySource) SyncJournalEntry
 	return d
 }
 
+// NewOptTCPSocketAction returns new OptTCPSocketAction with value set to v.
+func NewOptTCPSocketAction(v TCPSocketAction) OptTCPSocketAction {
+	return OptTCPSocketAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTCPSocketAction is optional TCPSocketAction.
+type OptTCPSocketAction struct {
+	Value TCPSocketAction
+	Set   bool
+}
+
+// IsSet returns true if OptTCPSocketAction was set.
+func (o OptTCPSocketAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTCPSocketAction) Reset() {
+	var v TCPSocketAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTCPSocketAction) SetTo(v TCPSocketAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTCPSocketAction) Get() (v TCPSocketAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTCPSocketAction) Or(d TCPSocketAction) TCPSocketAction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptTeam returns new OptTeam with value set to v.
 func NewOptTeam(v Team) OptTeam {
 	return OptTeam{
@@ -10364,6 +10766,185 @@ func (s *PreferredSchedulingTerm) SetWeight(val int32) {
 // SetPreference sets the value of Preference.
 func (s *PreferredSchedulingTerm) SetPreference(val NodeSelectorTerm) {
 	s.Preference = val
+}
+
+// Ref: #/components/schemas/Probe
+type Probe struct {
+	Exec                          OptExecAction      `json:"exec"`
+	HttpGet                       OptHTTPGetAction   `json:"httpGet"`
+	TcpSocket                     OptTCPSocketAction `json:"tcpSocket"`
+	Grpc                          OptGRPCAction      `json:"grpc"`
+	InitialDelaySeconds           OptInt32           `json:"initialDelaySeconds"`
+	TimeoutSeconds                OptInt32           `json:"timeoutSeconds"`
+	PeriodSeconds                 OptInt32           `json:"periodSeconds"`
+	SuccessThreshold              OptInt32           `json:"successThreshold"`
+	FailureThreshold              OptInt32           `json:"failureThreshold"`
+	TerminationGracePeriodSeconds OptInt64           `json:"terminationGracePeriodSeconds"`
+}
+
+// GetExec returns the value of Exec.
+func (s *Probe) GetExec() OptExecAction {
+	return s.Exec
+}
+
+// GetHttpGet returns the value of HttpGet.
+func (s *Probe) GetHttpGet() OptHTTPGetAction {
+	return s.HttpGet
+}
+
+// GetTcpSocket returns the value of TcpSocket.
+func (s *Probe) GetTcpSocket() OptTCPSocketAction {
+	return s.TcpSocket
+}
+
+// GetGrpc returns the value of Grpc.
+func (s *Probe) GetGrpc() OptGRPCAction {
+	return s.Grpc
+}
+
+// GetInitialDelaySeconds returns the value of InitialDelaySeconds.
+func (s *Probe) GetInitialDelaySeconds() OptInt32 {
+	return s.InitialDelaySeconds
+}
+
+// GetTimeoutSeconds returns the value of TimeoutSeconds.
+func (s *Probe) GetTimeoutSeconds() OptInt32 {
+	return s.TimeoutSeconds
+}
+
+// GetPeriodSeconds returns the value of PeriodSeconds.
+func (s *Probe) GetPeriodSeconds() OptInt32 {
+	return s.PeriodSeconds
+}
+
+// GetSuccessThreshold returns the value of SuccessThreshold.
+func (s *Probe) GetSuccessThreshold() OptInt32 {
+	return s.SuccessThreshold
+}
+
+// GetFailureThreshold returns the value of FailureThreshold.
+func (s *Probe) GetFailureThreshold() OptInt32 {
+	return s.FailureThreshold
+}
+
+// GetTerminationGracePeriodSeconds returns the value of TerminationGracePeriodSeconds.
+func (s *Probe) GetTerminationGracePeriodSeconds() OptInt64 {
+	return s.TerminationGracePeriodSeconds
+}
+
+// SetExec sets the value of Exec.
+func (s *Probe) SetExec(val OptExecAction) {
+	s.Exec = val
+}
+
+// SetHttpGet sets the value of HttpGet.
+func (s *Probe) SetHttpGet(val OptHTTPGetAction) {
+	s.HttpGet = val
+}
+
+// SetTcpSocket sets the value of TcpSocket.
+func (s *Probe) SetTcpSocket(val OptTCPSocketAction) {
+	s.TcpSocket = val
+}
+
+// SetGrpc sets the value of Grpc.
+func (s *Probe) SetGrpc(val OptGRPCAction) {
+	s.Grpc = val
+}
+
+// SetInitialDelaySeconds sets the value of InitialDelaySeconds.
+func (s *Probe) SetInitialDelaySeconds(val OptInt32) {
+	s.InitialDelaySeconds = val
+}
+
+// SetTimeoutSeconds sets the value of TimeoutSeconds.
+func (s *Probe) SetTimeoutSeconds(val OptInt32) {
+	s.TimeoutSeconds = val
+}
+
+// SetPeriodSeconds sets the value of PeriodSeconds.
+func (s *Probe) SetPeriodSeconds(val OptInt32) {
+	s.PeriodSeconds = val
+}
+
+// SetSuccessThreshold sets the value of SuccessThreshold.
+func (s *Probe) SetSuccessThreshold(val OptInt32) {
+	s.SuccessThreshold = val
+}
+
+// SetFailureThreshold sets the value of FailureThreshold.
+func (s *Probe) SetFailureThreshold(val OptInt32) {
+	s.FailureThreshold = val
+}
+
+// SetTerminationGracePeriodSeconds sets the value of TerminationGracePeriodSeconds.
+func (s *Probe) SetTerminationGracePeriodSeconds(val OptInt64) {
+	s.TerminationGracePeriodSeconds = val
+}
+
+// Ref: #/components/schemas/ProbePort
+// ProbePort represents sum type.
+type ProbePort struct {
+	Type   ProbePortType // switch on this field
+	Int32  int32
+	String string
+}
+
+// ProbePortType is oneOf type of ProbePort.
+type ProbePortType string
+
+// Possible values for ProbePortType.
+const (
+	Int32ProbePort  ProbePortType = "int32"
+	StringProbePort ProbePortType = "string"
+)
+
+// IsInt32 reports whether ProbePort is int32.
+func (s ProbePort) IsInt32() bool { return s.Type == Int32ProbePort }
+
+// IsString reports whether ProbePort is string.
+func (s ProbePort) IsString() bool { return s.Type == StringProbePort }
+
+// SetInt32 sets ProbePort to int32.
+func (s *ProbePort) SetInt32(v int32) {
+	s.Type = Int32ProbePort
+	s.Int32 = v
+}
+
+// GetInt32 returns int32 and true boolean if ProbePort is int32.
+func (s ProbePort) GetInt32() (v int32, ok bool) {
+	if !s.IsInt32() {
+		return v, false
+	}
+	return s.Int32, true
+}
+
+// NewInt32ProbePort returns new ProbePort from int32.
+func NewInt32ProbePort(v int32) ProbePort {
+	var s ProbePort
+	s.SetInt32(v)
+	return s
+}
+
+// SetString sets ProbePort to string.
+func (s *ProbePort) SetString(v string) {
+	s.Type = StringProbePort
+	s.String = v
+}
+
+// GetString returns string and true boolean if ProbePort is string.
+func (s ProbePort) GetString() (v string, ok bool) {
+	if !s.IsString() {
+		return v, false
+	}
+	return s.String, true
+}
+
+// NewStringProbePort returns new ProbePort from string.
+func NewStringProbePort(v string) ProbePort {
+	var s ProbePort
+	s.SetString(v)
+	return s
 }
 
 // Ref: #/components/schemas/ProcessType
@@ -12150,7 +12731,7 @@ type SandboxTemplateSpec struct {
 	DisplayName      OptString                     `json:"displayName"`
 	Tags             []string                      `json:"tags"`
 	MainContainer    OptContainerSpec              `json:"mainContainer"`
-	Sidecars         []ContainerSpec               `json:"sidecars"`
+	Sidecars         []SidecarContainerSpec        `json:"sidecars"`
 	Pod              OptPodSpecOverride            `json:"pod"`
 	Network          OptSandboxNetworkPolicy       `json:"network"`
 	Pool             OptPoolStrategy               `json:"pool"`
@@ -12183,7 +12764,7 @@ func (s *SandboxTemplateSpec) GetMainContainer() OptContainerSpec {
 }
 
 // GetSidecars returns the value of Sidecars.
-func (s *SandboxTemplateSpec) GetSidecars() []ContainerSpec {
+func (s *SandboxTemplateSpec) GetSidecars() []SidecarContainerSpec {
 	return s.Sidecars
 }
 
@@ -12253,7 +12834,7 @@ func (s *SandboxTemplateSpec) SetMainContainer(val OptContainerSpec) {
 }
 
 // SetSidecars sets the value of Sidecars.
-func (s *SandboxTemplateSpec) SetSidecars(val []ContainerSpec) {
+func (s *SandboxTemplateSpec) SetSidecars(val []SidecarContainerSpec) {
 	s.Sidecars = val
 }
 
@@ -12600,6 +13181,120 @@ func (s *SecurityContext) SetRunAsUser(val OptInt64) {
 // SetRunAsGroup sets the value of RunAsGroup.
 func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
 	s.RunAsGroup = val
+}
+
+// Ref: #/components/schemas/SidecarContainerSpec
+type SidecarContainerSpec struct {
+	Name            string             `json:"name"`
+	Image           string             `json:"image"`
+	Command         []string           `json:"command"`
+	Args            []string           `json:"args"`
+	Env             []EnvVar           `json:"env"`
+	Resources       OptResourceQuota   `json:"resources"`
+	SecurityContext OptSecurityContext `json:"securityContext"`
+	ReadinessProbe  OptProbe           `json:"readinessProbe"`
+	LivenessProbe   OptProbe           `json:"livenessProbe"`
+	StartupProbe    OptProbe           `json:"startupProbe"`
+}
+
+// GetName returns the value of Name.
+func (s *SidecarContainerSpec) GetName() string {
+	return s.Name
+}
+
+// GetImage returns the value of Image.
+func (s *SidecarContainerSpec) GetImage() string {
+	return s.Image
+}
+
+// GetCommand returns the value of Command.
+func (s *SidecarContainerSpec) GetCommand() []string {
+	return s.Command
+}
+
+// GetArgs returns the value of Args.
+func (s *SidecarContainerSpec) GetArgs() []string {
+	return s.Args
+}
+
+// GetEnv returns the value of Env.
+func (s *SidecarContainerSpec) GetEnv() []EnvVar {
+	return s.Env
+}
+
+// GetResources returns the value of Resources.
+func (s *SidecarContainerSpec) GetResources() OptResourceQuota {
+	return s.Resources
+}
+
+// GetSecurityContext returns the value of SecurityContext.
+func (s *SidecarContainerSpec) GetSecurityContext() OptSecurityContext {
+	return s.SecurityContext
+}
+
+// GetReadinessProbe returns the value of ReadinessProbe.
+func (s *SidecarContainerSpec) GetReadinessProbe() OptProbe {
+	return s.ReadinessProbe
+}
+
+// GetLivenessProbe returns the value of LivenessProbe.
+func (s *SidecarContainerSpec) GetLivenessProbe() OptProbe {
+	return s.LivenessProbe
+}
+
+// GetStartupProbe returns the value of StartupProbe.
+func (s *SidecarContainerSpec) GetStartupProbe() OptProbe {
+	return s.StartupProbe
+}
+
+// SetName sets the value of Name.
+func (s *SidecarContainerSpec) SetName(val string) {
+	s.Name = val
+}
+
+// SetImage sets the value of Image.
+func (s *SidecarContainerSpec) SetImage(val string) {
+	s.Image = val
+}
+
+// SetCommand sets the value of Command.
+func (s *SidecarContainerSpec) SetCommand(val []string) {
+	s.Command = val
+}
+
+// SetArgs sets the value of Args.
+func (s *SidecarContainerSpec) SetArgs(val []string) {
+	s.Args = val
+}
+
+// SetEnv sets the value of Env.
+func (s *SidecarContainerSpec) SetEnv(val []EnvVar) {
+	s.Env = val
+}
+
+// SetResources sets the value of Resources.
+func (s *SidecarContainerSpec) SetResources(val OptResourceQuota) {
+	s.Resources = val
+}
+
+// SetSecurityContext sets the value of SecurityContext.
+func (s *SidecarContainerSpec) SetSecurityContext(val OptSecurityContext) {
+	s.SecurityContext = val
+}
+
+// SetReadinessProbe sets the value of ReadinessProbe.
+func (s *SidecarContainerSpec) SetReadinessProbe(val OptProbe) {
+	s.ReadinessProbe = val
+}
+
+// SetLivenessProbe sets the value of LivenessProbe.
+func (s *SidecarContainerSpec) SetLivenessProbe(val OptProbe) {
+	s.LivenessProbe = val
+}
+
+// SetStartupProbe sets the value of StartupProbe.
+func (s *SidecarContainerSpec) SetStartupProbe(val OptProbe) {
+	s.StartupProbe = val
 }
 
 // Ref: #/components/schemas/SignalContextRequest
@@ -16282,6 +16977,32 @@ func (s *SyncReplica) SetCreatedAt(val OptDateTime) {
 // SetUpdatedAt sets the value of UpdatedAt.
 func (s *SyncReplica) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/TCPSocketAction
+type TCPSocketAction struct {
+	Port ProbePort `json:"port"`
+	Host OptString `json:"host"`
+}
+
+// GetPort returns the value of Port.
+func (s *TCPSocketAction) GetPort() ProbePort {
+	return s.Port
+}
+
+// GetHost returns the value of Host.
+func (s *TCPSocketAction) GetHost() OptString {
+	return s.Host
+}
+
+// SetPort sets the value of Port.
+func (s *TCPSocketAction) SetPort(val ProbePort) {
+	s.Port = val
+}
+
+// SetHost sets the value of Host.
+func (s *TCPSocketAction) SetHost(val OptString) {
+	s.Host = val
 }
 
 // Client certificate projection used for TLS terminate-reoriginate auth.
