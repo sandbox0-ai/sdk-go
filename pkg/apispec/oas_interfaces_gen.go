@@ -161,6 +161,14 @@ type AuthOidcProviderCallbackGetRes interface {
 	authOidcProviderCallbackGetRes()
 }
 
+type AuthOidcProviderDevicePollPostRes interface {
+	authOidcProviderDevicePollPostRes()
+}
+
+type AuthOidcProviderDeviceStartPostRes interface {
+	authOidcProviderDeviceStartPostRes()
+}
+
 type AuthOidcProviderLoginGetRes interface {
 	authOidcProviderLoginGetRes()
 }
@@ -243,10 +251,6 @@ type TeamsIDPutRes interface {
 
 type TeamsPostRes interface {
 	teamsPostRes()
-}
-
-type TenantActiveGetRes interface {
-	tenantActiveGetRes()
 }
 
 type UsersMeGetRes interface {
