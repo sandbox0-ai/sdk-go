@@ -481,76 +481,6 @@ type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostConflict ErrorEnvelope
 func (*APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostConflict) aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes() {
 }
 
-// Ref: #/components/schemas/ActiveTeam
-type ActiveTeam struct {
-	UserID             string       `json:"user_id"`
-	TeamID             string       `json:"team_id"`
-	TeamRole           OptString    `json:"team_role"`
-	HomeRegionID       string       `json:"home_region_id"`
-	DefaultTeam        OptBool      `json:"default_team"`
-	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
-}
-
-// GetUserID returns the value of UserID.
-func (s *ActiveTeam) GetUserID() string {
-	return s.UserID
-}
-
-// GetTeamID returns the value of TeamID.
-func (s *ActiveTeam) GetTeamID() string {
-	return s.TeamID
-}
-
-// GetTeamRole returns the value of TeamRole.
-func (s *ActiveTeam) GetTeamRole() OptString {
-	return s.TeamRole
-}
-
-// GetHomeRegionID returns the value of HomeRegionID.
-func (s *ActiveTeam) GetHomeRegionID() string {
-	return s.HomeRegionID
-}
-
-// GetDefaultTeam returns the value of DefaultTeam.
-func (s *ActiveTeam) GetDefaultTeam() OptBool {
-	return s.DefaultTeam
-}
-
-// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
-func (s *ActiveTeam) GetRegionalGatewayURL() OptNilString {
-	return s.RegionalGatewayURL
-}
-
-// SetUserID sets the value of UserID.
-func (s *ActiveTeam) SetUserID(val string) {
-	s.UserID = val
-}
-
-// SetTeamID sets the value of TeamID.
-func (s *ActiveTeam) SetTeamID(val string) {
-	s.TeamID = val
-}
-
-// SetTeamRole sets the value of TeamRole.
-func (s *ActiveTeam) SetTeamRole(val OptString) {
-	s.TeamRole = val
-}
-
-// SetHomeRegionID sets the value of HomeRegionID.
-func (s *ActiveTeam) SetHomeRegionID(val string) {
-	s.HomeRegionID = val
-}
-
-// SetDefaultTeam sets the value of DefaultTeam.
-func (s *ActiveTeam) SetDefaultTeam(val OptBool) {
-	s.DefaultTeam = val
-}
-
-// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
-func (s *ActiveTeam) SetRegionalGatewayURL(val OptNilString) {
-	s.RegionalGatewayURL = val
-}
-
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
 	Email string                   `json:"email"`
@@ -758,6 +688,18 @@ type AuthOidcProviderCallbackGetUnauthorized ErrorEnvelope
 
 func (*AuthOidcProviderCallbackGetUnauthorized) authOidcProviderCallbackGetRes() {}
 
+type AuthOidcProviderDevicePollPostBadRequest ErrorEnvelope
+
+func (*AuthOidcProviderDevicePollPostBadRequest) authOidcProviderDevicePollPostRes() {}
+
+type AuthOidcProviderDevicePollPostNotFound ErrorEnvelope
+
+func (*AuthOidcProviderDevicePollPostNotFound) authOidcProviderDevicePollPostRes() {}
+
+type AuthOidcProviderDevicePollPostUnauthorized ErrorEnvelope
+
+func (*AuthOidcProviderDevicePollPostUnauthorized) authOidcProviderDevicePollPostRes() {}
+
 type AuthOidcProviderLoginGetBadRequest ErrorEnvelope
 
 func (*AuthOidcProviderLoginGetBadRequest) authOidcProviderLoginGetRes() {}
@@ -779,6 +721,8 @@ type AuthProvider struct {
 	// When set, browser login for this provider should redirect to this external URL instead of
 	// initiating the OIDC flow directly. Used for deployments that host their own authorization portal.
 	ExternalAuthPortalURL OptString `json:"external_auth_portal_url"`
+	BrowserLoginEnabled   bool      `json:"browser_login_enabled"`
+	DeviceLoginEnabled    bool      `json:"device_login_enabled"`
 }
 
 // GetID returns the value of ID.
@@ -801,6 +745,16 @@ func (s *AuthProvider) GetExternalAuthPortalURL() OptString {
 	return s.ExternalAuthPortalURL
 }
 
+// GetBrowserLoginEnabled returns the value of BrowserLoginEnabled.
+func (s *AuthProvider) GetBrowserLoginEnabled() bool {
+	return s.BrowserLoginEnabled
+}
+
+// GetDeviceLoginEnabled returns the value of DeviceLoginEnabled.
+func (s *AuthProvider) GetDeviceLoginEnabled() bool {
+	return s.DeviceLoginEnabled
+}
+
 // SetID sets the value of ID.
 func (s *AuthProvider) SetID(val string) {
 	s.ID = val
@@ -821,6 +775,16 @@ func (s *AuthProvider) SetExternalAuthPortalURL(val OptString) {
 	s.ExternalAuthPortalURL = val
 }
 
+// SetBrowserLoginEnabled sets the value of BrowserLoginEnabled.
+func (s *AuthProvider) SetBrowserLoginEnabled(val bool) {
+	s.BrowserLoginEnabled = val
+}
+
+// SetDeviceLoginEnabled sets the value of DeviceLoginEnabled.
+func (s *AuthProvider) SetDeviceLoginEnabled(val bool) {
+	s.DeviceLoginEnabled = val
+}
+
 type AuthRefreshPostBadRequest ErrorEnvelope
 
 func (*AuthRefreshPostBadRequest) authRefreshPostRes() {}
@@ -828,22 +792,6 @@ func (*AuthRefreshPostBadRequest) authRefreshPostRes() {}
 type AuthRefreshPostUnauthorized ErrorEnvelope
 
 func (*AuthRefreshPostUnauthorized) authRefreshPostRes() {}
-
-type AuthRegionTokenPostBadRequest ErrorEnvelope
-
-func (*AuthRegionTokenPostBadRequest) authRegionTokenPostRes() {}
-
-type AuthRegionTokenPostConflict ErrorEnvelope
-
-func (*AuthRegionTokenPostConflict) authRegionTokenPostRes() {}
-
-type AuthRegionTokenPostForbidden ErrorEnvelope
-
-func (*AuthRegionTokenPostForbidden) authRegionTokenPostRes() {}
-
-type AuthRegionTokenPostUnauthorized ErrorEnvelope
-
-func (*AuthRegionTokenPostUnauthorized) authRegionTokenPostRes() {}
 
 type AuthRegisterPostBadRequest ErrorEnvelope
 
@@ -2398,6 +2346,187 @@ func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsern
 	s.StaticUsernamePassword = val
 }
 
+// Ref: #/components/schemas/DeviceLoginPollRequest
+type DeviceLoginPollRequest struct {
+	DeviceLoginID string `json:"device_login_id"`
+}
+
+// GetDeviceLoginID returns the value of DeviceLoginID.
+func (s *DeviceLoginPollRequest) GetDeviceLoginID() string {
+	return s.DeviceLoginID
+}
+
+// SetDeviceLoginID sets the value of DeviceLoginID.
+func (s *DeviceLoginPollRequest) SetDeviceLoginID(val string) {
+	s.DeviceLoginID = val
+}
+
+// Ref: #/components/schemas/DeviceLoginPollResponse
+type DeviceLoginPollResponse struct {
+	Status          DeviceLoginPollResponseStatus `json:"status"`
+	IntervalSeconds OptInt                        `json:"interval_seconds"`
+	ExpiresAt       OptInt64                      `json:"expires_at"`
+	Login           OptLoginResponse              `json:"login"`
+}
+
+// GetStatus returns the value of Status.
+func (s *DeviceLoginPollResponse) GetStatus() DeviceLoginPollResponseStatus {
+	return s.Status
+}
+
+// GetIntervalSeconds returns the value of IntervalSeconds.
+func (s *DeviceLoginPollResponse) GetIntervalSeconds() OptInt {
+	return s.IntervalSeconds
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *DeviceLoginPollResponse) GetExpiresAt() OptInt64 {
+	return s.ExpiresAt
+}
+
+// GetLogin returns the value of Login.
+func (s *DeviceLoginPollResponse) GetLogin() OptLoginResponse {
+	return s.Login
+}
+
+// SetStatus sets the value of Status.
+func (s *DeviceLoginPollResponse) SetStatus(val DeviceLoginPollResponseStatus) {
+	s.Status = val
+}
+
+// SetIntervalSeconds sets the value of IntervalSeconds.
+func (s *DeviceLoginPollResponse) SetIntervalSeconds(val OptInt) {
+	s.IntervalSeconds = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *DeviceLoginPollResponse) SetExpiresAt(val OptInt64) {
+	s.ExpiresAt = val
+}
+
+// SetLogin sets the value of Login.
+func (s *DeviceLoginPollResponse) SetLogin(val OptLoginResponse) {
+	s.Login = val
+}
+
+type DeviceLoginPollResponseStatus string
+
+const (
+	DeviceLoginPollResponseStatusPending   DeviceLoginPollResponseStatus = "pending"
+	DeviceLoginPollResponseStatusSlowDown  DeviceLoginPollResponseStatus = "slow_down"
+	DeviceLoginPollResponseStatusCompleted DeviceLoginPollResponseStatus = "completed"
+)
+
+// AllValues returns all DeviceLoginPollResponseStatus values.
+func (DeviceLoginPollResponseStatus) AllValues() []DeviceLoginPollResponseStatus {
+	return []DeviceLoginPollResponseStatus{
+		DeviceLoginPollResponseStatusPending,
+		DeviceLoginPollResponseStatusSlowDown,
+		DeviceLoginPollResponseStatusCompleted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s DeviceLoginPollResponseStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case DeviceLoginPollResponseStatusPending:
+		return []byte(s), nil
+	case DeviceLoginPollResponseStatusSlowDown:
+		return []byte(s), nil
+	case DeviceLoginPollResponseStatusCompleted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *DeviceLoginPollResponseStatus) UnmarshalText(data []byte) error {
+	switch DeviceLoginPollResponseStatus(data) {
+	case DeviceLoginPollResponseStatusPending:
+		*s = DeviceLoginPollResponseStatusPending
+		return nil
+	case DeviceLoginPollResponseStatusSlowDown:
+		*s = DeviceLoginPollResponseStatusSlowDown
+		return nil
+	case DeviceLoginPollResponseStatusCompleted:
+		*s = DeviceLoginPollResponseStatusCompleted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/DeviceLoginStartResponse
+type DeviceLoginStartResponse struct {
+	DeviceLoginID           string    `json:"device_login_id"`
+	UserCode                string    `json:"user_code"`
+	VerificationURI         string    `json:"verification_uri"`
+	VerificationURIComplete OptString `json:"verification_uri_complete"`
+	ExpiresAt               int64     `json:"expires_at"`
+	IntervalSeconds         int       `json:"interval_seconds"`
+}
+
+// GetDeviceLoginID returns the value of DeviceLoginID.
+func (s *DeviceLoginStartResponse) GetDeviceLoginID() string {
+	return s.DeviceLoginID
+}
+
+// GetUserCode returns the value of UserCode.
+func (s *DeviceLoginStartResponse) GetUserCode() string {
+	return s.UserCode
+}
+
+// GetVerificationURI returns the value of VerificationURI.
+func (s *DeviceLoginStartResponse) GetVerificationURI() string {
+	return s.VerificationURI
+}
+
+// GetVerificationURIComplete returns the value of VerificationURIComplete.
+func (s *DeviceLoginStartResponse) GetVerificationURIComplete() OptString {
+	return s.VerificationURIComplete
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *DeviceLoginStartResponse) GetExpiresAt() int64 {
+	return s.ExpiresAt
+}
+
+// GetIntervalSeconds returns the value of IntervalSeconds.
+func (s *DeviceLoginStartResponse) GetIntervalSeconds() int {
+	return s.IntervalSeconds
+}
+
+// SetDeviceLoginID sets the value of DeviceLoginID.
+func (s *DeviceLoginStartResponse) SetDeviceLoginID(val string) {
+	s.DeviceLoginID = val
+}
+
+// SetUserCode sets the value of UserCode.
+func (s *DeviceLoginStartResponse) SetUserCode(val string) {
+	s.UserCode = val
+}
+
+// SetVerificationURI sets the value of VerificationURI.
+func (s *DeviceLoginStartResponse) SetVerificationURI(val string) {
+	s.VerificationURI = val
+}
+
+// SetVerificationURIComplete sets the value of VerificationURIComplete.
+func (s *DeviceLoginStartResponse) SetVerificationURIComplete(val OptString) {
+	s.VerificationURIComplete = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *DeviceLoginStartResponse) SetExpiresAt(val int64) {
+	s.ExpiresAt = val
+}
+
+// SetIntervalSeconds sets the value of IntervalSeconds.
+func (s *DeviceLoginStartResponse) SetIntervalSeconds(val int) {
+	s.IntervalSeconds = val
+}
+
 // Ref: #/components/schemas/EgressAuthFailurePolicy
 type EgressAuthFailurePolicy string
 
@@ -2810,6 +2939,7 @@ func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncConflictsConflictIDPutRes()     {
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes() {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes()       {}
 func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                                 {}
+func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()                     {}
 func (*ErrorEnvelope) authProvidersGetRes()                                    {}
 func (*ErrorEnvelope) healthzGetRes()                                          {}
 func (*ErrorEnvelope) readyzGetRes()                                           {}
@@ -3407,21 +3537,6 @@ func (s *Identity) SetCreatedAt(val int64) {
 	s.CreatedAt = val
 }
 
-// Ref: #/components/schemas/IssueRegionTokenRequest
-type IssueRegionTokenRequest struct {
-	TeamID OptString `json:"team_id"`
-}
-
-// GetTeamID returns the value of TeamID.
-func (s *IssueRegionTokenRequest) GetTeamID() OptString {
-	return s.TeamID
-}
-
-// SetTeamID sets the value of TeamID.
-func (s *IssueRegionTokenRequest) SetTeamID(val OptString) {
-	s.TeamID = val
-}
-
 // Ref: #/components/schemas/LabelSelector
 type LabelSelector struct {
 	MatchLabels      OptLabelSelectorMatchLabels `json:"matchLabels"`
@@ -3624,11 +3739,10 @@ func (s *LoginRequest) SetPassword(val string) {
 
 // Ref: #/components/schemas/LoginResponse
 type LoginResponse struct {
-	AccessToken     string             `json:"access_token"`
-	RefreshToken    string             `json:"refresh_token"`
-	ExpiresAt       int64              `json:"expires_at"`
-	User            User               `json:"user"`
-	RegionalSession OptRegionalSession `json:"regional_session"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresAt    int64  `json:"expires_at"`
+	User         User   `json:"user"`
 }
 
 // GetAccessToken returns the value of AccessToken.
@@ -3651,11 +3765,6 @@ func (s *LoginResponse) GetUser() User {
 	return s.User
 }
 
-// GetRegionalSession returns the value of RegionalSession.
-func (s *LoginResponse) GetRegionalSession() OptRegionalSession {
-	return s.RegionalSession
-}
-
 // SetAccessToken sets the value of AccessToken.
 func (s *LoginResponse) SetAccessToken(val string) {
 	s.AccessToken = val
@@ -3674,11 +3783,6 @@ func (s *LoginResponse) SetExpiresAt(val int64) {
 // SetUser sets the value of User.
 func (s *LoginResponse) SetUser(val User) {
 	s.User = val
-}
-
-// SetRegionalSession sets the value of RegionalSession.
-func (s *LoginResponse) SetRegionalSession(val OptRegionalSession) {
-	s.RegionalSession = val
 }
 
 type MetricsGetOK struct {
@@ -4140,52 +4244,6 @@ func (o OptAPIV1SandboxesGetStatus) Get() (v APIV1SandboxesGetStatus, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptAPIV1SandboxesGetStatus) Or(d APIV1SandboxesGetStatus) APIV1SandboxesGetStatus {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptActiveTeam returns new OptActiveTeam with value set to v.
-func NewOptActiveTeam(v ActiveTeam) OptActiveTeam {
-	return OptActiveTeam{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptActiveTeam is optional ActiveTeam.
-type OptActiveTeam struct {
-	Value ActiveTeam
-	Set   bool
-}
-
-// IsSet returns true if OptActiveTeam was set.
-func (o OptActiveTeam) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptActiveTeam) Reset() {
-	var v ActiveTeam
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptActiveTeam) SetTo(v ActiveTeam) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptActiveTeam) Get() (v ActiveTeam, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptActiveTeam) Or(d ActiveTeam) ActiveTeam {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -5112,6 +5170,98 @@ func (o OptDateTime) Or(d time.Time) time.Time {
 	return d
 }
 
+// NewOptDeviceLoginPollResponse returns new OptDeviceLoginPollResponse with value set to v.
+func NewOptDeviceLoginPollResponse(v DeviceLoginPollResponse) OptDeviceLoginPollResponse {
+	return OptDeviceLoginPollResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptDeviceLoginPollResponse is optional DeviceLoginPollResponse.
+type OptDeviceLoginPollResponse struct {
+	Value DeviceLoginPollResponse
+	Set   bool
+}
+
+// IsSet returns true if OptDeviceLoginPollResponse was set.
+func (o OptDeviceLoginPollResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptDeviceLoginPollResponse) Reset() {
+	var v DeviceLoginPollResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptDeviceLoginPollResponse) SetTo(v DeviceLoginPollResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptDeviceLoginPollResponse) Get() (v DeviceLoginPollResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptDeviceLoginPollResponse) Or(d DeviceLoginPollResponse) DeviceLoginPollResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptDeviceLoginStartResponse returns new OptDeviceLoginStartResponse with value set to v.
+func NewOptDeviceLoginStartResponse(v DeviceLoginStartResponse) OptDeviceLoginStartResponse {
+	return OptDeviceLoginStartResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptDeviceLoginStartResponse is optional DeviceLoginStartResponse.
+type OptDeviceLoginStartResponse struct {
+	Value DeviceLoginStartResponse
+	Set   bool
+}
+
+// IsSet returns true if OptDeviceLoginStartResponse was set.
+func (o OptDeviceLoginStartResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptDeviceLoginStartResponse) Reset() {
+	var v DeviceLoginStartResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptDeviceLoginStartResponse) SetTo(v DeviceLoginStartResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptDeviceLoginStartResponse) Get() (v DeviceLoginStartResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptDeviceLoginStartResponse) Or(d DeviceLoginStartResponse) DeviceLoginStartResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptEgressAuthFailurePolicy returns new OptEgressAuthFailurePolicy with value set to v.
 func NewOptEgressAuthFailurePolicy(v EgressAuthFailurePolicy) OptEgressAuthFailurePolicy {
 	return OptEgressAuthFailurePolicy{
@@ -5940,52 +6090,6 @@ func (o OptInt64) Or(d int64) int64 {
 	return d
 }
 
-// NewOptIssueRegionTokenRequest returns new OptIssueRegionTokenRequest with value set to v.
-func NewOptIssueRegionTokenRequest(v IssueRegionTokenRequest) OptIssueRegionTokenRequest {
-	return OptIssueRegionTokenRequest{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptIssueRegionTokenRequest is optional IssueRegionTokenRequest.
-type OptIssueRegionTokenRequest struct {
-	Value IssueRegionTokenRequest
-	Set   bool
-}
-
-// IsSet returns true if OptIssueRegionTokenRequest was set.
-func (o OptIssueRegionTokenRequest) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptIssueRegionTokenRequest) Reset() {
-	var v IssueRegionTokenRequest
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptIssueRegionTokenRequest) SetTo(v IssueRegionTokenRequest) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptIssueRegionTokenRequest) Get() (v IssueRegionTokenRequest, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptIssueRegionTokenRequest) Or(d IssueRegionTokenRequest) IssueRegionTokenRequest {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptLabelSelector returns new OptLabelSelector with value set to v.
 func NewOptLabelSelector(v LabelSelector) OptLabelSelector {
 	return OptLabelSelector{
@@ -6795,69 +6899,6 @@ func (o OptNilSyncJournalEntryMetadata) Or(d SyncJournalEntryMetadata) SyncJourn
 	return d
 }
 
-// NewOptNilTeam returns new OptNilTeam with value set to v.
-func NewOptNilTeam(v Team) OptNilTeam {
-	return OptNilTeam{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptNilTeam is optional nullable Team.
-type OptNilTeam struct {
-	Value Team
-	Set   bool
-	Null  bool
-}
-
-// IsSet returns true if OptNilTeam was set.
-func (o OptNilTeam) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptNilTeam) Reset() {
-	var v Team
-	o.Value = v
-	o.Set = false
-	o.Null = false
-}
-
-// SetTo sets value to v.
-func (o *OptNilTeam) SetTo(v Team) {
-	o.Set = true
-	o.Null = false
-	o.Value = v
-}
-
-// IsNull returns true if value is Null.
-func (o OptNilTeam) IsNull() bool { return o.Null }
-
-// SetToNull sets value to null.
-func (o *OptNilTeam) SetToNull() {
-	o.Set = true
-	o.Null = true
-	var v Team
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptNilTeam) Get() (v Team, ok bool) {
-	if o.Null {
-		return v, false
-	}
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptNilTeam) Or(d Team) Team {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptNodeAffinity returns new OptNodeAffinity with value set to v.
 func NewOptNodeAffinity(v NodeAffinity) OptNodeAffinity {
 	return OptNodeAffinity{
@@ -7634,52 +7675,6 @@ func (o OptRegion) Get() (v Region, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptRegion) Or(d Region) Region {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptRegionalSession returns new OptRegionalSession with value set to v.
-func NewOptRegionalSession(v RegionalSession) OptRegionalSession {
-	return OptRegionalSession{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRegionalSession is optional RegionalSession.
-type OptRegionalSession struct {
-	Value RegionalSession
-	Set   bool
-}
-
-// IsSet returns true if OptRegionalSession was set.
-func (o OptRegionalSession) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRegionalSession) Reset() {
-	var v RegionalSession
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRegionalSession) SetTo(v RegionalSession) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRegionalSession) Get() (v RegionalSession, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRegionalSession) Or(d RegionalSession) RegionalSession {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11400,54 +11395,6 @@ func (s *Region) SetEnabled(val bool) {
 	s.Enabled = val
 }
 
-// Ref: #/components/schemas/RegionalSession
-type RegionalSession struct {
-	RegionID           string       `json:"region_id"`
-	RegionalGatewayURL OptNilString `json:"regional_gateway_url"`
-	Token              string       `json:"token"`
-	ExpiresAt          int64        `json:"expires_at"`
-}
-
-// GetRegionID returns the value of RegionID.
-func (s *RegionalSession) GetRegionID() string {
-	return s.RegionID
-}
-
-// GetRegionalGatewayURL returns the value of RegionalGatewayURL.
-func (s *RegionalSession) GetRegionalGatewayURL() OptNilString {
-	return s.RegionalGatewayURL
-}
-
-// GetToken returns the value of Token.
-func (s *RegionalSession) GetToken() string {
-	return s.Token
-}
-
-// GetExpiresAt returns the value of ExpiresAt.
-func (s *RegionalSession) GetExpiresAt() int64 {
-	return s.ExpiresAt
-}
-
-// SetRegionID sets the value of RegionID.
-func (s *RegionalSession) SetRegionID(val string) {
-	s.RegionID = val
-}
-
-// SetRegionalGatewayURL sets the value of RegionalGatewayURL.
-func (s *RegionalSession) SetRegionalGatewayURL(val OptNilString) {
-	s.RegionalGatewayURL = val
-}
-
-// SetToken sets the value of Token.
-func (s *RegionalSession) SetToken(val string) {
-	s.Token = val
-}
-
-// SetExpiresAt sets the value of ExpiresAt.
-func (s *RegionalSession) SetExpiresAt(val int64) {
-	s.ExpiresAt = val
-}
-
 type RegionsIDDeleteConflict ErrorEnvelope
 
 func (*RegionsIDDeleteConflict) regionsIDDeleteRes() {}
@@ -11513,7 +11460,7 @@ type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
-	// Required in global-gateway mode because registration creates the user's default team.
+	// Required in global-gateway mode because registration creates the user's initial team.
 	HomeRegionID OptNilString `json:"home_region_id"`
 }
 
@@ -13540,49 +13487,6 @@ func (SuccessAPIKeyListResponseSuccess) AllValues() []SuccessAPIKeyListResponseS
 }
 
 // Merged schema.
-// Ref: #/components/schemas/SuccessActiveTeamResponse
-type SuccessActiveTeamResponse struct {
-	Success SuccessActiveTeamResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptActiveTeam `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessActiveTeamResponse) GetSuccess() SuccessActiveTeamResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessActiveTeamResponse) GetData() OptActiveTeam {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessActiveTeamResponse) SetSuccess(val SuccessActiveTeamResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessActiveTeamResponse) SetData(val OptActiveTeam) {
-	s.Data = val
-}
-
-func (*SuccessActiveTeamResponse) tenantActiveGetRes() {}
-
-type SuccessActiveTeamResponseSuccess bool
-
-const (
-	SuccessActiveTeamResponseSuccessTrue SuccessActiveTeamResponseSuccess = true
-)
-
-// AllValues returns all SuccessActiveTeamResponseSuccess values.
-func (SuccessActiveTeamResponseSuccess) AllValues() []SuccessActiveTeamResponseSuccess {
-	return []SuccessActiveTeamResponseSuccess{
-		SuccessActiveTeamResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
 // Ref: #/components/schemas/SuccessAuthProvidersResponse
 type SuccessAuthProvidersResponse struct {
 	Success SuccessAuthProvidersResponseSuccess `json:"success"`
@@ -14103,6 +14007,92 @@ func (SuccessDeletedResponseSuccess) AllValues() []SuccessDeletedResponseSuccess
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessDeviceLoginPollResponse
+type SuccessDeviceLoginPollResponse struct {
+	Success SuccessDeviceLoginPollResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptDeviceLoginPollResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessDeviceLoginPollResponse) GetSuccess() SuccessDeviceLoginPollResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessDeviceLoginPollResponse) GetData() OptDeviceLoginPollResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessDeviceLoginPollResponse) SetSuccess(val SuccessDeviceLoginPollResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessDeviceLoginPollResponse) SetData(val OptDeviceLoginPollResponse) {
+	s.Data = val
+}
+
+func (*SuccessDeviceLoginPollResponse) authOidcProviderDevicePollPostRes() {}
+
+type SuccessDeviceLoginPollResponseSuccess bool
+
+const (
+	SuccessDeviceLoginPollResponseSuccessTrue SuccessDeviceLoginPollResponseSuccess = true
+)
+
+// AllValues returns all SuccessDeviceLoginPollResponseSuccess values.
+func (SuccessDeviceLoginPollResponseSuccess) AllValues() []SuccessDeviceLoginPollResponseSuccess {
+	return []SuccessDeviceLoginPollResponseSuccess{
+		SuccessDeviceLoginPollResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessDeviceLoginStartResponse
+type SuccessDeviceLoginStartResponse struct {
+	Success SuccessDeviceLoginStartResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptDeviceLoginStartResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessDeviceLoginStartResponse) GetSuccess() SuccessDeviceLoginStartResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessDeviceLoginStartResponse) GetData() OptDeviceLoginStartResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessDeviceLoginStartResponse) SetSuccess(val SuccessDeviceLoginStartResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessDeviceLoginStartResponse) SetData(val OptDeviceLoginStartResponse) {
+	s.Data = val
+}
+
+func (*SuccessDeviceLoginStartResponse) authOidcProviderDeviceStartPostRes() {}
+
+type SuccessDeviceLoginStartResponseSuccess bool
+
+const (
+	SuccessDeviceLoginStartResponseSuccessTrue SuccessDeviceLoginStartResponseSuccess = true
+)
+
+// AllValues returns all SuccessDeviceLoginStartResponseSuccess values.
+func (SuccessDeviceLoginStartResponseSuccess) AllValues() []SuccessDeviceLoginStartResponseSuccess {
+	return []SuccessDeviceLoginStartResponseSuccess{
+		SuccessDeviceLoginStartResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessExposedPortsResponse
 type SuccessExposedPortsResponse struct {
 	Success SuccessExposedPortsResponseSuccess `json:"success"`
@@ -14446,49 +14436,6 @@ const (
 func (SuccessIdentityListResponseSuccess) AllValues() []SuccessIdentityListResponseSuccess {
 	return []SuccessIdentityListResponseSuccess{
 		SuccessIdentityListResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessIssueRegionTokenResponse
-type SuccessIssueRegionTokenResponse struct {
-	Success SuccessIssueRegionTokenResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptRegionalSession `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessIssueRegionTokenResponse) GetSuccess() SuccessIssueRegionTokenResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessIssueRegionTokenResponse) GetData() OptRegionalSession {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessIssueRegionTokenResponse) SetSuccess(val SuccessIssueRegionTokenResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessIssueRegionTokenResponse) SetData(val OptRegionalSession) {
-	s.Data = val
-}
-
-func (*SuccessIssueRegionTokenResponse) authRegionTokenPostRes() {}
-
-type SuccessIssueRegionTokenResponseSuccess bool
-
-const (
-	SuccessIssueRegionTokenResponseSuccessTrue SuccessIssueRegionTokenResponseSuccess = true
-)
-
-// AllValues returns all SuccessIssueRegionTokenResponseSuccess values.
-func (SuccessIssueRegionTokenResponseSuccess) AllValues() []SuccessIssueRegionTokenResponseSuccess {
-	return []SuccessIssueRegionTokenResponseSuccess{
-		SuccessIssueRegionTokenResponseSuccessTrue,
 	}
 }
 
@@ -17342,22 +17289,6 @@ func (s *TemplateUpdateRequest) SetSpec(val SandboxTemplateSpec) {
 	s.Spec = val
 }
 
-type TenantActiveGetBadRequest ErrorEnvelope
-
-func (*TenantActiveGetBadRequest) tenantActiveGetRes() {}
-
-type TenantActiveGetConflict ErrorEnvelope
-
-func (*TenantActiveGetConflict) tenantActiveGetRes() {}
-
-type TenantActiveGetForbidden ErrorEnvelope
-
-func (*TenantActiveGetForbidden) tenantActiveGetRes() {}
-
-type TenantActiveGetUnauthorized ErrorEnvelope
-
-func (*TenantActiveGetUnauthorized) tenantActiveGetRes() {}
-
 // Ref: #/components/schemas/Toleration
 type Toleration struct {
 	Key      OptString `json:"key"`
@@ -17816,9 +17747,8 @@ func (s *UpdateTeamRequest) SetSlug(val OptString) {
 
 // Ref: #/components/schemas/UpdateUserRequest
 type UpdateUserRequest struct {
-	Name          OptString    `json:"name"`
-	AvatarURL     OptString    `json:"avatar_url"`
-	DefaultTeamID OptNilString `json:"default_team_id"`
+	Name      OptString `json:"name"`
+	AvatarURL OptString `json:"avatar_url"`
 }
 
 // GetName returns the value of Name.
@@ -17831,11 +17761,6 @@ func (s *UpdateUserRequest) GetAvatarURL() OptString {
 	return s.AvatarURL
 }
 
-// GetDefaultTeamID returns the value of DefaultTeamID.
-func (s *UpdateUserRequest) GetDefaultTeamID() OptNilString {
-	return s.DefaultTeamID
-}
-
 // SetName sets the value of Name.
 func (s *UpdateUserRequest) SetName(val OptString) {
 	s.Name = val
@@ -17844,11 +17769,6 @@ func (s *UpdateUserRequest) SetName(val OptString) {
 // SetAvatarURL sets the value of AvatarURL.
 func (s *UpdateUserRequest) SetAvatarURL(val OptString) {
 	s.AvatarURL = val
-}
-
-// SetDefaultTeamID sets the value of DefaultTeamID.
-func (s *UpdateUserRequest) SetDefaultTeamID(val OptNilString) {
-	s.DefaultTeamID = val
 }
 
 // Ref: #/components/schemas/UpsertSyncReplicaRequest
@@ -17916,8 +17836,6 @@ type User struct {
 	Email         string       `json:"email"`
 	Name          string       `json:"name"`
 	AvatarURL     OptNilString `json:"avatar_url"`
-	DefaultTeamID OptNilString `json:"default_team_id"`
-	DefaultTeam   OptNilTeam   `json:"default_team"`
 	EmailVerified bool         `json:"email_verified"`
 	IsAdmin       bool         `json:"is_admin"`
 	CreatedAt     time.Time    `json:"created_at"`
@@ -17942,16 +17860,6 @@ func (s *User) GetName() string {
 // GetAvatarURL returns the value of AvatarURL.
 func (s *User) GetAvatarURL() OptNilString {
 	return s.AvatarURL
-}
-
-// GetDefaultTeamID returns the value of DefaultTeamID.
-func (s *User) GetDefaultTeamID() OptNilString {
-	return s.DefaultTeamID
-}
-
-// GetDefaultTeam returns the value of DefaultTeam.
-func (s *User) GetDefaultTeam() OptNilTeam {
-	return s.DefaultTeam
 }
 
 // GetEmailVerified returns the value of EmailVerified.
@@ -17992,16 +17900,6 @@ func (s *User) SetName(val string) {
 // SetAvatarURL sets the value of AvatarURL.
 func (s *User) SetAvatarURL(val OptNilString) {
 	s.AvatarURL = val
-}
-
-// SetDefaultTeamID sets the value of DefaultTeamID.
-func (s *User) SetDefaultTeamID(val OptNilString) {
-	s.DefaultTeamID = val
-}
-
-// SetDefaultTeam sets the value of DefaultTeam.
-func (s *User) SetDefaultTeam(val OptNilTeam) {
-	s.DefaultTeam = val
 }
 
 // SetEmailVerified sets the value of EmailVerified.

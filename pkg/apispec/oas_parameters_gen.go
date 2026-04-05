@@ -398,6 +398,16 @@ type AuthOidcProviderCallbackGetParams struct {
 	State    string
 }
 
+// AuthOidcProviderDevicePollPostParams is parameters of POST /auth/oidc/{provider}/device/poll operation.
+type AuthOidcProviderDevicePollPostParams struct {
+	Provider string
+}
+
+// AuthOidcProviderDeviceStartPostParams is parameters of POST /auth/oidc/{provider}/device/start operation.
+type AuthOidcProviderDeviceStartPostParams struct {
+	Provider string
+}
+
 // AuthOidcProviderLoginGetParams is parameters of GET /auth/oidc/{provider}/login operation.
 type AuthOidcProviderLoginGetParams struct {
 	Provider  string
@@ -454,11 +464,6 @@ type TeamsIDMembersUserIdPutParams struct {
 // TeamsIDPutParams is parameters of PUT /teams/{id} operation.
 type TeamsIDPutParams struct {
 	ID string
-}
-
-// TenantActiveGetParams is parameters of GET /tenant/active operation.
-type TenantActiveGetParams struct {
-	TeamID OptString `json:",omitempty,omitzero"`
 }
 
 // UsersMeIdentitiesIDDeleteParams is parameters of DELETE /users/me/identities/{id} operation.
