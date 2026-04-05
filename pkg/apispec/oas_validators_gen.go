@@ -545,38 +545,6 @@ func (s *AuthRefreshPostUnauthorized) Validate() error {
 	return nil
 }
 
-func (s *AuthRegionTokenPostBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *AuthRegionTokenPostConflict) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *AuthRegionTokenPostForbidden) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *AuthRegionTokenPostUnauthorized) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *AuthRegisterPostBadRequest) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -3334,38 +3302,6 @@ func (s *SuccessIdentityListResponse) Validate() error {
 }
 
 func (s SuccessIdentityListResponseSuccess) Validate() error {
-	switch s {
-	case true:
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s *SuccessIssueRegionTokenResponse) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Success.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "success",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s SuccessIssueRegionTokenResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil

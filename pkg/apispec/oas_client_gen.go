@@ -634,12 +634,6 @@ type Invoker interface {
 	//
 	// POST /auth/refresh
 	AuthRefreshPost(ctx context.Context, request *RefreshRequest, options ...RequestOption) (AuthRefreshPostRes, error)
-	// AuthRegionTokenPost invokes POST /auth/region-token operation.
-	//
-	// Exchange a user session and explicit team selection for a region-scoped token.
-	//
-	// POST /auth/region-token
-	AuthRegionTokenPost(ctx context.Context, request *IssueRegionTokenRequest, options ...RequestOption) (AuthRegionTokenPostRes, error)
 	// AuthRegisterPost invokes POST /auth/register operation.
 	//
 	// Register a new user.
@@ -11157,104 +11151,6 @@ func (c *Client) sendAuthRefreshPost(ctx context.Context, request *RefreshReques
 	}
 
 	result, err := decodeAuthRefreshPostResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// AuthRegionTokenPost invokes POST /auth/region-token operation.
-//
-// Exchange a user session and explicit team selection for a region-scoped token.
-//
-// POST /auth/region-token
-func (c *Client) AuthRegionTokenPost(ctx context.Context, request *IssueRegionTokenRequest, options ...RequestOption) (AuthRegionTokenPostRes, error) {
-	res, err := c.sendAuthRegionTokenPost(ctx, request, options...)
-	return res, err
-}
-
-func (c *Client) sendAuthRegionTokenPost(ctx context.Context, request *IssueRegionTokenRequest, requestOptions ...RequestOption) (res AuthRegionTokenPostRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [1]string
-	pathParts[0] = "/auth/region-token"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAuthRegionTokenPostRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, AuthRegionTokenPostOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAuthRegionTokenPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

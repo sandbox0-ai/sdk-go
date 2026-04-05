@@ -181,10 +181,6 @@ type AuthRefreshPostRes interface {
 	authRefreshPostRes()
 }
 
-type AuthRegionTokenPostRes interface {
-	authRegionTokenPostRes()
-}
-
 type AuthRegisterPostRes interface {
 	authRegisterPostRes()
 }

@@ -93,7 +93,6 @@ const (
 	AuthOidcProviderLoginGetOperation                              OperationName = "AuthOidcProviderLoginGet"
 	AuthProvidersGetOperation                                      OperationName = "AuthProvidersGet"
 	AuthRefreshPostOperation                                       OperationName = "AuthRefreshPost"
-	AuthRegionTokenPostOperation                                   OperationName = "AuthRegionTokenPost"
 	AuthRegisterPostOperation                                      OperationName = "AuthRegisterPost"
 	HealthzGetOperation                                            OperationName = "HealthzGet"
 	MetadataGetOperation                                           OperationName = "MetadataGet"
