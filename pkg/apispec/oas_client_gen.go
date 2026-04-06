@@ -139,7 +139,7 @@ type Invoker interface {
 	// Get registry credentials for uploads.
 	//
 	// POST /api/v1/registry/credentials
-	APIV1RegistryCredentialsPost(ctx context.Context, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error)
+	APIV1RegistryCredentialsPost(ctx context.Context, request OptRegistryCredentialsRequest, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error)
 	// APIV1SandboxesGet invokes GET /api/v1/sandboxes operation.
 	//
 	// List all sandboxes for the authenticated team. In multi-cluster mode, this endpoint aggregates
@@ -1777,12 +1777,12 @@ func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *Cr
 // Get registry credentials for uploads.
 //
 // POST /api/v1/registry/credentials
-func (c *Client) APIV1RegistryCredentialsPost(ctx context.Context, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error) {
-	res, err := c.sendAPIV1RegistryCredentialsPost(ctx, options...)
+func (c *Client) APIV1RegistryCredentialsPost(ctx context.Context, request OptRegistryCredentialsRequest, options ...RequestOption) (APIV1RegistryCredentialsPostRes, error) {
+	res, err := c.sendAPIV1RegistryCredentialsPost(ctx, request, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1RegistryCredentialsPost(ctx context.Context, requestOptions ...RequestOption) (res APIV1RegistryCredentialsPostRes, err error) {
+func (c *Client) sendAPIV1RegistryCredentialsPost(ctx context.Context, request OptRegistryCredentialsRequest, requestOptions ...RequestOption) (res APIV1RegistryCredentialsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -1802,6 +1802,9 @@ func (c *Client) sendAPIV1RegistryCredentialsPost(ctx context.Context, requestOp
 	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1RegistryCredentialsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	{
