@@ -64,6 +64,14 @@ func (s *APIKeysIDDeleteNotFound) Validate() error {
 	return nil
 }
 
+func (s *APIV1RegistryCredentialsPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *APIV1RegistryCredentialsPostForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {

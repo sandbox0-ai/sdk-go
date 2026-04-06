@@ -184,6 +184,10 @@ type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
 
+type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
+
+func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
+
 type APIV1RegistryCredentialsPostForbidden ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostForbidden) aPIV1RegistryCredentialsPostRes() {}
@@ -7779,6 +7783,52 @@ func (o OptRegistryCredentials) Or(d RegistryCredentials) RegistryCredentials {
 	return d
 }
 
+// NewOptRegistryCredentialsRequest returns new OptRegistryCredentialsRequest with value set to v.
+func NewOptRegistryCredentialsRequest(v RegistryCredentialsRequest) OptRegistryCredentialsRequest {
+	return OptRegistryCredentialsRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRegistryCredentialsRequest is optional RegistryCredentialsRequest.
+type OptRegistryCredentialsRequest struct {
+	Value RegistryCredentialsRequest
+	Set   bool
+}
+
+// IsSet returns true if OptRegistryCredentialsRequest was set.
+func (o OptRegistryCredentialsRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRegistryCredentialsRequest) Reset() {
+	var v RegistryCredentialsRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRegistryCredentialsRequest) SetTo(v RegistryCredentialsRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRegistryCredentialsRequest) Get() (v RegistryCredentialsRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRegistryCredentialsRequest) Or(d RegistryCredentialsRequest) RegistryCredentialsRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptResourceQuota returns new OptResourceQuota with value set to v.
 func NewOptResourceQuota(v ResourceQuota) OptResourceQuota {
 	return OptResourceQuota{
@@ -11624,6 +11674,22 @@ func (s *RegistryCredentials) SetPassword(val string) {
 // SetExpiresAt sets the value of ExpiresAt.
 func (s *RegistryCredentials) SetExpiresAt(val OptDateTime) {
 	s.ExpiresAt = val
+}
+
+// Ref: #/components/schemas/RegistryCredentialsRequest
+type RegistryCredentialsRequest struct {
+	// Target image name and tag requested for push, without credentials.
+	TargetImage OptString `json:"targetImage"`
+}
+
+// GetTargetImage returns the value of TargetImage.
+func (s *RegistryCredentialsRequest) GetTargetImage() OptString {
+	return s.TargetImage
+}
+
+// SetTargetImage sets the value of TargetImage.
+func (s *RegistryCredentialsRequest) SetTargetImage(val OptString) {
+	s.TargetImage = val
 }
 
 // Ref: #/components/schemas/ResizeContextRequest
