@@ -3,6 +3,18 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *CreateSandboxVolumeRequest) setDefaults() {
+	{
+		val := int64(0)
+		s.DefaultPosixUID.SetTo(val)
+	}
+	{
+		val := int64(0)
+		s.DefaultPosixGid.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxConfig) setDefaults() {
 	{
 		val := bool(true)

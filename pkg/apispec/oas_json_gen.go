@@ -5457,6 +5457,18 @@ func (s *CreateSandboxVolumeRequest) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 	{
+		if s.DefaultPosixUID.Set {
+			e.FieldStart("default_posix_uid")
+			s.DefaultPosixUID.Encode(e)
+		}
+	}
+	{
+		if s.DefaultPosixGid.Set {
+			e.FieldStart("default_posix_gid")
+			s.DefaultPosixGid.Encode(e)
+		}
+	}
+	{
 		if s.CacheSize.Set {
 			e.FieldStart("cache_size")
 			s.CacheSize.Encode(e)
@@ -5488,12 +5500,14 @@ func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateSandboxVolumeRequest = [5]string{
-	0: "cache_size",
-	1: "prefetch",
-	2: "buffer_size",
-	3: "writeback",
-	4: "access_mode",
+var jsonFieldsNameOfCreateSandboxVolumeRequest = [7]string{
+	0: "default_posix_uid",
+	1: "default_posix_gid",
+	2: "cache_size",
+	3: "prefetch",
+	4: "buffer_size",
+	5: "writeback",
+	6: "access_mode",
 }
 
 // Decode decodes CreateSandboxVolumeRequest from json.
@@ -5501,9 +5515,30 @@ func (s *CreateSandboxVolumeRequest) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode CreateSandboxVolumeRequest to nil")
 	}
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "default_posix_uid":
+			if err := func() error {
+				s.DefaultPosixUID.Reset()
+				if err := s.DefaultPosixUID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_uid\"")
+			}
+		case "default_posix_gid":
+			if err := func() error {
+				s.DefaultPosixGid.Reset()
+				if err := s.DefaultPosixGid.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_gid\"")
+			}
 		case "cache_size":
 			if err := func() error {
 				s.CacheSize.Reset()
@@ -8508,6 +8543,18 @@ func (s *ForkVolumeRequest) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *ForkVolumeRequest) encodeFields(e *jx.Encoder) {
 	{
+		if s.DefaultPosixUID.Set {
+			e.FieldStart("default_posix_uid")
+			s.DefaultPosixUID.Encode(e)
+		}
+	}
+	{
+		if s.DefaultPosixGid.Set {
+			e.FieldStart("default_posix_gid")
+			s.DefaultPosixGid.Encode(e)
+		}
+	}
+	{
 		if s.CacheSize.Set {
 			e.FieldStart("cache_size")
 			s.CacheSize.Encode(e)
@@ -8539,12 +8586,14 @@ func (s *ForkVolumeRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfForkVolumeRequest = [5]string{
-	0: "cache_size",
-	1: "prefetch",
-	2: "buffer_size",
-	3: "writeback",
-	4: "access_mode",
+var jsonFieldsNameOfForkVolumeRequest = [7]string{
+	0: "default_posix_uid",
+	1: "default_posix_gid",
+	2: "cache_size",
+	3: "prefetch",
+	4: "buffer_size",
+	5: "writeback",
+	6: "access_mode",
 }
 
 // Decode decodes ForkVolumeRequest from json.
@@ -8555,6 +8604,26 @@ func (s *ForkVolumeRequest) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "default_posix_uid":
+			if err := func() error {
+				s.DefaultPosixUID.Reset()
+				if err := s.DefaultPosixUID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_uid\"")
+			}
+		case "default_posix_gid":
+			if err := func() error {
+				s.DefaultPosixGid.Reset()
+				if err := s.DefaultPosixGid.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_gid\"")
+			}
 		case "cache_size":
 			if err := func() error {
 				s.CacheSize.Reset()
@@ -22685,6 +22754,18 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.DefaultPosixUID.Set {
+			e.FieldStart("default_posix_uid")
+			s.DefaultPosixUID.Encode(e)
+		}
+	}
+	{
+		if s.DefaultPosixGid.Set {
+			e.FieldStart("default_posix_gid")
+			s.DefaultPosixGid.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("cache_size")
 		e.Str(s.CacheSize)
 	}
@@ -22720,18 +22801,20 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxVolume = [11]string{
+var jsonFieldsNameOfSandboxVolume = [13]string{
 	0:  "id",
 	1:  "team_id",
 	2:  "user_id",
 	3:  "source_volume_id",
-	4:  "cache_size",
-	5:  "prefetch",
-	6:  "buffer_size",
-	7:  "writeback",
-	8:  "access_mode",
-	9:  "created_at",
-	10: "updated_at",
+	4:  "default_posix_uid",
+	5:  "default_posix_gid",
+	6:  "cache_size",
+	7:  "prefetch",
+	8:  "buffer_size",
+	9:  "writeback",
+	10: "access_mode",
+	11: "created_at",
+	12: "updated_at",
 }
 
 // Decode decodes SandboxVolume from json.
@@ -22789,8 +22872,28 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"source_volume_id\"")
 			}
+		case "default_posix_uid":
+			if err := func() error {
+				s.DefaultPosixUID.Reset()
+				if err := s.DefaultPosixUID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_uid\"")
+			}
+		case "default_posix_gid":
+			if err := func() error {
+				s.DefaultPosixGid.Reset()
+				if err := s.DefaultPosixGid.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"default_posix_gid\"")
+			}
 		case "cache_size":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.CacheSize = string(v)
@@ -22812,7 +22915,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"prefetch\"")
 			}
 		case "buffer_size":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.BufferSize = string(v)
@@ -22844,7 +22947,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"access_mode\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -22856,7 +22959,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -22877,8 +22980,8 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b01010111,
-		0b00000110,
+		0b01000111,
+		0b00011001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

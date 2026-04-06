@@ -1885,12 +1885,28 @@ func (s *CreateRegionRequest) SetEnabled(val OptBool) {
 
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
 type CreateSandboxVolumeRequest struct {
-	CacheSize  OptString `json:"cache_size"`
-	Prefetch   OptInt    `json:"prefetch"`
-	BufferSize OptString `json:"buffer_size"`
-	Writeback  OptBool   `json:"writeback"`
+	// Default POSIX UID used by external volume access paths that do not carry caller identity. Defaults
+	// to 0 when omitted on create.
+	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
+	// Default POSIX GID used by external volume access paths that do not carry caller identity. Defaults
+	// to 0 when omitted on create.
+	DefaultPosixGid OptInt64  `json:"default_posix_gid"`
+	CacheSize       OptString `json:"cache_size"`
+	Prefetch        OptInt    `json:"prefetch"`
+	BufferSize      OptString `json:"buffer_size"`
+	Writeback       OptBool   `json:"writeback"`
 	// Access mode for the volume. Defaults to RWO when omitted.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
+}
+
+// GetDefaultPosixUID returns the value of DefaultPosixUID.
+func (s *CreateSandboxVolumeRequest) GetDefaultPosixUID() OptInt64 {
+	return s.DefaultPosixUID
+}
+
+// GetDefaultPosixGid returns the value of DefaultPosixGid.
+func (s *CreateSandboxVolumeRequest) GetDefaultPosixGid() OptInt64 {
+	return s.DefaultPosixGid
 }
 
 // GetCacheSize returns the value of CacheSize.
@@ -1916,6 +1932,16 @@ func (s *CreateSandboxVolumeRequest) GetWriteback() OptBool {
 // GetAccessMode returns the value of AccessMode.
 func (s *CreateSandboxVolumeRequest) GetAccessMode() OptVolumeAccessMode {
 	return s.AccessMode
+}
+
+// SetDefaultPosixUID sets the value of DefaultPosixUID.
+func (s *CreateSandboxVolumeRequest) SetDefaultPosixUID(val OptInt64) {
+	s.DefaultPosixUID = val
+}
+
+// SetDefaultPosixGid sets the value of DefaultPosixGid.
+func (s *CreateSandboxVolumeRequest) SetDefaultPosixGid(val OptInt64) {
+	s.DefaultPosixGid = val
 }
 
 // SetCacheSize sets the value of CacheSize.
@@ -3248,12 +3274,28 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/ForkVolumeRequest
 type ForkVolumeRequest struct {
-	CacheSize  OptString `json:"cache_size"`
-	Prefetch   OptInt    `json:"prefetch"`
-	BufferSize OptString `json:"buffer_size"`
-	Writeback  OptBool   `json:"writeback"`
+	// Override the default POSIX UID for external volume access paths. Inherits from the source volume
+	// when omitted.
+	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
+	// Override the default POSIX GID for external volume access paths. Inherits from the source volume
+	// when omitted.
+	DefaultPosixGid OptInt64  `json:"default_posix_gid"`
+	CacheSize       OptString `json:"cache_size"`
+	Prefetch        OptInt    `json:"prefetch"`
+	BufferSize      OptString `json:"buffer_size"`
+	Writeback       OptBool   `json:"writeback"`
 	// Access mode for the volume. Defaults to RWO when omitted.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
+}
+
+// GetDefaultPosixUID returns the value of DefaultPosixUID.
+func (s *ForkVolumeRequest) GetDefaultPosixUID() OptInt64 {
+	return s.DefaultPosixUID
+}
+
+// GetDefaultPosixGid returns the value of DefaultPosixGid.
+func (s *ForkVolumeRequest) GetDefaultPosixGid() OptInt64 {
+	return s.DefaultPosixGid
 }
 
 // GetCacheSize returns the value of CacheSize.
@@ -3279,6 +3321,16 @@ func (s *ForkVolumeRequest) GetWriteback() OptBool {
 // GetAccessMode returns the value of AccessMode.
 func (s *ForkVolumeRequest) GetAccessMode() OptVolumeAccessMode {
 	return s.AccessMode
+}
+
+// SetDefaultPosixUID sets the value of DefaultPosixUID.
+func (s *ForkVolumeRequest) SetDefaultPosixUID(val OptInt64) {
+	s.DefaultPosixUID = val
+}
+
+// SetDefaultPosixGid sets the value of DefaultPosixGid.
+func (s *ForkVolumeRequest) SetDefaultPosixGid(val OptInt64) {
+	s.DefaultPosixGid = val
 }
 
 // SetCacheSize sets the value of CacheSize.
@@ -12969,14 +13021,16 @@ func (s *SandboxUpdateRequest) SetConfig(val OptSandboxUpdateConfig) {
 
 // Ref: #/components/schemas/SandboxVolume
 type SandboxVolume struct {
-	ID             string       `json:"id"`
-	TeamID         string       `json:"team_id"`
-	UserID         string       `json:"user_id"`
-	SourceVolumeID OptNilString `json:"source_volume_id"`
-	CacheSize      string       `json:"cache_size"`
-	Prefetch       OptInt       `json:"prefetch"`
-	BufferSize     string       `json:"buffer_size"`
-	Writeback      OptBool      `json:"writeback"`
+	ID              string       `json:"id"`
+	TeamID          string       `json:"team_id"`
+	UserID          string       `json:"user_id"`
+	SourceVolumeID  OptNilString `json:"source_volume_id"`
+	DefaultPosixUID OptNilInt64  `json:"default_posix_uid"`
+	DefaultPosixGid OptNilInt64  `json:"default_posix_gid"`
+	CacheSize       string       `json:"cache_size"`
+	Prefetch        OptInt       `json:"prefetch"`
+	BufferSize      string       `json:"buffer_size"`
+	Writeback       OptBool      `json:"writeback"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
 	CreatedAt  time.Time           `json:"created_at"`
@@ -13001,6 +13055,16 @@ func (s *SandboxVolume) GetUserID() string {
 // GetSourceVolumeID returns the value of SourceVolumeID.
 func (s *SandboxVolume) GetSourceVolumeID() OptNilString {
 	return s.SourceVolumeID
+}
+
+// GetDefaultPosixUID returns the value of DefaultPosixUID.
+func (s *SandboxVolume) GetDefaultPosixUID() OptNilInt64 {
+	return s.DefaultPosixUID
+}
+
+// GetDefaultPosixGid returns the value of DefaultPosixGid.
+func (s *SandboxVolume) GetDefaultPosixGid() OptNilInt64 {
+	return s.DefaultPosixGid
 }
 
 // GetCacheSize returns the value of CacheSize.
@@ -13056,6 +13120,16 @@ func (s *SandboxVolume) SetUserID(val string) {
 // SetSourceVolumeID sets the value of SourceVolumeID.
 func (s *SandboxVolume) SetSourceVolumeID(val OptNilString) {
 	s.SourceVolumeID = val
+}
+
+// SetDefaultPosixUID sets the value of DefaultPosixUID.
+func (s *SandboxVolume) SetDefaultPosixUID(val OptNilInt64) {
+	s.DefaultPosixUID = val
+}
+
+// SetDefaultPosixGid sets the value of DefaultPosixGid.
+func (s *SandboxVolume) SetDefaultPosixGid(val OptNilInt64) {
+	s.DefaultPosixGid = val
 }
 
 // SetCacheSize sets the value of CacheSize.
