@@ -184,6 +184,10 @@ type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
 
+type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
+
+func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
+
 type APIV1RegistryCredentialsPostForbidden ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostForbidden) aPIV1RegistryCredentialsPostRes() {}
@@ -1042,10 +1046,55 @@ func (s *ChangeRequestMetadata) init() ChangeRequestMetadata {
 	return m
 }
 
+// Ref: #/components/schemas/ClaimMountRequest
+type ClaimMountRequest struct {
+	SandboxvolumeID string          `json:"sandboxvolume_id"`
+	MountPoint      string          `json:"mount_point"`
+	VolumeConfig    OptVolumeConfig `json:"volume_config"`
+}
+
+// GetSandboxvolumeID returns the value of SandboxvolumeID.
+func (s *ClaimMountRequest) GetSandboxvolumeID() string {
+	return s.SandboxvolumeID
+}
+
+// GetMountPoint returns the value of MountPoint.
+func (s *ClaimMountRequest) GetMountPoint() string {
+	return s.MountPoint
+}
+
+// GetVolumeConfig returns the value of VolumeConfig.
+func (s *ClaimMountRequest) GetVolumeConfig() OptVolumeConfig {
+	return s.VolumeConfig
+}
+
+// SetSandboxvolumeID sets the value of SandboxvolumeID.
+func (s *ClaimMountRequest) SetSandboxvolumeID(val string) {
+	s.SandboxvolumeID = val
+}
+
+// SetMountPoint sets the value of MountPoint.
+func (s *ClaimMountRequest) SetMountPoint(val string) {
+	s.MountPoint = val
+}
+
+// SetVolumeConfig sets the value of VolumeConfig.
+func (s *ClaimMountRequest) SetVolumeConfig(val OptVolumeConfig) {
+	s.VolumeConfig = val
+}
+
 // Ref: #/components/schemas/ClaimRequest
 type ClaimRequest struct {
-	Template OptString        `json:"template"`
-	Config   OptSandboxConfig `json:"config"`
+	Template OptString           `json:"template"`
+	Config   OptSandboxConfig    `json:"config"`
+	Mounts   []ClaimMountRequest `json:"mounts"`
+	// When true, claim waits best-effort for requested bootstrap mounts to
+	// reach a terminal state before returning. The wait is bounded by
+	// `mount_wait_timeout_ms`.
+	WaitForMounts OptBool `json:"wait_for_mounts"`
+	// Optional best-effort wait budget in milliseconds for bootstrap
+	// mounts when `wait_for_mounts` is true.
+	MountWaitTimeoutMs OptInt32 `json:"mount_wait_timeout_ms"`
 }
 
 // GetTemplate returns the value of Template.
@@ -1058,6 +1107,21 @@ func (s *ClaimRequest) GetConfig() OptSandboxConfig {
 	return s.Config
 }
 
+// GetMounts returns the value of Mounts.
+func (s *ClaimRequest) GetMounts() []ClaimMountRequest {
+	return s.Mounts
+}
+
+// GetWaitForMounts returns the value of WaitForMounts.
+func (s *ClaimRequest) GetWaitForMounts() OptBool {
+	return s.WaitForMounts
+}
+
+// GetMountWaitTimeoutMs returns the value of MountWaitTimeoutMs.
+func (s *ClaimRequest) GetMountWaitTimeoutMs() OptInt32 {
+	return s.MountWaitTimeoutMs
+}
+
 // SetTemplate sets the value of Template.
 func (s *ClaimRequest) SetTemplate(val OptString) {
 	s.Template = val
@@ -1068,13 +1132,29 @@ func (s *ClaimRequest) SetConfig(val OptSandboxConfig) {
 	s.Config = val
 }
 
+// SetMounts sets the value of Mounts.
+func (s *ClaimRequest) SetMounts(val []ClaimMountRequest) {
+	s.Mounts = val
+}
+
+// SetWaitForMounts sets the value of WaitForMounts.
+func (s *ClaimRequest) SetWaitForMounts(val OptBool) {
+	s.WaitForMounts = val
+}
+
+// SetMountWaitTimeoutMs sets the value of MountWaitTimeoutMs.
+func (s *ClaimRequest) SetMountWaitTimeoutMs(val OptInt32) {
+	s.MountWaitTimeoutMs = val
+}
+
 // Ref: #/components/schemas/ClaimResponse
 type ClaimResponse struct {
-	SandboxID string       `json:"sandbox_id"`
-	Status    string       `json:"status"`
-	PodName   string       `json:"pod_name"`
-	Template  string       `json:"template"`
-	ClusterID OptNilString `json:"cluster_id"`
+	SandboxID       string        `json:"sandbox_id"`
+	Status          string        `json:"status"`
+	PodName         string        `json:"pod_name"`
+	Template        string        `json:"template"`
+	ClusterID       OptNilString  `json:"cluster_id"`
+	BootstrapMounts []MountStatus `json:"bootstrap_mounts"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -1102,6 +1182,11 @@ func (s *ClaimResponse) GetClusterID() OptNilString {
 	return s.ClusterID
 }
 
+// GetBootstrapMounts returns the value of BootstrapMounts.
+func (s *ClaimResponse) GetBootstrapMounts() []MountStatus {
+	return s.BootstrapMounts
+}
+
 // SetSandboxID sets the value of SandboxID.
 func (s *ClaimResponse) SetSandboxID(val string) {
 	s.SandboxID = val
@@ -1125,6 +1210,11 @@ func (s *ClaimResponse) SetTemplate(val string) {
 // SetClusterID sets the value of ClusterID.
 func (s *ClaimResponse) SetClusterID(val OptNilString) {
 	s.ClusterID = val
+}
+
+// SetBootstrapMounts sets the value of BootstrapMounts.
+func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
+	s.BootstrapMounts = val
 }
 
 // Ref: #/components/schemas/ContainerSpec
@@ -3949,21 +4039,29 @@ func (s *MountResponse) SetMountSessionID(val string) {
 
 // Ref: #/components/schemas/MountStatus
 type MountStatus struct {
-	SandboxvolumeID    OptString `json:"sandboxvolume_id"`
-	MountPoint         OptString `json:"mount_point"`
-	MountedAt          OptString `json:"mounted_at"`
-	MountedDurationSec OptInt64  `json:"mounted_duration_sec"`
-	MountSessionID     OptString `json:"mount_session_id"`
+	SandboxvolumeID    string           `json:"sandboxvolume_id"`
+	MountPoint         string           `json:"mount_point"`
+	State              MountStatusState `json:"state"`
+	MountedAt          OptString        `json:"mounted_at"`
+	MountedDurationSec OptInt64         `json:"mounted_duration_sec"`
+	MountSessionID     OptString        `json:"mount_session_id"`
+	ErrorCode          OptString        `json:"error_code"`
+	ErrorMessage       OptString        `json:"error_message"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
-func (s *MountStatus) GetSandboxvolumeID() OptString {
+func (s *MountStatus) GetSandboxvolumeID() string {
 	return s.SandboxvolumeID
 }
 
 // GetMountPoint returns the value of MountPoint.
-func (s *MountStatus) GetMountPoint() OptString {
+func (s *MountStatus) GetMountPoint() string {
 	return s.MountPoint
+}
+
+// GetState returns the value of State.
+func (s *MountStatus) GetState() MountStatusState {
+	return s.State
 }
 
 // GetMountedAt returns the value of MountedAt.
@@ -3981,14 +4079,29 @@ func (s *MountStatus) GetMountSessionID() OptString {
 	return s.MountSessionID
 }
 
+// GetErrorCode returns the value of ErrorCode.
+func (s *MountStatus) GetErrorCode() OptString {
+	return s.ErrorCode
+}
+
+// GetErrorMessage returns the value of ErrorMessage.
+func (s *MountStatus) GetErrorMessage() OptString {
+	return s.ErrorMessage
+}
+
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
-func (s *MountStatus) SetSandboxvolumeID(val OptString) {
+func (s *MountStatus) SetSandboxvolumeID(val string) {
 	s.SandboxvolumeID = val
 }
 
 // SetMountPoint sets the value of MountPoint.
-func (s *MountStatus) SetMountPoint(val OptString) {
+func (s *MountStatus) SetMountPoint(val string) {
 	s.MountPoint = val
+}
+
+// SetState sets the value of State.
+func (s *MountStatus) SetState(val MountStatusState) {
+	s.State = val
 }
 
 // SetMountedAt sets the value of MountedAt.
@@ -4004,6 +4117,71 @@ func (s *MountStatus) SetMountedDurationSec(val OptInt64) {
 // SetMountSessionID sets the value of MountSessionID.
 func (s *MountStatus) SetMountSessionID(val OptString) {
 	s.MountSessionID = val
+}
+
+// SetErrorCode sets the value of ErrorCode.
+func (s *MountStatus) SetErrorCode(val OptString) {
+	s.ErrorCode = val
+}
+
+// SetErrorMessage sets the value of ErrorMessage.
+func (s *MountStatus) SetErrorMessage(val OptString) {
+	s.ErrorMessage = val
+}
+
+type MountStatusState string
+
+const (
+	MountStatusStatePending  MountStatusState = "pending"
+	MountStatusStateMounting MountStatusState = "mounting"
+	MountStatusStateMounted  MountStatusState = "mounted"
+	MountStatusStateFailed   MountStatusState = "failed"
+)
+
+// AllValues returns all MountStatusState values.
+func (MountStatusState) AllValues() []MountStatusState {
+	return []MountStatusState{
+		MountStatusStatePending,
+		MountStatusStateMounting,
+		MountStatusStateMounted,
+		MountStatusStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s MountStatusState) MarshalText() ([]byte, error) {
+	switch s {
+	case MountStatusStatePending:
+		return []byte(s), nil
+	case MountStatusStateMounting:
+		return []byte(s), nil
+	case MountStatusStateMounted:
+		return []byte(s), nil
+	case MountStatusStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *MountStatusState) UnmarshalText(data []byte) error {
+	switch MountStatusState(data) {
+	case MountStatusStatePending:
+		*s = MountStatusStatePending
+		return nil
+	case MountStatusStateMounting:
+		*s = MountStatusStateMounting
+		return nil
+	case MountStatusStateMounted:
+		*s = MountStatusStateMounted
+		return nil
+	case MountStatusStateFailed:
+		*s = MountStatusStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/MoveFileRequest
@@ -7773,6 +7951,52 @@ func (o OptRegistryCredentials) Get() (v RegistryCredentials, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptRegistryCredentials) Or(d RegistryCredentials) RegistryCredentials {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptRegistryCredentialsRequest returns new OptRegistryCredentialsRequest with value set to v.
+func NewOptRegistryCredentialsRequest(v RegistryCredentialsRequest) OptRegistryCredentialsRequest {
+	return OptRegistryCredentialsRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRegistryCredentialsRequest is optional RegistryCredentialsRequest.
+type OptRegistryCredentialsRequest struct {
+	Value RegistryCredentialsRequest
+	Set   bool
+}
+
+// IsSet returns true if OptRegistryCredentialsRequest was set.
+func (o OptRegistryCredentialsRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRegistryCredentialsRequest) Reset() {
+	var v RegistryCredentialsRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRegistryCredentialsRequest) SetTo(v RegistryCredentialsRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRegistryCredentialsRequest) Get() (v RegistryCredentialsRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRegistryCredentialsRequest) Or(d RegistryCredentialsRequest) RegistryCredentialsRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11624,6 +11848,22 @@ func (s *RegistryCredentials) SetPassword(val string) {
 // SetExpiresAt sets the value of ExpiresAt.
 func (s *RegistryCredentials) SetExpiresAt(val OptDateTime) {
 	s.ExpiresAt = val
+}
+
+// Ref: #/components/schemas/RegistryCredentialsRequest
+type RegistryCredentialsRequest struct {
+	// Target image name and tag requested for push, without credentials.
+	TargetImage OptString `json:"targetImage"`
+}
+
+// GetTargetImage returns the value of TargetImage.
+func (s *RegistryCredentialsRequest) GetTargetImage() OptString {
+	return s.TargetImage
+}
+
+// SetTargetImage sets the value of TargetImage.
+func (s *RegistryCredentialsRequest) SetTargetImage(val OptString) {
+	s.TargetImage = val
 }
 
 // Ref: #/components/schemas/ResizeContextRequest

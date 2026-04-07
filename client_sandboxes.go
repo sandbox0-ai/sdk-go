@@ -2,12 +2,23 @@ package sandbox0
 
 import (
 	"context"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 type sandboxOptions struct {
-	config *apispec.SandboxConfig
+	config             *apispec.SandboxConfig
+	mounts             []apispec.ClaimMountRequest
+	waitForMounts      *bool
+	mountWaitTimeoutMs *int32
+}
+
+// SandboxBootstrapMount configures a volume mount during sandbox claim.
+type SandboxBootstrapMount struct {
+	SandboxVolumeID string
+	MountPoint      string
+	VolumeConfig    *apispec.VolumeConfig
 }
 
 // SandboxOption configures sandbox creation.
@@ -24,6 +35,48 @@ func ensureSandboxConfig(opts *sandboxOptions) *apispec.SandboxConfig {
 func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 	return func(opts *sandboxOptions) {
 		opts.config = &config
+	}
+}
+
+// WithSandboxBootstrapMount requests mounting an existing volume during claim.
+func WithSandboxBootstrapMount(volumeID, mountPoint string, config *apispec.VolumeConfig) SandboxOption {
+	return func(opts *sandboxOptions) {
+		mount := apispec.ClaimMountRequest{
+			SandboxvolumeID: volumeID,
+			MountPoint:      mountPoint,
+		}
+		if config != nil {
+			mount.VolumeConfig = apispec.NewOptVolumeConfig(*config)
+		}
+		opts.mounts = append(opts.mounts, mount)
+	}
+}
+
+// WithSandboxBootstrapMounts requests mounting multiple existing volumes during claim.
+func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
+	return func(opts *sandboxOptions) {
+		for _, mount := range mounts {
+			claimMount := apispec.ClaimMountRequest{
+				SandboxvolumeID: mount.SandboxVolumeID,
+				MountPoint:      mount.MountPoint,
+			}
+			if mount.VolumeConfig != nil {
+				claimMount.VolumeConfig = apispec.NewOptVolumeConfig(*mount.VolumeConfig)
+			}
+			opts.mounts = append(opts.mounts, claimMount)
+		}
+	}
+}
+
+// WithSandboxBootstrapMountWait waits best-effort for claim-time mounts to finish.
+func WithSandboxBootstrapMountWait(timeout time.Duration) SandboxOption {
+	return func(opts *sandboxOptions) {
+		wait := true
+		opts.waitForMounts = &wait
+		if timeout > 0 {
+			millis := int32(timeout / time.Millisecond)
+			opts.mountWaitTimeoutMs = &millis
+		}
 	}
 }
 
@@ -108,7 +161,21 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	if options.config != nil {
 		req.Config = apispec.NewOptSandboxConfig(*options.config)
 	}
+	if len(options.mounts) > 0 {
+		req.Mounts = append(req.Mounts, options.mounts...)
+	}
+	if options.waitForMounts != nil {
+		req.WaitForMounts = apispec.NewOptBool(*options.waitForMounts)
+	}
+	if options.mountWaitTimeoutMs != nil {
+		req.MountWaitTimeoutMs = apispec.NewOptInt32(*options.mountWaitTimeoutMs)
+	}
 
+	return c.ClaimSandboxRequest(ctx, req)
+}
+
+// ClaimSandboxRequest claims a sandbox using a fully constructed request.
+func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimRequest) (*Sandbox, error) {
 	resp, err := c.api.APIV1SandboxesPost(ctx, &req)
 	if err != nil {
 		return nil, err
@@ -129,6 +196,7 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 			ClusterID:         clusterID,
 			PodName:           data.PodName,
 			Status:            data.Status,
+			BootstrapMounts:   append([]apispec.MountStatus(nil), data.BootstrapMounts...),
 			client:            c,
 			replContextByLang: map[string]string{},
 		}

@@ -85,6 +85,31 @@ cd examples/01_hello_world
 SANDBOX0_TOKEN=your-token go run main.go
 ```
 
+## Bootstrap Mounts At Claim Time
+
+You can request existing volumes during `ClaimSandbox` so the sandbox starts with them already mounted:
+
+```go
+volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{})
+if err != nil {
+    log.Fatal(err)
+}
+
+sandbox, err := client.ClaimSandbox(
+    ctx,
+    "default",
+    sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/data", nil),
+    sandbox0.WithSandboxBootstrapMountWait(45*time.Second),
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, mount := range sandbox.BootstrapMounts {
+    fmt.Printf("%s %s\n", mount.SandboxvolumeID, mount.State)
+}
+```
+
 ## Links
 
 - [Documentation](https://sandbox0.ai/docs)
