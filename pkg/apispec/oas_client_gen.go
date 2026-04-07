@@ -204,7 +204,8 @@ type Invoker interface {
 	// - { "type": "signal", "signal": "INT" }
 	// Server messages (JSON):
 	// - { "type": "output", "source": "stdout", "data": "hello\n" }
-	// - { "type": "done", "request_id": "req-1" }.
+	// - { "type": "done", "request_id": "req-1" }
+	// - { "type": "done", "exit_code": 0, "state": "stopped" }.
 	//
 	// GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws
 	APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) error
@@ -3138,7 +3139,8 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDStatsGet(ctx context.Context, 
 // - { "type": "signal", "signal": "INT" }
 // Server messages (JSON):
 // - { "type": "output", "source": "stdout", "data": "hello\n" }
-// - { "type": "done", "request_id": "req-1" }.
+// - { "type": "done", "request_id": "req-1" }
+// - { "type": "done", "exit_code": 0, "state": "stopped" }.
 //
 // GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws
 func (c *Client) APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) error {
