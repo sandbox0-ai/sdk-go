@@ -48,13 +48,14 @@ var nullArrayKeys = map[string]struct{}{
 	"preferredDuringSchedulingIgnoredDuringExecution": {},
 	"providers": {},
 	"requiredDuringSchedulingIgnoredDuringExecution": {},
-	"roles":       {},
-	"sidecars":    {},
-	"tags":        {},
-	"teams":       {},
-	"templates":   {},
-	"tolerations": {},
-	"values":      {},
+	"roles":         {},
+	"sharedVolumes": {},
+	"sidecars":      {},
+	"tags":          {},
+	"teams":         {},
+	"templates":     {},
+	"tolerations":   {},
+	"values":        {},
 }
 
 func normalizeNullMapResponse(_ context.Context, resp *http.Response) error {

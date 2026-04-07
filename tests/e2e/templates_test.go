@@ -34,6 +34,10 @@ func TestTemplateCRUD(t *testing.T) {
 			Name:    "codex",
 			Image:   "busybox:latest",
 			Command: []string{"sh", "-lc", "touch /tmp/ready; tail -f /dev/null"},
+			Resources: apispec.ResourceQuota{
+				CPU:    apispec.NewOptString("250m"),
+				Memory: apispec.NewOptString("1Gi"),
+			},
 			ReadinessProbe: apispec.NewOptProbe(apispec.Probe{
 				Exec:                apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
 				InitialDelaySeconds: apispec.NewOptInt32(1),
