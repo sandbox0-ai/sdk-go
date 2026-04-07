@@ -13449,7 +13449,7 @@ func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
 // Ref: #/components/schemas/SharedVolumeSpec
 type SharedVolumeSpec struct {
 	Name            string    `json:"name"`
-	SandboxVolumeId string    `json:"sandboxVolumeId"`
+	SandboxVolumeId OptString `json:"sandboxVolumeId"`
 	MountPath       string    `json:"mountPath"`
 	CacheSize       OptString `json:"cacheSize"`
 	Prefetch        OptInt32  `json:"prefetch"`
@@ -13463,7 +13463,7 @@ func (s *SharedVolumeSpec) GetName() string {
 }
 
 // GetSandboxVolumeId returns the value of SandboxVolumeId.
-func (s *SharedVolumeSpec) GetSandboxVolumeId() string {
+func (s *SharedVolumeSpec) GetSandboxVolumeId() OptString {
 	return s.SandboxVolumeId
 }
 
@@ -13498,7 +13498,7 @@ func (s *SharedVolumeSpec) SetName(val string) {
 }
 
 // SetSandboxVolumeId sets the value of SandboxVolumeId.
-func (s *SharedVolumeSpec) SetSandboxVolumeId(val string) {
+func (s *SharedVolumeSpec) SetSandboxVolumeId(val OptString) {
 	s.SandboxVolumeId = val
 }
 

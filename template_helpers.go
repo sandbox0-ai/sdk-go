@@ -84,11 +84,10 @@ func TemplateSidecar(name, image, cpu, memory string, opts ...TemplateSidecarOpt
 }
 
 // TemplateSharedVolume builds a shared volume spec.
-func TemplateSharedVolume(name, sandboxVolumeID, mountPath string, opts ...TemplateSharedVolumeOption) apispec.SharedVolumeSpec {
+func TemplateSharedVolume(name, mountPath string, opts ...TemplateSharedVolumeOption) apispec.SharedVolumeSpec {
 	volume := apispec.SharedVolumeSpec{
-		Name:            name,
-		SandboxVolumeId: sandboxVolumeID,
-		MountPath:       mountPath,
+		Name:      name,
+		MountPath: mountPath,
 	}
 	for _, opt := range opts {
 		opt(&volume)
@@ -283,6 +282,13 @@ func WithTemplateSidecarStartupProbe(probe apispec.Probe) TemplateSidecarOption 
 func WithTemplateSharedVolumeCacheSize(cacheSize string) TemplateSharedVolumeOption {
 	return func(volume *apispec.SharedVolumeSpec) {
 		volume.CacheSize = apispec.NewOptString(cacheSize)
+	}
+}
+
+// WithTemplateSharedVolumeID pins the shared volume to a fixed SandboxVolume.
+func WithTemplateSharedVolumeID(sandboxVolumeID string) TemplateSharedVolumeOption {
+	return func(volume *apispec.SharedVolumeSpec) {
+		volume.SandboxVolumeId = apispec.NewOptString(sandboxVolumeID)
 	}
 }
 

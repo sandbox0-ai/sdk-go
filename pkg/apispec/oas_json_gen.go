@@ -23744,8 +23744,10 @@ func (s *SharedVolumeSpec) encodeFields(e *jx.Encoder) {
 		e.Str(s.Name)
 	}
 	{
-		e.FieldStart("sandboxVolumeId")
-		e.Str(s.SandboxVolumeId)
+		if s.SandboxVolumeId.Set {
+			e.FieldStart("sandboxVolumeId")
+			s.SandboxVolumeId.Encode(e)
+		}
 	}
 	{
 		e.FieldStart("mountPath")
@@ -23809,11 +23811,9 @@ func (s *SharedVolumeSpec) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "sandboxVolumeId":
-			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				v, err := d.Str()
-				s.SandboxVolumeId = string(v)
-				if err != nil {
+				s.SandboxVolumeId.Reset()
+				if err := s.SandboxVolumeId.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -23882,7 +23882,7 @@ func (s *SharedVolumeSpec) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00000101,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

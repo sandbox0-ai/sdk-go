@@ -21,8 +21,8 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 		WithTemplateSharedVolume(
 			TemplateSharedVolume(
 				"workspace",
-				"vol_123",
 				"/workspace/shared",
+				WithTemplateSharedVolumeID("vol_123"),
 				WithTemplateSharedVolumeWriteback(true),
 			),
 		),
@@ -53,6 +53,10 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 	}
 	if request.Spec.SharedVolumes[0].Name != "workspace" {
 		t.Fatalf("sharedVolumes[0].name = %q, want workspace", request.Spec.SharedVolumes[0].Name)
+	}
+	volumeID, ok := request.Spec.SharedVolumes[0].SandboxVolumeId.Get()
+	if !ok || volumeID != "vol_123" {
+		t.Fatalf("sharedVolumes[0].sandboxVolumeId = %q, want vol_123", volumeID)
 	}
 	writeback, ok := request.Spec.SharedVolumes[0].Writeback.Get()
 	if !ok || !writeback {

@@ -22,9 +22,8 @@ func TestTemplateCreateRequestSharedVolumeRoundTrip(t *testing.T) {
 			}),
 			RuntimeClassName: apispec.NewOptString("kata-dev"),
 			SharedVolumes: []apispec.SharedVolumeSpec{{
-				Name:            "workspace",
-				SandboxVolumeId: "vol_123",
-				MountPath:       "/workspace/shared",
+				Name:      "workspace",
+				MountPath: "/workspace/shared",
 			}},
 			Sidecars: []apispec.SidecarContainerSpec{{
 				Name:    "helper",
@@ -57,6 +56,9 @@ func TestTemplateCreateRequestSharedVolumeRoundTrip(t *testing.T) {
 	}
 	if decoded.Spec.SharedVolumes[0].Name != "workspace" {
 		t.Fatalf("decoded shared volume name = %q, want workspace", decoded.Spec.SharedVolumes[0].Name)
+	}
+	if _, ok := decoded.Spec.SharedVolumes[0].SandboxVolumeId.Get(); ok {
+		t.Fatal("decoded shared volume sandboxVolumeId should be unset")
 	}
 	if len(decoded.Spec.Sidecars) != 1 {
 		t.Fatalf("len(decoded.Spec.Sidecars) = %d, want 1", len(decoded.Spec.Sidecars))
