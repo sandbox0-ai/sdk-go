@@ -3245,6 +3245,136 @@ func (s *ChangeRequestMetadata) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *ClaimMountRequest) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ClaimMountRequest) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("sandboxvolume_id")
+		e.Str(s.SandboxvolumeID)
+	}
+	{
+		e.FieldStart("mount_point")
+		e.Str(s.MountPoint)
+	}
+	{
+		if s.VolumeConfig.Set {
+			e.FieldStart("volume_config")
+			s.VolumeConfig.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfClaimMountRequest = [3]string{
+	0: "sandboxvolume_id",
+	1: "mount_point",
+	2: "volume_config",
+}
+
+// Decode decodes ClaimMountRequest from json.
+func (s *ClaimMountRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ClaimMountRequest to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "sandboxvolume_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.SandboxvolumeID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandboxvolume_id\"")
+			}
+		case "mount_point":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.MountPoint = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_point\"")
+			}
+		case "volume_config":
+			if err := func() error {
+				s.VolumeConfig.Reset()
+				if err := s.VolumeConfig.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"volume_config\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ClaimMountRequest")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfClaimMountRequest) {
+					name = jsonFieldsNameOfClaimMountRequest[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ClaimMountRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ClaimMountRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *ClaimRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -3265,11 +3395,36 @@ func (s *ClaimRequest) encodeFields(e *jx.Encoder) {
 			s.Config.Encode(e)
 		}
 	}
+	{
+		if s.Mounts != nil {
+			e.FieldStart("mounts")
+			e.ArrStart()
+			for _, elem := range s.Mounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.WaitForMounts.Set {
+			e.FieldStart("wait_for_mounts")
+			s.WaitForMounts.Encode(e)
+		}
+	}
+	{
+		if s.MountWaitTimeoutMs.Set {
+			e.FieldStart("mount_wait_timeout_ms")
+			s.MountWaitTimeoutMs.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfClaimRequest = [2]string{
+var jsonFieldsNameOfClaimRequest = [5]string{
 	0: "template",
 	1: "config",
+	2: "mounts",
+	3: "wait_for_mounts",
+	4: "mount_wait_timeout_ms",
 }
 
 // Decode decodes ClaimRequest from json.
@@ -3277,6 +3432,7 @@ func (s *ClaimRequest) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode ClaimRequest to nil")
 	}
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -3299,6 +3455,43 @@ func (s *ClaimRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"config\"")
+			}
+		case "mounts":
+			if err := func() error {
+				s.Mounts = make([]ClaimMountRequest, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ClaimMountRequest
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Mounts = append(s.Mounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mounts\"")
+			}
+		case "wait_for_mounts":
+			if err := func() error {
+				s.WaitForMounts.Reset()
+				if err := s.WaitForMounts.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"wait_for_mounts\"")
+			}
+		case "mount_wait_timeout_ms":
+			if err := func() error {
+				s.MountWaitTimeoutMs.Reset()
+				if err := s.MountWaitTimeoutMs.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_wait_timeout_ms\"")
 			}
 		default:
 			return d.Skip()
@@ -3355,14 +3548,25 @@ func (s *ClaimResponse) encodeFields(e *jx.Encoder) {
 			s.ClusterID.Encode(e)
 		}
 	}
+	{
+		if s.BootstrapMounts != nil {
+			e.FieldStart("bootstrap_mounts")
+			e.ArrStart()
+			for _, elem := range s.BootstrapMounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
 }
 
-var jsonFieldsNameOfClaimResponse = [5]string{
+var jsonFieldsNameOfClaimResponse = [6]string{
 	0: "sandbox_id",
 	1: "status",
 	2: "pod_name",
 	3: "template",
 	4: "cluster_id",
+	5: "bootstrap_mounts",
 }
 
 // Decode decodes ClaimResponse from json.
@@ -3431,6 +3635,23 @@ func (s *ClaimResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"cluster_id\"")
+			}
+		case "bootstrap_mounts":
+			if err := func() error {
+				s.BootstrapMounts = make([]MountStatus, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem MountStatus
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.BootstrapMounts = append(s.BootstrapMounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"bootstrap_mounts\"")
 			}
 		default:
 			return d.Skip()
@@ -10702,16 +10923,16 @@ func (s *MountStatus) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *MountStatus) encodeFields(e *jx.Encoder) {
 	{
-		if s.SandboxvolumeID.Set {
-			e.FieldStart("sandboxvolume_id")
-			s.SandboxvolumeID.Encode(e)
-		}
+		e.FieldStart("sandboxvolume_id")
+		e.Str(s.SandboxvolumeID)
 	}
 	{
-		if s.MountPoint.Set {
-			e.FieldStart("mount_point")
-			s.MountPoint.Encode(e)
-		}
+		e.FieldStart("mount_point")
+		e.Str(s.MountPoint)
+	}
+	{
+		e.FieldStart("state")
+		s.State.Encode(e)
 	}
 	{
 		if s.MountedAt.Set {
@@ -10731,14 +10952,29 @@ func (s *MountStatus) encodeFields(e *jx.Encoder) {
 			s.MountSessionID.Encode(e)
 		}
 	}
+	{
+		if s.ErrorCode.Set {
+			e.FieldStart("error_code")
+			s.ErrorCode.Encode(e)
+		}
+	}
+	{
+		if s.ErrorMessage.Set {
+			e.FieldStart("error_message")
+			s.ErrorMessage.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfMountStatus = [5]string{
+var jsonFieldsNameOfMountStatus = [8]string{
 	0: "sandboxvolume_id",
 	1: "mount_point",
-	2: "mounted_at",
-	3: "mounted_duration_sec",
-	4: "mount_session_id",
+	2: "state",
+	3: "mounted_at",
+	4: "mounted_duration_sec",
+	5: "mount_session_id",
+	6: "error_code",
+	7: "error_message",
 }
 
 // Decode decodes MountStatus from json.
@@ -10746,13 +10982,16 @@ func (s *MountStatus) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode MountStatus to nil")
 	}
+	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
 		case "sandboxvolume_id":
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				s.SandboxvolumeID.Reset()
-				if err := s.SandboxvolumeID.Decode(d); err != nil {
+				v, err := d.Str()
+				s.SandboxvolumeID = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -10760,14 +10999,26 @@ func (s *MountStatus) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"sandboxvolume_id\"")
 			}
 		case "mount_point":
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.MountPoint.Reset()
-				if err := s.MountPoint.Decode(d); err != nil {
+				v, err := d.Str()
+				s.MountPoint = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"mount_point\"")
+			}
+		case "state":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.State.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"state\"")
 			}
 		case "mounted_at":
 			if err := func() error {
@@ -10799,12 +11050,64 @@ func (s *MountStatus) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"mount_session_id\"")
 			}
+		case "error_code":
+			if err := func() error {
+				s.ErrorCode.Reset()
+				if err := s.ErrorCode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"error_code\"")
+			}
+		case "error_message":
+			if err := func() error {
+				s.ErrorMessage.Reset()
+				if err := s.ErrorMessage.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"error_message\"")
+			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
 		return errors.Wrap(err, "decode MountStatus")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfMountStatus) {
+					name = jsonFieldsNameOfMountStatus[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 
 	return nil
@@ -10819,6 +11122,50 @@ func (s *MountStatus) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *MountStatus) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes MountStatusState as json.
+func (s MountStatusState) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes MountStatusState from json.
+func (s *MountStatusState) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode MountStatusState to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch MountStatusState(v) {
+	case MountStatusStatePending:
+		*s = MountStatusStatePending
+	case MountStatusStateMounting:
+		*s = MountStatusStateMounting
+	case MountStatusStateMounted:
+		*s = MountStatusStateMounted
+	case MountStatusStateFailed:
+		*s = MountStatusStateFailed
+	default:
+		*s = MountStatusState(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s MountStatusState) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *MountStatusState) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

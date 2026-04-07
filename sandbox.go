@@ -12,11 +12,12 @@ import (
 
 // Sandbox is a convenience wrapper for sandbox-scoped operations.
 type Sandbox struct {
-	ID        string
-	Template  string
-	ClusterID *string
-	PodName   string
-	Status    string
+	ID              string
+	Template        string
+	ClusterID       *string
+	PodName         string
+	Status          string
+	BootstrapMounts []apispec.MountStatus
 
 	client            *Client
 	replContextByLang map[string]string

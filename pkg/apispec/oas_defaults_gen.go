@@ -3,6 +3,14 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *ClaimRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.WaitForMounts.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *CreateSandboxVolumeRequest) setDefaults() {
 	{
 		val := int64(0)
