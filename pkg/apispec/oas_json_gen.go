@@ -1444,6 +1444,8 @@ func (s *AddTeamMemberRequestRole) Decode(d *jx.Decoder) error {
 		*s = AddTeamMemberRequestRoleAdmin
 	case AddTeamMemberRequestRoleDeveloper:
 		*s = AddTeamMemberRequestRoleDeveloper
+	case AddTeamMemberRequestRoleBuilder:
+		*s = AddTeamMemberRequestRoleBuilder
 	case AddTeamMemberRequestRoleViewer:
 		*s = AddTeamMemberRequestRoleViewer
 	default:
@@ -38380,6 +38382,8 @@ func (s *UpdateTeamMemberRequestRole) Decode(d *jx.Decoder) error {
 		*s = UpdateTeamMemberRequestRoleAdmin
 	case UpdateTeamMemberRequestRoleDeveloper:
 		*s = UpdateTeamMemberRequestRoleDeveloper
+	case UpdateTeamMemberRequestRoleBuilder:
+		*s = UpdateTeamMemberRequestRoleBuilder
 	case UpdateTeamMemberRequestRoleViewer:
 		*s = UpdateTeamMemberRequestRoleViewer
 	default:

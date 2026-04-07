@@ -152,6 +152,29 @@ func TestSandboxStreams(t *testing.T) {
 			t.Fatalf("cmd stream did not produce output")
 		}
 	})
+
+	t.Run("cmd_stream_helper", func(t *testing.T) {
+		stream, err := sandbox.CmdStream(
+			ctx,
+			"echo helper",
+			sandbox0.WithCommand([]string{"sh", "-c", "echo helper"}),
+		)
+		if err != nil {
+			t.Fatalf("cmd stream helper failed: %v", err)
+		}
+		defer stream.Close()
+
+		output, err := stream.Recv()
+		if err != nil {
+			t.Fatalf("stream recv failed: %v", err)
+		}
+		if output.Source == "" {
+			t.Fatal("stream output source is empty")
+		}
+		if output.Data == "" {
+			t.Fatal("stream output data is empty")
+		}
+	})
 }
 
 // readWSOutput reads WebSocket messages until context is done, connection closes, or timeout.
