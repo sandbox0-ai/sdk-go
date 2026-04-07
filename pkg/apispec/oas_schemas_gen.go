@@ -1217,6 +1217,43 @@ func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
 	s.BootstrapMounts = val
 }
 
+// Ref: #/components/schemas/ContainerMountSpec
+type ContainerMountSpec struct {
+	Name      string  `json:"name"`
+	MountPath string  `json:"mountPath"`
+	ReadOnly  OptBool `json:"readOnly"`
+}
+
+// GetName returns the value of Name.
+func (s *ContainerMountSpec) GetName() string {
+	return s.Name
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *ContainerMountSpec) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetReadOnly returns the value of ReadOnly.
+func (s *ContainerMountSpec) GetReadOnly() OptBool {
+	return s.ReadOnly
+}
+
+// SetName sets the value of Name.
+func (s *ContainerMountSpec) SetName(val string) {
+	s.Name = val
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *ContainerMountSpec) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetReadOnly sets the value of ReadOnly.
+func (s *ContainerMountSpec) SetReadOnly(val OptBool) {
+	s.ReadOnly = val
+}
+
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
 	Image           string             `json:"image"`
@@ -8003,52 +8040,6 @@ func (o OptRegistryCredentialsRequest) Or(d RegistryCredentialsRequest) Registry
 	return d
 }
 
-// NewOptResourceQuota returns new OptResourceQuota with value set to v.
-func NewOptResourceQuota(v ResourceQuota) OptResourceQuota {
-	return OptResourceQuota{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptResourceQuota is optional ResourceQuota.
-type OptResourceQuota struct {
-	Value ResourceQuota
-	Set   bool
-}
-
-// IsSet returns true if OptResourceQuota was set.
-func (o OptResourceQuota) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptResourceQuota) Reset() {
-	var v ResourceQuota
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptResourceQuota) SetTo(v ResourceQuota) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptResourceQuota) Get() (v ResourceQuota, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptResourceQuota) Or(d ResourceQuota) ResourceQuota {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptResourceUsage returns new OptResourceUsage with value set to v.
 func NewOptResourceUsage(v ResourceUsage) OptResourceUsage {
 	return OptResourceUsage{
@@ -12971,6 +12962,7 @@ type SandboxTemplateSpec struct {
 	Tags             []string                      `json:"tags"`
 	MainContainer    OptContainerSpec              `json:"mainContainer"`
 	Sidecars         []SidecarContainerSpec        `json:"sidecars"`
+	SharedVolumes    []SharedVolumeSpec            `json:"sharedVolumes"`
 	Pod              OptPodSpecOverride            `json:"pod"`
 	Network          OptSandboxNetworkPolicy       `json:"network"`
 	Pool             OptPoolStrategy               `json:"pool"`
@@ -13005,6 +12997,11 @@ func (s *SandboxTemplateSpec) GetMainContainer() OptContainerSpec {
 // GetSidecars returns the value of Sidecars.
 func (s *SandboxTemplateSpec) GetSidecars() []SidecarContainerSpec {
 	return s.Sidecars
+}
+
+// GetSharedVolumes returns the value of SharedVolumes.
+func (s *SandboxTemplateSpec) GetSharedVolumes() []SharedVolumeSpec {
+	return s.SharedVolumes
 }
 
 // GetPod returns the value of Pod.
@@ -13075,6 +13072,11 @@ func (s *SandboxTemplateSpec) SetMainContainer(val OptContainerSpec) {
 // SetSidecars sets the value of Sidecars.
 func (s *SandboxTemplateSpec) SetSidecars(val []SidecarContainerSpec) {
 	s.Sidecars = val
+}
+
+// SetSharedVolumes sets the value of SharedVolumes.
+func (s *SandboxTemplateSpec) SetSharedVolumes(val []SharedVolumeSpec) {
+	s.SharedVolumes = val
 }
 
 // SetPod sets the value of Pod.
@@ -13444,18 +13446,99 @@ func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
 	s.RunAsGroup = val
 }
 
+// Ref: #/components/schemas/SharedVolumeSpec
+type SharedVolumeSpec struct {
+	Name            string    `json:"name"`
+	SandboxVolumeId string    `json:"sandboxVolumeId"`
+	MountPath       string    `json:"mountPath"`
+	CacheSize       OptString `json:"cacheSize"`
+	Prefetch        OptInt32  `json:"prefetch"`
+	BufferSize      OptString `json:"bufferSize"`
+	Writeback       OptBool   `json:"writeback"`
+}
+
+// GetName returns the value of Name.
+func (s *SharedVolumeSpec) GetName() string {
+	return s.Name
+}
+
+// GetSandboxVolumeId returns the value of SandboxVolumeId.
+func (s *SharedVolumeSpec) GetSandboxVolumeId() string {
+	return s.SandboxVolumeId
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *SharedVolumeSpec) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetCacheSize returns the value of CacheSize.
+func (s *SharedVolumeSpec) GetCacheSize() OptString {
+	return s.CacheSize
+}
+
+// GetPrefetch returns the value of Prefetch.
+func (s *SharedVolumeSpec) GetPrefetch() OptInt32 {
+	return s.Prefetch
+}
+
+// GetBufferSize returns the value of BufferSize.
+func (s *SharedVolumeSpec) GetBufferSize() OptString {
+	return s.BufferSize
+}
+
+// GetWriteback returns the value of Writeback.
+func (s *SharedVolumeSpec) GetWriteback() OptBool {
+	return s.Writeback
+}
+
+// SetName sets the value of Name.
+func (s *SharedVolumeSpec) SetName(val string) {
+	s.Name = val
+}
+
+// SetSandboxVolumeId sets the value of SandboxVolumeId.
+func (s *SharedVolumeSpec) SetSandboxVolumeId(val string) {
+	s.SandboxVolumeId = val
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *SharedVolumeSpec) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetCacheSize sets the value of CacheSize.
+func (s *SharedVolumeSpec) SetCacheSize(val OptString) {
+	s.CacheSize = val
+}
+
+// SetPrefetch sets the value of Prefetch.
+func (s *SharedVolumeSpec) SetPrefetch(val OptInt32) {
+	s.Prefetch = val
+}
+
+// SetBufferSize sets the value of BufferSize.
+func (s *SharedVolumeSpec) SetBufferSize(val OptString) {
+	s.BufferSize = val
+}
+
+// SetWriteback sets the value of Writeback.
+func (s *SharedVolumeSpec) SetWriteback(val OptBool) {
+	s.Writeback = val
+}
+
 // Ref: #/components/schemas/SidecarContainerSpec
 type SidecarContainerSpec struct {
-	Name            string             `json:"name"`
-	Image           string             `json:"image"`
-	Command         []string           `json:"command"`
-	Args            []string           `json:"args"`
-	Env             []EnvVar           `json:"env"`
-	Resources       OptResourceQuota   `json:"resources"`
-	SecurityContext OptSecurityContext `json:"securityContext"`
-	ReadinessProbe  OptProbe           `json:"readinessProbe"`
-	LivenessProbe   OptProbe           `json:"livenessProbe"`
-	StartupProbe    OptProbe           `json:"startupProbe"`
+	Name           string               `json:"name"`
+	Image          string               `json:"image"`
+	Command        []string             `json:"command"`
+	Args           []string             `json:"args"`
+	Env            []EnvVar             `json:"env"`
+	Resources      ResourceQuota        `json:"resources"`
+	Mounts         []ContainerMountSpec `json:"mounts"`
+	ReadinessProbe OptProbe             `json:"readinessProbe"`
+	LivenessProbe  OptProbe             `json:"livenessProbe"`
+	StartupProbe   OptProbe             `json:"startupProbe"`
 }
 
 // GetName returns the value of Name.
@@ -13484,13 +13567,13 @@ func (s *SidecarContainerSpec) GetEnv() []EnvVar {
 }
 
 // GetResources returns the value of Resources.
-func (s *SidecarContainerSpec) GetResources() OptResourceQuota {
+func (s *SidecarContainerSpec) GetResources() ResourceQuota {
 	return s.Resources
 }
 
-// GetSecurityContext returns the value of SecurityContext.
-func (s *SidecarContainerSpec) GetSecurityContext() OptSecurityContext {
-	return s.SecurityContext
+// GetMounts returns the value of Mounts.
+func (s *SidecarContainerSpec) GetMounts() []ContainerMountSpec {
+	return s.Mounts
 }
 
 // GetReadinessProbe returns the value of ReadinessProbe.
@@ -13534,13 +13617,13 @@ func (s *SidecarContainerSpec) SetEnv(val []EnvVar) {
 }
 
 // SetResources sets the value of Resources.
-func (s *SidecarContainerSpec) SetResources(val OptResourceQuota) {
+func (s *SidecarContainerSpec) SetResources(val ResourceQuota) {
 	s.Resources = val
 }
 
-// SetSecurityContext sets the value of SecurityContext.
-func (s *SidecarContainerSpec) SetSecurityContext(val OptSecurityContext) {
-	s.SecurityContext = val
+// SetMounts sets the value of Mounts.
+func (s *SidecarContainerSpec) SetMounts(val []ContainerMountSpec) {
+	s.Mounts = val
 }
 
 // SetReadinessProbe sets the value of ReadinessProbe.
