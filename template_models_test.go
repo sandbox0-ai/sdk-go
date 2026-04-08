@@ -20,7 +20,6 @@ func TestTemplateCreateRequestSharedVolumeRoundTrip(t *testing.T) {
 					Memory: apispec.NewOptString("2Gi"),
 				},
 			}),
-			RuntimeClassName: apispec.NewOptString("kata-dev"),
 			SharedVolumes: []apispec.SharedVolumeSpec{{
 				Name:      "workspace",
 				MountPath: "/workspace/shared",
@@ -68,9 +67,6 @@ func TestTemplateCreateRequestSharedVolumeRoundTrip(t *testing.T) {
 	}
 	if decoded.Spec.Sidecars[0].Mounts[0].MountPath != "/shared" {
 		t.Fatalf("decoded mount path = %q, want /shared", decoded.Spec.Sidecars[0].Mounts[0].MountPath)
-	}
-	if _, ok := decoded.Spec.RuntimeClassName.Get(); !ok {
-		t.Fatal("decoded runtimeClassName should be set")
 	}
 }
 

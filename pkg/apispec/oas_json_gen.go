@@ -16701,6 +16701,10 @@ func (s *PauseSandboxResponse) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Paused)
 	}
 	{
+		e.FieldStart("power_state")
+		s.PowerState.Encode(e)
+	}
+	{
 		if s.ResourceUsage.Set {
 			e.FieldStart("resource_usage")
 			s.ResourceUsage.Encode(e)
@@ -16720,12 +16724,13 @@ func (s *PauseSandboxResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfPauseSandboxResponse = [5]string{
+var jsonFieldsNameOfPauseSandboxResponse = [6]string{
 	0: "sandbox_id",
 	1: "paused",
-	2: "resource_usage",
-	3: "updated_memory",
-	4: "updated_cpu",
+	2: "power_state",
+	3: "resource_usage",
+	4: "updated_memory",
+	5: "updated_cpu",
 }
 
 // Decode decodes PauseSandboxResponse from json.
@@ -16760,6 +16765,16 @@ func (s *PauseSandboxResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"paused\"")
+			}
+		case "power_state":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.PowerState.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"power_state\"")
 			}
 		case "resource_usage":
 			if err := func() error {
@@ -16801,7 +16816,7 @@ func (s *PauseSandboxResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -20817,6 +20832,10 @@ func (s *ResumeSandboxResponse) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Resumed)
 	}
 	{
+		e.FieldStart("power_state")
+		s.PowerState.Encode(e)
+	}
+	{
 		if s.RestoredMemory.Set {
 			e.FieldStart("restored_memory")
 			s.RestoredMemory.Encode(e)
@@ -20824,10 +20843,11 @@ func (s *ResumeSandboxResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfResumeSandboxResponse = [3]string{
+var jsonFieldsNameOfResumeSandboxResponse = [4]string{
 	0: "sandbox_id",
 	1: "resumed",
-	2: "restored_memory",
+	2: "power_state",
+	3: "restored_memory",
 }
 
 // Decode decodes ResumeSandboxResponse from json.
@@ -20863,6 +20883,16 @@ func (s *ResumeSandboxResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"resumed\"")
 			}
+		case "power_state":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.PowerState.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"power_state\"")
+			}
 		case "restored_memory":
 			if err := func() error {
 				s.RestoredMemory.Reset()
@@ -20883,7 +20913,7 @@ func (s *ResumeSandboxResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -20965,6 +20995,10 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Paused)
 	}
 	{
+		e.FieldStart("power_state")
+		s.PowerState.Encode(e)
+	}
+	{
 		e.FieldStart("auto_resume")
 		e.Bool(s.AutoResume)
 	}
@@ -21000,20 +21034,21 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [13]string{
+var jsonFieldsNameOfSandbox = [14]string{
 	0:  "id",
 	1:  "template_id",
 	2:  "team_id",
 	3:  "user_id",
 	4:  "status",
 	5:  "paused",
-	6:  "auto_resume",
-	7:  "exposed_ports",
-	8:  "pod_name",
-	9:  "expires_at",
-	10: "hard_expires_at",
-	11: "claimed_at",
-	12: "created_at",
+	6:  "power_state",
+	7:  "auto_resume",
+	8:  "exposed_ports",
+	9:  "pod_name",
+	10: "expires_at",
+	11: "hard_expires_at",
+	12: "claimed_at",
+	13: "created_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -21095,8 +21130,18 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"paused\"")
 			}
-		case "auto_resume":
+		case "power_state":
 			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				if err := s.PowerState.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"power_state\"")
+			}
+		case "auto_resume":
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Bool()
 				s.AutoResume = bool(v)
@@ -21125,7 +21170,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"exposed_ports\"")
 			}
 		case "pod_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.PodName = string(v)
@@ -21137,7 +21182,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"pod_name\"")
 			}
 		case "expires_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -21149,7 +21194,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "hard_expires_at":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.HardExpiresAt = v
@@ -21161,7 +21206,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"hard_expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[1] |= 1 << 3
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -21173,7 +21218,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 4
+			requiredBitSet[1] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -21194,8 +21239,8 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b01110111,
-		0b00011111,
+		0b11110111,
+		0b00111110,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -21649,6 +21694,286 @@ func (s SandboxNetworkPolicyMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxNetworkPolicyMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxPowerState) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxPowerState) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("desired")
+		s.Desired.Encode(e)
+	}
+	{
+		e.FieldStart("desired_generation")
+		e.Int64(s.DesiredGeneration)
+	}
+	{
+		e.FieldStart("observed")
+		s.Observed.Encode(e)
+	}
+	{
+		e.FieldStart("observed_generation")
+		e.Int64(s.ObservedGeneration)
+	}
+	{
+		e.FieldStart("phase")
+		s.Phase.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfSandboxPowerState = [5]string{
+	0: "desired",
+	1: "desired_generation",
+	2: "observed",
+	3: "observed_generation",
+	4: "phase",
+}
+
+// Decode decodes SandboxPowerState from json.
+func (s *SandboxPowerState) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxPowerState to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "desired":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Desired.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"desired\"")
+			}
+		case "desired_generation":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int64()
+				s.DesiredGeneration = int64(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"desired_generation\"")
+			}
+		case "observed":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Observed.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"observed\"")
+			}
+		case "observed_generation":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int64()
+				s.ObservedGeneration = int64(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"observed_generation\"")
+			}
+		case "phase":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Phase.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"phase\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxPowerState")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00011111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxPowerState) {
+					name = jsonFieldsNameOfSandboxPowerState[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxPowerState) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxPowerState) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxPowerStateDesired as json.
+func (s SandboxPowerStateDesired) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxPowerStateDesired from json.
+func (s *SandboxPowerStateDesired) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxPowerStateDesired to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxPowerStateDesired(v) {
+	case SandboxPowerStateDesiredActive:
+		*s = SandboxPowerStateDesiredActive
+	case SandboxPowerStateDesiredPaused:
+		*s = SandboxPowerStateDesiredPaused
+	default:
+		*s = SandboxPowerStateDesired(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxPowerStateDesired) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxPowerStateDesired) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxPowerStateObserved as json.
+func (s SandboxPowerStateObserved) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxPowerStateObserved from json.
+func (s *SandboxPowerStateObserved) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxPowerStateObserved to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxPowerStateObserved(v) {
+	case SandboxPowerStateObservedActive:
+		*s = SandboxPowerStateObservedActive
+	case SandboxPowerStateObservedPaused:
+		*s = SandboxPowerStateObservedPaused
+	default:
+		*s = SandboxPowerStateObserved(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxPowerStateObserved) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxPowerStateObserved) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxPowerStatePhase as json.
+func (s SandboxPowerStatePhase) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxPowerStatePhase from json.
+func (s *SandboxPowerStatePhase) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxPowerStatePhase to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxPowerStatePhase(v) {
+	case SandboxPowerStatePhaseStable:
+		*s = SandboxPowerStatePhaseStable
+	case SandboxPowerStatePhasePausing:
+		*s = SandboxPowerStatePhasePausing
+	case SandboxPowerStatePhaseResuming:
+		*s = SandboxPowerStatePhaseResuming
+	default:
+		*s = SandboxPowerStatePhase(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxPowerStatePhase) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxPowerStatePhase) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -22236,6 +22561,10 @@ func (s *SandboxSummary) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Paused)
 	}
 	{
+		e.FieldStart("power_state")
+		s.PowerState.Encode(e)
+	}
+	{
 		if s.ClusterID.Set {
 			e.FieldStart("cluster_id")
 			s.ClusterID.Encode(e)
@@ -22255,15 +22584,16 @@ func (s *SandboxSummary) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxSummary = [8]string{
+var jsonFieldsNameOfSandboxSummary = [9]string{
 	0: "id",
 	1: "template_id",
 	2: "status",
 	3: "paused",
-	4: "cluster_id",
-	5: "created_at",
-	6: "expires_at",
-	7: "hard_expires_at",
+	4: "power_state",
+	5: "cluster_id",
+	6: "created_at",
+	7: "expires_at",
+	8: "hard_expires_at",
 }
 
 // Decode decodes SandboxSummary from json.
@@ -22271,7 +22601,7 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode SandboxSummary to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -22321,6 +22651,16 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"paused\"")
 			}
+		case "power_state":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.PowerState.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"power_state\"")
+			}
 		case "cluster_id":
 			if err := func() error {
 				s.ClusterID.Reset()
@@ -22332,7 +22672,7 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"cluster_id\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -22344,7 +22684,7 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "expires_at":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -22356,7 +22696,7 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "hard_expires_at":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.HardExpiresAt = v
@@ -22376,8 +22716,9 @@ func (s *SandboxSummary) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b11101111,
+	for i, mask := range [2]uint8{
+		0b11011111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -22702,12 +23043,6 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.RuntimeClassName.Set {
-			e.FieldStart("runtimeClassName")
-			s.RuntimeClassName.Encode(e)
-		}
-	}
-	{
 		if s.ClusterId.Set {
 			e.FieldStart("clusterId")
 			s.ClusterId.Encode(e)
@@ -22715,7 +23050,7 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxTemplateSpec = [15]string{
+var jsonFieldsNameOfSandboxTemplateSpec = [14]string{
 	0:  "description",
 	1:  "displayName",
 	2:  "tags",
@@ -22729,8 +23064,7 @@ var jsonFieldsNameOfSandboxTemplateSpec = [15]string{
 	10: "envVars",
 	11: "public",
 	12: "allowedTeams",
-	13: "runtimeClassName",
-	14: "clusterId",
+	13: "clusterId",
 }
 
 // Decode decodes SandboxTemplateSpec from json.
@@ -22902,16 +23236,6 @@ func (s *SandboxTemplateSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"allowedTeams\"")
-			}
-		case "runtimeClassName":
-			if err := func() error {
-				s.RuntimeClassName.Reset()
-				if err := s.RuntimeClassName.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"runtimeClassName\"")
 			}
 		case "clusterId":
 			if err := func() error {
@@ -23992,18 +24316,6 @@ func (s *SidecarContainerSpec) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.ReadinessProbe.Set {
-			e.FieldStart("readinessProbe")
-			s.ReadinessProbe.Encode(e)
-		}
-	}
-	{
-		if s.LivenessProbe.Set {
-			e.FieldStart("livenessProbe")
-			s.LivenessProbe.Encode(e)
-		}
-	}
-	{
 		if s.StartupProbe.Set {
 			e.FieldStart("startupProbe")
 			s.StartupProbe.Encode(e)
@@ -24011,7 +24323,7 @@ func (s *SidecarContainerSpec) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSidecarContainerSpec = [10]string{
+var jsonFieldsNameOfSidecarContainerSpec = [8]string{
 	0: "name",
 	1: "image",
 	2: "command",
@@ -24019,9 +24331,7 @@ var jsonFieldsNameOfSidecarContainerSpec = [10]string{
 	4: "env",
 	5: "resources",
 	6: "mounts",
-	7: "readinessProbe",
-	8: "livenessProbe",
-	9: "startupProbe",
+	7: "startupProbe",
 }
 
 // Decode decodes SidecarContainerSpec from json.
@@ -24029,7 +24339,7 @@ func (s *SidecarContainerSpec) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode SidecarContainerSpec to nil")
 	}
-	var requiredBitSet [2]uint8
+	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -24139,26 +24449,6 @@ func (s *SidecarContainerSpec) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"mounts\"")
 			}
-		case "readinessProbe":
-			if err := func() error {
-				s.ReadinessProbe.Reset()
-				if err := s.ReadinessProbe.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"readinessProbe\"")
-			}
-		case "livenessProbe":
-			if err := func() error {
-				s.LivenessProbe.Reset()
-				if err := s.LivenessProbe.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"livenessProbe\"")
-			}
 		case "startupProbe":
 			if err := func() error {
 				s.StartupProbe.Reset()
@@ -24178,9 +24468,8 @@ func (s *SidecarContainerSpec) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
+	for i, mask := range [1]uint8{
 		0b00100011,
-		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

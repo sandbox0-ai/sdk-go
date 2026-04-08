@@ -257,20 +257,6 @@ func WithTemplateSidecarMounts(mounts ...apispec.ContainerMountSpec) TemplateSid
 	}
 }
 
-// WithTemplateSidecarReadinessProbe sets the readiness probe.
-func WithTemplateSidecarReadinessProbe(probe apispec.Probe) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.ReadinessProbe = apispec.NewOptProbe(probe)
-	}
-}
-
-// WithTemplateSidecarLivenessProbe sets the liveness probe.
-func WithTemplateSidecarLivenessProbe(probe apispec.Probe) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.LivenessProbe = apispec.NewOptProbe(probe)
-	}
-}
-
 // WithTemplateSidecarStartupProbe sets the startup probe.
 func WithTemplateSidecarStartupProbe(probe apispec.Probe) TemplateSidecarOption {
 	return func(sidecar *apispec.SidecarContainerSpec) {
