@@ -264,13 +264,6 @@ func WithTemplateSidecarReadinessProbe(probe apispec.Probe) TemplateSidecarOptio
 	}
 }
 
-// WithTemplateSidecarLivenessProbe sets the liveness probe.
-func WithTemplateSidecarLivenessProbe(probe apispec.Probe) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.LivenessProbe = apispec.NewOptProbe(probe)
-	}
-}
-
 // WithTemplateSidecarStartupProbe sets the startup probe.
 func WithTemplateSidecarStartupProbe(probe apispec.Probe) TemplateSidecarOption {
 	return func(sidecar *apispec.SidecarContainerSpec) {

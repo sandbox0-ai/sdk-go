@@ -10745,6 +10745,7 @@ func (s *PTYSize) SetCols(val OptInt32) {
 type PauseSandboxResponse struct {
 	SandboxID     string                  `json:"sandbox_id"`
 	Paused        bool                    `json:"paused"`
+	PowerState    SandboxPowerState       `json:"power_state"`
 	ResourceUsage OptSandboxResourceUsage `json:"resource_usage"`
 	UpdatedMemory OptString               `json:"updated_memory"`
 	UpdatedCPU    OptString               `json:"updated_cpu"`
@@ -10758,6 +10759,11 @@ func (s *PauseSandboxResponse) GetSandboxID() string {
 // GetPaused returns the value of Paused.
 func (s *PauseSandboxResponse) GetPaused() bool {
 	return s.Paused
+}
+
+// GetPowerState returns the value of PowerState.
+func (s *PauseSandboxResponse) GetPowerState() SandboxPowerState {
+	return s.PowerState
 }
 
 // GetResourceUsage returns the value of ResourceUsage.
@@ -10783,6 +10789,11 @@ func (s *PauseSandboxResponse) SetSandboxID(val string) {
 // SetPaused sets the value of Paused.
 func (s *PauseSandboxResponse) SetPaused(val bool) {
 	s.Paused = val
+}
+
+// SetPowerState sets the value of PowerState.
+func (s *PauseSandboxResponse) SetPowerState(val SandboxPowerState) {
+	s.PowerState = val
 }
 
 // SetResourceUsage sets the value of ResourceUsage.
@@ -12121,9 +12132,10 @@ func (s *ResourceUsage) SetMemoryBytes(val OptInt64) {
 
 // Ref: #/components/schemas/ResumeSandboxResponse
 type ResumeSandboxResponse struct {
-	SandboxID      string    `json:"sandbox_id"`
-	Resumed        bool      `json:"resumed"`
-	RestoredMemory OptString `json:"restored_memory"`
+	SandboxID      string            `json:"sandbox_id"`
+	Resumed        bool              `json:"resumed"`
+	PowerState     SandboxPowerState `json:"power_state"`
+	RestoredMemory OptString         `json:"restored_memory"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -12134,6 +12146,11 @@ func (s *ResumeSandboxResponse) GetSandboxID() string {
 // GetResumed returns the value of Resumed.
 func (s *ResumeSandboxResponse) GetResumed() bool {
 	return s.Resumed
+}
+
+// GetPowerState returns the value of PowerState.
+func (s *ResumeSandboxResponse) GetPowerState() SandboxPowerState {
+	return s.PowerState
 }
 
 // GetRestoredMemory returns the value of RestoredMemory.
@@ -12151,6 +12168,11 @@ func (s *ResumeSandboxResponse) SetResumed(val bool) {
 	s.Resumed = val
 }
 
+// SetPowerState sets the value of PowerState.
+func (s *ResumeSandboxResponse) SetPowerState(val SandboxPowerState) {
+	s.PowerState = val
+}
+
 // SetRestoredMemory sets the value of RestoredMemory.
 func (s *ResumeSandboxResponse) SetRestoredMemory(val OptString) {
 	s.RestoredMemory = val
@@ -12164,6 +12186,7 @@ type Sandbox struct {
 	UserID       OptString           `json:"user_id"`
 	Status       string              `json:"status"`
 	Paused       bool                `json:"paused"`
+	PowerState   SandboxPowerState   `json:"power_state"`
 	AutoResume   bool                `json:"auto_resume"`
 	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
 	PodName      string              `json:"pod_name"`
@@ -12203,6 +12226,11 @@ func (s *Sandbox) GetStatus() string {
 // GetPaused returns the value of Paused.
 func (s *Sandbox) GetPaused() bool {
 	return s.Paused
+}
+
+// GetPowerState returns the value of PowerState.
+func (s *Sandbox) GetPowerState() SandboxPowerState {
+	return s.PowerState
 }
 
 // GetAutoResume returns the value of AutoResume.
@@ -12268,6 +12296,11 @@ func (s *Sandbox) SetStatus(val string) {
 // SetPaused sets the value of Paused.
 func (s *Sandbox) SetPaused(val bool) {
 	s.Paused = val
+}
+
+// SetPowerState sets the value of PowerState.
+func (s *Sandbox) SetPowerState(val SandboxPowerState) {
+	s.PowerState = val
 }
 
 // SetAutoResume sets the value of AutoResume.
@@ -12471,6 +12504,195 @@ func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxNetworkPolicyModeBlockAll:
 		*s = SandboxNetworkPolicyModeBlockAll
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxPowerState
+type SandboxPowerState struct {
+	Desired            SandboxPowerStateDesired  `json:"desired"`
+	DesiredGeneration  int64                     `json:"desired_generation"`
+	Observed           SandboxPowerStateObserved `json:"observed"`
+	ObservedGeneration int64                     `json:"observed_generation"`
+	Phase              SandboxPowerStatePhase    `json:"phase"`
+}
+
+// GetDesired returns the value of Desired.
+func (s *SandboxPowerState) GetDesired() SandboxPowerStateDesired {
+	return s.Desired
+}
+
+// GetDesiredGeneration returns the value of DesiredGeneration.
+func (s *SandboxPowerState) GetDesiredGeneration() int64 {
+	return s.DesiredGeneration
+}
+
+// GetObserved returns the value of Observed.
+func (s *SandboxPowerState) GetObserved() SandboxPowerStateObserved {
+	return s.Observed
+}
+
+// GetObservedGeneration returns the value of ObservedGeneration.
+func (s *SandboxPowerState) GetObservedGeneration() int64 {
+	return s.ObservedGeneration
+}
+
+// GetPhase returns the value of Phase.
+func (s *SandboxPowerState) GetPhase() SandboxPowerStatePhase {
+	return s.Phase
+}
+
+// SetDesired sets the value of Desired.
+func (s *SandboxPowerState) SetDesired(val SandboxPowerStateDesired) {
+	s.Desired = val
+}
+
+// SetDesiredGeneration sets the value of DesiredGeneration.
+func (s *SandboxPowerState) SetDesiredGeneration(val int64) {
+	s.DesiredGeneration = val
+}
+
+// SetObserved sets the value of Observed.
+func (s *SandboxPowerState) SetObserved(val SandboxPowerStateObserved) {
+	s.Observed = val
+}
+
+// SetObservedGeneration sets the value of ObservedGeneration.
+func (s *SandboxPowerState) SetObservedGeneration(val int64) {
+	s.ObservedGeneration = val
+}
+
+// SetPhase sets the value of Phase.
+func (s *SandboxPowerState) SetPhase(val SandboxPowerStatePhase) {
+	s.Phase = val
+}
+
+type SandboxPowerStateDesired string
+
+const (
+	SandboxPowerStateDesiredActive SandboxPowerStateDesired = "active"
+	SandboxPowerStateDesiredPaused SandboxPowerStateDesired = "paused"
+)
+
+// AllValues returns all SandboxPowerStateDesired values.
+func (SandboxPowerStateDesired) AllValues() []SandboxPowerStateDesired {
+	return []SandboxPowerStateDesired{
+		SandboxPowerStateDesiredActive,
+		SandboxPowerStateDesiredPaused,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxPowerStateDesired) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxPowerStateDesiredActive:
+		return []byte(s), nil
+	case SandboxPowerStateDesiredPaused:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxPowerStateDesired) UnmarshalText(data []byte) error {
+	switch SandboxPowerStateDesired(data) {
+	case SandboxPowerStateDesiredActive:
+		*s = SandboxPowerStateDesiredActive
+		return nil
+	case SandboxPowerStateDesiredPaused:
+		*s = SandboxPowerStateDesiredPaused
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxPowerStateObserved string
+
+const (
+	SandboxPowerStateObservedActive SandboxPowerStateObserved = "active"
+	SandboxPowerStateObservedPaused SandboxPowerStateObserved = "paused"
+)
+
+// AllValues returns all SandboxPowerStateObserved values.
+func (SandboxPowerStateObserved) AllValues() []SandboxPowerStateObserved {
+	return []SandboxPowerStateObserved{
+		SandboxPowerStateObservedActive,
+		SandboxPowerStateObservedPaused,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxPowerStateObserved) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxPowerStateObservedActive:
+		return []byte(s), nil
+	case SandboxPowerStateObservedPaused:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxPowerStateObserved) UnmarshalText(data []byte) error {
+	switch SandboxPowerStateObserved(data) {
+	case SandboxPowerStateObservedActive:
+		*s = SandboxPowerStateObservedActive
+		return nil
+	case SandboxPowerStateObservedPaused:
+		*s = SandboxPowerStateObservedPaused
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxPowerStatePhase string
+
+const (
+	SandboxPowerStatePhaseStable   SandboxPowerStatePhase = "stable"
+	SandboxPowerStatePhasePausing  SandboxPowerStatePhase = "pausing"
+	SandboxPowerStatePhaseResuming SandboxPowerStatePhase = "resuming"
+)
+
+// AllValues returns all SandboxPowerStatePhase values.
+func (SandboxPowerStatePhase) AllValues() []SandboxPowerStatePhase {
+	return []SandboxPowerStatePhase{
+		SandboxPowerStatePhaseStable,
+		SandboxPowerStatePhasePausing,
+		SandboxPowerStatePhaseResuming,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxPowerStatePhase) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxPowerStatePhaseStable:
+		return []byte(s), nil
+	case SandboxPowerStatePhasePausing:
+		return []byte(s), nil
+	case SandboxPowerStatePhaseResuming:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxPowerStatePhase) UnmarshalText(data []byte) error {
+	switch SandboxPowerStatePhase(data) {
+	case SandboxPowerStatePhaseStable:
+		*s = SandboxPowerStatePhaseStable
+		return nil
+	case SandboxPowerStatePhasePausing:
+		*s = SandboxPowerStatePhasePausing
+		return nil
+	case SandboxPowerStatePhaseResuming:
+		*s = SandboxPowerStatePhaseResuming
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -12760,6 +12982,7 @@ type SandboxSummary struct {
 	TemplateID string               `json:"template_id"`
 	Status     SandboxSummaryStatus `json:"status"`
 	Paused     bool                 `json:"paused"`
+	PowerState SandboxPowerState    `json:"power_state"`
 	// Cluster where sandbox runs (multi-cluster only).
 	ClusterID OptNilString `json:"cluster_id"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -12786,6 +13009,11 @@ func (s *SandboxSummary) GetStatus() SandboxSummaryStatus {
 // GetPaused returns the value of Paused.
 func (s *SandboxSummary) GetPaused() bool {
 	return s.Paused
+}
+
+// GetPowerState returns the value of PowerState.
+func (s *SandboxSummary) GetPowerState() SandboxPowerState {
+	return s.PowerState
 }
 
 // GetClusterID returns the value of ClusterID.
@@ -12826,6 +13054,11 @@ func (s *SandboxSummary) SetStatus(val SandboxSummaryStatus) {
 // SetPaused sets the value of Paused.
 func (s *SandboxSummary) SetPaused(val bool) {
 	s.Paused = val
+}
+
+// SetPowerState sets the value of PowerState.
+func (s *SandboxSummary) SetPowerState(val SandboxPowerState) {
+	s.PowerState = val
 }
 
 // SetClusterID sets the value of ClusterID.
@@ -12964,21 +13197,20 @@ func (s *SandboxTemplateCondition) SetMessage(val OptString) {
 
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
-	Description      OptString                     `json:"description"`
-	DisplayName      OptString                     `json:"displayName"`
-	Tags             []string                      `json:"tags"`
-	MainContainer    OptContainerSpec              `json:"mainContainer"`
-	Sidecars         []SidecarContainerSpec        `json:"sidecars"`
-	SharedVolumes    []SharedVolumeSpec            `json:"sharedVolumes"`
-	Pod              OptPodSpecOverride            `json:"pod"`
-	Network          OptSandboxNetworkPolicy       `json:"network"`
-	Pool             OptPoolStrategy               `json:"pool"`
-	Lifecycle        OptLifecyclePolicy            `json:"lifecycle"`
-	EnvVars          OptSandboxTemplateSpecEnvVars `json:"envVars"`
-	Public           OptBool                       `json:"public"`
-	AllowedTeams     []string                      `json:"allowedTeams"`
-	RuntimeClassName OptString                     `json:"runtimeClassName"`
-	ClusterId        OptString                     `json:"clusterId"`
+	Description   OptString                     `json:"description"`
+	DisplayName   OptString                     `json:"displayName"`
+	Tags          []string                      `json:"tags"`
+	MainContainer OptContainerSpec              `json:"mainContainer"`
+	Sidecars      []SidecarContainerSpec        `json:"sidecars"`
+	SharedVolumes []SharedVolumeSpec            `json:"sharedVolumes"`
+	Pod           OptPodSpecOverride            `json:"pod"`
+	Network       OptSandboxNetworkPolicy       `json:"network"`
+	Pool          OptPoolStrategy               `json:"pool"`
+	Lifecycle     OptLifecyclePolicy            `json:"lifecycle"`
+	EnvVars       OptSandboxTemplateSpecEnvVars `json:"envVars"`
+	Public        OptBool                       `json:"public"`
+	AllowedTeams  []string                      `json:"allowedTeams"`
+	ClusterId     OptString                     `json:"clusterId"`
 }
 
 // GetDescription returns the value of Description.
@@ -13044,11 +13276,6 @@ func (s *SandboxTemplateSpec) GetPublic() OptBool {
 // GetAllowedTeams returns the value of AllowedTeams.
 func (s *SandboxTemplateSpec) GetAllowedTeams() []string {
 	return s.AllowedTeams
-}
-
-// GetRuntimeClassName returns the value of RuntimeClassName.
-func (s *SandboxTemplateSpec) GetRuntimeClassName() OptString {
-	return s.RuntimeClassName
 }
 
 // GetClusterId returns the value of ClusterId.
@@ -13119,11 +13346,6 @@ func (s *SandboxTemplateSpec) SetPublic(val OptBool) {
 // SetAllowedTeams sets the value of AllowedTeams.
 func (s *SandboxTemplateSpec) SetAllowedTeams(val []string) {
 	s.AllowedTeams = val
-}
-
-// SetRuntimeClassName sets the value of RuntimeClassName.
-func (s *SandboxTemplateSpec) SetRuntimeClassName(val OptString) {
-	s.RuntimeClassName = val
 }
 
 // SetClusterId sets the value of ClusterId.
@@ -13544,7 +13766,6 @@ type SidecarContainerSpec struct {
 	Resources      ResourceQuota        `json:"resources"`
 	Mounts         []ContainerMountSpec `json:"mounts"`
 	ReadinessProbe OptProbe             `json:"readinessProbe"`
-	LivenessProbe  OptProbe             `json:"livenessProbe"`
 	StartupProbe   OptProbe             `json:"startupProbe"`
 }
 
@@ -13586,11 +13807,6 @@ func (s *SidecarContainerSpec) GetMounts() []ContainerMountSpec {
 // GetReadinessProbe returns the value of ReadinessProbe.
 func (s *SidecarContainerSpec) GetReadinessProbe() OptProbe {
 	return s.ReadinessProbe
-}
-
-// GetLivenessProbe returns the value of LivenessProbe.
-func (s *SidecarContainerSpec) GetLivenessProbe() OptProbe {
-	return s.LivenessProbe
 }
 
 // GetStartupProbe returns the value of StartupProbe.
@@ -13636,11 +13852,6 @@ func (s *SidecarContainerSpec) SetMounts(val []ContainerMountSpec) {
 // SetReadinessProbe sets the value of ReadinessProbe.
 func (s *SidecarContainerSpec) SetReadinessProbe(val OptProbe) {
 	s.ReadinessProbe = val
-}
-
-// SetLivenessProbe sets the value of LivenessProbe.
-func (s *SidecarContainerSpec) SetLivenessProbe(val OptProbe) {
-	s.LivenessProbe = val
 }
 
 // SetStartupProbe sets the value of StartupProbe.

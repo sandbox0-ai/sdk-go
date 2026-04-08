@@ -76,3 +76,33 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 		t.Fatalf("displayName = %q, want Helper Template", displayName)
 	}
 }
+
+func TestTemplateSidecarProbeHelpers(t *testing.T) {
+	t.Parallel()
+
+	readiness := apispec.Probe{
+		Exec:             apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
+		PeriodSeconds:    apispec.NewOptInt32(1),
+		FailureThreshold: apispec.NewOptInt32(2),
+	}
+	startup := apispec.Probe{
+		Exec:                apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/booted"}}),
+		InitialDelaySeconds: apispec.NewOptInt32(1),
+	}
+
+	sidecar := TemplateSidecar(
+		"helper",
+		"busybox:latest",
+		"250m",
+		"1Gi",
+		WithTemplateSidecarReadinessProbe(readiness),
+		WithTemplateSidecarStartupProbe(startup),
+	)
+
+	if !sidecar.ReadinessProbe.IsSet() {
+		t.Fatal("sidecar.ReadinessProbe should be set")
+	}
+	if !sidecar.StartupProbe.IsSet() {
+		t.Fatal("sidecar.StartupProbe should be set")
+	}
+}
