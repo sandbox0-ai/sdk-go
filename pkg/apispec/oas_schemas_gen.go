@@ -13758,14 +13758,15 @@ func (s *SharedVolumeSpec) SetWriteback(val OptBool) {
 
 // Ref: #/components/schemas/SidecarContainerSpec
 type SidecarContainerSpec struct {
-	Name         string               `json:"name"`
-	Image        string               `json:"image"`
-	Command      []string             `json:"command"`
-	Args         []string             `json:"args"`
-	Env          []EnvVar             `json:"env"`
-	Resources    ResourceQuota        `json:"resources"`
-	Mounts       []ContainerMountSpec `json:"mounts"`
-	StartupProbe OptProbe             `json:"startupProbe"`
+	Name           string               `json:"name"`
+	Image          string               `json:"image"`
+	Command        []string             `json:"command"`
+	Args           []string             `json:"args"`
+	Env            []EnvVar             `json:"env"`
+	Resources      ResourceQuota        `json:"resources"`
+	Mounts         []ContainerMountSpec `json:"mounts"`
+	ReadinessProbe OptProbe             `json:"readinessProbe"`
+	StartupProbe   OptProbe             `json:"startupProbe"`
 }
 
 // GetName returns the value of Name.
@@ -13801,6 +13802,11 @@ func (s *SidecarContainerSpec) GetResources() ResourceQuota {
 // GetMounts returns the value of Mounts.
 func (s *SidecarContainerSpec) GetMounts() []ContainerMountSpec {
 	return s.Mounts
+}
+
+// GetReadinessProbe returns the value of ReadinessProbe.
+func (s *SidecarContainerSpec) GetReadinessProbe() OptProbe {
+	return s.ReadinessProbe
 }
 
 // GetStartupProbe returns the value of StartupProbe.
@@ -13841,6 +13847,11 @@ func (s *SidecarContainerSpec) SetResources(val ResourceQuota) {
 // SetMounts sets the value of Mounts.
 func (s *SidecarContainerSpec) SetMounts(val []ContainerMountSpec) {
 	s.Mounts = val
+}
+
+// SetReadinessProbe sets the value of ReadinessProbe.
+func (s *SidecarContainerSpec) SetReadinessProbe(val OptProbe) {
+	s.ReadinessProbe = val
 }
 
 // SetStartupProbe sets the value of StartupProbe.

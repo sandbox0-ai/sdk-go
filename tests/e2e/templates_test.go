@@ -38,6 +38,11 @@ func TestTemplateCRUD(t *testing.T) {
 				CPU:    apispec.NewOptString("250m"),
 				Memory: apispec.NewOptString("1Gi"),
 			},
+			ReadinessProbe: apispec.NewOptProbe(apispec.Probe{
+				Exec:             apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
+				PeriodSeconds:    apispec.NewOptInt32(1),
+				FailureThreshold: apispec.NewOptInt32(1),
+			}),
 			StartupProbe: apispec.NewOptProbe(apispec.Probe{
 				Exec:                apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
 				InitialDelaySeconds: apispec.NewOptInt32(1),
@@ -62,6 +67,9 @@ func TestTemplateCRUD(t *testing.T) {
 	if len(created.Spec.Sidecars) != 1 {
 		t.Fatalf("created template sidecars = %d, want 1", len(created.Spec.Sidecars))
 	}
+	if !created.Spec.Sidecars[0].ReadinessProbe.IsSet() {
+		t.Fatalf("created template sidecar readiness probe missing")
+	}
 	if !created.Spec.Sidecars[0].StartupProbe.IsSet() {
 		t.Fatalf("created template sidecar startup probe missing")
 	}
@@ -81,6 +89,9 @@ func TestTemplateCRUD(t *testing.T) {
 	}
 	if len(fetched.Spec.Sidecars) != 1 {
 		t.Fatalf("fetched template sidecars = %d, want 1", len(fetched.Spec.Sidecars))
+	}
+	if !fetched.Spec.Sidecars[0].ReadinessProbe.IsSet() {
+		t.Fatalf("fetched template sidecar readiness probe missing")
 	}
 	if !fetched.Spec.Sidecars[0].StartupProbe.IsSet() {
 		t.Fatalf("fetched template sidecar startup probe missing")
