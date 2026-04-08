@@ -77,11 +77,20 @@ defer stream.Close()
 
 for {
     output, err := stream.Recv()
-    if err != nil {
+    if err == io.EOF {
         break
+    }
+    if err != nil {
+        log.Fatal(err)
     }
     fmt.Print(output.Data)
 }
+
+done, err := stream.Wait()
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("exit=%d state=%s\n", *done.ExitCode, done.State)
 ```
 
 ## Documentation
