@@ -516,6 +516,7 @@ type AddTeamMemberRequestRole string
 const (
 	AddTeamMemberRequestRoleAdmin     AddTeamMemberRequestRole = "admin"
 	AddTeamMemberRequestRoleDeveloper AddTeamMemberRequestRole = "developer"
+	AddTeamMemberRequestRoleBuilder   AddTeamMemberRequestRole = "builder"
 	AddTeamMemberRequestRoleViewer    AddTeamMemberRequestRole = "viewer"
 )
 
@@ -524,6 +525,7 @@ func (AddTeamMemberRequestRole) AllValues() []AddTeamMemberRequestRole {
 	return []AddTeamMemberRequestRole{
 		AddTeamMemberRequestRoleAdmin,
 		AddTeamMemberRequestRoleDeveloper,
+		AddTeamMemberRequestRoleBuilder,
 		AddTeamMemberRequestRoleViewer,
 	}
 }
@@ -534,6 +536,8 @@ func (s AddTeamMemberRequestRole) MarshalText() ([]byte, error) {
 	case AddTeamMemberRequestRoleAdmin:
 		return []byte(s), nil
 	case AddTeamMemberRequestRoleDeveloper:
+		return []byte(s), nil
+	case AddTeamMemberRequestRoleBuilder:
 		return []byte(s), nil
 	case AddTeamMemberRequestRoleViewer:
 		return []byte(s), nil
@@ -550,6 +554,9 @@ func (s *AddTeamMemberRequestRole) UnmarshalText(data []byte) error {
 		return nil
 	case AddTeamMemberRequestRoleDeveloper:
 		*s = AddTeamMemberRequestRoleDeveloper
+		return nil
+	case AddTeamMemberRequestRoleBuilder:
+		*s = AddTeamMemberRequestRoleBuilder
 		return nil
 	case AddTeamMemberRequestRoleViewer:
 		*s = AddTeamMemberRequestRoleViewer
@@ -18073,6 +18080,7 @@ type UpdateTeamMemberRequestRole string
 const (
 	UpdateTeamMemberRequestRoleAdmin     UpdateTeamMemberRequestRole = "admin"
 	UpdateTeamMemberRequestRoleDeveloper UpdateTeamMemberRequestRole = "developer"
+	UpdateTeamMemberRequestRoleBuilder   UpdateTeamMemberRequestRole = "builder"
 	UpdateTeamMemberRequestRoleViewer    UpdateTeamMemberRequestRole = "viewer"
 )
 
@@ -18081,6 +18089,7 @@ func (UpdateTeamMemberRequestRole) AllValues() []UpdateTeamMemberRequestRole {
 	return []UpdateTeamMemberRequestRole{
 		UpdateTeamMemberRequestRoleAdmin,
 		UpdateTeamMemberRequestRoleDeveloper,
+		UpdateTeamMemberRequestRoleBuilder,
 		UpdateTeamMemberRequestRoleViewer,
 	}
 }
@@ -18091,6 +18100,8 @@ func (s UpdateTeamMemberRequestRole) MarshalText() ([]byte, error) {
 	case UpdateTeamMemberRequestRoleAdmin:
 		return []byte(s), nil
 	case UpdateTeamMemberRequestRoleDeveloper:
+		return []byte(s), nil
+	case UpdateTeamMemberRequestRoleBuilder:
 		return []byte(s), nil
 	case UpdateTeamMemberRequestRoleViewer:
 		return []byte(s), nil
@@ -18107,6 +18118,9 @@ func (s *UpdateTeamMemberRequestRole) UnmarshalText(data []byte) error {
 		return nil
 	case UpdateTeamMemberRequestRoleDeveloper:
 		*s = UpdateTeamMemberRequestRoleDeveloper
+		return nil
+	case UpdateTeamMemberRequestRoleBuilder:
+		*s = UpdateTeamMemberRequestRoleBuilder
 		return nil
 	case UpdateTeamMemberRequestRoleViewer:
 		*s = UpdateTeamMemberRequestRoleViewer

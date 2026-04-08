@@ -62,6 +62,37 @@ func main() {
 }
 ```
 
+## CMD Streaming
+
+```go
+stream, err := sandbox.CmdStream(
+    ctx,
+    "sh -c 'echo hello && echo warn >&2'",
+    sandbox0.WithCommand([]string{"sh", "-c", "echo hello && echo warn >&2"}),
+)
+if err != nil {
+    log.Fatal(err)
+}
+defer stream.Close()
+
+for {
+    output, err := stream.Recv()
+    if err == io.EOF {
+        break
+    }
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Print(output.Data)
+}
+
+done, err := stream.Wait()
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("exit=%d state=%s\n", *done.ExitCode, done.State)
+```
+
 ## Documentation
 
 - [Sandbox0 docs](https://sandbox0.ai/docs)

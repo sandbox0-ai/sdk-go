@@ -343,6 +343,8 @@ func (s AddTeamMemberRequestRole) Validate() error {
 		return nil
 	case "developer":
 		return nil
+	case "builder":
+		return nil
 	case "viewer":
 		return nil
 	default:
@@ -5551,6 +5553,8 @@ func (s UpdateTeamMemberRequestRole) Validate() error {
 	case "admin":
 		return nil
 	case "developer":
+		return nil
+	case "builder":
 		return nil
 	case "viewer":
 		return nil

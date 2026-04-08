@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net"
 	"testing"
 	"time"
@@ -150,6 +151,41 @@ func TestSandboxStreams(t *testing.T) {
 		}
 		if !received {
 			t.Fatalf("cmd stream did not produce output")
+		}
+	})
+
+	t.Run("cmd_stream_helper", func(t *testing.T) {
+		stream, err := sandbox.CmdStream(
+			ctx,
+			"echo helper",
+			sandbox0.WithCommand([]string{"sh", "-c", "echo helper"}),
+		)
+		if err != nil {
+			t.Fatalf("cmd stream helper failed: %v", err)
+		}
+		defer stream.Close()
+
+		output, err := stream.Recv()
+		if err != nil {
+			t.Fatalf("stream recv failed: %v", err)
+		}
+		if output.Source == "" {
+			t.Fatal("stream output source is empty")
+		}
+		if output.Data == "" {
+			t.Fatal("stream output data is empty")
+		}
+
+		done, err := stream.Wait()
+		if err != nil {
+			t.Fatalf("stream wait failed: %v", err)
+		}
+		if done.ExitCode == nil || *done.ExitCode != 0 {
+			t.Fatalf("stream done exit code = %#v, want 0", done.ExitCode)
+		}
+
+		if _, err := stream.Recv(); !errors.Is(err, io.EOF) {
+			t.Fatalf("stream recv after done = %v, want io.EOF", err)
 		}
 	})
 }

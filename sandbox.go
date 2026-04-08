@@ -153,8 +153,64 @@ func WithCmdPTYSize(rows, cols uint16) CmdOption {
 // By default, it waits for command completion. Use WithCmdWait(false) for async execution.
 // The context is not automatically deleted; use DeleteContext to clean up when done.
 func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdResult, error) {
+	options, err := resolveCmdOptions(cmd, opts...)
+	if err != nil {
+		return CmdResult{}, err
+	}
+
+	waitUntilDone := true
+	if options.wait != nil {
+		waitUntilDone = *options.wait
+	}
+	req := buildCmdCreateContextRequest(options, waitUntilDone)
+	contextResp, err := s.CreateContext(ctx, req)
+	if err != nil {
+		return CmdResult{}, err
+	}
+	if contextResp == nil {
+		return CmdResult{}, errors.New("create context returned nil response")
+	}
+
+	outputRaw := ""
+	if value, ok := contextResp.OutputRaw.Get(); ok {
+		outputRaw = value
+	}
+
+	return CmdResult{
+		SandboxID: s.ID,
+		ContextID: contextResp.ID,
+		OutputRaw: outputRaw,
+	}, nil
+}
+
+// CmdStream executes a command in a CMD context and returns a connected WebSocket stream.
+func (s *Sandbox) CmdStream(ctx context.Context, cmd string, opts ...CmdOption) (*ContextStream, error) {
+	options, err := resolveCmdOptions(cmd, opts...)
+	if err != nil {
+		return nil, err
+	}
+	if options.wait != nil && *options.wait {
+		return nil, errors.New("cmd stream requires wait=false")
+	}
+
+	contextResp, err := s.CreateContext(ctx, buildCmdCreateContextRequest(options, false))
+	if err != nil {
+		return nil, err
+	}
+	if contextResp == nil {
+		return nil, errors.New("create context returned nil response")
+	}
+
+	conn, _, err := s.ConnectWSContext(ctx, contextResp.ID)
+	if err != nil {
+		return nil, err
+	}
+	return newContextStream(s.ID, contextResp.ID, conn), nil
+}
+
+func resolveCmdOptions(cmd string, opts ...CmdOption) (cmdOptions, error) {
 	if strings.TrimSpace(cmd) == "" {
-		return CmdResult{}, errors.New("command cannot be empty")
+		return cmdOptions{}, errors.New("command cannot be empty")
 	}
 
 	options := cmdOptions{}
@@ -165,18 +221,18 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if options.command == nil {
 		parsed, err := parseCommand(cmd)
 		if err != nil {
-			return CmdResult{}, err
+			return cmdOptions{}, err
 		}
 		options.command = parsed
 	}
 	if len(options.command) == 0 {
-		return CmdResult{}, errors.New("command cannot be empty")
+		return cmdOptions{}, errors.New("command cannot be empty")
 	}
 
-	waitUntilDone := true
-	if options.wait != nil {
-		waitUntilDone = *options.wait
-	}
+	return options, nil
+}
+
+func buildCmdCreateContextRequest(options cmdOptions, waitUntilDone bool) apispec.CreateContextRequest {
 	req := apispec.CreateContextRequest{
 		Type:          apispec.NewOptProcessType(apispec.ProcessTypeCmd),
 		Cmd:           apispec.NewOptCreateCMDContextRequest(apispec.CreateCMDContextRequest{Command: options.command}),
@@ -197,24 +253,7 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if options.ttlSec != nil {
 		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
 	}
-	contextResp, err := s.CreateContext(ctx, req)
-	if err != nil {
-		return CmdResult{}, err
-	}
-	if contextResp == nil {
-		return CmdResult{}, errors.New("create context returned nil response")
-	}
-
-	outputRaw := ""
-	if value, ok := contextResp.OutputRaw.Get(); ok {
-		outputRaw = value
-	}
-
-	return CmdResult{
-		SandboxID: s.ID,
-		ContextID: contextResp.ID,
-		OutputRaw: outputRaw,
-	}, nil
+	return req
 }
 
 func (s *Sandbox) ensureReplContext(ctx context.Context, alias string, options runOptions) (string, error) {
