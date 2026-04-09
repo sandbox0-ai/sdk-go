@@ -5839,6 +5839,119 @@ func (s *CreateRegionRequest) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *CreateSSHPublicKeyRequest) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *CreateSSHPublicKeyRequest) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("public_key")
+		e.Str(s.PublicKey)
+	}
+}
+
+var jsonFieldsNameOfCreateSSHPublicKeyRequest = [2]string{
+	0: "name",
+	1: "public_key",
+}
+
+// Decode decodes CreateSSHPublicKeyRequest from json.
+func (s *CreateSSHPublicKeyRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode CreateSSHPublicKeyRequest to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "public_key":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.PublicKey = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"public_key\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode CreateSSHPublicKeyRequest")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfCreateSSHPublicKeyRequest) {
+					name = jsonFieldsNameOfCreateSSHPublicKeyRequest[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *CreateSSHPublicKeyRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *CreateSSHPublicKeyRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *CreateSandboxVolumeRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -14750,6 +14863,39 @@ func (s *OptResumeSandboxResponse) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SSHPublicKey as json.
+func (o OptSSHPublicKey) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SSHPublicKey from json.
+func (o *OptSSHPublicKey) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSSHPublicKey to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSSHPublicKey) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSSHPublicKey) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes Sandbox as json.
 func (o OptSandbox) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -14945,6 +15091,39 @@ func (s OptSandboxResourceUsage) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandboxResourceUsage) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxSSHConnection as json.
+func (o OptSandboxSSHConnection) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxSSHConnection from json.
+func (o *OptSandboxSSHConnection) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxSSHConnection to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxSSHConnection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxSSHConnection) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -15840,6 +16019,39 @@ func (s OptSuccessRestoreResponseData) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSuccessRestoreResponseData) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSSHPublicKeyListResponseData as json.
+func (o OptSuccessSSHPublicKeyListResponseData) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SuccessSSHPublicKeyListResponseData from json.
+func (o *OptSuccessSSHPublicKeyListResponseData) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSuccessSSHPublicKeyListResponseData to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSuccessSSHPublicKeyListResponseData) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSuccessSSHPublicKeyListResponseData) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -20960,6 +21172,221 @@ func (s *ResumeSandboxResponse) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SSHPublicKey) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SSHPublicKey) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		e.Str(s.ID)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("public_key")
+		e.Str(s.PublicKey)
+	}
+	{
+		e.FieldStart("key_type")
+		e.Str(s.KeyType)
+	}
+	{
+		e.FieldStart("fingerprint_sha256")
+		e.Str(s.FingerprintSHA256)
+	}
+	{
+		if s.Comment.Set {
+			e.FieldStart("comment")
+			s.Comment.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+}
+
+var jsonFieldsNameOfSSHPublicKey = [8]string{
+	0: "id",
+	1: "name",
+	2: "public_key",
+	3: "key_type",
+	4: "fingerprint_sha256",
+	5: "comment",
+	6: "created_at",
+	7: "updated_at",
+}
+
+// Decode decodes SSHPublicKey from json.
+func (s *SSHPublicKey) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SSHPublicKey to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "public_key":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.PublicKey = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"public_key\"")
+			}
+		case "key_type":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.KeyType = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"key_type\"")
+			}
+		case "fingerprint_sha256":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.FingerprintSHA256 = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"fingerprint_sha256\"")
+			}
+		case "comment":
+			if err := func() error {
+				s.Comment.Reset()
+				if err := s.Comment.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"comment\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SSHPublicKey")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b11011111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSSHPublicKey) {
+					name = jsonFieldsNameOfSSHPublicKey[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SSHPublicKey) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SSHPublicKey) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *Sandbox) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -21017,6 +21444,12 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		e.Str(s.PodName)
 	}
 	{
+		if s.SSH.Set {
+			e.FieldStart("ssh")
+			s.SSH.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("expires_at")
 		json.EncodeDateTime(e, s.ExpiresAt)
 	}
@@ -21034,7 +21467,7 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [14]string{
+var jsonFieldsNameOfSandbox = [15]string{
 	0:  "id",
 	1:  "template_id",
 	2:  "team_id",
@@ -21045,10 +21478,11 @@ var jsonFieldsNameOfSandbox = [14]string{
 	7:  "auto_resume",
 	8:  "exposed_ports",
 	9:  "pod_name",
-	10: "expires_at",
-	11: "hard_expires_at",
-	12: "claimed_at",
-	13: "created_at",
+	10: "ssh",
+	11: "expires_at",
+	12: "hard_expires_at",
+	13: "claimed_at",
+	14: "created_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -21181,8 +21615,18 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"pod_name\"")
 			}
+		case "ssh":
+			if err := func() error {
+				s.SSH.Reset()
+				if err := s.SSH.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ssh\"")
+			}
 		case "expires_at":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -21194,7 +21638,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "hard_expires_at":
-			requiredBitSet[1] |= 1 << 3
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.HardExpiresAt = v
@@ -21206,7 +21650,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"hard_expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[1] |= 1 << 4
+			requiredBitSet[1] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -21218,7 +21662,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[1] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -21240,7 +21684,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11110111,
-		0b00111110,
+		0b01111010,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -22315,6 +22759,136 @@ func (s *SandboxResourceUsage) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxResourceUsage) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxSSHConnection) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxSSHConnection) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("host")
+		e.Str(s.Host)
+	}
+	{
+		e.FieldStart("port")
+		e.Int(s.Port)
+	}
+	{
+		e.FieldStart("username")
+		e.Str(s.Username)
+	}
+}
+
+var jsonFieldsNameOfSandboxSSHConnection = [3]string{
+	0: "host",
+	1: "port",
+	2: "username",
+}
+
+// Decode decodes SandboxSSHConnection from json.
+func (s *SandboxSSHConnection) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxSSHConnection to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "host":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Host = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"host\"")
+			}
+		case "port":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.Port = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"port\"")
+			}
+		case "username":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Username = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"username\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxSSHConnection")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxSSHConnection) {
+					name = jsonFieldsNameOfSandboxSSHConnection[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxSSHConnection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxSSHConnection) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -31036,6 +31610,366 @@ func (s *SuccessResumeSandboxResponseSuccess) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SuccessSSHPublicKeyListResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSSHPublicKeyListResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data.Set {
+			e.FieldStart("data")
+			s.Data.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSSHPublicKeyListResponse = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes SuccessSSHPublicKeyListResponse from json.
+func (s *SuccessSSHPublicKeyListResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSSHPublicKeyListResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data.Reset()
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSSHPublicKeyListResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSuccessSSHPublicKeyListResponse) {
+					name = jsonFieldsNameOfSuccessSSHPublicKeyListResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSSHPublicKeyListResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSSHPublicKeyListResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SuccessSSHPublicKeyListResponseData) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSSHPublicKeyListResponseData) encodeFields(e *jx.Encoder) {
+	{
+		if s.SSHKeys != nil {
+			e.FieldStart("ssh_keys")
+			e.ArrStart()
+			for _, elem := range s.SSHKeys {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSSHPublicKeyListResponseData = [1]string{
+	0: "ssh_keys",
+}
+
+// Decode decodes SuccessSSHPublicKeyListResponseData from json.
+func (s *SuccessSSHPublicKeyListResponseData) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSSHPublicKeyListResponseData to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "ssh_keys":
+			if err := func() error {
+				s.SSHKeys = make([]SSHPublicKey, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem SSHPublicKey
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.SSHKeys = append(s.SSHKeys, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ssh_keys\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSSHPublicKeyListResponseData")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSSHPublicKeyListResponseData) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSSHPublicKeyListResponseData) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSSHPublicKeyListResponseSuccess as json.
+func (s SuccessSSHPublicKeyListResponseSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes SuccessSSHPublicKeyListResponseSuccess from json.
+func (s *SuccessSSHPublicKeyListResponseSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSSHPublicKeyListResponseSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = SuccessSSHPublicKeyListResponseSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SuccessSSHPublicKeyListResponseSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSSHPublicKeyListResponseSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SuccessSSHPublicKeyResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSSHPublicKeyResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data.Set {
+			e.FieldStart("data")
+			s.Data.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSSHPublicKeyResponse = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes SuccessSSHPublicKeyResponse from json.
+func (s *SuccessSSHPublicKeyResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSSHPublicKeyResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data.Reset()
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSSHPublicKeyResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSuccessSSHPublicKeyResponse) {
+					name = jsonFieldsNameOfSuccessSSHPublicKeyResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSSHPublicKeyResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSSHPublicKeyResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSSHPublicKeyResponseSuccess as json.
+func (s SuccessSSHPublicKeyResponseSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes SuccessSSHPublicKeyResponseSuccess from json.
+func (s *SuccessSSHPublicKeyResponseSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSSHPublicKeyResponseSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = SuccessSSHPublicKeyResponseSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SuccessSSHPublicKeyResponseSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSSHPublicKeyResponseSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SuccessSandboxListResponse) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -39449,6 +40383,234 @@ func (s *UsersMePutUnauthorized) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *UsersMePutUnauthorized) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysIDDeleteBadRequest as json.
+func (s *UsersMeSSHKeysIDDeleteBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysIDDeleteBadRequest from json.
+func (s *UsersMeSSHKeysIDDeleteBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysIDDeleteBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysIDDeleteBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysIDDeleteBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysIDDeleteBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysIDDeleteNotFound as json.
+func (s *UsersMeSSHKeysIDDeleteNotFound) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysIDDeleteNotFound from json.
+func (s *UsersMeSSHKeysIDDeleteNotFound) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysIDDeleteNotFound to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysIDDeleteNotFound(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysIDDeleteNotFound) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysIDDeleteNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysIDDeleteUnauthorized as json.
+func (s *UsersMeSSHKeysIDDeleteUnauthorized) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysIDDeleteUnauthorized from json.
+func (s *UsersMeSSHKeysIDDeleteUnauthorized) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysIDDeleteUnauthorized to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysIDDeleteUnauthorized(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysIDDeleteUnauthorized) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysIDDeleteUnauthorized) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysPostBadRequest as json.
+func (s *UsersMeSSHKeysPostBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysPostBadRequest from json.
+func (s *UsersMeSSHKeysPostBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysPostBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysPostBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysPostBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysPostBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysPostConflict as json.
+func (s *UsersMeSSHKeysPostConflict) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysPostConflict from json.
+func (s *UsersMeSSHKeysPostConflict) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysPostConflict to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysPostConflict(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysPostConflict) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysPostConflict) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes UsersMeSSHKeysPostUnauthorized as json.
+func (s *UsersMeSSHKeysPostUnauthorized) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes UsersMeSSHKeysPostUnauthorized from json.
+func (s *UsersMeSSHKeysPostUnauthorized) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UsersMeSSHKeysPostUnauthorized to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = UsersMeSSHKeysPostUnauthorized(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UsersMeSSHKeysPostUnauthorized) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UsersMeSSHKeysPostUnauthorized) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

@@ -4254,6 +4254,70 @@ func (s SuccessResumeSandboxResponseSuccess) Validate() error {
 	}
 }
 
+func (s *SuccessSSHPublicKeyListResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessSSHPublicKeyListResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessSSHPublicKeyResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessSSHPublicKeyResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *SuccessSandboxListResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -5815,6 +5879,54 @@ func (s *UsersMePutBadRequest) Validate() error {
 }
 
 func (s *UsersMePutUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysIDDeleteBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysIDDeleteNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysIDDeleteUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysPostConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UsersMeSSHKeysPostUnauthorized) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err

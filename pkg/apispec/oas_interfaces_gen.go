@@ -264,3 +264,15 @@ type UsersMeIdentitiesIDDeleteRes interface {
 type UsersMePutRes interface {
 	usersMePutRes()
 }
+
+type UsersMeSSHKeysGetRes interface {
+	usersMeSSHKeysGetRes()
+}
+
+type UsersMeSSHKeysIDDeleteRes interface {
+	usersMeSSHKeysIDDeleteRes()
+}
+
+type UsersMeSSHKeysPostRes interface {
+	usersMeSSHKeysPostRes()
+}
