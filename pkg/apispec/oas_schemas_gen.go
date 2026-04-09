@@ -2017,6 +2017,32 @@ func (s *CreateRegionRequest) SetEnabled(val OptBool) {
 	s.Enabled = val
 }
 
+// Ref: #/components/schemas/CreateSSHPublicKeyRequest
+type CreateSSHPublicKeyRequest struct {
+	Name      string `json:"name"`
+	PublicKey string `json:"public_key"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateSSHPublicKeyRequest) GetName() string {
+	return s.Name
+}
+
+// GetPublicKey returns the value of PublicKey.
+func (s *CreateSSHPublicKeyRequest) GetPublicKey() string {
+	return s.PublicKey
+}
+
+// SetName sets the value of Name.
+func (s *CreateSSHPublicKeyRequest) SetName(val string) {
+	s.Name = val
+}
+
+// SetPublicKey sets the value of PublicKey.
+func (s *CreateSSHPublicKeyRequest) SetPublicKey(val string) {
+	s.PublicKey = val
+}
+
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
 type CreateSandboxVolumeRequest struct {
 	// Default POSIX UID used by external volume access paths that do not carry caller identity. Defaults
@@ -3109,6 +3135,7 @@ func (*ErrorEnvelope) teamsIDMembersGetRes()                                   {
 func (*ErrorEnvelope) teamsPostRes()                                           {}
 func (*ErrorEnvelope) usersMeGetRes()                                          {}
 func (*ErrorEnvelope) usersMeIdentitiesGetRes()                                {}
+func (*ErrorEnvelope) usersMeSSHKeysGetRes()                                   {}
 
 type ErrorEnvelopeSuccess bool
 
@@ -8139,6 +8166,52 @@ func (o OptResumeSandboxResponse) Or(d ResumeSandboxResponse) ResumeSandboxRespo
 	return d
 }
 
+// NewOptSSHPublicKey returns new OptSSHPublicKey with value set to v.
+func NewOptSSHPublicKey(v SSHPublicKey) OptSSHPublicKey {
+	return OptSSHPublicKey{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSSHPublicKey is optional SSHPublicKey.
+type OptSSHPublicKey struct {
+	Value SSHPublicKey
+	Set   bool
+}
+
+// IsSet returns true if OptSSHPublicKey was set.
+func (o OptSSHPublicKey) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSSHPublicKey) Reset() {
+	var v SSHPublicKey
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSSHPublicKey) SetTo(v SSHPublicKey) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSSHPublicKey) Get() (v SSHPublicKey, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSSHPublicKey) Or(d SSHPublicKey) SSHPublicKey {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandbox returns new OptSandbox with value set to v.
 func NewOptSandbox(v Sandbox) OptSandbox {
 	return OptSandbox{
@@ -8409,6 +8482,52 @@ func (o OptSandboxResourceUsage) Get() (v SandboxResourceUsage, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxResourceUsage) Or(d SandboxResourceUsage) SandboxResourceUsage {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxSSHConnection returns new OptSandboxSSHConnection with value set to v.
+func NewOptSandboxSSHConnection(v SandboxSSHConnection) OptSandboxSSHConnection {
+	return OptSandboxSSHConnection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxSSHConnection is optional SandboxSSHConnection.
+type OptSandboxSSHConnection struct {
+	Value SandboxSSHConnection
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxSSHConnection was set.
+func (o OptSandboxSSHConnection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxSSHConnection) Reset() {
+	var v SandboxSSHConnection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxSSHConnection) SetTo(v SandboxSSHConnection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxSSHConnection) Get() (v SandboxSSHConnection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxSSHConnection) Or(d SandboxSSHConnection) SandboxSSHConnection {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9651,6 +9770,52 @@ func (o OptSuccessRestoreResponseData) Get() (v SuccessRestoreResponseData, ok b
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessRestoreResponseData) Or(d SuccessRestoreResponseData) SuccessRestoreResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessSSHPublicKeyListResponseData returns new OptSuccessSSHPublicKeyListResponseData with value set to v.
+func NewOptSuccessSSHPublicKeyListResponseData(v SuccessSSHPublicKeyListResponseData) OptSuccessSSHPublicKeyListResponseData {
+	return OptSuccessSSHPublicKeyListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessSSHPublicKeyListResponseData is optional SuccessSSHPublicKeyListResponseData.
+type OptSuccessSSHPublicKeyListResponseData struct {
+	Value SuccessSSHPublicKeyListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessSSHPublicKeyListResponseData was set.
+func (o OptSuccessSSHPublicKeyListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessSSHPublicKeyListResponseData) Reset() {
+	var v SuccessSSHPublicKeyListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessSSHPublicKeyListResponseData) SetTo(v SuccessSSHPublicKeyListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessSSHPublicKeyListResponseData) Get() (v SuccessSSHPublicKeyListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessSSHPublicKeyListResponseData) Or(d SuccessSSHPublicKeyListResponseData) SuccessSSHPublicKeyListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12178,18 +12343,111 @@ func (s *ResumeSandboxResponse) SetRestoredMemory(val OptString) {
 	s.RestoredMemory = val
 }
 
+// Ref: #/components/schemas/SSHPublicKey
+type SSHPublicKey struct {
+	ID                string    `json:"id"`
+	Name              string    `json:"name"`
+	PublicKey         string    `json:"public_key"`
+	KeyType           string    `json:"key_type"`
+	FingerprintSHA256 string    `json:"fingerprint_sha256"`
+	Comment           OptString `json:"comment"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SSHPublicKey) GetID() string {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *SSHPublicKey) GetName() string {
+	return s.Name
+}
+
+// GetPublicKey returns the value of PublicKey.
+func (s *SSHPublicKey) GetPublicKey() string {
+	return s.PublicKey
+}
+
+// GetKeyType returns the value of KeyType.
+func (s *SSHPublicKey) GetKeyType() string {
+	return s.KeyType
+}
+
+// GetFingerprintSHA256 returns the value of FingerprintSHA256.
+func (s *SSHPublicKey) GetFingerprintSHA256() string {
+	return s.FingerprintSHA256
+}
+
+// GetComment returns the value of Comment.
+func (s *SSHPublicKey) GetComment() OptString {
+	return s.Comment
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SSHPublicKey) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SSHPublicKey) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *SSHPublicKey) SetID(val string) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *SSHPublicKey) SetName(val string) {
+	s.Name = val
+}
+
+// SetPublicKey sets the value of PublicKey.
+func (s *SSHPublicKey) SetPublicKey(val string) {
+	s.PublicKey = val
+}
+
+// SetKeyType sets the value of KeyType.
+func (s *SSHPublicKey) SetKeyType(val string) {
+	s.KeyType = val
+}
+
+// SetFingerprintSHA256 sets the value of FingerprintSHA256.
+func (s *SSHPublicKey) SetFingerprintSHA256(val string) {
+	s.FingerprintSHA256 = val
+}
+
+// SetComment sets the value of Comment.
+func (s *SSHPublicKey) SetComment(val OptString) {
+	s.Comment = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SSHPublicKey) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SSHPublicKey) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID           string              `json:"id"`
-	TemplateID   string              `json:"template_id"`
-	TeamID       string              `json:"team_id"`
-	UserID       OptString           `json:"user_id"`
-	Status       string              `json:"status"`
-	Paused       bool                `json:"paused"`
-	PowerState   SandboxPowerState   `json:"power_state"`
-	AutoResume   bool                `json:"auto_resume"`
-	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
-	PodName      string              `json:"pod_name"`
+	ID           string                  `json:"id"`
+	TemplateID   string                  `json:"template_id"`
+	TeamID       string                  `json:"team_id"`
+	UserID       OptString               `json:"user_id"`
+	Status       string                  `json:"status"`
+	Paused       bool                    `json:"paused"`
+	PowerState   SandboxPowerState       `json:"power_state"`
+	AutoResume   bool                    `json:"auto_resume"`
+	ExposedPorts []ExposedPortConfig     `json:"exposed_ports"`
+	PodName      string                  `json:"pod_name"`
+	SSH          OptSandboxSSHConnection `json:"ssh"`
 	// Soft expiration timestamp. Zero value means not set.
 	ExpiresAt time.Time `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
@@ -12246,6 +12504,11 @@ func (s *Sandbox) GetExposedPorts() []ExposedPortConfig {
 // GetPodName returns the value of PodName.
 func (s *Sandbox) GetPodName() string {
 	return s.PodName
+}
+
+// GetSSH returns the value of SSH.
+func (s *Sandbox) GetSSH() OptSandboxSSHConnection {
+	return s.SSH
 }
 
 // GetExpiresAt returns the value of ExpiresAt.
@@ -12316,6 +12579,11 @@ func (s *Sandbox) SetExposedPorts(val []ExposedPortConfig) {
 // SetPodName sets the value of PodName.
 func (s *Sandbox) SetPodName(val string) {
 	s.PodName = val
+}
+
+// SetSSH sets the value of SSH.
+func (s *Sandbox) SetSSH(val OptSandboxSSHConnection) {
+	s.SSH = val
 }
 
 // SetExpiresAt sets the value of ExpiresAt.
@@ -12860,6 +13128,43 @@ func (s *SandboxResourceUsage) SetPausedContextCount(val OptInt) {
 // SetContexts sets the value of Contexts.
 func (s *SandboxResourceUsage) SetContexts(val []ContextResourceUsage) {
 	s.Contexts = val
+}
+
+// Ref: #/components/schemas/SandboxSSHConnection
+type SandboxSSHConnection struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Username string `json:"username"`
+}
+
+// GetHost returns the value of Host.
+func (s *SandboxSSHConnection) GetHost() string {
+	return s.Host
+}
+
+// GetPort returns the value of Port.
+func (s *SandboxSSHConnection) GetPort() int {
+	return s.Port
+}
+
+// GetUsername returns the value of Username.
+func (s *SandboxSSHConnection) GetUsername() string {
+	return s.Username
+}
+
+// SetHost sets the value of Host.
+func (s *SandboxSSHConnection) SetHost(val string) {
+	s.Host = val
+}
+
+// SetPort sets the value of Port.
+func (s *SandboxSSHConnection) SetPort(val int) {
+	s.Port = val
+}
+
+// SetUsername sets the value of Username.
+func (s *SandboxSSHConnection) SetUsername(val string) {
+	s.Username = val
 }
 
 // Ref: #/components/schemas/SandboxStatus
@@ -15137,6 +15442,7 @@ func (*SuccessMessageResponse) teamsIDDeleteRes()              {}
 func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes() {}
 func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()    {}
 func (*SuccessMessageResponse) usersMeIdentitiesIDDeleteRes()  {}
+func (*SuccessMessageResponse) usersMeSSHKeysIDDeleteRes()     {}
 
 type SuccessMessageResponseData struct {
 	Message OptString `json:"message"`
@@ -15697,6 +16003,106 @@ const (
 func (SuccessResumeSandboxResponseSuccess) AllValues() []SuccessResumeSandboxResponseSuccess {
 	return []SuccessResumeSandboxResponseSuccess{
 		SuccessResumeSandboxResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSSHPublicKeyListResponse
+type SuccessSSHPublicKeyListResponse struct {
+	Success SuccessSSHPublicKeyListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessSSHPublicKeyListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSSHPublicKeyListResponse) GetSuccess() SuccessSSHPublicKeyListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSSHPublicKeyListResponse) GetData() OptSuccessSSHPublicKeyListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSSHPublicKeyListResponse) SetSuccess(val SuccessSSHPublicKeyListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSSHPublicKeyListResponse) SetData(val OptSuccessSSHPublicKeyListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessSSHPublicKeyListResponse) usersMeSSHKeysGetRes() {}
+
+type SuccessSSHPublicKeyListResponseData struct {
+	SSHKeys []SSHPublicKey `json:"ssh_keys"`
+}
+
+// GetSSHKeys returns the value of SSHKeys.
+func (s *SuccessSSHPublicKeyListResponseData) GetSSHKeys() []SSHPublicKey {
+	return s.SSHKeys
+}
+
+// SetSSHKeys sets the value of SSHKeys.
+func (s *SuccessSSHPublicKeyListResponseData) SetSSHKeys(val []SSHPublicKey) {
+	s.SSHKeys = val
+}
+
+type SuccessSSHPublicKeyListResponseSuccess bool
+
+const (
+	SuccessSSHPublicKeyListResponseSuccessTrue SuccessSSHPublicKeyListResponseSuccess = true
+)
+
+// AllValues returns all SuccessSSHPublicKeyListResponseSuccess values.
+func (SuccessSSHPublicKeyListResponseSuccess) AllValues() []SuccessSSHPublicKeyListResponseSuccess {
+	return []SuccessSSHPublicKeyListResponseSuccess{
+		SuccessSSHPublicKeyListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSSHPublicKeyResponse
+type SuccessSSHPublicKeyResponse struct {
+	Success SuccessSSHPublicKeyResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSSHPublicKey `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSSHPublicKeyResponse) GetSuccess() SuccessSSHPublicKeyResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSSHPublicKeyResponse) GetData() OptSSHPublicKey {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSSHPublicKeyResponse) SetSuccess(val SuccessSSHPublicKeyResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSSHPublicKeyResponse) SetData(val OptSSHPublicKey) {
+	s.Data = val
+}
+
+func (*SuccessSSHPublicKeyResponse) usersMeSSHKeysPostRes() {}
+
+type SuccessSSHPublicKeyResponseSuccess bool
+
+const (
+	SuccessSSHPublicKeyResponseSuccessTrue SuccessSSHPublicKeyResponseSuccess = true
+)
+
+// AllValues returns all SuccessSSHPublicKeyResponseSuccess values.
+func (SuccessSSHPublicKeyResponseSuccess) AllValues() []SuccessSSHPublicKeyResponseSuccess {
+	return []SuccessSSHPublicKeyResponseSuccess{
+		SuccessSSHPublicKeyResponseSuccessTrue,
 	}
 }
 
@@ -18567,6 +18973,30 @@ func (*UsersMePutBadRequest) usersMePutRes() {}
 type UsersMePutUnauthorized ErrorEnvelope
 
 func (*UsersMePutUnauthorized) usersMePutRes() {}
+
+type UsersMeSSHKeysIDDeleteBadRequest ErrorEnvelope
+
+func (*UsersMeSSHKeysIDDeleteBadRequest) usersMeSSHKeysIDDeleteRes() {}
+
+type UsersMeSSHKeysIDDeleteNotFound ErrorEnvelope
+
+func (*UsersMeSSHKeysIDDeleteNotFound) usersMeSSHKeysIDDeleteRes() {}
+
+type UsersMeSSHKeysIDDeleteUnauthorized ErrorEnvelope
+
+func (*UsersMeSSHKeysIDDeleteUnauthorized) usersMeSSHKeysIDDeleteRes() {}
+
+type UsersMeSSHKeysPostBadRequest ErrorEnvelope
+
+func (*UsersMeSSHKeysPostBadRequest) usersMeSSHKeysPostRes() {}
+
+type UsersMeSSHKeysPostConflict ErrorEnvelope
+
+func (*UsersMeSSHKeysPostConflict) usersMeSSHKeysPostRes() {}
+
+type UsersMeSSHKeysPostUnauthorized ErrorEnvelope
+
+func (*UsersMeSSHKeysPostUnauthorized) usersMeSSHKeysPostRes() {}
 
 // Access mode for sandbox volumes. Enforcement is scoped to storage-proxy instances. RWO allows
 // read-write mounts on a single instance; ROX allows read-only mounts across instances; RWX allows

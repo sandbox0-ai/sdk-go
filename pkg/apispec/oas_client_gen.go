@@ -774,6 +774,24 @@ type Invoker interface {
 	//
 	// PUT /users/me
 	UsersMePut(ctx context.Context, request *UpdateUserRequest, options ...RequestOption) (UsersMePutRes, error)
+	// UsersMeSSHKeysGet invokes GET /users/me/ssh-keys operation.
+	//
+	// List current user SSH public keys.
+	//
+	// GET /users/me/ssh-keys
+	UsersMeSSHKeysGet(ctx context.Context, options ...RequestOption) (UsersMeSSHKeysGetRes, error)
+	// UsersMeSSHKeysIDDelete invokes DELETE /users/me/ssh-keys/{id} operation.
+	//
+	// Delete a current user SSH public key.
+	//
+	// DELETE /users/me/ssh-keys/{id}
+	UsersMeSSHKeysIDDelete(ctx context.Context, params UsersMeSSHKeysIDDeleteParams, options ...RequestOption) (UsersMeSSHKeysIDDeleteRes, error)
+	// UsersMeSSHKeysPost invokes POST /users/me/ssh-keys operation.
+	//
+	// Create a current user SSH public key.
+	//
+	// POST /users/me/ssh-keys
+	UsersMeSSHKeysPost(ctx context.Context, request *CreateSSHPublicKeyRequest, options ...RequestOption) (UsersMeSSHKeysPostRes, error)
 }
 
 // Client implements OAS client.
@@ -13440,6 +13458,312 @@ func (c *Client) sendUsersMePut(ctx context.Context, request *UpdateUserRequest,
 	}
 
 	result, err := decodeUsersMePutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UsersMeSSHKeysGet invokes GET /users/me/ssh-keys operation.
+//
+// List current user SSH public keys.
+//
+// GET /users/me/ssh-keys
+func (c *Client) UsersMeSSHKeysGet(ctx context.Context, options ...RequestOption) (UsersMeSSHKeysGetRes, error) {
+	res, err := c.sendUsersMeSSHKeysGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendUsersMeSSHKeysGet(ctx context.Context, requestOptions ...RequestOption) (res UsersMeSSHKeysGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/users/me/ssh-keys"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, UsersMeSSHKeysGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeUsersMeSSHKeysGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UsersMeSSHKeysIDDelete invokes DELETE /users/me/ssh-keys/{id} operation.
+//
+// Delete a current user SSH public key.
+//
+// DELETE /users/me/ssh-keys/{id}
+func (c *Client) UsersMeSSHKeysIDDelete(ctx context.Context, params UsersMeSSHKeysIDDeleteParams, options ...RequestOption) (UsersMeSSHKeysIDDeleteRes, error) {
+	res, err := c.sendUsersMeSSHKeysIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendUsersMeSSHKeysIDDelete(ctx context.Context, params UsersMeSSHKeysIDDeleteParams, requestOptions ...RequestOption) (res UsersMeSSHKeysIDDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/users/me/ssh-keys/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, UsersMeSSHKeysIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeUsersMeSSHKeysIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UsersMeSSHKeysPost invokes POST /users/me/ssh-keys operation.
+//
+// Create a current user SSH public key.
+//
+// POST /users/me/ssh-keys
+func (c *Client) UsersMeSSHKeysPost(ctx context.Context, request *CreateSSHPublicKeyRequest, options ...RequestOption) (UsersMeSSHKeysPostRes, error) {
+	res, err := c.sendUsersMeSSHKeysPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendUsersMeSSHKeysPost(ctx context.Context, request *CreateSSHPublicKeyRequest, requestOptions ...RequestOption) (res UsersMeSSHKeysPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/users/me/ssh-keys"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeUsersMeSSHKeysPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, UsersMeSSHKeysPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeUsersMeSSHKeysPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

@@ -470,3 +470,8 @@ type TeamsIDPutParams struct {
 type UsersMeIdentitiesIDDeleteParams struct {
 	ID string
 }
+
+// UsersMeSSHKeysIDDeleteParams is parameters of DELETE /users/me/ssh-keys/{id} operation.
+type UsersMeSSHKeysIDDeleteParams struct {
+	ID string
+}

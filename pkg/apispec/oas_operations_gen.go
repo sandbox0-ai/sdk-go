@@ -116,4 +116,7 @@ const (
 	UsersMeIdentitiesGetOperation                                  OperationName = "UsersMeIdentitiesGet"
 	UsersMeIdentitiesIDDeleteOperation                             OperationName = "UsersMeIdentitiesIDDelete"
 	UsersMePutOperation                                            OperationName = "UsersMePut"
+	UsersMeSSHKeysGetOperation                                     OperationName = "UsersMeSSHKeysGet"
+	UsersMeSSHKeysIDDeleteOperation                                OperationName = "UsersMeSSHKeysIDDelete"
+	UsersMeSSHKeysPostOperation                                    OperationName = "UsersMeSSHKeysPost"
 )
