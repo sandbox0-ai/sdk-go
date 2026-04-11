@@ -80,6 +80,12 @@ func trimTrailingSlashes(u *url.URL) {
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
+	// APIKeysCurrentGet invokes GET /api-keys/current operation.
+	//
+	// Returns the identity and permissions of the currently authenticated API key.
+	//
+	// GET /api-keys/current
+	APIKeysCurrentGet(ctx context.Context, options ...RequestOption) (APIKeysCurrentGetRes, error)
 	// APIKeysGet invokes GET /api-keys operation.
 	//
 	// List API keys.
@@ -134,6 +140,15 @@ type Invoker interface {
 	//
 	// POST /api/v1/credential-sources
 	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (*SuccessCredentialSourceResponse, error)
+	// APIV1ImageBuildsPost invokes POST /api/v1/image-builds operation.
+	//
+	// Starts an image build inside a dedicated builder sandbox template configured by the platform
+	// operator.
+	// The response returns sandbox/context handles so callers can stream logs and inspect build state
+	// using the existing sandbox and context APIs.
+	//
+	// POST /api/v1/image-builds
+	APIV1ImageBuildsPost(ctx context.Context, request *ImageBuildRequest, options ...RequestOption) (APIV1ImageBuildsPostRes, error)
 	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
 	//
 	// Get registry credentials for uploads.
@@ -835,6 +850,101 @@ func (c *Client) onResponse(ctx context.Context, resp *http.Response) error {
 		}
 	}
 	return nil
+}
+
+// APIKeysCurrentGet invokes GET /api-keys/current operation.
+//
+// Returns the identity and permissions of the currently authenticated API key.
+//
+// GET /api-keys/current
+func (c *Client) APIKeysCurrentGet(ctx context.Context, options ...RequestOption) (APIKeysCurrentGetRes, error) {
+	res, err := c.sendAPIKeysCurrentGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIKeysCurrentGet(ctx context.Context, requestOptions ...RequestOption) (res APIKeysCurrentGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api-keys/current"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIKeysCurrentGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIKeysCurrentGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
 }
 
 // APIKeysGet invokes GET /api-keys operation.
@@ -1785,6 +1895,107 @@ func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *Cr
 	}
 
 	result, err := decodeAPIV1CredentialSourcesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ImageBuildsPost invokes POST /api/v1/image-builds operation.
+//
+// Starts an image build inside a dedicated builder sandbox template configured by the platform
+// operator.
+// The response returns sandbox/context handles so callers can stream logs and inspect build state
+// using the existing sandbox and context APIs.
+//
+// POST /api/v1/image-builds
+func (c *Client) APIV1ImageBuildsPost(ctx context.Context, request *ImageBuildRequest, options ...RequestOption) (APIV1ImageBuildsPostRes, error) {
+	res, err := c.sendAPIV1ImageBuildsPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ImageBuildsPost(ctx context.Context, request *ImageBuildRequest, requestOptions ...RequestOption) (res APIV1ImageBuildsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/image-builds"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1ImageBuildsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ImageBuildsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ImageBuildsPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

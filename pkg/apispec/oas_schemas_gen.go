@@ -184,6 +184,26 @@ type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
 
+type APIV1ImageBuildsPostBadRequest ErrorEnvelope
+
+func (*APIV1ImageBuildsPostBadRequest) aPIV1ImageBuildsPostRes() {}
+
+type APIV1ImageBuildsPostForbidden ErrorEnvelope
+
+func (*APIV1ImageBuildsPostForbidden) aPIV1ImageBuildsPostRes() {}
+
+type APIV1ImageBuildsPostInternalServerError ErrorEnvelope
+
+func (*APIV1ImageBuildsPostInternalServerError) aPIV1ImageBuildsPostRes() {}
+
+type APIV1ImageBuildsPostServiceUnavailable ErrorEnvelope
+
+func (*APIV1ImageBuildsPostServiceUnavailable) aPIV1ImageBuildsPostRes() {}
+
+type APIV1ImageBuildsPostUnauthorized ErrorEnvelope
+
+func (*APIV1ImageBuildsPostUnauthorized) aPIV1ImageBuildsPostRes() {}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -2532,6 +2552,98 @@ func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsern
 	s.StaticUsernamePassword = val
 }
 
+// Ref: #/components/schemas/CurrentAPIKeyResponse
+type CurrentAPIKeyResponse struct {
+	ID          string    `json:"id"`
+	TeamID      string    `json:"team_id"`
+	CreatedBy   string    `json:"created_by"`
+	Type        string    `json:"type"`
+	Roles       []string  `json:"roles"`
+	Permissions []string  `json:"permissions"`
+	IsActive    bool      `json:"is_active"`
+	ExpiresAt   time.Time `json:"expires_at"`
+}
+
+// GetID returns the value of ID.
+func (s *CurrentAPIKeyResponse) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *CurrentAPIKeyResponse) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *CurrentAPIKeyResponse) GetCreatedBy() string {
+	return s.CreatedBy
+}
+
+// GetType returns the value of Type.
+func (s *CurrentAPIKeyResponse) GetType() string {
+	return s.Type
+}
+
+// GetRoles returns the value of Roles.
+func (s *CurrentAPIKeyResponse) GetRoles() []string {
+	return s.Roles
+}
+
+// GetPermissions returns the value of Permissions.
+func (s *CurrentAPIKeyResponse) GetPermissions() []string {
+	return s.Permissions
+}
+
+// GetIsActive returns the value of IsActive.
+func (s *CurrentAPIKeyResponse) GetIsActive() bool {
+	return s.IsActive
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *CurrentAPIKeyResponse) GetExpiresAt() time.Time {
+	return s.ExpiresAt
+}
+
+// SetID sets the value of ID.
+func (s *CurrentAPIKeyResponse) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *CurrentAPIKeyResponse) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *CurrentAPIKeyResponse) SetCreatedBy(val string) {
+	s.CreatedBy = val
+}
+
+// SetType sets the value of Type.
+func (s *CurrentAPIKeyResponse) SetType(val string) {
+	s.Type = val
+}
+
+// SetRoles sets the value of Roles.
+func (s *CurrentAPIKeyResponse) SetRoles(val []string) {
+	s.Roles = val
+}
+
+// SetPermissions sets the value of Permissions.
+func (s *CurrentAPIKeyResponse) SetPermissions(val []string) {
+	s.Permissions = val
+}
+
+// SetIsActive sets the value of IsActive.
+func (s *CurrentAPIKeyResponse) SetIsActive(val bool) {
+	s.IsActive = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *CurrentAPIKeyResponse) SetExpiresAt(val time.Time) {
+	s.ExpiresAt = val
+}
+
 // Ref: #/components/schemas/DeviceLoginPollRequest
 type DeviceLoginPollRequest struct {
 	DeviceLoginID string `json:"device_login_id"`
@@ -3102,6 +3214,7 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
+func (*ErrorEnvelope) aPIKeysCurrentGetRes()                                   {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                          {}
 func (*ErrorEnvelope) aPIKeysPostRes()                                         {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                       {}
@@ -3748,6 +3861,263 @@ func (s *Identity) SetProvider(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *Identity) SetCreatedAt(val int64) {
 	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/ImageBuildRequest
+type ImageBuildRequest struct {
+	// SandboxVolume containing the Docker build context.
+	ContextVolumeID string `json:"context_volume_id"`
+	// Relative subdirectory inside the mounted context volume.
+	ContextPath OptString `json:"context_path"`
+	// Relative Dockerfile path inside the selected context directory.
+	DockerfilePath OptString `json:"dockerfile_path"`
+	// Optional tenant-scoped SandboxVolume mounted as build cache.
+	CacheVolumeID OptString `json:"cache_volume_id"`
+	// Optional target platform such as linux/amd64.
+	Platform  OptString                     `json:"platform"`
+	NoCache   OptBool                       `json:"no_cache"`
+	Pull      OptBool                       `json:"pull"`
+	BuildArgs OptImageBuildRequestBuildArgs `json:"build_args"`
+}
+
+// GetContextVolumeID returns the value of ContextVolumeID.
+func (s *ImageBuildRequest) GetContextVolumeID() string {
+	return s.ContextVolumeID
+}
+
+// GetContextPath returns the value of ContextPath.
+func (s *ImageBuildRequest) GetContextPath() OptString {
+	return s.ContextPath
+}
+
+// GetDockerfilePath returns the value of DockerfilePath.
+func (s *ImageBuildRequest) GetDockerfilePath() OptString {
+	return s.DockerfilePath
+}
+
+// GetCacheVolumeID returns the value of CacheVolumeID.
+func (s *ImageBuildRequest) GetCacheVolumeID() OptString {
+	return s.CacheVolumeID
+}
+
+// GetPlatform returns the value of Platform.
+func (s *ImageBuildRequest) GetPlatform() OptString {
+	return s.Platform
+}
+
+// GetNoCache returns the value of NoCache.
+func (s *ImageBuildRequest) GetNoCache() OptBool {
+	return s.NoCache
+}
+
+// GetPull returns the value of Pull.
+func (s *ImageBuildRequest) GetPull() OptBool {
+	return s.Pull
+}
+
+// GetBuildArgs returns the value of BuildArgs.
+func (s *ImageBuildRequest) GetBuildArgs() OptImageBuildRequestBuildArgs {
+	return s.BuildArgs
+}
+
+// SetContextVolumeID sets the value of ContextVolumeID.
+func (s *ImageBuildRequest) SetContextVolumeID(val string) {
+	s.ContextVolumeID = val
+}
+
+// SetContextPath sets the value of ContextPath.
+func (s *ImageBuildRequest) SetContextPath(val OptString) {
+	s.ContextPath = val
+}
+
+// SetDockerfilePath sets the value of DockerfilePath.
+func (s *ImageBuildRequest) SetDockerfilePath(val OptString) {
+	s.DockerfilePath = val
+}
+
+// SetCacheVolumeID sets the value of CacheVolumeID.
+func (s *ImageBuildRequest) SetCacheVolumeID(val OptString) {
+	s.CacheVolumeID = val
+}
+
+// SetPlatform sets the value of Platform.
+func (s *ImageBuildRequest) SetPlatform(val OptString) {
+	s.Platform = val
+}
+
+// SetNoCache sets the value of NoCache.
+func (s *ImageBuildRequest) SetNoCache(val OptBool) {
+	s.NoCache = val
+}
+
+// SetPull sets the value of Pull.
+func (s *ImageBuildRequest) SetPull(val OptBool) {
+	s.Pull = val
+}
+
+// SetBuildArgs sets the value of BuildArgs.
+func (s *ImageBuildRequest) SetBuildArgs(val OptImageBuildRequestBuildArgs) {
+	s.BuildArgs = val
+}
+
+type ImageBuildRequestBuildArgs map[string]string
+
+func (s *ImageBuildRequestBuildArgs) init() ImageBuildRequestBuildArgs {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ImageBuildResponse
+type ImageBuildResponse struct {
+	SandboxID       string                   `json:"sandbox_id"`
+	ContextID       string                   `json:"context_id"`
+	Status          ImageBuildResponseStatus `json:"status"`
+	BuilderTemplate string                   `json:"builder_template"`
+	// Target image name generated by the server.
+	TargetImage       string `json:"target_image"`
+	PushImage         string `json:"push_image"`
+	PullImage         string `json:"pull_image"`
+	SandboxPath       string `json:"sandbox_path"`
+	ContextAPIPath    string `json:"context_api_path"`
+	ContextStreamPath string `json:"context_stream_path"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *ImageBuildResponse) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetContextID returns the value of ContextID.
+func (s *ImageBuildResponse) GetContextID() string {
+	return s.ContextID
+}
+
+// GetStatus returns the value of Status.
+func (s *ImageBuildResponse) GetStatus() ImageBuildResponseStatus {
+	return s.Status
+}
+
+// GetBuilderTemplate returns the value of BuilderTemplate.
+func (s *ImageBuildResponse) GetBuilderTemplate() string {
+	return s.BuilderTemplate
+}
+
+// GetTargetImage returns the value of TargetImage.
+func (s *ImageBuildResponse) GetTargetImage() string {
+	return s.TargetImage
+}
+
+// GetPushImage returns the value of PushImage.
+func (s *ImageBuildResponse) GetPushImage() string {
+	return s.PushImage
+}
+
+// GetPullImage returns the value of PullImage.
+func (s *ImageBuildResponse) GetPullImage() string {
+	return s.PullImage
+}
+
+// GetSandboxPath returns the value of SandboxPath.
+func (s *ImageBuildResponse) GetSandboxPath() string {
+	return s.SandboxPath
+}
+
+// GetContextAPIPath returns the value of ContextAPIPath.
+func (s *ImageBuildResponse) GetContextAPIPath() string {
+	return s.ContextAPIPath
+}
+
+// GetContextStreamPath returns the value of ContextStreamPath.
+func (s *ImageBuildResponse) GetContextStreamPath() string {
+	return s.ContextStreamPath
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *ImageBuildResponse) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetContextID sets the value of ContextID.
+func (s *ImageBuildResponse) SetContextID(val string) {
+	s.ContextID = val
+}
+
+// SetStatus sets the value of Status.
+func (s *ImageBuildResponse) SetStatus(val ImageBuildResponseStatus) {
+	s.Status = val
+}
+
+// SetBuilderTemplate sets the value of BuilderTemplate.
+func (s *ImageBuildResponse) SetBuilderTemplate(val string) {
+	s.BuilderTemplate = val
+}
+
+// SetTargetImage sets the value of TargetImage.
+func (s *ImageBuildResponse) SetTargetImage(val string) {
+	s.TargetImage = val
+}
+
+// SetPushImage sets the value of PushImage.
+func (s *ImageBuildResponse) SetPushImage(val string) {
+	s.PushImage = val
+}
+
+// SetPullImage sets the value of PullImage.
+func (s *ImageBuildResponse) SetPullImage(val string) {
+	s.PullImage = val
+}
+
+// SetSandboxPath sets the value of SandboxPath.
+func (s *ImageBuildResponse) SetSandboxPath(val string) {
+	s.SandboxPath = val
+}
+
+// SetContextAPIPath sets the value of ContextAPIPath.
+func (s *ImageBuildResponse) SetContextAPIPath(val string) {
+	s.ContextAPIPath = val
+}
+
+// SetContextStreamPath sets the value of ContextStreamPath.
+func (s *ImageBuildResponse) SetContextStreamPath(val string) {
+	s.ContextStreamPath = val
+}
+
+type ImageBuildResponseStatus string
+
+const (
+	ImageBuildResponseStatusRunning ImageBuildResponseStatus = "running"
+)
+
+// AllValues returns all ImageBuildResponseStatus values.
+func (ImageBuildResponseStatus) AllValues() []ImageBuildResponseStatus {
+	return []ImageBuildResponseStatus{
+		ImageBuildResponseStatusRunning,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ImageBuildResponseStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case ImageBuildResponseStatusRunning:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ImageBuildResponseStatus) UnmarshalText(data []byte) error {
+	switch ImageBuildResponseStatus(data) {
+	case ImageBuildResponseStatusRunning:
+		*s = ImageBuildResponseStatusRunning
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/LabelSelector
@@ -5425,6 +5795,52 @@ func (o OptCredentialSourceMetadata) Or(d CredentialSourceMetadata) CredentialSo
 	return d
 }
 
+// NewOptCurrentAPIKeyResponse returns new OptCurrentAPIKeyResponse with value set to v.
+func NewOptCurrentAPIKeyResponse(v CurrentAPIKeyResponse) OptCurrentAPIKeyResponse {
+	return OptCurrentAPIKeyResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCurrentAPIKeyResponse is optional CurrentAPIKeyResponse.
+type OptCurrentAPIKeyResponse struct {
+	Value CurrentAPIKeyResponse
+	Set   bool
+}
+
+// IsSet returns true if OptCurrentAPIKeyResponse was set.
+func (o OptCurrentAPIKeyResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCurrentAPIKeyResponse) Reset() {
+	var v CurrentAPIKeyResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCurrentAPIKeyResponse) SetTo(v CurrentAPIKeyResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCurrentAPIKeyResponse) Get() (v CurrentAPIKeyResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCurrentAPIKeyResponse) Or(d CurrentAPIKeyResponse) CurrentAPIKeyResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
 	return OptDateTime{
@@ -6247,6 +6663,98 @@ func (o OptHTTPHeadersProjection) Get() (v HTTPHeadersProjection, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptHTTPHeadersProjection) Or(d HTTPHeadersProjection) HTTPHeadersProjection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptImageBuildRequestBuildArgs returns new OptImageBuildRequestBuildArgs with value set to v.
+func NewOptImageBuildRequestBuildArgs(v ImageBuildRequestBuildArgs) OptImageBuildRequestBuildArgs {
+	return OptImageBuildRequestBuildArgs{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptImageBuildRequestBuildArgs is optional ImageBuildRequestBuildArgs.
+type OptImageBuildRequestBuildArgs struct {
+	Value ImageBuildRequestBuildArgs
+	Set   bool
+}
+
+// IsSet returns true if OptImageBuildRequestBuildArgs was set.
+func (o OptImageBuildRequestBuildArgs) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptImageBuildRequestBuildArgs) Reset() {
+	var v ImageBuildRequestBuildArgs
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptImageBuildRequestBuildArgs) SetTo(v ImageBuildRequestBuildArgs) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptImageBuildRequestBuildArgs) Get() (v ImageBuildRequestBuildArgs, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptImageBuildRequestBuildArgs) Or(d ImageBuildRequestBuildArgs) ImageBuildRequestBuildArgs {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptImageBuildResponse returns new OptImageBuildResponse with value set to v.
+func NewOptImageBuildResponse(v ImageBuildResponse) OptImageBuildResponse {
+	return OptImageBuildResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptImageBuildResponse is optional ImageBuildResponse.
+type OptImageBuildResponse struct {
+	Value ImageBuildResponse
+	Set   bool
+}
+
+// IsSet returns true if OptImageBuildResponse was set.
+func (o OptImageBuildResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptImageBuildResponse) Reset() {
+	var v ImageBuildResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptImageBuildResponse) SetTo(v ImageBuildResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptImageBuildResponse) Get() (v ImageBuildResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptImageBuildResponse) Or(d ImageBuildResponse) ImageBuildResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9264,6 +9772,52 @@ func (o OptSuccessCreatedResponseData) Get() (v SuccessCreatedResponseData, ok b
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessCreatedResponseData) Or(d SuccessCreatedResponseData) SuccessCreatedResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessCurrentAPIKeyResponseData returns new OptSuccessCurrentAPIKeyResponseData with value set to v.
+func NewOptSuccessCurrentAPIKeyResponseData(v SuccessCurrentAPIKeyResponseData) OptSuccessCurrentAPIKeyResponseData {
+	return OptSuccessCurrentAPIKeyResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessCurrentAPIKeyResponseData is optional SuccessCurrentAPIKeyResponseData.
+type OptSuccessCurrentAPIKeyResponseData struct {
+	Value SuccessCurrentAPIKeyResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessCurrentAPIKeyResponseData was set.
+func (o OptSuccessCurrentAPIKeyResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessCurrentAPIKeyResponseData) Reset() {
+	var v SuccessCurrentAPIKeyResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessCurrentAPIKeyResponseData) SetTo(v SuccessCurrentAPIKeyResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessCurrentAPIKeyResponseData) Get() (v SuccessCurrentAPIKeyResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessCurrentAPIKeyResponseData) Or(d SuccessCurrentAPIKeyResponseData) SuccessCurrentAPIKeyResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -14870,6 +15424,63 @@ func (SuccessCredentialSourceResponseSuccess) AllValues() []SuccessCredentialSou
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessCurrentAPIKeyResponse
+type SuccessCurrentAPIKeyResponse struct {
+	Success SuccessCurrentAPIKeyResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessCurrentAPIKeyResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessCurrentAPIKeyResponse) GetSuccess() SuccessCurrentAPIKeyResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessCurrentAPIKeyResponse) GetData() OptSuccessCurrentAPIKeyResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessCurrentAPIKeyResponse) SetSuccess(val SuccessCurrentAPIKeyResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessCurrentAPIKeyResponse) SetData(val OptSuccessCurrentAPIKeyResponseData) {
+	s.Data = val
+}
+
+func (*SuccessCurrentAPIKeyResponse) aPIKeysCurrentGetRes() {}
+
+type SuccessCurrentAPIKeyResponseData struct {
+	APIKey OptCurrentAPIKeyResponse `json:"api_key"`
+}
+
+// GetAPIKey returns the value of APIKey.
+func (s *SuccessCurrentAPIKeyResponseData) GetAPIKey() OptCurrentAPIKeyResponse {
+	return s.APIKey
+}
+
+// SetAPIKey sets the value of APIKey.
+func (s *SuccessCurrentAPIKeyResponseData) SetAPIKey(val OptCurrentAPIKeyResponse) {
+	s.APIKey = val
+}
+
+type SuccessCurrentAPIKeyResponseSuccess bool
+
+const (
+	SuccessCurrentAPIKeyResponseSuccessTrue SuccessCurrentAPIKeyResponseSuccess = true
+)
+
+// AllValues returns all SuccessCurrentAPIKeyResponseSuccess values.
+func (SuccessCurrentAPIKeyResponseSuccess) AllValues() []SuccessCurrentAPIKeyResponseSuccess {
+	return []SuccessCurrentAPIKeyResponseSuccess{
+		SuccessCurrentAPIKeyResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessDeletedResponse
 type SuccessDeletedResponse struct {
 	Success SuccessDeletedResponseSuccess `json:"success"`
@@ -15356,6 +15967,49 @@ const (
 func (SuccessIdentityListResponseSuccess) AllValues() []SuccessIdentityListResponseSuccess {
 	return []SuccessIdentityListResponseSuccess{
 		SuccessIdentityListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessImageBuildResponse
+type SuccessImageBuildResponse struct {
+	Success SuccessImageBuildResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptImageBuildResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessImageBuildResponse) GetSuccess() SuccessImageBuildResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessImageBuildResponse) GetData() OptImageBuildResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessImageBuildResponse) SetSuccess(val SuccessImageBuildResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessImageBuildResponse) SetData(val OptImageBuildResponse) {
+	s.Data = val
+}
+
+func (*SuccessImageBuildResponse) aPIV1ImageBuildsPostRes() {}
+
+type SuccessImageBuildResponseSuccess bool
+
+const (
+	SuccessImageBuildResponseSuccessTrue SuccessImageBuildResponseSuccess = true
+)
+
+// AllValues returns all SuccessImageBuildResponseSuccess values.
+func (SuccessImageBuildResponseSuccess) AllValues() []SuccessImageBuildResponseSuccess {
+	return []SuccessImageBuildResponseSuccess{
+		SuccessImageBuildResponseSuccessTrue,
 	}
 }
 

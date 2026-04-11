@@ -6,6 +6,7 @@ package apispec
 type OperationName = string
 
 const (
+	APIKeysCurrentGetOperation                                     OperationName = "APIKeysCurrentGet"
 	APIKeysGetOperation                                            OperationName = "APIKeysGet"
 	APIKeysIDDeactivatePostOperation                               OperationName = "APIKeysIDDeactivatePost"
 	APIKeysIDDeleteOperation                                       OperationName = "APIKeysIDDelete"
@@ -15,6 +16,7 @@ const (
 	APIV1CredentialSourcesNameGetOperation                         OperationName = "APIV1CredentialSourcesNameGet"
 	APIV1CredentialSourcesNamePutOperation                         OperationName = "APIV1CredentialSourcesNamePut"
 	APIV1CredentialSourcesPostOperation                            OperationName = "APIV1CredentialSourcesPost"
+	APIV1ImageBuildsPostOperation                                  OperationName = "APIV1ImageBuildsPost"
 	APIV1RegistryCredentialsPostOperation                          OperationName = "APIV1RegistryCredentialsPost"
 	APIV1SandboxesGetOperation                                     OperationName = "APIV1SandboxesGet"
 	APIV1SandboxesIDContextsCtxIDDeleteOperation                   OperationName = "APIV1SandboxesIDContextsCtxIDDelete"

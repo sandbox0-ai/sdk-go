@@ -19,6 +19,7 @@ tags:
   - name: files
   - name: templates
   - name: registry
+  - name: image-builds
   - name: sandbox-volumes
   - name: snapshots
   - name: volume-sync
@@ -1027,6 +1028,26 @@ paths:
                 $ref: "#/components/schemas/SuccessCreateAPIKeyResponse"
         "400":
           description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /api-keys/current:
+    get:
+      tags: [api-keys]
+      summary: Introspect current API key
+      description: Returns the identity and permissions of the currently authenticated API key.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current API key details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessCurrentAPIKeyResponse"
+        "401":
+          description: API key authentication required
           content:
             application/json:
               schema:
@@ -2118,6 +2139,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+  /api/v1/image-builds:
+    post:
+      tags: [image-builds]
+      summary: Start a server-side image build
+      description: |
+        Starts an image build inside a dedicated builder sandbox template configured by the platform operator.
+        The response returns sandbox/context handles so callers can stream logs and inspect build state using the existing sandbox and context APIs.
+      security:
+        - bearerAuth: []
+      x-upstream-service: manager
+      x-upstream-path: /api/v1/image-builds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageBuildRequest"
+      responses:
+        "201":
+          description: Image build started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessImageBuildResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "503":
+          description: Image build is not configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
   /api/v1/credential-sources:
     get:
       tags: [credential-sources]
@@ -3092,6 +3167,13 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/RegistryCredentials"
+    SuccessImageBuildResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ImageBuildResponse"
     SuccessCredentialSourceResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
@@ -3131,6 +3213,60 @@ components:
         targetImage:
           type: string
           description: Target image name and tag requested for push, without credentials.
+    ImageBuildRequest:
+      type: object
+      properties:
+        context_volume_id:
+          type: string
+          description: SandboxVolume containing the Docker build context.
+        context_path:
+          type: string
+          description: Relative subdirectory inside the mounted context volume.
+        dockerfile_path:
+          type: string
+          description: Relative Dockerfile path inside the selected context directory.
+        cache_volume_id:
+          type: string
+          description: Optional tenant-scoped SandboxVolume mounted as build cache.
+        platform:
+          type: string
+          description: Optional target platform such as linux/amd64.
+        no_cache:
+          type: boolean
+        pull:
+          type: boolean
+        build_args:
+          type: object
+          additionalProperties:
+            type: string
+      required: [context_volume_id]
+    ImageBuildResponse:
+      type: object
+      properties:
+        sandbox_id:
+          type: string
+        context_id:
+          type: string
+        status:
+          type: string
+          enum: [running]
+        builder_template:
+          type: string
+        target_image:
+          type: string
+          description: Target image name generated by the server.
+        push_image:
+          type: string
+        pull_image:
+          type: string
+        sandbox_path:
+          type: string
+        context_api_path:
+          type: string
+        context_stream_path:
+          type: string
+      required:
+        [sandbox_id, context_id, status, builder_template, target_image, push_image, pull_image, sandbox_path, context_api_path, context_stream_path]
     SuccessDeletedResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
@@ -3722,6 +3858,31 @@ components:
           type: string
           format: date-time
       required: [id, name, type, roles, team_id, expires_at, created_at]
+    CurrentAPIKeyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        team_id:
+          type: string
+        created_by:
+          type: string
+        type:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        is_active:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+      required: [id, team_id, created_by, type, roles, permissions, is_active, expires_at]
     SuccessCreateAPIKeyResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
@@ -3729,6 +3890,16 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/CreateAPIKeyResponse"
+    SuccessCurrentAPIKeyResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                api_key:
+                  $ref: "#/components/schemas/CurrentAPIKeyResponse"
     SuccessAPIKeyListResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
