@@ -18,7 +18,6 @@ type APIKey struct {
 	UserID     OptNilString `json:"user_id"`
 	CreatedBy  string       `json:"created_by"`
 	Name       string       `json:"name"`
-	Type       string       `json:"type"`
 	Roles      []string     `json:"roles"`
 	IsActive   bool         `json:"is_active"`
 	ExpiresAt  time.Time    `json:"expires_at"`
@@ -56,11 +55,6 @@ func (s *APIKey) GetCreatedBy() string {
 // GetName returns the value of Name.
 func (s *APIKey) GetName() string {
 	return s.Name
-}
-
-// GetType returns the value of Type.
-func (s *APIKey) GetType() string {
-	return s.Type
 }
 
 // GetRoles returns the value of Roles.
@@ -126,11 +120,6 @@ func (s *APIKey) SetCreatedBy(val string) {
 // SetName sets the value of Name.
 func (s *APIKey) SetName(val string) {
 	s.Name = val
-}
-
-// SetType sets the value of Type.
-func (s *APIKey) SetType(val string) {
-	s.Type = val
 }
 
 // SetRoles sets the value of Roles.
@@ -349,6 +338,18 @@ type APIV1SandboxesIDGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDGetNotFound) aPIV1SandboxesIDGetRes() {}
 
+type APIV1SandboxesIDPausePostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostConflict) aPIV1SandboxesIDPausePostRes() {}
+
+type APIV1SandboxesIDPausePostGatewayTimeout ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostGatewayTimeout) aPIV1SandboxesIDPausePostRes() {}
+
+type APIV1SandboxesIDPausePostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
+
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -356,6 +357,18 @@ func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
 type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
+
+type APIV1SandboxesIDResumePostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostConflict) aPIV1SandboxesIDResumePostRes() {}
+
+type APIV1SandboxesIDResumePostGatewayTimeout ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostGatewayTimeout) aPIV1SandboxesIDResumePostRes() {}
+
+type APIV1SandboxesIDResumePostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostNotFound) aPIV1SandboxesIDResumePostRes() {}
 
 // Merged schema.
 type APIV1SandboxvolumesIDFilesGetOKApplicationJSON struct {
@@ -1574,9 +1587,8 @@ func (s *ContextStatsResponse) SetUsage(val OptResourceUsage) {
 
 // Ref: #/components/schemas/CreateAPIKeyRequest
 type CreateAPIKeyRequest struct {
-	Name  string                  `json:"name"`
-	Type  CreateAPIKeyRequestType `json:"type"`
-	Roles []string                `json:"roles"`
+	Name  string   `json:"name"`
+	Roles []string `json:"roles"`
 	// 30d, 90d, 180d, 365d, or never.
 	ExpiresIn OptString `json:"expires_in"`
 }
@@ -1584,11 +1596,6 @@ type CreateAPIKeyRequest struct {
 // GetName returns the value of Name.
 func (s *CreateAPIKeyRequest) GetName() string {
 	return s.Name
-}
-
-// GetType returns the value of Type.
-func (s *CreateAPIKeyRequest) GetType() CreateAPIKeyRequestType {
-	return s.Type
 }
 
 // GetRoles returns the value of Roles.
@@ -1606,11 +1613,6 @@ func (s *CreateAPIKeyRequest) SetName(val string) {
 	s.Name = val
 }
 
-// SetType sets the value of Type.
-func (s *CreateAPIKeyRequest) SetType(val CreateAPIKeyRequestType) {
-	s.Type = val
-}
-
 // SetRoles sets the value of Roles.
 func (s *CreateAPIKeyRequest) SetRoles(val []string) {
 	s.Roles = val
@@ -1621,52 +1623,10 @@ func (s *CreateAPIKeyRequest) SetExpiresIn(val OptString) {
 	s.ExpiresIn = val
 }
 
-type CreateAPIKeyRequestType string
-
-const (
-	CreateAPIKeyRequestTypeUser    CreateAPIKeyRequestType = "user"
-	CreateAPIKeyRequestTypeService CreateAPIKeyRequestType = "service"
-)
-
-// AllValues returns all CreateAPIKeyRequestType values.
-func (CreateAPIKeyRequestType) AllValues() []CreateAPIKeyRequestType {
-	return []CreateAPIKeyRequestType{
-		CreateAPIKeyRequestTypeUser,
-		CreateAPIKeyRequestTypeService,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s CreateAPIKeyRequestType) MarshalText() ([]byte, error) {
-	switch s {
-	case CreateAPIKeyRequestTypeUser:
-		return []byte(s), nil
-	case CreateAPIKeyRequestTypeService:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *CreateAPIKeyRequestType) UnmarshalText(data []byte) error {
-	switch CreateAPIKeyRequestType(data) {
-	case CreateAPIKeyRequestTypeUser:
-		*s = CreateAPIKeyRequestTypeUser
-		return nil
-	case CreateAPIKeyRequestTypeService:
-		*s = CreateAPIKeyRequestTypeService
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
 // Ref: #/components/schemas/CreateAPIKeyResponse
 type CreateAPIKeyResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
-	Type      string    `json:"type"`
 	Roles     []string  `json:"roles"`
 	TeamID    string    `json:"team_id"`
 	Key       OptString `json:"key"`
@@ -1682,11 +1642,6 @@ func (s *CreateAPIKeyResponse) GetID() string {
 // GetName returns the value of Name.
 func (s *CreateAPIKeyResponse) GetName() string {
 	return s.Name
-}
-
-// GetType returns the value of Type.
-func (s *CreateAPIKeyResponse) GetType() string {
-	return s.Type
 }
 
 // GetRoles returns the value of Roles.
@@ -1722,11 +1677,6 @@ func (s *CreateAPIKeyResponse) SetID(val string) {
 // SetName sets the value of Name.
 func (s *CreateAPIKeyResponse) SetName(val string) {
 	s.Name = val
-}
-
-// SetType sets the value of Type.
-func (s *CreateAPIKeyResponse) SetType(val string) {
-	s.Type = val
 }
 
 // SetRoles sets the value of Roles.
@@ -2500,7 +2450,6 @@ type CurrentAPIKeyResponse struct {
 	ID          string    `json:"id"`
 	TeamID      string    `json:"team_id"`
 	CreatedBy   string    `json:"created_by"`
-	Type        string    `json:"type"`
 	Roles       []string  `json:"roles"`
 	Permissions []string  `json:"permissions"`
 	IsActive    bool      `json:"is_active"`
@@ -2520,11 +2469,6 @@ func (s *CurrentAPIKeyResponse) GetTeamID() string {
 // GetCreatedBy returns the value of CreatedBy.
 func (s *CurrentAPIKeyResponse) GetCreatedBy() string {
 	return s.CreatedBy
-}
-
-// GetType returns the value of Type.
-func (s *CurrentAPIKeyResponse) GetType() string {
-	return s.Type
 }
 
 // GetRoles returns the value of Roles.
@@ -2560,11 +2504,6 @@ func (s *CurrentAPIKeyResponse) SetTeamID(val string) {
 // SetCreatedBy sets the value of CreatedBy.
 func (s *CurrentAPIKeyResponse) SetCreatedBy(val string) {
 	s.CreatedBy = val
-}
-
-// SetType sets the value of Type.
-func (s *CurrentAPIKeyResponse) SetType(val string) {
-	s.Type = val
 }
 
 // SetRoles sets the value of Roles.
@@ -3167,9 +3106,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()                     {
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()              {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPutRes()                     {}
 func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                          {}
-func (*ErrorEnvelope) aPIV1SandboxesIDPausePostRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                         {}
-func (*ErrorEnvelope) aPIV1SandboxesIDResumePostRes()                          {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesPostRes()                                  {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                         {}
@@ -3204,6 +3141,21 @@ func (ErrorEnvelopeSuccess) AllValues() []ErrorEnvelopeSuccess {
 	return []ErrorEnvelopeSuccess{
 		ErrorEnvelopeSuccessFalse,
 	}
+}
+
+// Ref: #/components/schemas/ExecAction
+type ExecAction struct {
+	Command []string `json:"command"`
+}
+
+// GetCommand returns the value of Command.
+func (s *ExecAction) GetCommand() []string {
+	return s.Command
+}
+
+// SetCommand sets the value of Command.
+func (s *ExecAction) SetCommand(val []string) {
+	s.Command = val
 }
 
 // Ref: #/components/schemas/ExecCandidate
@@ -3625,6 +3577,91 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/HTTPGetAction
+type HTTPGetAction struct {
+	Path        OptString    `json:"path"`
+	Port        ProbePort    `json:"port"`
+	Host        OptString    `json:"host"`
+	Scheme      OptString    `json:"scheme"`
+	HttpHeaders []HTTPHeader `json:"httpHeaders"`
+}
+
+// GetPath returns the value of Path.
+func (s *HTTPGetAction) GetPath() OptString {
+	return s.Path
+}
+
+// GetPort returns the value of Port.
+func (s *HTTPGetAction) GetPort() ProbePort {
+	return s.Port
+}
+
+// GetHost returns the value of Host.
+func (s *HTTPGetAction) GetHost() OptString {
+	return s.Host
+}
+
+// GetScheme returns the value of Scheme.
+func (s *HTTPGetAction) GetScheme() OptString {
+	return s.Scheme
+}
+
+// GetHttpHeaders returns the value of HttpHeaders.
+func (s *HTTPGetAction) GetHttpHeaders() []HTTPHeader {
+	return s.HttpHeaders
+}
+
+// SetPath sets the value of Path.
+func (s *HTTPGetAction) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetPort sets the value of Port.
+func (s *HTTPGetAction) SetPort(val ProbePort) {
+	s.Port = val
+}
+
+// SetHost sets the value of Host.
+func (s *HTTPGetAction) SetHost(val OptString) {
+	s.Host = val
+}
+
+// SetScheme sets the value of Scheme.
+func (s *HTTPGetAction) SetScheme(val OptString) {
+	s.Scheme = val
+}
+
+// SetHttpHeaders sets the value of HttpHeaders.
+func (s *HTTPGetAction) SetHttpHeaders(val []HTTPHeader) {
+	s.HttpHeaders = val
+}
+
+// Ref: #/components/schemas/HTTPHeader
+type HTTPHeader struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// GetName returns the value of Name.
+func (s *HTTPHeader) GetName() string {
+	return s.Name
+}
+
+// GetValue returns the value of Value.
+func (s *HTTPHeader) GetValue() string {
+	return s.Value
+}
+
+// SetName sets the value of Name.
+func (s *HTTPHeader) SetName(val string) {
+	s.Name = val
+}
+
+// SetValue sets the value of Value.
+func (s *HTTPHeader) SetValue(val string) {
+	s.Value = val
 }
 
 // Ref: #/components/schemas/HTTPHeadersProjection
@@ -5723,6 +5760,52 @@ func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
 	return d
 }
 
+// NewOptExecAction returns new OptExecAction with value set to v.
+func NewOptExecAction(v ExecAction) OptExecAction {
+	return OptExecAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecAction is optional ExecAction.
+type OptExecAction struct {
+	Value ExecAction
+	Set   bool
+}
+
+// IsSet returns true if OptExecAction was set.
+func (o OptExecAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecAction) Reset() {
+	var v ExecAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecAction) SetTo(v ExecAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecAction) Get() (v ExecAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecAction) Or(d ExecAction) ExecAction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptFileContentResponse returns new OptFileContentResponse with value set to v.
 func NewOptFileContentResponse(v FileContentResponse) OptFileContentResponse {
 	return OptFileContentResponse{
@@ -6039,6 +6122,52 @@ func (o OptGatewayMetadata) Get() (v GatewayMetadata, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPGetAction returns new OptHTTPGetAction with value set to v.
+func NewOptHTTPGetAction(v HTTPGetAction) OptHTTPGetAction {
+	return OptHTTPGetAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPGetAction is optional HTTPGetAction.
+type OptHTTPGetAction struct {
+	Value HTTPGetAction
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPGetAction was set.
+func (o OptHTTPGetAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPGetAction) Reset() {
+	var v HTTPGetAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPGetAction) SetTo(v HTTPGetAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPGetAction) Get() (v HTTPGetAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPGetAction) Or(d HTTPGetAction) HTTPGetAction {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8188,6 +8317,98 @@ func (o OptSandboxNetworkPolicy) Or(d SandboxNetworkPolicy) SandboxNetworkPolicy
 	return d
 }
 
+// NewOptSandboxProbeSet returns new OptSandboxProbeSet with value set to v.
+func NewOptSandboxProbeSet(v SandboxProbeSet) OptSandboxProbeSet {
+	return OptSandboxProbeSet{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxProbeSet is optional SandboxProbeSet.
+type OptSandboxProbeSet struct {
+	Value SandboxProbeSet
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxProbeSet was set.
+func (o OptSandboxProbeSet) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxProbeSet) Reset() {
+	var v SandboxProbeSet
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxProbeSet) SetTo(v SandboxProbeSet) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxProbeSet) Get() (v SandboxProbeSet, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxProbeSet) Or(d SandboxProbeSet) SandboxProbeSet {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxProbeSpec returns new OptSandboxProbeSpec with value set to v.
+func NewOptSandboxProbeSpec(v SandboxProbeSpec) OptSandboxProbeSpec {
+	return OptSandboxProbeSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxProbeSpec is optional SandboxProbeSpec.
+type OptSandboxProbeSpec struct {
+	Value SandboxProbeSpec
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxProbeSpec was set.
+func (o OptSandboxProbeSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxProbeSpec) Reset() {
+	var v SandboxProbeSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxProbeSpec) SetTo(v SandboxProbeSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxProbeSpec) Get() (v SandboxProbeSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxProbeSpec) Or(d SandboxProbeSpec) SandboxProbeSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxRefreshRequest returns new OptSandboxRefreshRequest with value set to v.
 func NewOptSandboxRefreshRequest(v SandboxRefreshRequest) OptSandboxRefreshRequest {
 	return OptSandboxRefreshRequest{
@@ -10120,6 +10341,52 @@ func (o OptSyncJournalEntrySource) Or(d SyncJournalEntrySource) SyncJournalEntry
 	return d
 }
 
+// NewOptTCPSocketAction returns new OptTCPSocketAction with value set to v.
+func NewOptTCPSocketAction(v TCPSocketAction) OptTCPSocketAction {
+	return OptTCPSocketAction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTCPSocketAction is optional TCPSocketAction.
+type OptTCPSocketAction struct {
+	Value TCPSocketAction
+	Set   bool
+}
+
+// IsSet returns true if OptTCPSocketAction was set.
+func (o OptTCPSocketAction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTCPSocketAction) Reset() {
+	var v TCPSocketAction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTCPSocketAction) SetTo(v TCPSocketAction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTCPSocketAction) Get() (v TCPSocketAction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTCPSocketAction) Or(d TCPSocketAction) TCPSocketAction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptTeam returns new OptTeam with value set to v.
 func NewOptTeam(v Team) OptTeam {
 	return OptTeam{
@@ -11050,6 +11317,11 @@ func (s *PreferredSchedulingTerm) SetWeight(val int32) {
 func (s *PreferredSchedulingTerm) SetPreference(val NodeSelectorTerm) {
 	s.Preference = val
 }
+
+type ProbePort int32
+
+// Ref: #/components/schemas/ProcessProbeAction
+type ProcessProbeAction struct{}
 
 // Ref: #/components/schemas/ProcessType
 type ProcessType string
@@ -12624,6 +12896,113 @@ func (s *SandboxPowerStatePhase) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/SandboxProbeSet
+type SandboxProbeSet struct {
+	Startup   OptSandboxProbeSpec `json:"startup"`
+	Readiness OptSandboxProbeSpec `json:"readiness"`
+	Liveness  OptSandboxProbeSpec `json:"liveness"`
+}
+
+// GetStartup returns the value of Startup.
+func (s *SandboxProbeSet) GetStartup() OptSandboxProbeSpec {
+	return s.Startup
+}
+
+// GetReadiness returns the value of Readiness.
+func (s *SandboxProbeSet) GetReadiness() OptSandboxProbeSpec {
+	return s.Readiness
+}
+
+// GetLiveness returns the value of Liveness.
+func (s *SandboxProbeSet) GetLiveness() OptSandboxProbeSpec {
+	return s.Liveness
+}
+
+// SetStartup sets the value of Startup.
+func (s *SandboxProbeSet) SetStartup(val OptSandboxProbeSpec) {
+	s.Startup = val
+}
+
+// SetReadiness sets the value of Readiness.
+func (s *SandboxProbeSet) SetReadiness(val OptSandboxProbeSpec) {
+	s.Readiness = val
+}
+
+// SetLiveness sets the value of Liveness.
+func (s *SandboxProbeSet) SetLiveness(val OptSandboxProbeSpec) {
+	s.Liveness = val
+}
+
+// Ref: #/components/schemas/SandboxProbeSpec
+type SandboxProbeSpec struct {
+	Process             *ProcessProbeAction `json:"process"`
+	Exec                OptExecAction       `json:"exec"`
+	HttpGet             OptHTTPGetAction    `json:"httpGet"`
+	TcpSocket           OptTCPSocketAction  `json:"tcpSocket"`
+	InitialDelaySeconds OptInt32            `json:"initialDelaySeconds"`
+	TimeoutSeconds      OptInt32            `json:"timeoutSeconds"`
+}
+
+// GetProcess returns the value of Process.
+func (s *SandboxProbeSpec) GetProcess() *ProcessProbeAction {
+	return s.Process
+}
+
+// GetExec returns the value of Exec.
+func (s *SandboxProbeSpec) GetExec() OptExecAction {
+	return s.Exec
+}
+
+// GetHttpGet returns the value of HttpGet.
+func (s *SandboxProbeSpec) GetHttpGet() OptHTTPGetAction {
+	return s.HttpGet
+}
+
+// GetTcpSocket returns the value of TcpSocket.
+func (s *SandboxProbeSpec) GetTcpSocket() OptTCPSocketAction {
+	return s.TcpSocket
+}
+
+// GetInitialDelaySeconds returns the value of InitialDelaySeconds.
+func (s *SandboxProbeSpec) GetInitialDelaySeconds() OptInt32 {
+	return s.InitialDelaySeconds
+}
+
+// GetTimeoutSeconds returns the value of TimeoutSeconds.
+func (s *SandboxProbeSpec) GetTimeoutSeconds() OptInt32 {
+	return s.TimeoutSeconds
+}
+
+// SetProcess sets the value of Process.
+func (s *SandboxProbeSpec) SetProcess(val *ProcessProbeAction) {
+	s.Process = val
+}
+
+// SetExec sets the value of Exec.
+func (s *SandboxProbeSpec) SetExec(val OptExecAction) {
+	s.Exec = val
+}
+
+// SetHttpGet sets the value of HttpGet.
+func (s *SandboxProbeSpec) SetHttpGet(val OptHTTPGetAction) {
+	s.HttpGet = val
+}
+
+// SetTcpSocket sets the value of TcpSocket.
+func (s *SandboxProbeSpec) SetTcpSocket(val OptTCPSocketAction) {
+	s.TcpSocket = val
+}
+
+// SetInitialDelaySeconds sets the value of InitialDelaySeconds.
+func (s *SandboxProbeSpec) SetInitialDelaySeconds(val OptInt32) {
+	s.InitialDelaySeconds = val
+}
+
+// SetTimeoutSeconds sets the value of TimeoutSeconds.
+func (s *SandboxProbeSpec) SetTimeoutSeconds(val OptInt32) {
+	s.TimeoutSeconds = val
 }
 
 // Ref: #/components/schemas/SandboxRefreshRequest
@@ -17468,6 +17847,32 @@ func (s *SyncReplica) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
 }
 
+// Ref: #/components/schemas/TCPSocketAction
+type TCPSocketAction struct {
+	Port ProbePort `json:"port"`
+	Host OptString `json:"host"`
+}
+
+// GetPort returns the value of Port.
+func (s *TCPSocketAction) GetPort() ProbePort {
+	return s.Port
+}
+
+// GetHost returns the value of Host.
+func (s *TCPSocketAction) GetHost() OptString {
+	return s.Host
+}
+
+// SetPort sets the value of Port.
+func (s *TCPSocketAction) SetPort(val ProbePort) {
+	s.Port = val
+}
+
+// SetHost sets the value of Host.
+func (s *TCPSocketAction) SetHost(val OptString) {
+	s.Host = val
+}
+
 // Client certificate projection used for TLS terminate-reoriginate auth.
 // Ref: #/components/schemas/TLSClientCertificateProjection
 type TLSClientCertificateProjection struct{}
@@ -19084,11 +19489,18 @@ func (VolumeSyncReseedRequiredErrorEnvelopeSuccess) AllValues() []VolumeSyncRese
 
 // Ref: #/components/schemas/WarmProcessSpec
 type WarmProcessSpec struct {
+	Name    OptString                 `json:"name"`
 	Type    WarmProcessSpecType       `json:"type"`
 	Alias   OptString                 `json:"alias"`
 	Command []string                  `json:"command"`
 	Cwd     OptString                 `json:"cwd"`
 	EnvVars OptWarmProcessSpecEnvVars `json:"envVars"`
+	Probes  OptSandboxProbeSet        `json:"probes"`
+}
+
+// GetName returns the value of Name.
+func (s *WarmProcessSpec) GetName() OptString {
+	return s.Name
 }
 
 // GetType returns the value of Type.
@@ -19116,6 +19528,16 @@ func (s *WarmProcessSpec) GetEnvVars() OptWarmProcessSpecEnvVars {
 	return s.EnvVars
 }
 
+// GetProbes returns the value of Probes.
+func (s *WarmProcessSpec) GetProbes() OptSandboxProbeSet {
+	return s.Probes
+}
+
+// SetName sets the value of Name.
+func (s *WarmProcessSpec) SetName(val OptString) {
+	s.Name = val
+}
+
 // SetType sets the value of Type.
 func (s *WarmProcessSpec) SetType(val WarmProcessSpecType) {
 	s.Type = val
@@ -19139,6 +19561,11 @@ func (s *WarmProcessSpec) SetCwd(val OptString) {
 // SetEnvVars sets the value of EnvVars.
 func (s *WarmProcessSpec) SetEnvVars(val OptWarmProcessSpecEnvVars) {
 	s.EnvVars = val
+}
+
+// SetProbes sets the value of Probes.
+func (s *WarmProcessSpec) SetProbes(val OptSandboxProbeSet) {
+	s.Probes = val
 }
 
 type WarmProcessSpecEnvVars map[string]string

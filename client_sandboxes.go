@@ -269,8 +269,6 @@ func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.
 			return nil, unexpectedResponseError(response)
 		}
 		return &data, nil
-	case *apispec.ErrorEnvelope:
-		return nil, apiErrorFromResponse(response)
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
@@ -289,8 +287,6 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 			return nil, unexpectedResponseError(response)
 		}
 		return &data, nil
-	case *apispec.ErrorEnvelope:
-		return nil, apiErrorFromResponse(response)
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
@@ -309,8 +305,6 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 			return nil, unexpectedResponseError(response)
 		}
 		return &data, nil
-	case *apispec.ErrorEnvelope:
-		return nil, apiErrorFromResponse(response)
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
