@@ -193,6 +193,30 @@ func (s *APIV1SandboxesIDGetNotFound) Validate() error {
 	return nil
 }
 
+func (s *APIV1SandboxesIDPausePostConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDPausePostGatewayTimeout) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDPausePostNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *APIV1SandboxesIDPutBadRequest) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -202,6 +226,30 @@ func (s *APIV1SandboxesIDPutBadRequest) Validate() error {
 }
 
 func (s *APIV1SandboxesIDPutNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDResumePostConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDResumePostGatewayTimeout) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDResumePostNotFound) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -814,40 +862,6 @@ func (s *ContextStatsResponse) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s *CreateAPIKeyRequest) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Type.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "type",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s CreateAPIKeyRequestType) Validate() error {
-	switch s {
-	case "user":
-		return nil
-	case "service":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
 }
 
 func (s *CreateAPIKeyResponse) Validate() error {

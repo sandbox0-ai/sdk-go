@@ -51,10 +51,6 @@ func (s *APIKey) encodeFields(e *jx.Encoder) {
 		e.Str(s.Name)
 	}
 	{
-		e.FieldStart("type")
-		e.Str(s.Type)
-	}
-	{
 		e.FieldStart("roles")
 		e.ArrStart()
 		for _, elem := range s.Roles {
@@ -92,21 +88,20 @@ func (s *APIKey) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfAPIKey = [14]string{
+var jsonFieldsNameOfAPIKey = [13]string{
 	0:  "id",
 	1:  "key_value",
 	2:  "team_id",
 	3:  "user_id",
 	4:  "created_by",
 	5:  "name",
-	6:  "type",
-	7:  "roles",
-	8:  "is_active",
-	9:  "expires_at",
-	10: "last_used_at",
-	11: "usage_count",
-	12: "created_at",
-	13: "updated_at",
+	6:  "roles",
+	7:  "is_active",
+	8:  "expires_at",
+	9:  "last_used_at",
+	10: "usage_count",
+	11: "created_at",
+	12: "updated_at",
 }
 
 // Decode decodes APIKey from json.
@@ -186,20 +181,8 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
-		case "type":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.Type = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
 		case "roles":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				s.Roles = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
@@ -219,7 +202,7 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"roles\"")
 			}
 		case "is_active":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Bool()
 				s.IsActive = bool(v)
@@ -231,7 +214,7 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"is_active\"")
 			}
 		case "expires_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -263,7 +246,7 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"usage_count\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 4
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -275,7 +258,7 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -297,7 +280,7 @@ func (s *APIKey) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11110101,
-		0b00110011,
+		0b00011001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -942,6 +925,120 @@ func (s *APIV1SandboxesIDGetNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes APIV1SandboxesIDPausePostConflict as json.
+func (s *APIV1SandboxesIDPausePostConflict) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDPausePostConflict from json.
+func (s *APIV1SandboxesIDPausePostConflict) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDPausePostConflict to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDPausePostConflict(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDPausePostConflict) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDPausePostConflict) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDPausePostGatewayTimeout as json.
+func (s *APIV1SandboxesIDPausePostGatewayTimeout) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDPausePostGatewayTimeout from json.
+func (s *APIV1SandboxesIDPausePostGatewayTimeout) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDPausePostGatewayTimeout to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDPausePostGatewayTimeout(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDPausePostGatewayTimeout) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDPausePostGatewayTimeout) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDPausePostNotFound as json.
+func (s *APIV1SandboxesIDPausePostNotFound) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDPausePostNotFound from json.
+func (s *APIV1SandboxesIDPausePostNotFound) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDPausePostNotFound to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDPausePostNotFound(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDPausePostNotFound) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDPausePostNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes APIV1SandboxesIDPutBadRequest as json.
 func (s *APIV1SandboxesIDPutBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -1014,6 +1111,120 @@ func (s *APIV1SandboxesIDPutNotFound) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *APIV1SandboxesIDPutNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDResumePostConflict as json.
+func (s *APIV1SandboxesIDResumePostConflict) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDResumePostConflict from json.
+func (s *APIV1SandboxesIDResumePostConflict) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDResumePostConflict to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDResumePostConflict(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDResumePostConflict) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDResumePostConflict) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDResumePostGatewayTimeout as json.
+func (s *APIV1SandboxesIDResumePostGatewayTimeout) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDResumePostGatewayTimeout from json.
+func (s *APIV1SandboxesIDResumePostGatewayTimeout) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDResumePostGatewayTimeout to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDResumePostGatewayTimeout(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDResumePostGatewayTimeout) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDResumePostGatewayTimeout) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDResumePostNotFound as json.
+func (s *APIV1SandboxesIDResumePostNotFound) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDResumePostNotFound from json.
+func (s *APIV1SandboxesIDResumePostNotFound) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDResumePostNotFound to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDResumePostNotFound(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDResumePostNotFound) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDResumePostNotFound) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -4673,10 +4884,6 @@ func (s *CreateAPIKeyRequest) encodeFields(e *jx.Encoder) {
 		e.Str(s.Name)
 	}
 	{
-		e.FieldStart("type")
-		s.Type.Encode(e)
-	}
-	{
 		if s.Roles != nil {
 			e.FieldStart("roles")
 			e.ArrStart()
@@ -4694,11 +4901,10 @@ func (s *CreateAPIKeyRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateAPIKeyRequest = [4]string{
+var jsonFieldsNameOfCreateAPIKeyRequest = [3]string{
 	0: "name",
-	1: "type",
-	2: "roles",
-	3: "expires_in",
+	1: "roles",
+	2: "expires_in",
 }
 
 // Decode decodes CreateAPIKeyRequest from json.
@@ -4721,16 +4927,6 @@ func (s *CreateAPIKeyRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
-			}
-		case "type":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				if err := s.Type.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
 			}
 		case "roles":
 			if err := func() error {
@@ -4771,7 +4967,7 @@ func (s *CreateAPIKeyRequest) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -4817,46 +5013,6 @@ func (s *CreateAPIKeyRequest) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes CreateAPIKeyRequestType as json.
-func (s CreateAPIKeyRequestType) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes CreateAPIKeyRequestType from json.
-func (s *CreateAPIKeyRequestType) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode CreateAPIKeyRequestType to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch CreateAPIKeyRequestType(v) {
-	case CreateAPIKeyRequestTypeUser:
-		*s = CreateAPIKeyRequestTypeUser
-	case CreateAPIKeyRequestTypeService:
-		*s = CreateAPIKeyRequestTypeService
-	default:
-		*s = CreateAPIKeyRequestType(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s CreateAPIKeyRequestType) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *CreateAPIKeyRequestType) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode implements json.Marshaler.
 func (s *CreateAPIKeyResponse) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -4873,10 +5029,6 @@ func (s *CreateAPIKeyResponse) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("name")
 		e.Str(s.Name)
-	}
-	{
-		e.FieldStart("type")
-		e.Str(s.Type)
 	}
 	{
 		e.FieldStart("roles")
@@ -4906,15 +5058,14 @@ func (s *CreateAPIKeyResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateAPIKeyResponse = [8]string{
+var jsonFieldsNameOfCreateAPIKeyResponse = [7]string{
 	0: "id",
 	1: "name",
-	2: "type",
-	3: "roles",
-	4: "team_id",
-	5: "key",
-	6: "expires_at",
-	7: "created_at",
+	2: "roles",
+	3: "team_id",
+	4: "key",
+	5: "expires_at",
+	6: "created_at",
 }
 
 // Decode decodes CreateAPIKeyResponse from json.
@@ -4950,20 +5101,8 @@ func (s *CreateAPIKeyResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
-		case "type":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := d.Str()
-				s.Type = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
 		case "roles":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				s.Roles = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
@@ -4983,7 +5122,7 @@ func (s *CreateAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"roles\"")
 			}
 		case "team_id":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.TeamID = string(v)
@@ -5005,7 +5144,7 @@ func (s *CreateAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"key\"")
 			}
 		case "expires_at":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -5017,7 +5156,7 @@ func (s *CreateAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -5038,7 +5177,7 @@ func (s *CreateAPIKeyResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b11011111,
+		0b01101111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -6997,10 +7136,6 @@ func (s *CurrentAPIKeyResponse) encodeFields(e *jx.Encoder) {
 		e.Str(s.CreatedBy)
 	}
 	{
-		e.FieldStart("type")
-		e.Str(s.Type)
-	}
-	{
 		e.FieldStart("roles")
 		e.ArrStart()
 		for _, elem := range s.Roles {
@@ -7026,15 +7161,14 @@ func (s *CurrentAPIKeyResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCurrentAPIKeyResponse = [8]string{
+var jsonFieldsNameOfCurrentAPIKeyResponse = [7]string{
 	0: "id",
 	1: "team_id",
 	2: "created_by",
-	3: "type",
-	4: "roles",
-	5: "permissions",
-	6: "is_active",
-	7: "expires_at",
+	3: "roles",
+	4: "permissions",
+	5: "is_active",
+	6: "expires_at",
 }
 
 // Decode decodes CurrentAPIKeyResponse from json.
@@ -7082,20 +7216,8 @@ func (s *CurrentAPIKeyResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_by\"")
 			}
-		case "type":
-			requiredBitSet[0] |= 1 << 3
-			if err := func() error {
-				v, err := d.Str()
-				s.Type = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
 		case "roles":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				s.Roles = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
@@ -7115,7 +7237,7 @@ func (s *CurrentAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"roles\"")
 			}
 		case "permissions":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				s.Permissions = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
@@ -7135,7 +7257,7 @@ func (s *CurrentAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"permissions\"")
 			}
 		case "is_active":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := d.Bool()
 				s.IsActive = bool(v)
@@ -7147,7 +7269,7 @@ func (s *CurrentAPIKeyResponse) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"is_active\"")
 			}
 		case "expires_at":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -7168,7 +7290,7 @@ func (s *CurrentAPIKeyResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b11111111,
+		0b01111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -8473,6 +8595,82 @@ func (s *ErrorEnvelopeSuccess) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *ExecAction) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ExecAction) encodeFields(e *jx.Encoder) {
+	{
+		if s.Command != nil {
+			e.FieldStart("command")
+			e.ArrStart()
+			for _, elem := range s.Command {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfExecAction = [1]string{
+	0: "command",
+}
+
+// Decode decodes ExecAction from json.
+func (s *ExecAction) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ExecAction to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "command":
+			if err := func() error {
+				s.Command = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Command = append(s.Command, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"command\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ExecAction")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ExecAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ExecAction) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *ExecCandidate) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -9382,6 +9580,292 @@ func (s GatewayMetadataGatewayMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *GatewayMetadataGatewayMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPGetAction) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPGetAction) encodeFields(e *jx.Encoder) {
+	{
+		if s.Path.Set {
+			e.FieldStart("path")
+			s.Path.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("port")
+		s.Port.Encode(e)
+	}
+	{
+		if s.Host.Set {
+			e.FieldStart("host")
+			s.Host.Encode(e)
+		}
+	}
+	{
+		if s.Scheme.Set {
+			e.FieldStart("scheme")
+			s.Scheme.Encode(e)
+		}
+	}
+	{
+		if s.HttpHeaders != nil {
+			e.FieldStart("httpHeaders")
+			e.ArrStart()
+			for _, elem := range s.HttpHeaders {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPGetAction = [5]string{
+	0: "path",
+	1: "port",
+	2: "host",
+	3: "scheme",
+	4: "httpHeaders",
+}
+
+// Decode decodes HTTPGetAction from json.
+func (s *HTTPGetAction) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPGetAction to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "path":
+			if err := func() error {
+				s.Path.Reset()
+				if err := s.Path.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"path\"")
+			}
+		case "port":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Port.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"port\"")
+			}
+		case "host":
+			if err := func() error {
+				s.Host.Reset()
+				if err := s.Host.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"host\"")
+			}
+		case "scheme":
+			if err := func() error {
+				s.Scheme.Reset()
+				if err := s.Scheme.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"scheme\"")
+			}
+		case "httpHeaders":
+			if err := func() error {
+				s.HttpHeaders = make([]HTTPHeader, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem HTTPHeader
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.HttpHeaders = append(s.HttpHeaders, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"httpHeaders\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPGetAction")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000010,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfHTTPGetAction) {
+					name = jsonFieldsNameOfHTTPGetAction[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPGetAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPGetAction) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPHeader) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPHeader) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("value")
+		e.Str(s.Value)
+	}
+}
+
+var jsonFieldsNameOfHTTPHeader = [2]string{
+	0: "name",
+	1: "value",
+}
+
+// Decode decodes HTTPHeader from json.
+func (s *HTTPHeader) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPHeader to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "value":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Value = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"value\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPHeader")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfHTTPHeader) {
+					name = jsonFieldsNameOfHTTPHeader[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPHeader) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPHeader) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -12748,6 +13232,39 @@ func (s *OptEgressTLSMode) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes ExecAction as json.
+func (o OptExecAction) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes ExecAction from json.
+func (o *OptExecAction) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptExecAction to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptExecAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptExecAction) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes FileContentResponse as json.
 func (o OptFileContentResponse) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -12977,6 +13494,39 @@ func (s OptGatewayMetadata) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptGatewayMetadata) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes HTTPGetAction as json.
+func (o OptHTTPGetAction) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes HTTPGetAction from json.
+func (o *OptHTTPGetAction) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptHTTPGetAction to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptHTTPGetAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptHTTPGetAction) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -14564,6 +15114,72 @@ func (s *OptSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxProbeSet as json.
+func (o OptSandboxProbeSet) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxProbeSet from json.
+func (o *OptSandboxProbeSet) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxProbeSet to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxProbeSet) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxProbeSet) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxProbeSpec as json.
+func (o OptSandboxProbeSpec) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxProbeSpec from json.
+func (o *OptSandboxProbeSpec) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxProbeSpec to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxProbeSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxProbeSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SandboxRefreshRequest as json.
 func (o OptSandboxRefreshRequest) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -15950,6 +16566,39 @@ func (s OptSyncJournalEntrySource) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSyncJournalEntrySource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TCPSocketAction as json.
+func (o OptTCPSocketAction) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes TCPSocketAction from json.
+func (o *OptTCPSocketAction) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptTCPSocketAction to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptTCPSocketAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptTCPSocketAction) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -17512,6 +18161,90 @@ func (s *PreferredSchedulingTerm) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *PreferredSchedulingTerm) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ProbePort as json.
+func (s ProbePort) Encode(e *jx.Encoder) {
+	unwrapped := int32(s)
+
+	e.Int32(unwrapped)
+}
+
+// Decode decodes ProbePort from json.
+func (s *ProbePort) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ProbePort to nil")
+	}
+	var unwrapped int32
+	if err := func() error {
+		v, err := d.Int32()
+		unwrapped = int32(v)
+		if err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = ProbePort(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ProbePort) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ProbePort) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *ProcessProbeAction) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ProcessProbeAction) encodeFields(e *jx.Encoder) {
+}
+
+var jsonFieldsNameOfProcessProbeAction = [0]string{}
+
+// Decode decodes ProcessProbeAction from json.
+func (s *ProcessProbeAction) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ProcessProbeAction to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		default:
+			return errors.Errorf("unexpected field %q", k)
+		}
+	}); err != nil {
+		return errors.Wrap(err, "decode ProcessProbeAction")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ProcessProbeAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ProcessProbeAction) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -21721,6 +22454,253 @@ func (s SandboxPowerStatePhase) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxPowerStatePhase) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxProbeSet) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxProbeSet) encodeFields(e *jx.Encoder) {
+	{
+		if s.Startup.Set {
+			e.FieldStart("startup")
+			s.Startup.Encode(e)
+		}
+	}
+	{
+		if s.Readiness.Set {
+			e.FieldStart("readiness")
+			s.Readiness.Encode(e)
+		}
+	}
+	{
+		if s.Liveness.Set {
+			e.FieldStart("liveness")
+			s.Liveness.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxProbeSet = [3]string{
+	0: "startup",
+	1: "readiness",
+	2: "liveness",
+}
+
+// Decode decodes SandboxProbeSet from json.
+func (s *SandboxProbeSet) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxProbeSet to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "startup":
+			if err := func() error {
+				s.Startup.Reset()
+				if err := s.Startup.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"startup\"")
+			}
+		case "readiness":
+			if err := func() error {
+				s.Readiness.Reset()
+				if err := s.Readiness.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"readiness\"")
+			}
+		case "liveness":
+			if err := func() error {
+				s.Liveness.Reset()
+				if err := s.Liveness.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"liveness\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxProbeSet")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxProbeSet) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxProbeSet) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxProbeSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxProbeSpec) encodeFields(e *jx.Encoder) {
+	{
+		if s.Process != nil {
+			e.FieldStart("process")
+			s.Process.Encode(e)
+		}
+	}
+	{
+		if s.Exec.Set {
+			e.FieldStart("exec")
+			s.Exec.Encode(e)
+		}
+	}
+	{
+		if s.HttpGet.Set {
+			e.FieldStart("httpGet")
+			s.HttpGet.Encode(e)
+		}
+	}
+	{
+		if s.TcpSocket.Set {
+			e.FieldStart("tcpSocket")
+			s.TcpSocket.Encode(e)
+		}
+	}
+	{
+		if s.InitialDelaySeconds.Set {
+			e.FieldStart("initialDelaySeconds")
+			s.InitialDelaySeconds.Encode(e)
+		}
+	}
+	{
+		if s.TimeoutSeconds.Set {
+			e.FieldStart("timeoutSeconds")
+			s.TimeoutSeconds.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxProbeSpec = [6]string{
+	0: "process",
+	1: "exec",
+	2: "httpGet",
+	3: "tcpSocket",
+	4: "initialDelaySeconds",
+	5: "timeoutSeconds",
+}
+
+// Decode decodes SandboxProbeSpec from json.
+func (s *SandboxProbeSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxProbeSpec to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "process":
+			if err := func() error {
+				s.Process = nil
+				var elem ProcessProbeAction
+				if err := elem.Decode(d); err != nil {
+					return err
+				}
+				s.Process = &elem
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"process\"")
+			}
+		case "exec":
+			if err := func() error {
+				s.Exec.Reset()
+				if err := s.Exec.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exec\"")
+			}
+		case "httpGet":
+			if err := func() error {
+				s.HttpGet.Reset()
+				if err := s.HttpGet.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"httpGet\"")
+			}
+		case "tcpSocket":
+			if err := func() error {
+				s.TcpSocket.Reset()
+				if err := s.TcpSocket.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tcpSocket\"")
+			}
+		case "initialDelaySeconds":
+			if err := func() error {
+				s.InitialDelaySeconds.Reset()
+				if err := s.InitialDelaySeconds.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"initialDelaySeconds\"")
+			}
+		case "timeoutSeconds":
+			if err := func() error {
+				s.TimeoutSeconds.Reset()
+				if err := s.TimeoutSeconds.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"timeoutSeconds\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxProbeSpec")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxProbeSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxProbeSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -36143,6 +37123,117 @@ func (s *SyncReplica) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *TCPSocketAction) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *TCPSocketAction) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("port")
+		s.Port.Encode(e)
+	}
+	{
+		if s.Host.Set {
+			e.FieldStart("host")
+			s.Host.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfTCPSocketAction = [2]string{
+	0: "port",
+	1: "host",
+}
+
+// Decode decodes TCPSocketAction from json.
+func (s *TCPSocketAction) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TCPSocketAction to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "port":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Port.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"port\"")
+			}
+		case "host":
+			if err := func() error {
+				s.Host.Reset()
+				if err := s.Host.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"host\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode TCPSocketAction")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfTCPSocketAction) {
+					name = jsonFieldsNameOfTCPSocketAction[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TCPSocketAction) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TCPSocketAction) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *TLSClientCertificateProjection) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -41136,6 +42227,12 @@ func (s *WarmProcessSpec) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *WarmProcessSpec) encodeFields(e *jx.Encoder) {
 	{
+		if s.Name.Set {
+			e.FieldStart("name")
+			s.Name.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("type")
 		s.Type.Encode(e)
 	}
@@ -41167,14 +42264,22 @@ func (s *WarmProcessSpec) encodeFields(e *jx.Encoder) {
 			s.EnvVars.Encode(e)
 		}
 	}
+	{
+		if s.Probes.Set {
+			e.FieldStart("probes")
+			s.Probes.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfWarmProcessSpec = [5]string{
-	0: "type",
-	1: "alias",
-	2: "command",
-	3: "cwd",
-	4: "envVars",
+var jsonFieldsNameOfWarmProcessSpec = [7]string{
+	0: "name",
+	1: "type",
+	2: "alias",
+	3: "command",
+	4: "cwd",
+	5: "envVars",
+	6: "probes",
 }
 
 // Decode decodes WarmProcessSpec from json.
@@ -41186,8 +42291,18 @@ func (s *WarmProcessSpec) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "name":
+			if err := func() error {
+				s.Name.Reset()
+				if err := s.Name.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
 		case "type":
-			requiredBitSet[0] |= 1 << 0
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
 				if err := s.Type.Decode(d); err != nil {
 					return err
@@ -41245,6 +42360,16 @@ func (s *WarmProcessSpec) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"envVars\"")
 			}
+		case "probes":
+			if err := func() error {
+				s.Probes.Reset()
+				if err := s.Probes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"probes\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -41255,7 +42380,7 @@ func (s *WarmProcessSpec) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000010,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
