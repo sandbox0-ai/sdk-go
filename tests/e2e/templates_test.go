@@ -29,28 +29,12 @@ func TestTemplateCRUD(t *testing.T) {
 
 	source := templates[0]
 	sourceSpec := source.Spec
-	sourceSpec.Sidecars = []apispec.SidecarContainerSpec{
-		{
-			Name:    "codex",
-			Image:   "busybox:latest",
-			Command: []string{"sh", "-lc", "touch /tmp/ready; tail -f /dev/null"},
-			Resources: apispec.ResourceQuota{
-				CPU:    apispec.NewOptString("250m"),
-				Memory: apispec.NewOptString("1Gi"),
-			},
-			ReadinessProbe: apispec.NewOptProbe(apispec.Probe{
-				Exec:             apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
-				PeriodSeconds:    apispec.NewOptInt32(1),
-				FailureThreshold: apispec.NewOptInt32(1),
-			}),
-			StartupProbe: apispec.NewOptProbe(apispec.Probe{
-				Exec:                apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
-				InitialDelaySeconds: apispec.NewOptInt32(1),
-				PeriodSeconds:       apispec.NewOptInt32(1),
-				FailureThreshold:    apispec.NewOptInt32(1),
-			}),
-		},
-	}
+	sourceSpec.WarmProcesses = []apispec.WarmProcessSpec{{
+		Type:    apispec.WarmProcessSpecTypeCmd,
+		Alias:   apispec.NewOptString("codex"),
+		Command: []string{"sh", "-lc", "touch /tmp/ready; tail -f /dev/null"},
+		Cwd:     apispec.NewOptString("/workspace"),
+	}}
 	templateID := fmt.Sprintf("sdk-e2e-%d", time.Now().UnixNano())
 
 	createReq := apispec.TemplateCreateRequest{
@@ -64,14 +48,11 @@ func TestTemplateCRUD(t *testing.T) {
 	if created == nil || created.TemplateID == "" {
 		t.Fatalf("create template returned empty template")
 	}
-	if len(created.Spec.Sidecars) != 1 {
-		t.Fatalf("created template sidecars = %d, want 1", len(created.Spec.Sidecars))
+	if len(created.Spec.WarmProcesses) != 1 {
+		t.Fatalf("created template warmProcesses = %d, want 1", len(created.Spec.WarmProcesses))
 	}
-	if !created.Spec.Sidecars[0].ReadinessProbe.IsSet() {
-		t.Fatalf("created template sidecar readiness probe missing")
-	}
-	if !created.Spec.Sidecars[0].StartupProbe.IsSet() {
-		t.Fatalf("created template sidecar startup probe missing")
+	if created.Spec.WarmProcesses[0].Type != apispec.WarmProcessSpecTypeCmd {
+		t.Fatalf("created template warm process type = %q, want cmd", created.Spec.WarmProcesses[0].Type)
 	}
 	deleted := false
 	t.Cleanup(func() {
@@ -87,14 +68,8 @@ func TestTemplateCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("get template failed: %v", err)
 	}
-	if len(fetched.Spec.Sidecars) != 1 {
-		t.Fatalf("fetched template sidecars = %d, want 1", len(fetched.Spec.Sidecars))
-	}
-	if !fetched.Spec.Sidecars[0].ReadinessProbe.IsSet() {
-		t.Fatalf("fetched template sidecar readiness probe missing")
-	}
-	if !fetched.Spec.Sidecars[0].StartupProbe.IsSet() {
-		t.Fatalf("fetched template sidecar startup probe missing")
+	if len(fetched.Spec.WarmProcesses) != 1 {
+		t.Fatalf("fetched template warmProcesses = %d, want 1", len(fetched.Spec.WarmProcesses))
 	}
 
 	updatedSpec := fetched.Spec
@@ -104,8 +79,8 @@ func TestTemplateCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("update template failed: %v", err)
 	}
-	if len(updated.Spec.Sidecars) != 1 {
-		t.Fatalf("updated template sidecars = %d, want 1", len(updated.Spec.Sidecars))
+	if len(updated.Spec.WarmProcesses) != 1 {
+		t.Fatalf("updated template warmProcesses = %d, want 1", len(updated.Spec.WarmProcesses))
 	}
 
 	if _, err := client.DeleteTemplate(ctx, templateID); err != nil {

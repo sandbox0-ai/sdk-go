@@ -6,7 +6,7 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
+func TestNewTemplateCreateRequestBuildsWarmProcessSpec(t *testing.T) {
 	t.Parallel()
 
 	request := NewTemplateCreateRequest(
@@ -18,22 +18,13 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 			WithTemplateContainerEnv(apispec.EnvVar{Name: "APP_ENV", Value: "test"}),
 		),
 		WithTemplateDisplayName("Helper Template"),
-		WithTemplateSharedVolume(
-			TemplateSharedVolume(
-				"workspace",
-				"/workspace/shared",
-				WithTemplateSharedVolumeID("vol_123"),
-				WithTemplateSharedVolumeWriteback(true),
-			),
-		),
-		WithTemplateSidecar(
-			TemplateSidecar(
-				"helper",
-				"busybox:latest",
-				"250m",
-				"1Gi",
-				WithTemplateSidecarCommand("sh", "-lc", "tail -f /dev/null"),
-				WithTemplateSidecarMount(TemplateMount("workspace", "/shared")),
+		WithTemplateWarmProcess(
+			TemplateWarmProcess(
+				apispec.WarmProcessSpecTypeCmd,
+				WithTemplateWarmProcessAlias("helper"),
+				WithTemplateWarmProcessCommand("sh", "-lc", "tail -f /dev/null"),
+				WithTemplateWarmProcessCWD("/workspace"),
+				WithTemplateWarmProcessEnvVars(map[string]string{"MODE": "warm"}),
 			),
 		),
 	)
@@ -48,28 +39,27 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 	if main.Image != "ubuntu:24.04" {
 		t.Fatalf("mainContainer.image = %q, want ubuntu:24.04", main.Image)
 	}
-	if len(request.Spec.SharedVolumes) != 1 {
-		t.Fatalf("len(sharedVolumes) = %d, want 1", len(request.Spec.SharedVolumes))
+	if len(request.Spec.WarmProcesses) != 1 {
+		t.Fatalf("len(warmProcesses) = %d, want 1", len(request.Spec.WarmProcesses))
 	}
-	if request.Spec.SharedVolumes[0].Name != "workspace" {
-		t.Fatalf("sharedVolumes[0].name = %q, want workspace", request.Spec.SharedVolumes[0].Name)
+	process := request.Spec.WarmProcesses[0]
+	if process.Type != apispec.WarmProcessSpecTypeCmd {
+		t.Fatalf("warmProcesses[0].type = %q, want cmd", process.Type)
 	}
-	volumeID, ok := request.Spec.SharedVolumes[0].SandboxVolumeId.Get()
-	if !ok || volumeID != "vol_123" {
-		t.Fatalf("sharedVolumes[0].sandboxVolumeId = %q, want vol_123", volumeID)
+	alias, ok := process.Alias.Get()
+	if !ok || alias != "helper" {
+		t.Fatalf("warmProcesses[0].alias = %q, want helper", alias)
 	}
-	writeback, ok := request.Spec.SharedVolumes[0].Writeback.Get()
-	if !ok || !writeback {
-		t.Fatalf("sharedVolumes[0].writeback = %v, want true", writeback)
+	if len(process.Command) != 3 || process.Command[2] != "tail -f /dev/null" {
+		t.Fatalf("warmProcesses[0].command = %#v, want shell command", process.Command)
 	}
-	if len(request.Spec.Sidecars) != 1 {
-		t.Fatalf("len(sidecars) = %d, want 1", len(request.Spec.Sidecars))
+	cwd, ok := process.Cwd.Get()
+	if !ok || cwd != "/workspace" {
+		t.Fatalf("warmProcesses[0].cwd = %q, want /workspace", cwd)
 	}
-	if len(request.Spec.Sidecars[0].Mounts) != 1 {
-		t.Fatalf("len(sidecars[0].mounts) = %d, want 1", len(request.Spec.Sidecars[0].Mounts))
-	}
-	if request.Spec.Sidecars[0].Mounts[0].MountPath != "/shared" {
-		t.Fatalf("sidecars[0].mounts[0].mountPath = %q, want /shared", request.Spec.Sidecars[0].Mounts[0].MountPath)
+	envVars, ok := process.EnvVars.Get()
+	if !ok || envVars["MODE"] != "warm" {
+		t.Fatalf("warmProcesses[0].envVars = %#v, want MODE=warm", envVars)
 	}
 	displayName, ok := request.Spec.DisplayName.Get()
 	if !ok || displayName != "Helper Template" {
@@ -77,32 +67,22 @@ func TestNewTemplateCreateRequestBuildsSharedVolumeSpec(t *testing.T) {
 	}
 }
 
-func TestTemplateSidecarProbeHelpers(t *testing.T) {
+func TestTemplateWarmProcessCopiesEnvVars(t *testing.T) {
 	t.Parallel()
 
-	readiness := apispec.Probe{
-		Exec:             apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/ready"}}),
-		PeriodSeconds:    apispec.NewOptInt32(1),
-		FailureThreshold: apispec.NewOptInt32(2),
-	}
-	startup := apispec.Probe{
-		Exec:                apispec.NewOptExecAction(apispec.ExecAction{Command: []string{"test", "-f", "/tmp/booted"}}),
-		InitialDelaySeconds: apispec.NewOptInt32(1),
-	}
-
-	sidecar := TemplateSidecar(
-		"helper",
-		"busybox:latest",
-		"250m",
-		"1Gi",
-		WithTemplateSidecarReadinessProbe(readiness),
-		WithTemplateSidecarStartupProbe(startup),
+	envVars := map[string]string{"MODE": "warm"}
+	process := TemplateWarmProcess(
+		apispec.WarmProcessSpecTypeRepl,
+		WithTemplateWarmProcessAlias("shell"),
+		WithTemplateWarmProcessEnvVars(envVars),
 	)
+	envVars["MODE"] = "changed"
 
-	if !sidecar.ReadinessProbe.IsSet() {
-		t.Fatal("sidecar.ReadinessProbe should be set")
+	copied, ok := process.EnvVars.Get()
+	if !ok {
+		t.Fatal("process.EnvVars should be set")
 	}
-	if !sidecar.StartupProbe.IsSet() {
-		t.Fatal("sidecar.StartupProbe should be set")
+	if copied["MODE"] != "warm" {
+		t.Fatalf("process.EnvVars[MODE] = %q, want warm", copied["MODE"])
 	}
 }

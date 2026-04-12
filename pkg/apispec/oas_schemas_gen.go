@@ -1224,43 +1224,6 @@ func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
 	s.BootstrapMounts = val
 }
 
-// Ref: #/components/schemas/ContainerMountSpec
-type ContainerMountSpec struct {
-	Name      string  `json:"name"`
-	MountPath string  `json:"mountPath"`
-	ReadOnly  OptBool `json:"readOnly"`
-}
-
-// GetName returns the value of Name.
-func (s *ContainerMountSpec) GetName() string {
-	return s.Name
-}
-
-// GetMountPath returns the value of MountPath.
-func (s *ContainerMountSpec) GetMountPath() string {
-	return s.MountPath
-}
-
-// GetReadOnly returns the value of ReadOnly.
-func (s *ContainerMountSpec) GetReadOnly() OptBool {
-	return s.ReadOnly
-}
-
-// SetName sets the value of Name.
-func (s *ContainerMountSpec) SetName(val string) {
-	s.Name = val
-}
-
-// SetMountPath sets the value of MountPath.
-func (s *ContainerMountSpec) SetMountPath(val string) {
-	s.MountPath = val
-}
-
-// SetReadOnly sets the value of ReadOnly.
-func (s *ContainerMountSpec) SetReadOnly(val OptBool) {
-	s.ReadOnly = val
-}
-
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
 	Image           string             `json:"image"`
@@ -2532,6 +2495,98 @@ func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsern
 	s.StaticUsernamePassword = val
 }
 
+// Ref: #/components/schemas/CurrentAPIKeyResponse
+type CurrentAPIKeyResponse struct {
+	ID          string    `json:"id"`
+	TeamID      string    `json:"team_id"`
+	CreatedBy   string    `json:"created_by"`
+	Type        string    `json:"type"`
+	Roles       []string  `json:"roles"`
+	Permissions []string  `json:"permissions"`
+	IsActive    bool      `json:"is_active"`
+	ExpiresAt   time.Time `json:"expires_at"`
+}
+
+// GetID returns the value of ID.
+func (s *CurrentAPIKeyResponse) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *CurrentAPIKeyResponse) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *CurrentAPIKeyResponse) GetCreatedBy() string {
+	return s.CreatedBy
+}
+
+// GetType returns the value of Type.
+func (s *CurrentAPIKeyResponse) GetType() string {
+	return s.Type
+}
+
+// GetRoles returns the value of Roles.
+func (s *CurrentAPIKeyResponse) GetRoles() []string {
+	return s.Roles
+}
+
+// GetPermissions returns the value of Permissions.
+func (s *CurrentAPIKeyResponse) GetPermissions() []string {
+	return s.Permissions
+}
+
+// GetIsActive returns the value of IsActive.
+func (s *CurrentAPIKeyResponse) GetIsActive() bool {
+	return s.IsActive
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *CurrentAPIKeyResponse) GetExpiresAt() time.Time {
+	return s.ExpiresAt
+}
+
+// SetID sets the value of ID.
+func (s *CurrentAPIKeyResponse) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *CurrentAPIKeyResponse) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *CurrentAPIKeyResponse) SetCreatedBy(val string) {
+	s.CreatedBy = val
+}
+
+// SetType sets the value of Type.
+func (s *CurrentAPIKeyResponse) SetType(val string) {
+	s.Type = val
+}
+
+// SetRoles sets the value of Roles.
+func (s *CurrentAPIKeyResponse) SetRoles(val []string) {
+	s.Roles = val
+}
+
+// SetPermissions sets the value of Permissions.
+func (s *CurrentAPIKeyResponse) SetPermissions(val []string) {
+	s.Permissions = val
+}
+
+// SetIsActive sets the value of IsActive.
+func (s *CurrentAPIKeyResponse) SetIsActive(val bool) {
+	s.IsActive = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *CurrentAPIKeyResponse) SetExpiresAt(val time.Time) {
+	s.ExpiresAt = val
+}
+
 // Ref: #/components/schemas/DeviceLoginPollRequest
 type DeviceLoginPollRequest struct {
 	DeviceLoginID string `json:"device_login_id"`
@@ -3102,6 +3157,7 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
+func (*ErrorEnvelope) aPIKeysCurrentGetRes()                                   {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                          {}
 func (*ErrorEnvelope) aPIKeysPostRes()                                         {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                       {}
@@ -3148,21 +3204,6 @@ func (ErrorEnvelopeSuccess) AllValues() []ErrorEnvelopeSuccess {
 	return []ErrorEnvelopeSuccess{
 		ErrorEnvelopeSuccessFalse,
 	}
-}
-
-// Ref: #/components/schemas/ExecAction
-type ExecAction struct {
-	Command []string `json:"command"`
-}
-
-// GetCommand returns the value of Command.
-func (s *ExecAction) GetCommand() []string {
-	return s.Command
-}
-
-// SetCommand sets the value of Command.
-func (s *ExecAction) SetCommand(val []string) {
-	s.Command = val
 }
 
 // Ref: #/components/schemas/ExecCandidate
@@ -3519,32 +3560,6 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
-// Ref: #/components/schemas/GRPCAction
-type GRPCAction struct {
-	Port    int32     `json:"port"`
-	Service OptString `json:"service"`
-}
-
-// GetPort returns the value of Port.
-func (s *GRPCAction) GetPort() int32 {
-	return s.Port
-}
-
-// GetService returns the value of Service.
-func (s *GRPCAction) GetService() OptString {
-	return s.Service
-}
-
-// SetPort sets the value of Port.
-func (s *GRPCAction) SetPort(val int32) {
-	s.Port = val
-}
-
-// SetService sets the value of Service.
-func (s *GRPCAction) SetService(val OptString) {
-	s.Service = val
-}
-
 // Ref: #/components/schemas/GatewayMetadata
 type GatewayMetadata struct {
 	GatewayMode GatewayMetadataGatewayMode `json:"gateway_mode"`
@@ -3610,91 +3625,6 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
-}
-
-// Ref: #/components/schemas/HTTPGetAction
-type HTTPGetAction struct {
-	Path        OptString    `json:"path"`
-	Port        ProbePort    `json:"port"`
-	Host        OptString    `json:"host"`
-	Scheme      OptString    `json:"scheme"`
-	HttpHeaders []HTTPHeader `json:"httpHeaders"`
-}
-
-// GetPath returns the value of Path.
-func (s *HTTPGetAction) GetPath() OptString {
-	return s.Path
-}
-
-// GetPort returns the value of Port.
-func (s *HTTPGetAction) GetPort() ProbePort {
-	return s.Port
-}
-
-// GetHost returns the value of Host.
-func (s *HTTPGetAction) GetHost() OptString {
-	return s.Host
-}
-
-// GetScheme returns the value of Scheme.
-func (s *HTTPGetAction) GetScheme() OptString {
-	return s.Scheme
-}
-
-// GetHttpHeaders returns the value of HttpHeaders.
-func (s *HTTPGetAction) GetHttpHeaders() []HTTPHeader {
-	return s.HttpHeaders
-}
-
-// SetPath sets the value of Path.
-func (s *HTTPGetAction) SetPath(val OptString) {
-	s.Path = val
-}
-
-// SetPort sets the value of Port.
-func (s *HTTPGetAction) SetPort(val ProbePort) {
-	s.Port = val
-}
-
-// SetHost sets the value of Host.
-func (s *HTTPGetAction) SetHost(val OptString) {
-	s.Host = val
-}
-
-// SetScheme sets the value of Scheme.
-func (s *HTTPGetAction) SetScheme(val OptString) {
-	s.Scheme = val
-}
-
-// SetHttpHeaders sets the value of HttpHeaders.
-func (s *HTTPGetAction) SetHttpHeaders(val []HTTPHeader) {
-	s.HttpHeaders = val
-}
-
-// Ref: #/components/schemas/HTTPHeader
-type HTTPHeader struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
-
-// GetName returns the value of Name.
-func (s *HTTPHeader) GetName() string {
-	return s.Name
-}
-
-// GetValue returns the value of Value.
-func (s *HTTPHeader) GetValue() string {
-	return s.Value
-}
-
-// SetName sets the value of Name.
-func (s *HTTPHeader) SetName(val string) {
-	s.Name = val
-}
-
-// SetValue sets the value of Value.
-func (s *HTTPHeader) SetValue(val string) {
-	s.Value = val
 }
 
 // Ref: #/components/schemas/HTTPHeadersProjection
@@ -5425,6 +5355,52 @@ func (o OptCredentialSourceMetadata) Or(d CredentialSourceMetadata) CredentialSo
 	return d
 }
 
+// NewOptCurrentAPIKeyResponse returns new OptCurrentAPIKeyResponse with value set to v.
+func NewOptCurrentAPIKeyResponse(v CurrentAPIKeyResponse) OptCurrentAPIKeyResponse {
+	return OptCurrentAPIKeyResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCurrentAPIKeyResponse is optional CurrentAPIKeyResponse.
+type OptCurrentAPIKeyResponse struct {
+	Value CurrentAPIKeyResponse
+	Set   bool
+}
+
+// IsSet returns true if OptCurrentAPIKeyResponse was set.
+func (o OptCurrentAPIKeyResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCurrentAPIKeyResponse) Reset() {
+	var v CurrentAPIKeyResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCurrentAPIKeyResponse) SetTo(v CurrentAPIKeyResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCurrentAPIKeyResponse) Get() (v CurrentAPIKeyResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCurrentAPIKeyResponse) Or(d CurrentAPIKeyResponse) CurrentAPIKeyResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
 	return OptDateTime{
@@ -5747,52 +5723,6 @@ func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
 	return d
 }
 
-// NewOptExecAction returns new OptExecAction with value set to v.
-func NewOptExecAction(v ExecAction) OptExecAction {
-	return OptExecAction{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptExecAction is optional ExecAction.
-type OptExecAction struct {
-	Value ExecAction
-	Set   bool
-}
-
-// IsSet returns true if OptExecAction was set.
-func (o OptExecAction) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptExecAction) Reset() {
-	var v ExecAction
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptExecAction) SetTo(v ExecAction) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptExecAction) Get() (v ExecAction, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptExecAction) Or(d ExecAction) ExecAction {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptFileContentResponse returns new OptFileContentResponse with value set to v.
 func NewOptFileContentResponse(v FileContentResponse) OptFileContentResponse {
 	return OptFileContentResponse{
@@ -6069,52 +5999,6 @@ func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
 	return d
 }
 
-// NewOptGRPCAction returns new OptGRPCAction with value set to v.
-func NewOptGRPCAction(v GRPCAction) OptGRPCAction {
-	return OptGRPCAction{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptGRPCAction is optional GRPCAction.
-type OptGRPCAction struct {
-	Value GRPCAction
-	Set   bool
-}
-
-// IsSet returns true if OptGRPCAction was set.
-func (o OptGRPCAction) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptGRPCAction) Reset() {
-	var v GRPCAction
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptGRPCAction) SetTo(v GRPCAction) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptGRPCAction) Get() (v GRPCAction, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptGRPCAction) Or(d GRPCAction) GRPCAction {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
 func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
 	return OptGatewayMetadata{
@@ -6155,52 +6039,6 @@ func (o OptGatewayMetadata) Get() (v GatewayMetadata, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptHTTPGetAction returns new OptHTTPGetAction with value set to v.
-func NewOptHTTPGetAction(v HTTPGetAction) OptHTTPGetAction {
-	return OptHTTPGetAction{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptHTTPGetAction is optional HTTPGetAction.
-type OptHTTPGetAction struct {
-	Value HTTPGetAction
-	Set   bool
-}
-
-// IsSet returns true if OptHTTPGetAction was set.
-func (o OptHTTPGetAction) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptHTTPGetAction) Reset() {
-	var v HTTPGetAction
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptHTTPGetAction) SetTo(v HTTPGetAction) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptHTTPGetAction) Get() (v HTTPGetAction, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptHTTPGetAction) Or(d HTTPGetAction) HTTPGetAction {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7608,52 +7446,6 @@ func (o OptPreStopHook) Get() (v PreStopHook, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPreStopHook) Or(d PreStopHook) PreStopHook {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptProbe returns new OptProbe with value set to v.
-func NewOptProbe(v Probe) OptProbe {
-	return OptProbe{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptProbe is optional Probe.
-type OptProbe struct {
-	Value Probe
-	Set   bool
-}
-
-// IsSet returns true if OptProbe was set.
-func (o OptProbe) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptProbe) Reset() {
-	var v Probe
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptProbe) SetTo(v Probe) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptProbe) Get() (v Probe, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptProbe) Or(d Probe) Probe {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9270,6 +9062,52 @@ func (o OptSuccessCreatedResponseData) Or(d SuccessCreatedResponseData) SuccessC
 	return d
 }
 
+// NewOptSuccessCurrentAPIKeyResponseData returns new OptSuccessCurrentAPIKeyResponseData with value set to v.
+func NewOptSuccessCurrentAPIKeyResponseData(v SuccessCurrentAPIKeyResponseData) OptSuccessCurrentAPIKeyResponseData {
+	return OptSuccessCurrentAPIKeyResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessCurrentAPIKeyResponseData is optional SuccessCurrentAPIKeyResponseData.
+type OptSuccessCurrentAPIKeyResponseData struct {
+	Value SuccessCurrentAPIKeyResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessCurrentAPIKeyResponseData was set.
+func (o OptSuccessCurrentAPIKeyResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessCurrentAPIKeyResponseData) Reset() {
+	var v SuccessCurrentAPIKeyResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessCurrentAPIKeyResponseData) SetTo(v SuccessCurrentAPIKeyResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessCurrentAPIKeyResponseData) Get() (v SuccessCurrentAPIKeyResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessCurrentAPIKeyResponseData) Or(d SuccessCurrentAPIKeyResponseData) SuccessCurrentAPIKeyResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSuccessDeletedResponseData returns new OptSuccessDeletedResponseData with value set to v.
 func NewOptSuccessDeletedResponseData(v SuccessDeletedResponseData) OptSuccessDeletedResponseData {
 	return OptSuccessDeletedResponseData{
@@ -10282,52 +10120,6 @@ func (o OptSyncJournalEntrySource) Or(d SyncJournalEntrySource) SyncJournalEntry
 	return d
 }
 
-// NewOptTCPSocketAction returns new OptTCPSocketAction with value set to v.
-func NewOptTCPSocketAction(v TCPSocketAction) OptTCPSocketAction {
-	return OptTCPSocketAction{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTCPSocketAction is optional TCPSocketAction.
-type OptTCPSocketAction struct {
-	Value TCPSocketAction
-	Set   bool
-}
-
-// IsSet returns true if OptTCPSocketAction was set.
-func (o OptTCPSocketAction) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTCPSocketAction) Reset() {
-	var v TCPSocketAction
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTCPSocketAction) SetTo(v TCPSocketAction) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTCPSocketAction) Get() (v TCPSocketAction, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTCPSocketAction) Or(d TCPSocketAction) TCPSocketAction {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptTeam returns new OptTeam with value set to v.
 func NewOptTeam(v Team) OptTeam {
 	return OptTeam{
@@ -10834,6 +10626,52 @@ func (o OptVolumeSyncReseedRequiredDetails) Or(d VolumeSyncReseedRequiredDetails
 	return d
 }
 
+// NewOptWarmProcessSpecEnvVars returns new OptWarmProcessSpecEnvVars with value set to v.
+func NewOptWarmProcessSpecEnvVars(v WarmProcessSpecEnvVars) OptWarmProcessSpecEnvVars {
+	return OptWarmProcessSpecEnvVars{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptWarmProcessSpecEnvVars is optional WarmProcessSpecEnvVars.
+type OptWarmProcessSpecEnvVars struct {
+	Value WarmProcessSpecEnvVars
+	Set   bool
+}
+
+// IsSet returns true if OptWarmProcessSpecEnvVars was set.
+func (o OptWarmProcessSpecEnvVars) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptWarmProcessSpecEnvVars) Reset() {
+	var v WarmProcessSpecEnvVars
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptWarmProcessSpecEnvVars) SetTo(v WarmProcessSpecEnvVars) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptWarmProcessSpecEnvVars) Get() (v WarmProcessSpecEnvVars, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptWarmProcessSpecEnvVars) Or(d WarmProcessSpecEnvVars) WarmProcessSpecEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptWebhookConfig returns new OptWebhookConfig with value set to v.
 func NewOptWebhookConfig(v WebhookConfig) OptWebhookConfig {
 	return OptWebhookConfig{
@@ -11211,185 +11049,6 @@ func (s *PreferredSchedulingTerm) SetWeight(val int32) {
 // SetPreference sets the value of Preference.
 func (s *PreferredSchedulingTerm) SetPreference(val NodeSelectorTerm) {
 	s.Preference = val
-}
-
-// Ref: #/components/schemas/Probe
-type Probe struct {
-	Exec                          OptExecAction      `json:"exec"`
-	HttpGet                       OptHTTPGetAction   `json:"httpGet"`
-	TcpSocket                     OptTCPSocketAction `json:"tcpSocket"`
-	Grpc                          OptGRPCAction      `json:"grpc"`
-	InitialDelaySeconds           OptInt32           `json:"initialDelaySeconds"`
-	TimeoutSeconds                OptInt32           `json:"timeoutSeconds"`
-	PeriodSeconds                 OptInt32           `json:"periodSeconds"`
-	SuccessThreshold              OptInt32           `json:"successThreshold"`
-	FailureThreshold              OptInt32           `json:"failureThreshold"`
-	TerminationGracePeriodSeconds OptInt64           `json:"terminationGracePeriodSeconds"`
-}
-
-// GetExec returns the value of Exec.
-func (s *Probe) GetExec() OptExecAction {
-	return s.Exec
-}
-
-// GetHttpGet returns the value of HttpGet.
-func (s *Probe) GetHttpGet() OptHTTPGetAction {
-	return s.HttpGet
-}
-
-// GetTcpSocket returns the value of TcpSocket.
-func (s *Probe) GetTcpSocket() OptTCPSocketAction {
-	return s.TcpSocket
-}
-
-// GetGrpc returns the value of Grpc.
-func (s *Probe) GetGrpc() OptGRPCAction {
-	return s.Grpc
-}
-
-// GetInitialDelaySeconds returns the value of InitialDelaySeconds.
-func (s *Probe) GetInitialDelaySeconds() OptInt32 {
-	return s.InitialDelaySeconds
-}
-
-// GetTimeoutSeconds returns the value of TimeoutSeconds.
-func (s *Probe) GetTimeoutSeconds() OptInt32 {
-	return s.TimeoutSeconds
-}
-
-// GetPeriodSeconds returns the value of PeriodSeconds.
-func (s *Probe) GetPeriodSeconds() OptInt32 {
-	return s.PeriodSeconds
-}
-
-// GetSuccessThreshold returns the value of SuccessThreshold.
-func (s *Probe) GetSuccessThreshold() OptInt32 {
-	return s.SuccessThreshold
-}
-
-// GetFailureThreshold returns the value of FailureThreshold.
-func (s *Probe) GetFailureThreshold() OptInt32 {
-	return s.FailureThreshold
-}
-
-// GetTerminationGracePeriodSeconds returns the value of TerminationGracePeriodSeconds.
-func (s *Probe) GetTerminationGracePeriodSeconds() OptInt64 {
-	return s.TerminationGracePeriodSeconds
-}
-
-// SetExec sets the value of Exec.
-func (s *Probe) SetExec(val OptExecAction) {
-	s.Exec = val
-}
-
-// SetHttpGet sets the value of HttpGet.
-func (s *Probe) SetHttpGet(val OptHTTPGetAction) {
-	s.HttpGet = val
-}
-
-// SetTcpSocket sets the value of TcpSocket.
-func (s *Probe) SetTcpSocket(val OptTCPSocketAction) {
-	s.TcpSocket = val
-}
-
-// SetGrpc sets the value of Grpc.
-func (s *Probe) SetGrpc(val OptGRPCAction) {
-	s.Grpc = val
-}
-
-// SetInitialDelaySeconds sets the value of InitialDelaySeconds.
-func (s *Probe) SetInitialDelaySeconds(val OptInt32) {
-	s.InitialDelaySeconds = val
-}
-
-// SetTimeoutSeconds sets the value of TimeoutSeconds.
-func (s *Probe) SetTimeoutSeconds(val OptInt32) {
-	s.TimeoutSeconds = val
-}
-
-// SetPeriodSeconds sets the value of PeriodSeconds.
-func (s *Probe) SetPeriodSeconds(val OptInt32) {
-	s.PeriodSeconds = val
-}
-
-// SetSuccessThreshold sets the value of SuccessThreshold.
-func (s *Probe) SetSuccessThreshold(val OptInt32) {
-	s.SuccessThreshold = val
-}
-
-// SetFailureThreshold sets the value of FailureThreshold.
-func (s *Probe) SetFailureThreshold(val OptInt32) {
-	s.FailureThreshold = val
-}
-
-// SetTerminationGracePeriodSeconds sets the value of TerminationGracePeriodSeconds.
-func (s *Probe) SetTerminationGracePeriodSeconds(val OptInt64) {
-	s.TerminationGracePeriodSeconds = val
-}
-
-// Ref: #/components/schemas/ProbePort
-// ProbePort represents sum type.
-type ProbePort struct {
-	Type   ProbePortType // switch on this field
-	Int32  int32
-	String string
-}
-
-// ProbePortType is oneOf type of ProbePort.
-type ProbePortType string
-
-// Possible values for ProbePortType.
-const (
-	Int32ProbePort  ProbePortType = "int32"
-	StringProbePort ProbePortType = "string"
-)
-
-// IsInt32 reports whether ProbePort is int32.
-func (s ProbePort) IsInt32() bool { return s.Type == Int32ProbePort }
-
-// IsString reports whether ProbePort is string.
-func (s ProbePort) IsString() bool { return s.Type == StringProbePort }
-
-// SetInt32 sets ProbePort to int32.
-func (s *ProbePort) SetInt32(v int32) {
-	s.Type = Int32ProbePort
-	s.Int32 = v
-}
-
-// GetInt32 returns int32 and true boolean if ProbePort is int32.
-func (s ProbePort) GetInt32() (v int32, ok bool) {
-	if !s.IsInt32() {
-		return v, false
-	}
-	return s.Int32, true
-}
-
-// NewInt32ProbePort returns new ProbePort from int32.
-func NewInt32ProbePort(v int32) ProbePort {
-	var s ProbePort
-	s.SetInt32(v)
-	return s
-}
-
-// SetString sets ProbePort to string.
-func (s *ProbePort) SetString(v string) {
-	s.Type = StringProbePort
-	s.String = v
-}
-
-// GetString returns string and true boolean if ProbePort is string.
-func (s ProbePort) GetString() (v string, ok bool) {
-	if !s.IsString() {
-		return v, false
-	}
-	return s.String, true
-}
-
-// NewStringProbePort returns new ProbePort from string.
-func NewStringProbePort(v string) ProbePort {
-	var s ProbePort
-	s.SetString(v)
-	return s
 }
 
 // Ref: #/components/schemas/ProcessType
@@ -13506,8 +13165,7 @@ type SandboxTemplateSpec struct {
 	DisplayName   OptString                     `json:"displayName"`
 	Tags          []string                      `json:"tags"`
 	MainContainer OptContainerSpec              `json:"mainContainer"`
-	Sidecars      []SidecarContainerSpec        `json:"sidecars"`
-	SharedVolumes []SharedVolumeSpec            `json:"sharedVolumes"`
+	WarmProcesses []WarmProcessSpec             `json:"warmProcesses"`
 	Pod           OptPodSpecOverride            `json:"pod"`
 	Network       OptSandboxNetworkPolicy       `json:"network"`
 	Pool          OptPoolStrategy               `json:"pool"`
@@ -13538,14 +13196,9 @@ func (s *SandboxTemplateSpec) GetMainContainer() OptContainerSpec {
 	return s.MainContainer
 }
 
-// GetSidecars returns the value of Sidecars.
-func (s *SandboxTemplateSpec) GetSidecars() []SidecarContainerSpec {
-	return s.Sidecars
-}
-
-// GetSharedVolumes returns the value of SharedVolumes.
-func (s *SandboxTemplateSpec) GetSharedVolumes() []SharedVolumeSpec {
-	return s.SharedVolumes
+// GetWarmProcesses returns the value of WarmProcesses.
+func (s *SandboxTemplateSpec) GetWarmProcesses() []WarmProcessSpec {
+	return s.WarmProcesses
 }
 
 // GetPod returns the value of Pod.
@@ -13608,14 +13261,9 @@ func (s *SandboxTemplateSpec) SetMainContainer(val OptContainerSpec) {
 	s.MainContainer = val
 }
 
-// SetSidecars sets the value of Sidecars.
-func (s *SandboxTemplateSpec) SetSidecars(val []SidecarContainerSpec) {
-	s.Sidecars = val
-}
-
-// SetSharedVolumes sets the value of SharedVolumes.
-func (s *SandboxTemplateSpec) SetSharedVolumes(val []SharedVolumeSpec) {
-	s.SharedVolumes = val
+// SetWarmProcesses sets the value of WarmProcesses.
+func (s *SandboxTemplateSpec) SetWarmProcesses(val []WarmProcessSpec) {
+	s.WarmProcesses = val
 }
 
 // SetPod sets the value of Pod.
@@ -13978,190 +13626,6 @@ func (s *SecurityContext) SetRunAsUser(val OptInt64) {
 // SetRunAsGroup sets the value of RunAsGroup.
 func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
 	s.RunAsGroup = val
-}
-
-// Ref: #/components/schemas/SharedVolumeSpec
-type SharedVolumeSpec struct {
-	Name            string    `json:"name"`
-	SandboxVolumeId OptString `json:"sandboxVolumeId"`
-	MountPath       string    `json:"mountPath"`
-	CacheSize       OptString `json:"cacheSize"`
-	Prefetch        OptInt32  `json:"prefetch"`
-	BufferSize      OptString `json:"bufferSize"`
-	Writeback       OptBool   `json:"writeback"`
-}
-
-// GetName returns the value of Name.
-func (s *SharedVolumeSpec) GetName() string {
-	return s.Name
-}
-
-// GetSandboxVolumeId returns the value of SandboxVolumeId.
-func (s *SharedVolumeSpec) GetSandboxVolumeId() OptString {
-	return s.SandboxVolumeId
-}
-
-// GetMountPath returns the value of MountPath.
-func (s *SharedVolumeSpec) GetMountPath() string {
-	return s.MountPath
-}
-
-// GetCacheSize returns the value of CacheSize.
-func (s *SharedVolumeSpec) GetCacheSize() OptString {
-	return s.CacheSize
-}
-
-// GetPrefetch returns the value of Prefetch.
-func (s *SharedVolumeSpec) GetPrefetch() OptInt32 {
-	return s.Prefetch
-}
-
-// GetBufferSize returns the value of BufferSize.
-func (s *SharedVolumeSpec) GetBufferSize() OptString {
-	return s.BufferSize
-}
-
-// GetWriteback returns the value of Writeback.
-func (s *SharedVolumeSpec) GetWriteback() OptBool {
-	return s.Writeback
-}
-
-// SetName sets the value of Name.
-func (s *SharedVolumeSpec) SetName(val string) {
-	s.Name = val
-}
-
-// SetSandboxVolumeId sets the value of SandboxVolumeId.
-func (s *SharedVolumeSpec) SetSandboxVolumeId(val OptString) {
-	s.SandboxVolumeId = val
-}
-
-// SetMountPath sets the value of MountPath.
-func (s *SharedVolumeSpec) SetMountPath(val string) {
-	s.MountPath = val
-}
-
-// SetCacheSize sets the value of CacheSize.
-func (s *SharedVolumeSpec) SetCacheSize(val OptString) {
-	s.CacheSize = val
-}
-
-// SetPrefetch sets the value of Prefetch.
-func (s *SharedVolumeSpec) SetPrefetch(val OptInt32) {
-	s.Prefetch = val
-}
-
-// SetBufferSize sets the value of BufferSize.
-func (s *SharedVolumeSpec) SetBufferSize(val OptString) {
-	s.BufferSize = val
-}
-
-// SetWriteback sets the value of Writeback.
-func (s *SharedVolumeSpec) SetWriteback(val OptBool) {
-	s.Writeback = val
-}
-
-// Ref: #/components/schemas/SidecarContainerSpec
-type SidecarContainerSpec struct {
-	Name           string               `json:"name"`
-	Image          string               `json:"image"`
-	Command        []string             `json:"command"`
-	Args           []string             `json:"args"`
-	Env            []EnvVar             `json:"env"`
-	Resources      ResourceQuota        `json:"resources"`
-	Mounts         []ContainerMountSpec `json:"mounts"`
-	ReadinessProbe OptProbe             `json:"readinessProbe"`
-	StartupProbe   OptProbe             `json:"startupProbe"`
-}
-
-// GetName returns the value of Name.
-func (s *SidecarContainerSpec) GetName() string {
-	return s.Name
-}
-
-// GetImage returns the value of Image.
-func (s *SidecarContainerSpec) GetImage() string {
-	return s.Image
-}
-
-// GetCommand returns the value of Command.
-func (s *SidecarContainerSpec) GetCommand() []string {
-	return s.Command
-}
-
-// GetArgs returns the value of Args.
-func (s *SidecarContainerSpec) GetArgs() []string {
-	return s.Args
-}
-
-// GetEnv returns the value of Env.
-func (s *SidecarContainerSpec) GetEnv() []EnvVar {
-	return s.Env
-}
-
-// GetResources returns the value of Resources.
-func (s *SidecarContainerSpec) GetResources() ResourceQuota {
-	return s.Resources
-}
-
-// GetMounts returns the value of Mounts.
-func (s *SidecarContainerSpec) GetMounts() []ContainerMountSpec {
-	return s.Mounts
-}
-
-// GetReadinessProbe returns the value of ReadinessProbe.
-func (s *SidecarContainerSpec) GetReadinessProbe() OptProbe {
-	return s.ReadinessProbe
-}
-
-// GetStartupProbe returns the value of StartupProbe.
-func (s *SidecarContainerSpec) GetStartupProbe() OptProbe {
-	return s.StartupProbe
-}
-
-// SetName sets the value of Name.
-func (s *SidecarContainerSpec) SetName(val string) {
-	s.Name = val
-}
-
-// SetImage sets the value of Image.
-func (s *SidecarContainerSpec) SetImage(val string) {
-	s.Image = val
-}
-
-// SetCommand sets the value of Command.
-func (s *SidecarContainerSpec) SetCommand(val []string) {
-	s.Command = val
-}
-
-// SetArgs sets the value of Args.
-func (s *SidecarContainerSpec) SetArgs(val []string) {
-	s.Args = val
-}
-
-// SetEnv sets the value of Env.
-func (s *SidecarContainerSpec) SetEnv(val []EnvVar) {
-	s.Env = val
-}
-
-// SetResources sets the value of Resources.
-func (s *SidecarContainerSpec) SetResources(val ResourceQuota) {
-	s.Resources = val
-}
-
-// SetMounts sets the value of Mounts.
-func (s *SidecarContainerSpec) SetMounts(val []ContainerMountSpec) {
-	s.Mounts = val
-}
-
-// SetReadinessProbe sets the value of ReadinessProbe.
-func (s *SidecarContainerSpec) SetReadinessProbe(val OptProbe) {
-	s.ReadinessProbe = val
-}
-
-// SetStartupProbe sets the value of StartupProbe.
-func (s *SidecarContainerSpec) SetStartupProbe(val OptProbe) {
-	s.StartupProbe = val
 }
 
 // Ref: #/components/schemas/SignalContextRequest
@@ -14866,6 +14330,63 @@ const (
 func (SuccessCredentialSourceResponseSuccess) AllValues() []SuccessCredentialSourceResponseSuccess {
 	return []SuccessCredentialSourceResponseSuccess{
 		SuccessCredentialSourceResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessCurrentAPIKeyResponse
+type SuccessCurrentAPIKeyResponse struct {
+	Success SuccessCurrentAPIKeyResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessCurrentAPIKeyResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessCurrentAPIKeyResponse) GetSuccess() SuccessCurrentAPIKeyResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessCurrentAPIKeyResponse) GetData() OptSuccessCurrentAPIKeyResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessCurrentAPIKeyResponse) SetSuccess(val SuccessCurrentAPIKeyResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessCurrentAPIKeyResponse) SetData(val OptSuccessCurrentAPIKeyResponseData) {
+	s.Data = val
+}
+
+func (*SuccessCurrentAPIKeyResponse) aPIKeysCurrentGetRes() {}
+
+type SuccessCurrentAPIKeyResponseData struct {
+	APIKey OptCurrentAPIKeyResponse `json:"api_key"`
+}
+
+// GetAPIKey returns the value of APIKey.
+func (s *SuccessCurrentAPIKeyResponseData) GetAPIKey() OptCurrentAPIKeyResponse {
+	return s.APIKey
+}
+
+// SetAPIKey sets the value of APIKey.
+func (s *SuccessCurrentAPIKeyResponseData) SetAPIKey(val OptCurrentAPIKeyResponse) {
+	s.APIKey = val
+}
+
+type SuccessCurrentAPIKeyResponseSuccess bool
+
+const (
+	SuccessCurrentAPIKeyResponseSuccessTrue SuccessCurrentAPIKeyResponseSuccess = true
+)
+
+// AllValues returns all SuccessCurrentAPIKeyResponseSuccess values.
+func (SuccessCurrentAPIKeyResponseSuccess) AllValues() []SuccessCurrentAPIKeyResponseSuccess {
+	return []SuccessCurrentAPIKeyResponseSuccess{
+		SuccessCurrentAPIKeyResponseSuccessTrue,
 	}
 }
 
@@ -17947,32 +17468,6 @@ func (s *SyncReplica) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
 }
 
-// Ref: #/components/schemas/TCPSocketAction
-type TCPSocketAction struct {
-	Port ProbePort `json:"port"`
-	Host OptString `json:"host"`
-}
-
-// GetPort returns the value of Port.
-func (s *TCPSocketAction) GetPort() ProbePort {
-	return s.Port
-}
-
-// GetHost returns the value of Host.
-func (s *TCPSocketAction) GetHost() OptString {
-	return s.Host
-}
-
-// SetPort sets the value of Port.
-func (s *TCPSocketAction) SetPort(val ProbePort) {
-	s.Port = val
-}
-
-// SetHost sets the value of Host.
-func (s *TCPSocketAction) SetHost(val OptString) {
-	s.Host = val
-}
-
 // Client certificate projection used for TLS terminate-reoriginate auth.
 // Ref: #/components/schemas/TLSClientCertificateProjection
 type TLSClientCertificateProjection struct{}
@@ -19584,6 +19079,117 @@ const (
 func (VolumeSyncReseedRequiredErrorEnvelopeSuccess) AllValues() []VolumeSyncReseedRequiredErrorEnvelopeSuccess {
 	return []VolumeSyncReseedRequiredErrorEnvelopeSuccess{
 		VolumeSyncReseedRequiredErrorEnvelopeSuccessFalse,
+	}
+}
+
+// Ref: #/components/schemas/WarmProcessSpec
+type WarmProcessSpec struct {
+	Type    WarmProcessSpecType       `json:"type"`
+	Alias   OptString                 `json:"alias"`
+	Command []string                  `json:"command"`
+	Cwd     OptString                 `json:"cwd"`
+	EnvVars OptWarmProcessSpecEnvVars `json:"envVars"`
+}
+
+// GetType returns the value of Type.
+func (s *WarmProcessSpec) GetType() WarmProcessSpecType {
+	return s.Type
+}
+
+// GetAlias returns the value of Alias.
+func (s *WarmProcessSpec) GetAlias() OptString {
+	return s.Alias
+}
+
+// GetCommand returns the value of Command.
+func (s *WarmProcessSpec) GetCommand() []string {
+	return s.Command
+}
+
+// GetCwd returns the value of Cwd.
+func (s *WarmProcessSpec) GetCwd() OptString {
+	return s.Cwd
+}
+
+// GetEnvVars returns the value of EnvVars.
+func (s *WarmProcessSpec) GetEnvVars() OptWarmProcessSpecEnvVars {
+	return s.EnvVars
+}
+
+// SetType sets the value of Type.
+func (s *WarmProcessSpec) SetType(val WarmProcessSpecType) {
+	s.Type = val
+}
+
+// SetAlias sets the value of Alias.
+func (s *WarmProcessSpec) SetAlias(val OptString) {
+	s.Alias = val
+}
+
+// SetCommand sets the value of Command.
+func (s *WarmProcessSpec) SetCommand(val []string) {
+	s.Command = val
+}
+
+// SetCwd sets the value of Cwd.
+func (s *WarmProcessSpec) SetCwd(val OptString) {
+	s.Cwd = val
+}
+
+// SetEnvVars sets the value of EnvVars.
+func (s *WarmProcessSpec) SetEnvVars(val OptWarmProcessSpecEnvVars) {
+	s.EnvVars = val
+}
+
+type WarmProcessSpecEnvVars map[string]string
+
+func (s *WarmProcessSpecEnvVars) init() WarmProcessSpecEnvVars {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+type WarmProcessSpecType string
+
+const (
+	WarmProcessSpecTypeRepl WarmProcessSpecType = "repl"
+	WarmProcessSpecTypeCmd  WarmProcessSpecType = "cmd"
+)
+
+// AllValues returns all WarmProcessSpecType values.
+func (WarmProcessSpecType) AllValues() []WarmProcessSpecType {
+	return []WarmProcessSpecType{
+		WarmProcessSpecTypeRepl,
+		WarmProcessSpecTypeCmd,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s WarmProcessSpecType) MarshalText() ([]byte, error) {
+	switch s {
+	case WarmProcessSpecTypeRepl:
+		return []byte(s), nil
+	case WarmProcessSpecTypeCmd:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *WarmProcessSpecType) UnmarshalText(data []byte) error {
+	switch WarmProcessSpecType(data) {
+	case WarmProcessSpecTypeRepl:
+		*s = WarmProcessSpecTypeRepl
+		return nil
+	case WarmProcessSpecTypeCmd:
+		*s = WarmProcessSpecTypeCmd
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
 	}
 }
 

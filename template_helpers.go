@@ -8,11 +8,8 @@ type TemplateOption func(*apispec.SandboxTemplateSpec)
 // TemplateContainerOption configures the main container spec.
 type TemplateContainerOption func(*apispec.ContainerSpec)
 
-// TemplateSidecarOption configures a sidecar container spec.
-type TemplateSidecarOption func(*apispec.SidecarContainerSpec)
-
-// TemplateSharedVolumeOption configures a shared volume spec.
-type TemplateSharedVolumeOption func(*apispec.SharedVolumeSpec)
+// TemplateWarmProcessOption configures a warm process spec.
+type TemplateWarmProcessOption func(*apispec.WarmProcessSpec)
 
 // NewTemplateSpec builds a template spec around a main container.
 func NewTemplateSpec(main apispec.ContainerSpec, opts ...TemplateOption) apispec.SandboxTemplateSpec {
@@ -50,14 +47,6 @@ func TemplateResources(cpu, memory string) apispec.ResourceQuota {
 	return resources
 }
 
-// TemplateMount builds a shared volume mount reference.
-func TemplateMount(name, mountPath string) apispec.ContainerMountSpec {
-	return apispec.ContainerMountSpec{
-		Name:      name,
-		MountPath: mountPath,
-	}
-}
-
 // TemplateMainContainer builds a main container spec.
 func TemplateMainContainer(image, cpu, memory string, opts ...TemplateContainerOption) apispec.ContainerSpec {
 	container := apispec.ContainerSpec{
@@ -70,29 +59,13 @@ func TemplateMainContainer(image, cpu, memory string, opts ...TemplateContainerO
 	return container
 }
 
-// TemplateSidecar builds a sidecar spec.
-func TemplateSidecar(name, image, cpu, memory string, opts ...TemplateSidecarOption) apispec.SidecarContainerSpec {
-	sidecar := apispec.SidecarContainerSpec{
-		Name:      name,
-		Image:     image,
-		Resources: TemplateResources(cpu, memory),
-	}
+// TemplateWarmProcess builds a warm process spec.
+func TemplateWarmProcess(processType apispec.WarmProcessSpecType, opts ...TemplateWarmProcessOption) apispec.WarmProcessSpec {
+	process := apispec.WarmProcessSpec{Type: processType}
 	for _, opt := range opts {
-		opt(&sidecar)
+		opt(&process)
 	}
-	return sidecar
-}
-
-// TemplateSharedVolume builds a shared volume spec.
-func TemplateSharedVolume(name, mountPath string, opts ...TemplateSharedVolumeOption) apispec.SharedVolumeSpec {
-	volume := apispec.SharedVolumeSpec{
-		Name:      name,
-		MountPath: mountPath,
-	}
-	for _, opt := range opts {
-		opt(&volume)
-	}
-	return volume
+	return process
 }
 
 // WithTemplateDescription sets the template description.
@@ -173,31 +146,17 @@ func WithTemplateClusterID(clusterID string) TemplateOption {
 	}
 }
 
-// WithTemplateSidecar appends one sidecar.
-func WithTemplateSidecar(sidecar apispec.SidecarContainerSpec) TemplateOption {
+// WithTemplateWarmProcess appends one warm process.
+func WithTemplateWarmProcess(process apispec.WarmProcessSpec) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Sidecars = append(spec.Sidecars, sidecar)
+		spec.WarmProcesses = append(spec.WarmProcesses, process)
 	}
 }
 
-// WithTemplateSidecars appends multiple sidecars.
-func WithTemplateSidecars(sidecars ...apispec.SidecarContainerSpec) TemplateOption {
+// WithTemplateWarmProcesses appends multiple warm processes.
+func WithTemplateWarmProcesses(processes ...apispec.WarmProcessSpec) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Sidecars = append(spec.Sidecars, sidecars...)
-	}
-}
-
-// WithTemplateSharedVolume appends one shared volume.
-func WithTemplateSharedVolume(volume apispec.SharedVolumeSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.SharedVolumes = append(spec.SharedVolumes, volume)
-	}
-}
-
-// WithTemplateSharedVolumes appends multiple shared volumes.
-func WithTemplateSharedVolumes(volumes ...apispec.SharedVolumeSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.SharedVolumes = append(spec.SharedVolumes, volumes...)
+		spec.WarmProcesses = append(spec.WarmProcesses, processes...)
 	}
 }
 
@@ -222,86 +181,38 @@ func WithTemplateContainerSecurityContext(securityContext apispec.SecurityContex
 	}
 }
 
-// WithTemplateSidecarCommand sets the sidecar command.
-func WithTemplateSidecarCommand(command ...string) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.Command = append([]string(nil), command...)
+// WithTemplateWarmProcessAlias sets the process alias.
+func WithTemplateWarmProcessAlias(alias string) TemplateWarmProcessOption {
+	return func(process *apispec.WarmProcessSpec) {
+		process.Alias = apispec.NewOptString(alias)
 	}
 }
 
-// WithTemplateSidecarArgs sets the sidecar args.
-func WithTemplateSidecarArgs(args ...string) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.Args = append([]string(nil), args...)
+// WithTemplateWarmProcessCommand sets the command used by a cmd warm process.
+func WithTemplateWarmProcessCommand(command ...string) TemplateWarmProcessOption {
+	return func(process *apispec.WarmProcessSpec) {
+		process.Command = append([]string(nil), command...)
 	}
 }
 
-// WithTemplateSidecarEnv sets the sidecar environment variables.
-func WithTemplateSidecarEnv(env ...apispec.EnvVar) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.Env = append([]apispec.EnvVar(nil), env...)
+// WithTemplateWarmProcessCWD sets the process working directory.
+func WithTemplateWarmProcessCWD(cwd string) TemplateWarmProcessOption {
+	return func(process *apispec.WarmProcessSpec) {
+		process.Cwd = apispec.NewOptString(cwd)
 	}
 }
 
-// WithTemplateSidecarMount appends one shared volume mount.
-func WithTemplateSidecarMount(mount apispec.ContainerMountSpec) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.Mounts = append(sidecar.Mounts, mount)
-	}
-}
-
-// WithTemplateSidecarMounts appends multiple shared volume mounts.
-func WithTemplateSidecarMounts(mounts ...apispec.ContainerMountSpec) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.Mounts = append(sidecar.Mounts, mounts...)
-	}
-}
-
-// WithTemplateSidecarReadinessProbe sets the readiness probe.
-func WithTemplateSidecarReadinessProbe(probe apispec.Probe) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.ReadinessProbe = apispec.NewOptProbe(probe)
-	}
-}
-
-// WithTemplateSidecarStartupProbe sets the startup probe.
-func WithTemplateSidecarStartupProbe(probe apispec.Probe) TemplateSidecarOption {
-	return func(sidecar *apispec.SidecarContainerSpec) {
-		sidecar.StartupProbe = apispec.NewOptProbe(probe)
-	}
-}
-
-// WithTemplateSharedVolumeCacheSize sets the shared volume cache size.
-func WithTemplateSharedVolumeCacheSize(cacheSize string) TemplateSharedVolumeOption {
-	return func(volume *apispec.SharedVolumeSpec) {
-		volume.CacheSize = apispec.NewOptString(cacheSize)
-	}
-}
-
-// WithTemplateSharedVolumeID pins the shared volume to a fixed SandboxVolume.
-func WithTemplateSharedVolumeID(sandboxVolumeID string) TemplateSharedVolumeOption {
-	return func(volume *apispec.SharedVolumeSpec) {
-		volume.SandboxVolumeId = apispec.NewOptString(sandboxVolumeID)
-	}
-}
-
-// WithTemplateSharedVolumePrefetch sets the shared volume prefetch size.
-func WithTemplateSharedVolumePrefetch(prefetch int32) TemplateSharedVolumeOption {
-	return func(volume *apispec.SharedVolumeSpec) {
-		volume.Prefetch = apispec.NewOptInt32(prefetch)
-	}
-}
-
-// WithTemplateSharedVolumeBufferSize sets the shared volume buffer size.
-func WithTemplateSharedVolumeBufferSize(bufferSize string) TemplateSharedVolumeOption {
-	return func(volume *apispec.SharedVolumeSpec) {
-		volume.BufferSize = apispec.NewOptString(bufferSize)
-	}
-}
-
-// WithTemplateSharedVolumeWriteback sets shared volume writeback mode.
-func WithTemplateSharedVolumeWriteback(writeback bool) TemplateSharedVolumeOption {
-	return func(volume *apispec.SharedVolumeSpec) {
-		volume.Writeback = apispec.NewOptBool(writeback)
+// WithTemplateWarmProcessEnvVars sets process-level environment variables.
+func WithTemplateWarmProcessEnvVars(envVars map[string]string) TemplateWarmProcessOption {
+	return func(process *apispec.WarmProcessSpec) {
+		if envVars == nil {
+			process.EnvVars = apispec.OptWarmProcessSpecEnvVars{}
+			return
+		}
+		copied := make(apispec.WarmProcessSpecEnvVars, len(envVars))
+		for key, value := range envVars {
+			copied[key] = value
+		}
+		process.EnvVars = apispec.NewOptWarmProcessSpecEnvVars(copied)
 	}
 }

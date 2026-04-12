@@ -1173,6 +1173,40 @@ func (s *CredentialSourceWriteRequest) Validate() error {
 	return nil
 }
 
+func (s *CurrentAPIKeyResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if s.Roles == nil {
+			return errors.New("nil is invalid value")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "roles",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if s.Permissions == nil {
+			return errors.New("nil is invalid value")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "permissions",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *DeviceLoginPollResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2545,6 +2579,31 @@ func (s *SandboxTemplateSpec) Validate() error {
 
 	var failures []validate.FieldError
 	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.WarmProcesses {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "warmProcesses",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if value, ok := s.Network.Get(); ok {
 			if err := func() error {
 				if err := value.Validate(); err != nil {
@@ -3283,6 +3342,86 @@ func (s *SuccessCredentialSourceResponse) Validate() error {
 }
 
 func (s SuccessCredentialSourceResponseSuccess) Validate() error {
+	switch s {
+	case true:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SuccessCurrentAPIKeyResponse) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Success.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "success",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Data.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *SuccessCurrentAPIKeyResponseData) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.APIKey.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "api_key",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SuccessCurrentAPIKeyResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil
@@ -6162,6 +6301,40 @@ func (s *VolumeSyncReseedRequiredErrorEnvelopeError) Validate() error {
 func (s VolumeSyncReseedRequiredErrorEnvelopeSuccess) Validate() error {
 	switch s {
 	case false:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *WarmProcessSpec) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s WarmProcessSpecType) Validate() error {
+	switch s {
+	case "repl":
+		return nil
+	case "cmd":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
