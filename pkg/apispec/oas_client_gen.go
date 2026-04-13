@@ -161,7 +161,8 @@ type Invoker interface {
 	APIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
 	// APIV1SandboxesIDContextsCtxIDExecPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec operation.
 	//
-	// Sends input and blocks until the context completes or times out.
+	// Sends input and blocks until the context completes or times out. For REPL contexts, the server
+	// appends a trailing newline when the input does not already end in \n or \r.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec
 	APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (*SuccessContextExecResponse, error)
@@ -173,7 +174,8 @@ type Invoker interface {
 	APIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, options ...RequestOption) (*SuccessContextResponse, error)
 	// APIV1SandboxesIDContextsCtxIDInputPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input operation.
 	//
-	// Send input to context.
+	// Writes input to the context stdin exactly as provided. For REPL contexts, include a trailing
+	// newline to submit a line for execution.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input
 	APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (*SuccessWrittenResponse, error)
@@ -204,6 +206,8 @@ type Invoker interface {
 	// APIV1SandboxesIDContextsCtxIDWsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws operation.
 	//
 	// Upgrades to WebSocket for streaming I/O.
+	// WebSocket input data is written to stdin exactly as provided; include "\n" when submitting a REPL
+	// line.
 	// Client messages (JSON):
 	// - { "type": "input", "data": "ls\n", "request_id": "req-1" }
 	// - { "type": "resize", "rows": 24, "cols": 80 }
@@ -2309,7 +2313,8 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, pa
 
 // APIV1SandboxesIDContextsCtxIDExecPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec operation.
 //
-// Sends input and blocks until the context completes or times out.
+// Sends input and blocks until the context completes or times out. For REPL contexts, the server
+// appends a trailing newline when the input does not already end in \n or \r.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec
 func (c *Client) APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (*SuccessContextExecResponse, error) {
@@ -2577,7 +2582,8 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDGet(ctx context.Context, param
 
 // APIV1SandboxesIDContextsCtxIDInputPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input operation.
 //
-// Send input to context.
+// Writes input to the context stdin exactly as provided. For REPL contexts, include a trailing
+// newline to submit a line for execution.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input
 func (c *Client) APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (*SuccessWrittenResponse, error) {
@@ -3252,6 +3258,8 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDStatsGet(ctx context.Context, 
 // APIV1SandboxesIDContextsCtxIDWsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws operation.
 //
 // Upgrades to WebSocket for streaming I/O.
+// WebSocket input data is written to stdin exactly as provided; include "\n" when submitting a REPL
+// line.
 // Client messages (JSON):
 // - { "type": "input", "data": "ls\n", "request_id": "req-1" }
 // - { "type": "resize", "rows": 24, "cols": 80 }

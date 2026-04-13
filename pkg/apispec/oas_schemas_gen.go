@@ -1314,6 +1314,8 @@ func (s *ContextExecResponse) SetOutputRaw(val string) {
 
 // Ref: #/components/schemas/ContextInputRequest
 type ContextInputRequest struct {
+	// Input bytes encoded as a string. The /input endpoint writes this value exactly as provided. The
+	// /exec endpoint appends a trailing newline for REPL contexts when missing.
 	Data string `json:"data"`
 }
 
