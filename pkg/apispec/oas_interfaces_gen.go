@@ -65,6 +65,10 @@ type APIV1SandboxesIDGetRes interface {
 	aPIV1SandboxesIDGetRes()
 }
 
+type APIV1SandboxesIDLogsGetRes interface {
+	aPIV1SandboxesIDLogsGetRes()
+}
+
 type APIV1SandboxesIDNetworkGetRes interface {
 	aPIV1SandboxesIDNetworkGetRes()
 }
