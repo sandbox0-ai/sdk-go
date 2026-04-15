@@ -23,16 +23,12 @@ func TestGetSandboxLogs(t *testing.T) {
 		if got := r.URL.Query().Get("timestamps"); got != "true" {
 			t.Fatalf("timestamps = %q, want true", got)
 		}
-		writeJSON(t, w, http.StatusOK, map[string]any{
-			"success": true,
-			"data": map[string]any{
-				"sandbox_id": "sb_123",
-				"pod_name":   "pod-a",
-				"container":  "procd",
-				"previous":   false,
-				"logs":       "ready\n",
-			},
-		})
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("X-Sandbox-ID", "sb_123")
+		w.Header().Set("X-Sandbox-Pod-Name", "pod-a")
+		w.Header().Set("X-Sandbox-Log-Container", "procd")
+		w.Header().Set("X-Sandbox-Log-Previous", "true")
+		_, _ = fmt.Fprint(w, "ready\n")
 	})
 	defer server.Close()
 
@@ -44,7 +40,7 @@ func TestGetSandboxLogs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetSandboxLogs() error = %v", err)
 	}
-	if logs.Logs != "ready\n" || logs.Container != "procd" {
+	if logs.Logs != "ready\n" || logs.Container != "procd" || !logs.Previous {
 		t.Fatalf("logs = %+v, want procd ready output", logs)
 	}
 }
@@ -67,8 +63,9 @@ func TestStreamSandboxLogsReturnsLiveReader(t *testing.T) {
 		w.Header().Set("X-Sandbox-ID", "sb_123")
 		w.Header().Set("X-Sandbox-Pod-Name", "pod-a")
 		w.Header().Set("X-Sandbox-Log-Container", "procd")
+		w.Header().Set("X-Sandbox-Log-Previous", "true")
 		w.WriteHeader(http.StatusOK)
-		_, _ = fmt.Fprintln(w, "line one")
+		_, _ = fmt.Fprint(w, "line one\n")
 		if flusher, ok := w.(http.Flusher); ok {
 			flusher.Flush()
 		}
@@ -85,7 +82,7 @@ func TestStreamSandboxLogsReturnsLiveReader(t *testing.T) {
 	}
 	defer stream.Close()
 
-	if stream.SandboxID != "sb_123" || stream.PodName != "pod-a" || stream.Container != "procd" {
+	if stream.SandboxID != "sb_123" || stream.PodName != "pod-a" || stream.Container != "procd" || !stream.Previous {
 		t.Fatalf("stream metadata = %+v, want sandbox and pod headers", stream)
 	}
 	line, err := bufio.NewReader(stream).ReadString('\n')
