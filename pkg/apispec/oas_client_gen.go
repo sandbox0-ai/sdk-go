@@ -322,6 +322,13 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes/{id}
 	APIV1SandboxesIDGet(ctx context.Context, params APIV1SandboxesIDGetParams, options ...RequestOption) (APIV1SandboxesIDGetRes, error)
+	// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
+	//
+	// Returns a bounded snapshot of Kubernetes container logs for the sandbox pod.
+	// Set `follow=true` to stream logs as text/plain until the client disconnects.
+	//
+	// GET /api/v1/sandboxes/{id}/logs
+	APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error)
 	// APIV1SandboxesIDNetworkGet invokes GET /api/v1/sandboxes/{id}/network operation.
 	//
 	// Get sandbox network policy.
@@ -5261,6 +5268,243 @@ func (c *Client) sendAPIV1SandboxesIDGet(ctx context.Context, params APIV1Sandbo
 	}
 
 	result, err := decodeAPIV1SandboxesIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
+//
+// Returns a bounded snapshot of Kubernetes container logs for the sandbox pod.
+// Set `follow=true` to stream logs as text/plain until the client disconnects.
+//
+// GET /api/v1/sandboxes/{id}/logs
+func (c *Client) APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDLogsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDLogsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/logs"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "container" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "container",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Container.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "tail_lines" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "tail_lines",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.TailLines.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit_bytes" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit_bytes",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.LimitBytes.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "follow" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "follow",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Follow.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "previous" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "previous",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Previous.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "timestamps" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "timestamps",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Timestamps.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "since_seconds" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "since_seconds",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.SinceSeconds.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDLogsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDLogsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

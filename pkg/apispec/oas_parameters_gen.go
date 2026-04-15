@@ -178,6 +178,25 @@ type APIV1SandboxesIDGetParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDLogsGetParams is parameters of GET /api/v1/sandboxes/{id}/logs operation.
+type APIV1SandboxesIDLogsGetParams struct {
+	ID string
+	// Pod container name. Defaults to the sandbox main container.
+	Container OptString `json:",omitempty,omitzero"`
+	// Maximum number of log lines to return from the end of the log.
+	TailLines OptInt64 `json:",omitempty,omitzero"`
+	// Maximum response log payload bytes read from Kubernetes. Defaults only apply when follow is false.
+	LimitBytes OptInt64 `json:",omitempty,omitzero"`
+	// Stream logs until the client disconnects. When true, the response content type is text/plain.
+	Follow OptBool `json:",omitempty,omitzero"`
+	// Return logs for the previously terminated container instance.
+	Previous OptBool `json:",omitempty,omitzero"`
+	// Include Kubernetes log timestamps when available.
+	Timestamps OptBool `json:",omitempty,omitzero"`
+	// Only return logs newer than this many seconds.
+	SinceSeconds OptInt64 `json:",omitempty,omitzero"`
+}
+
 // APIV1SandboxesIDNetworkGetParams is parameters of GET /api/v1/sandboxes/{id}/network operation.
 type APIV1SandboxesIDNetworkGetParams struct {
 	ID string

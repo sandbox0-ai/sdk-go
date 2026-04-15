@@ -338,6 +338,34 @@ type APIV1SandboxesIDGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDGetNotFound) aPIV1SandboxesIDGetRes() {}
 
+type APIV1SandboxesIDLogsGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDLogsGetBadRequest) aPIV1SandboxesIDLogsGetRes() {}
+
+type APIV1SandboxesIDLogsGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDLogsGetForbidden) aPIV1SandboxesIDLogsGetRes() {}
+
+type APIV1SandboxesIDLogsGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDLogsGetNotFound) aPIV1SandboxesIDLogsGetRes() {}
+
+type APIV1SandboxesIDLogsGetOKTextPlain struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxesIDLogsGetOKTextPlain) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxesIDLogsGetOKTextPlain) aPIV1SandboxesIDLogsGetRes() {}
+
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostConflict) aPIV1SandboxesIDPausePostRes() {}
@@ -8273,6 +8301,52 @@ func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars
 	return d
 }
 
+// NewOptSandboxLogs returns new OptSandboxLogs with value set to v.
+func NewOptSandboxLogs(v SandboxLogs) OptSandboxLogs {
+	return OptSandboxLogs{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxLogs is optional SandboxLogs.
+type OptSandboxLogs struct {
+	Value SandboxLogs
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxLogs was set.
+func (o OptSandboxLogs) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxLogs) Reset() {
+	var v SandboxLogs
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxLogs) SetTo(v SandboxLogs) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxLogs) Get() (v SandboxLogs, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxLogs) Or(d SandboxLogs) SandboxLogs {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxNetworkPolicy returns new OptSandboxNetworkPolicy with value set to v.
 func NewOptSandboxNetworkPolicy(v SandboxNetworkPolicy) OptSandboxNetworkPolicy {
 	return OptSandboxNetworkPolicy{
@@ -12633,6 +12707,66 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 	return m
 }
 
+// Ref: #/components/schemas/SandboxLogs
+type SandboxLogs struct {
+	SandboxID string `json:"sandbox_id"`
+	PodName   string `json:"pod_name"`
+	Container string `json:"container"`
+	Previous  bool   `json:"previous"`
+	// Log text returned by Kubernetes for the selected container.
+	Logs string `json:"logs"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxLogs) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetPodName returns the value of PodName.
+func (s *SandboxLogs) GetPodName() string {
+	return s.PodName
+}
+
+// GetContainer returns the value of Container.
+func (s *SandboxLogs) GetContainer() string {
+	return s.Container
+}
+
+// GetPrevious returns the value of Previous.
+func (s *SandboxLogs) GetPrevious() bool {
+	return s.Previous
+}
+
+// GetLogs returns the value of Logs.
+func (s *SandboxLogs) GetLogs() string {
+	return s.Logs
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxLogs) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetPodName sets the value of PodName.
+func (s *SandboxLogs) SetPodName(val string) {
+	s.PodName = val
+}
+
+// SetContainer sets the value of Container.
+func (s *SandboxLogs) SetContainer(val string) {
+	s.Container = val
+}
+
+// SetPrevious sets the value of Previous.
+func (s *SandboxLogs) SetPrevious(val bool) {
+	s.Previous = val
+}
+
+// SetLogs sets the value of Logs.
+func (s *SandboxLogs) SetLogs(val string) {
+	s.Logs = val
+}
+
 // Ref: #/components/schemas/SandboxNetworkPolicy
 type SandboxNetworkPolicy struct {
 	Mode               SandboxNetworkPolicyMode `json:"mode"`
@@ -16086,6 +16220,49 @@ const (
 func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListResponseSuccess {
 	return []SuccessSandboxListResponseSuccess{
 		SuccessSandboxListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxLogsResponse
+type SuccessSandboxLogsResponse struct {
+	Success SuccessSandboxLogsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxLogs `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxLogsResponse) GetSuccess() SuccessSandboxLogsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxLogsResponse) GetData() OptSandboxLogs {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxLogsResponse) SetSuccess(val SuccessSandboxLogsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxLogsResponse) SetData(val OptSandboxLogs) {
+	s.Data = val
+}
+
+func (*SuccessSandboxLogsResponse) aPIV1SandboxesIDLogsGetRes() {}
+
+type SuccessSandboxLogsResponseSuccess bool
+
+const (
+	SuccessSandboxLogsResponseSuccessTrue SuccessSandboxLogsResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxLogsResponseSuccess values.
+func (SuccessSandboxLogsResponseSuccess) AllValues() []SuccessSandboxLogsResponseSuccess {
+	return []SuccessSandboxLogsResponseSuccess{
+		SuccessSandboxLogsResponseSuccessTrue,
 	}
 }
 

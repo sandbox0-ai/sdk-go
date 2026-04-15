@@ -16,10 +16,15 @@ const defaultBaseURL = "https://api.sandbox0.ai"
 // Client is the high-level Sandbox0 SDK client.
 type Client struct {
 	api            *apispec.Client
+	httpClient     httpDoer
 	baseURL        string
 	tokenSource    TokenSource
 	userAgent      string
 	requestEditors []apispec.RequestEditor
+}
+
+type httpDoer interface {
+	Do(*http.Request) (*http.Response, error)
 }
 
 // NewClient creates a new Sandbox0 SDK client.
@@ -33,8 +38,14 @@ func NewClient(opts ...Option) (*Client, error) {
 		}
 	}
 
+	httpClient := cfg.httpClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+
 	client := &Client{
 		baseURL:        cfg.baseURL,
+		httpClient:     httpClient,
 		tokenSource:    cfg.tokenSource,
 		userAgent:      cfg.userAgent,
 		requestEditors: cfg.requestEditors,
