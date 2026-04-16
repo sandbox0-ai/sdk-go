@@ -324,8 +324,9 @@ type Invoker interface {
 	APIV1SandboxesIDGet(ctx context.Context, params APIV1SandboxesIDGetParams, options ...RequestOption) (APIV1SandboxesIDGetRes, error)
 	// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
 	//
-	// Returns a bounded snapshot of Kubernetes container logs for the sandbox pod.
-	// Set `follow=true` to stream logs as text/plain until the client disconnects.
+	// Returns Kubernetes container logs for the sandbox pod.
+	// When `follow=false`, the response is a bounded text/plain snapshot.
+	// When `follow=true`, the response is a text/plain stream until the client disconnects.
 	//
 	// GET /api/v1/sandboxes/{id}/logs
 	APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error)
@@ -5277,8 +5278,9 @@ func (c *Client) sendAPIV1SandboxesIDGet(ctx context.Context, params APIV1Sandbo
 
 // APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
 //
-// Returns a bounded snapshot of Kubernetes container logs for the sandbox pod.
-// Set `follow=true` to stream logs as text/plain until the client disconnects.
+// Returns Kubernetes container logs for the sandbox pod.
+// When `follow=false`, the response is a bounded text/plain snapshot.
+// When `follow=true`, the response is a text/plain stream until the client disconnects.
 //
 // GET /api/v1/sandboxes/{id}/logs
 func (c *Client) APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error) {

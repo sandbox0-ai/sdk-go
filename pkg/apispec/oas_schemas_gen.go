@@ -12,19 +12,22 @@ import (
 
 // Ref: #/components/schemas/APIKey
 type APIKey struct {
-	ID         string       `json:"id"`
-	KeyValue   OptString    `json:"key_value"`
-	TeamID     string       `json:"team_id"`
-	UserID     OptNilString `json:"user_id"`
-	CreatedBy  string       `json:"created_by"`
-	Name       string       `json:"name"`
-	Roles      []string     `json:"roles"`
-	IsActive   bool         `json:"is_active"`
-	ExpiresAt  time.Time    `json:"expires_at"`
-	LastUsedAt OptDateTime  `json:"last_used_at"`
-	UsageCount OptInt64     `json:"usage_count"`
-	CreatedAt  time.Time    `json:"created_at"`
-	UpdatedAt  time.Time    `json:"updated_at"`
+	ID        string       `json:"id"`
+	KeyValue  OptString    `json:"key_value"`
+	TeamID    string       `json:"team_id"`
+	UserID    OptNilString `json:"user_id"`
+	CreatedBy string       `json:"created_by"`
+	Name      string       `json:"name"`
+	// API key scope. team keys use roles for team-scoped access. platform keys grant system admin access
+	// and can only be created or managed by system admin user sessions.
+	Scope      string      `json:"scope"`
+	Roles      []string    `json:"roles"`
+	IsActive   bool        `json:"is_active"`
+	ExpiresAt  time.Time   `json:"expires_at"`
+	LastUsedAt OptDateTime `json:"last_used_at"`
+	UsageCount OptInt64    `json:"usage_count"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdatedAt  time.Time   `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -55,6 +58,11 @@ func (s *APIKey) GetCreatedBy() string {
 // GetName returns the value of Name.
 func (s *APIKey) GetName() string {
 	return s.Name
+}
+
+// GetScope returns the value of Scope.
+func (s *APIKey) GetScope() string {
+	return s.Scope
 }
 
 // GetRoles returns the value of Roles.
@@ -122,6 +130,11 @@ func (s *APIKey) SetName(val string) {
 	s.Name = val
 }
 
+// SetScope sets the value of Scope.
+func (s *APIKey) SetScope(val string) {
+	s.Scope = val
+}
+
 // SetRoles sets the value of Roles.
 func (s *APIKey) SetRoles(val []string) {
 	s.Roles = val
@@ -172,6 +185,14 @@ func (*APIKeysIDDeleteForbidden) aPIKeysIDDeleteRes() {}
 type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
+
+type APIKeysPostBadRequest ErrorEnvelope
+
+func (*APIKeysPostBadRequest) aPIKeysPostRes() {}
+
+type APIKeysPostForbidden ErrorEnvelope
+
+func (*APIKeysPostForbidden) aPIKeysPostRes() {}
 
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
@@ -350,21 +371,80 @@ type APIV1SandboxesIDLogsGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDLogsGetNotFound) aPIV1SandboxesIDLogsGetRes() {}
 
-type APIV1SandboxesIDLogsGetOKTextPlain struct {
+type APIV1SandboxesIDLogsGetOK struct {
 	Data io.Reader
 }
 
 // Read reads data from the Data reader.
 //
 // Kept to satisfy the io.Reader interface.
-func (s APIV1SandboxesIDLogsGetOKTextPlain) Read(p []byte) (n int, err error) {
+func (s APIV1SandboxesIDLogsGetOK) Read(p []byte) (n int, err error) {
 	if s.Data == nil {
 		return 0, io.EOF
 	}
 	return s.Data.Read(p)
 }
 
-func (*APIV1SandboxesIDLogsGetOKTextPlain) aPIV1SandboxesIDLogsGetRes() {}
+// APIV1SandboxesIDLogsGetOKHeaders wraps APIV1SandboxesIDLogsGetOK with response headers.
+type APIV1SandboxesIDLogsGetOKHeaders struct {
+	XSandboxID           OptString
+	XSandboxLogContainer OptString
+	XSandboxLogPrevious  OptBool
+	XSandboxPodName      OptString
+	Response             APIV1SandboxesIDLogsGetOK
+}
+
+// GetXSandboxID returns the value of XSandboxID.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxID() OptString {
+	return s.XSandboxID
+}
+
+// GetXSandboxLogContainer returns the value of XSandboxLogContainer.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxLogContainer() OptString {
+	return s.XSandboxLogContainer
+}
+
+// GetXSandboxLogPrevious returns the value of XSandboxLogPrevious.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxLogPrevious() OptBool {
+	return s.XSandboxLogPrevious
+}
+
+// GetXSandboxPodName returns the value of XSandboxPodName.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxPodName() OptString {
+	return s.XSandboxPodName
+}
+
+// GetResponse returns the value of Response.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) GetResponse() APIV1SandboxesIDLogsGetOK {
+	return s.Response
+}
+
+// SetXSandboxID sets the value of XSandboxID.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxID(val OptString) {
+	s.XSandboxID = val
+}
+
+// SetXSandboxLogContainer sets the value of XSandboxLogContainer.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxLogContainer(val OptString) {
+	s.XSandboxLogContainer = val
+}
+
+// SetXSandboxLogPrevious sets the value of XSandboxLogPrevious.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxLogPrevious(val OptBool) {
+	s.XSandboxLogPrevious = val
+}
+
+// SetXSandboxPodName sets the value of XSandboxPodName.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxPodName(val OptString) {
+	s.XSandboxPodName = val
+}
+
+// SetResponse sets the value of Response.
+func (s *APIV1SandboxesIDLogsGetOKHeaders) SetResponse(val APIV1SandboxesIDLogsGetOK) {
+	s.Response = val
+}
+
+func (*APIV1SandboxesIDLogsGetOKHeaders) aPIV1SandboxesIDLogsGetRes() {}
 
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
@@ -1617,7 +1697,12 @@ func (s *ContextStatsResponse) SetUsage(val OptResourceUsage) {
 
 // Ref: #/components/schemas/CreateAPIKeyRequest
 type CreateAPIKeyRequest struct {
-	Name  string   `json:"name"`
+	Name string `json:"name"`
+	// API key scope: team or platform. Defaults to team. platform keys grant system admin access,
+	// require a system admin user session, and do not support roles.
+	Scope OptString `json:"scope"`
+	// Requested API key roles. Supported roles: admin, developer, builder, viewer. The roles must not
+	// grant permissions outside the authenticated caller's permissions.
 	Roles []string `json:"roles"`
 	// 30d, 90d, 180d, 365d, or never.
 	ExpiresIn OptString `json:"expires_in"`
@@ -1626,6 +1711,11 @@ type CreateAPIKeyRequest struct {
 // GetName returns the value of Name.
 func (s *CreateAPIKeyRequest) GetName() string {
 	return s.Name
+}
+
+// GetScope returns the value of Scope.
+func (s *CreateAPIKeyRequest) GetScope() OptString {
+	return s.Scope
 }
 
 // GetRoles returns the value of Roles.
@@ -1643,6 +1733,11 @@ func (s *CreateAPIKeyRequest) SetName(val string) {
 	s.Name = val
 }
 
+// SetScope sets the value of Scope.
+func (s *CreateAPIKeyRequest) SetScope(val OptString) {
+	s.Scope = val
+}
+
 // SetRoles sets the value of Roles.
 func (s *CreateAPIKeyRequest) SetRoles(val []string) {
 	s.Roles = val
@@ -1657,6 +1752,7 @@ func (s *CreateAPIKeyRequest) SetExpiresIn(val OptString) {
 type CreateAPIKeyResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
+	Scope     string    `json:"scope"`
 	Roles     []string  `json:"roles"`
 	TeamID    string    `json:"team_id"`
 	Key       OptString `json:"key"`
@@ -1672,6 +1768,11 @@ func (s *CreateAPIKeyResponse) GetID() string {
 // GetName returns the value of Name.
 func (s *CreateAPIKeyResponse) GetName() string {
 	return s.Name
+}
+
+// GetScope returns the value of Scope.
+func (s *CreateAPIKeyResponse) GetScope() string {
+	return s.Scope
 }
 
 // GetRoles returns the value of Roles.
@@ -1707,6 +1808,11 @@ func (s *CreateAPIKeyResponse) SetID(val string) {
 // SetName sets the value of Name.
 func (s *CreateAPIKeyResponse) SetName(val string) {
 	s.Name = val
+}
+
+// SetScope sets the value of Scope.
+func (s *CreateAPIKeyResponse) SetScope(val string) {
+	s.Scope = val
 }
 
 // SetRoles sets the value of Roles.
@@ -2480,6 +2586,7 @@ type CurrentAPIKeyResponse struct {
 	ID          string    `json:"id"`
 	TeamID      string    `json:"team_id"`
 	CreatedBy   string    `json:"created_by"`
+	Scope       string    `json:"scope"`
 	Roles       []string  `json:"roles"`
 	Permissions []string  `json:"permissions"`
 	IsActive    bool      `json:"is_active"`
@@ -2499,6 +2606,11 @@ func (s *CurrentAPIKeyResponse) GetTeamID() string {
 // GetCreatedBy returns the value of CreatedBy.
 func (s *CurrentAPIKeyResponse) GetCreatedBy() string {
 	return s.CreatedBy
+}
+
+// GetScope returns the value of Scope.
+func (s *CurrentAPIKeyResponse) GetScope() string {
+	return s.Scope
 }
 
 // GetRoles returns the value of Roles.
@@ -2534,6 +2646,11 @@ func (s *CurrentAPIKeyResponse) SetTeamID(val string) {
 // SetCreatedBy sets the value of CreatedBy.
 func (s *CurrentAPIKeyResponse) SetCreatedBy(val string) {
 	s.CreatedBy = val
+}
+
+// SetScope sets the value of Scope.
+func (s *CurrentAPIKeyResponse) SetScope(val string) {
+	s.Scope = val
 }
 
 // SetRoles sets the value of Roles.
@@ -3128,7 +3245,6 @@ func (s *ErrorEnvelope) SetError(val Error) {
 
 func (*ErrorEnvelope) aPIKeysCurrentGetRes()                                   {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                          {}
-func (*ErrorEnvelope) aPIKeysPostRes()                                         {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                       {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                                   {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()                  {}
@@ -8301,52 +8417,6 @@ func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars
 	return d
 }
 
-// NewOptSandboxLogs returns new OptSandboxLogs with value set to v.
-func NewOptSandboxLogs(v SandboxLogs) OptSandboxLogs {
-	return OptSandboxLogs{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxLogs is optional SandboxLogs.
-type OptSandboxLogs struct {
-	Value SandboxLogs
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxLogs was set.
-func (o OptSandboxLogs) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxLogs) Reset() {
-	var v SandboxLogs
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxLogs) SetTo(v SandboxLogs) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxLogs) Get() (v SandboxLogs, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxLogs) Or(d SandboxLogs) SandboxLogs {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxNetworkPolicy returns new OptSandboxNetworkPolicy with value set to v.
 func NewOptSandboxNetworkPolicy(v SandboxNetworkPolicy) OptSandboxNetworkPolicy {
 	return OptSandboxNetworkPolicy{
@@ -12707,66 +12777,6 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 	return m
 }
 
-// Ref: #/components/schemas/SandboxLogs
-type SandboxLogs struct {
-	SandboxID string `json:"sandbox_id"`
-	PodName   string `json:"pod_name"`
-	Container string `json:"container"`
-	Previous  bool   `json:"previous"`
-	// Log text returned by Kubernetes for the selected container.
-	Logs string `json:"logs"`
-}
-
-// GetSandboxID returns the value of SandboxID.
-func (s *SandboxLogs) GetSandboxID() string {
-	return s.SandboxID
-}
-
-// GetPodName returns the value of PodName.
-func (s *SandboxLogs) GetPodName() string {
-	return s.PodName
-}
-
-// GetContainer returns the value of Container.
-func (s *SandboxLogs) GetContainer() string {
-	return s.Container
-}
-
-// GetPrevious returns the value of Previous.
-func (s *SandboxLogs) GetPrevious() bool {
-	return s.Previous
-}
-
-// GetLogs returns the value of Logs.
-func (s *SandboxLogs) GetLogs() string {
-	return s.Logs
-}
-
-// SetSandboxID sets the value of SandboxID.
-func (s *SandboxLogs) SetSandboxID(val string) {
-	s.SandboxID = val
-}
-
-// SetPodName sets the value of PodName.
-func (s *SandboxLogs) SetPodName(val string) {
-	s.PodName = val
-}
-
-// SetContainer sets the value of Container.
-func (s *SandboxLogs) SetContainer(val string) {
-	s.Container = val
-}
-
-// SetPrevious sets the value of Previous.
-func (s *SandboxLogs) SetPrevious(val bool) {
-	s.Previous = val
-}
-
-// SetLogs sets the value of Logs.
-func (s *SandboxLogs) SetLogs(val string) {
-	s.Logs = val
-}
-
 // Ref: #/components/schemas/SandboxNetworkPolicy
 type SandboxNetworkPolicy struct {
 	Mode               SandboxNetworkPolicyMode `json:"mode"`
@@ -16220,49 +16230,6 @@ const (
 func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListResponseSuccess {
 	return []SuccessSandboxListResponseSuccess{
 		SuccessSandboxListResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessSandboxLogsResponse
-type SuccessSandboxLogsResponse struct {
-	Success SuccessSandboxLogsResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptSandboxLogs `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessSandboxLogsResponse) GetSuccess() SuccessSandboxLogsResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessSandboxLogsResponse) GetData() OptSandboxLogs {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessSandboxLogsResponse) SetSuccess(val SuccessSandboxLogsResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessSandboxLogsResponse) SetData(val OptSandboxLogs) {
-	s.Data = val
-}
-
-func (*SuccessSandboxLogsResponse) aPIV1SandboxesIDLogsGetRes() {}
-
-type SuccessSandboxLogsResponseSuccess bool
-
-const (
-	SuccessSandboxLogsResponseSuccessTrue SuccessSandboxLogsResponseSuccess = true
-)
-
-// AllValues returns all SuccessSandboxLogsResponseSuccess values.
-func (SuccessSandboxLogsResponseSuccess) AllValues() []SuccessSandboxLogsResponseSuccess {
-	return []SuccessSandboxLogsResponseSuccess{
-		SuccessSandboxLogsResponseSuccessTrue,
 	}
 }
 

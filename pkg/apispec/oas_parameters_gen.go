@@ -187,7 +187,7 @@ type APIV1SandboxesIDLogsGetParams struct {
 	TailLines OptInt64 `json:",omitempty,omitzero"`
 	// Maximum response log payload bytes read from Kubernetes. Defaults only apply when follow is false.
 	LimitBytes OptInt64 `json:",omitempty,omitzero"`
-	// Stream logs until the client disconnects. When true, the response content type is text/plain.
+	// Stream logs as text/plain until the client disconnects. When false, return a text/plain snapshot.
 	Follow OptBool `json:",omitempty,omitzero"`
 	// Return logs for the previously terminated container instance.
 	Previous OptBool `json:",omitempty,omitzero"`

@@ -1031,6 +1031,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Requested roles exceed caller permissions, or platform scope requires a system admin user session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
   /api-keys/current:
     get:
       tags: [api-keys]
@@ -1304,8 +1310,9 @@ paths:
       tags: [sandboxes]
       summary: Get sandbox pod logs
       description: |
-        Returns a bounded snapshot of Kubernetes container logs for the sandbox pod.
-        Set `follow=true` to stream logs as text/plain until the client disconnects.
+        Returns Kubernetes container logs for the sandbox pod.
+        When `follow=false`, the response is a bounded text/plain snapshot.
+        When `follow=true`, the response is a text/plain stream until the client disconnects.
       security:
         - bearerAuth: []
       x-upstream-service: manager
@@ -1338,7 +1345,7 @@ paths:
             maximum: 8388608
         - name: follow
           in: query
-          description: Stream logs until the client disconnects. When true, the response content type is text/plain.
+          description: Stream logs as text/plain until the client disconnects. When false, return a text/plain snapshot.
           schema:
             type: boolean
             default: false
@@ -1364,10 +1371,24 @@ paths:
       responses:
         "200":
           description: Sandbox pod logs
-          content:
-            application/json:
+          headers:
+            X-Sandbox-ID:
+              description: Sandbox ID for the returned log payload.
               schema:
-                $ref: "#/components/schemas/SuccessSandboxLogsResponse"
+                type: string
+            X-Sandbox-Pod-Name:
+              description: Kubernetes pod name that produced the returned log payload.
+              schema:
+                type: string
+            X-Sandbox-Log-Container:
+              description: Kubernetes container name that produced the returned log payload.
+              schema:
+                type: string
+            X-Sandbox-Log-Previous:
+              description: Whether the returned payload came from a previously terminated container instance.
+              schema:
+                type: boolean
+          content:
             text/plain:
               schema:
                 type: string
@@ -3784,6 +3805,9 @@ components:
           type: string
         name:
           type: string
+        scope:
+          type: string
+          description: "API key scope. team keys use roles for team-scoped access. platform keys grant system admin access and can only be created or managed by system admin user sessions."
         roles:
           type: array
           items:
@@ -3810,6 +3834,7 @@ components:
         - team_id
         - created_by
         - name
+        - scope
         - roles
         - is_active
         - expires_at
@@ -3820,8 +3845,12 @@ components:
       properties:
         name:
           type: string
+        scope:
+          type: string
+          description: "API key scope: team or platform. Defaults to team. platform keys grant system admin access, require a system admin user session, and do not support roles."
         roles:
           type: array
+          description: "Requested API key roles. Supported roles: admin, developer, builder, viewer. The roles must not grant permissions outside the authenticated caller's permissions."
           items:
             type: string
         expires_in:
@@ -3834,6 +3863,8 @@ components:
         id:
           type: string
         name:
+          type: string
+        scope:
           type: string
         roles:
           type: array
@@ -3849,7 +3880,7 @@ components:
         created_at:
           type: string
           format: date-time
-      required: [id, name, roles, team_id, expires_at, created_at]
+      required: [id, name, scope, roles, team_id, expires_at, created_at]
     CurrentAPIKeyResponse:
       type: object
       properties:
@@ -3858,6 +3889,8 @@ components:
         team_id:
           type: string
         created_by:
+          type: string
+        scope:
           type: string
         roles:
           type: array
@@ -3872,7 +3905,7 @@ components:
         expires_at:
           type: string
           format: date-time
-      required: [id, team_id, created_by, roles, permissions, is_active, expires_at]
+      required: [id, team_id, created_by, scope, roles, permissions, is_active, expires_at]
     SuccessCreateAPIKeyResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
@@ -4193,26 +4226,6 @@ components:
           type: string
         created_at:
           type: string
-    SandboxLogs:
-      type: object
-      properties:
-        sandbox_id:
-          type: string
-        pod_name:
-          type: string
-        container:
-          type: string
-        previous:
-          type: boolean
-        logs:
-          type: string
-          description: Log text returned by Kubernetes for the selected container.
-      required:
-        - sandbox_id
-        - pod_name
-        - container
-        - previous
-        - logs
     SuccessSandboxResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
@@ -4227,13 +4240,6 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/SandboxStatus"
-    SuccessSandboxLogsResponse:
-      allOf:
-        - $ref: "#/components/schemas/SuccessEnvelope"
-        - type: object
-          properties:
-            data:
-              $ref: "#/components/schemas/SandboxLogs"
     SandboxSummary:
       type: object
       properties:

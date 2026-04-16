@@ -23,16 +23,13 @@ func TestGetSandboxLogs(t *testing.T) {
 		if got := r.URL.Query().Get("timestamps"); got != "true" {
 			t.Fatalf("timestamps = %q, want true", got)
 		}
-		writeJSON(t, w, http.StatusOK, map[string]any{
-			"success": true,
-			"data": map[string]any{
-				"sandbox_id": "sb_123",
-				"pod_name":   "pod-a",
-				"container":  "procd",
-				"previous":   false,
-				"logs":       "ready\n",
-			},
-		})
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("X-Sandbox-ID", "sb_123")
+		w.Header().Set("X-Sandbox-Pod-Name", "pod-a")
+		w.Header().Set("X-Sandbox-Log-Container", "procd")
+		w.Header().Set("X-Sandbox-Log-Previous", "false")
+		w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprint(w, "ready\n")
 	})
 	defer server.Close()
 
