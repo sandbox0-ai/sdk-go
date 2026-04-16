@@ -46,12 +46,18 @@ func (c *Client) GetSandboxLogs(ctx context.Context, sandboxID string, opts *San
 		return nil, err
 	}
 	switch response := resp.(type) {
-	case *apispec.SuccessSandboxLogsResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
+	case *apispec.APIV1SandboxesIDLogsGetOKHeaders:
+		body, err := io.ReadAll(response.Response.Data)
+		if err != nil {
+			return nil, err
 		}
-		return &data, nil
+		return &apispec.SandboxLogs{
+			SandboxID: response.XSandboxID.Or(sandboxID),
+			PodName:   response.XSandboxPodName.Or(""),
+			Container: response.XSandboxLogContainer.Or(""),
+			Previous:  response.XSandboxLogPrevious.Or(false),
+			Logs:      string(body),
+		}, nil
 	default:
 		return nil, apiErrorFromResponse(response)
 	}

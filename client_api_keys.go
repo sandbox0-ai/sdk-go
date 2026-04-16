@@ -40,6 +40,7 @@ func (c *Client) GetCurrentAPIKey(ctx context.Context) (*apispec.APIKey, error) 
 				ID        string   `json:"id"`
 				TeamID    string   `json:"team_id"`
 				CreatedBy string   `json:"created_by"`
+				Scope     string   `json:"scope"`
 				Roles     []string `json:"roles"`
 				IsActive  bool     `json:"is_active"`
 				ExpiresAt string   `json:"expires_at"`
@@ -61,6 +62,7 @@ func (c *Client) GetCurrentAPIKey(ctx context.Context) (*apispec.APIKey, error) 
 		ID:        envelope.Data.APIKey.ID,
 		TeamID:    envelope.Data.APIKey.TeamID,
 		CreatedBy: envelope.Data.APIKey.CreatedBy,
+		Scope:     envelope.Data.APIKey.Scope,
 		Roles:     append([]string(nil), envelope.Data.APIKey.Roles...),
 		IsActive:  envelope.Data.APIKey.IsActive,
 		ExpiresAt: expiresAt,
