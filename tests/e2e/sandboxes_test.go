@@ -107,8 +107,7 @@ func TestClaimSandboxWithBootstrapMounts(t *testing.T) {
 	sandbox, err := client.ClaimSandbox(
 		ctx,
 		cfg.template,
-		sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/bootstrap-data", nil),
-		sandbox0.WithSandboxBootstrapMountWait(45*time.Second),
+		sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/bootstrap-data"),
 	)
 	if err != nil {
 		t.Fatalf("claim sandbox with bootstrap mounts failed: %v", err)
@@ -127,21 +126,6 @@ func TestClaimSandboxWithBootstrapMounts(t *testing.T) {
 	}
 	if sandbox.BootstrapMounts[0].State != apispec.MountStatusStateMounted {
 		t.Fatalf("bootstrap mount state = %q, want %q", sandbox.BootstrapMounts[0].State, apispec.MountStatusStateMounted)
-	}
-
-	statuses, err := sandbox.MountStatus(ctx)
-	if err != nil {
-		t.Fatalf("mount status failed: %v", err)
-	}
-	foundMounted := false
-	for _, status := range statuses {
-		if status.SandboxvolumeID == volume.ID && status.State == apispec.MountStatusStateMounted {
-			foundMounted = true
-			break
-		}
-	}
-	if !foundMounted {
-		t.Fatal("mounted bootstrap volume not found in sandbox mount status")
 	}
 
 	got, err := sandbox.ReadFile(ctx, "/workspace/bootstrap-data/claim-bootstrap/hello.txt")

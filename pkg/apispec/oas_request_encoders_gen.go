@@ -228,34 +228,6 @@ func encodeAPIV1SandboxesIDRefreshPostRequest(
 	return nil
 }
 
-func encodeAPIV1SandboxesIDSandboxvolumesMountPostRequest(
-	req *MountRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeAPIV1SandboxesIDSandboxvolumesUnmountPostRequest(
-	req *UnmountRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
 func encodeAPIV1SandboxesPostRequest(
 	req *ClaimRequest,
 	r *http.Request,
@@ -504,6 +476,20 @@ func encodeAuthRefreshPostRequest(
 
 func encodeAuthRegisterPostRequest(
 	req *RegisterRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAuthWebLoginExchangePostRequest(
+	req *WebLoginExchangeRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

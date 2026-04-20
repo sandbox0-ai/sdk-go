@@ -2,23 +2,19 @@ package sandbox0
 
 import (
 	"context"
-	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 type sandboxOptions struct {
-	config             *apispec.SandboxConfig
-	mounts             []apispec.ClaimMountRequest
-	waitForMounts      *bool
-	mountWaitTimeoutMs *int32
+	config *apispec.SandboxConfig
+	mounts []apispec.ClaimMountRequest
 }
 
 // SandboxBootstrapMount configures a volume mount during sandbox claim.
 type SandboxBootstrapMount struct {
 	SandboxVolumeID string
 	MountPoint      string
-	VolumeConfig    *apispec.VolumeConfig
 }
 
 // SandboxOption configures sandbox creation.
@@ -39,14 +35,11 @@ func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 }
 
 // WithSandboxBootstrapMount requests mounting an existing volume during claim.
-func WithSandboxBootstrapMount(volumeID, mountPoint string, config *apispec.VolumeConfig) SandboxOption {
+func WithSandboxBootstrapMount(volumeID, mountPoint string) SandboxOption {
 	return func(opts *sandboxOptions) {
 		mount := apispec.ClaimMountRequest{
 			SandboxvolumeID: volumeID,
 			MountPoint:      mountPoint,
-		}
-		if config != nil {
-			mount.VolumeConfig = apispec.NewOptVolumeConfig(*config)
 		}
 		opts.mounts = append(opts.mounts, mount)
 	}
@@ -60,22 +53,7 @@ func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
 				SandboxvolumeID: mount.SandboxVolumeID,
 				MountPoint:      mount.MountPoint,
 			}
-			if mount.VolumeConfig != nil {
-				claimMount.VolumeConfig = apispec.NewOptVolumeConfig(*mount.VolumeConfig)
-			}
 			opts.mounts = append(opts.mounts, claimMount)
-		}
-	}
-}
-
-// WithSandboxBootstrapMountWait waits best-effort for claim-time mounts to finish.
-func WithSandboxBootstrapMountWait(timeout time.Duration) SandboxOption {
-	return func(opts *sandboxOptions) {
-		wait := true
-		opts.waitForMounts = &wait
-		if timeout > 0 {
-			millis := int32(timeout / time.Millisecond)
-			opts.mountWaitTimeoutMs = &millis
 		}
 	}
 }
@@ -163,12 +141,6 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	}
 	if len(options.mounts) > 0 {
 		req.Mounts = append(req.Mounts, options.mounts...)
-	}
-	if options.waitForMounts != nil {
-		req.WaitForMounts = apispec.NewOptBool(*options.waitForMounts)
-	}
-	if options.mountWaitTimeoutMs != nil {
-		req.MountWaitTimeoutMs = apispec.NewOptInt32(*options.mountWaitTimeoutMs)
 	}
 
 	return c.ClaimSandboxRequest(ctx, req)

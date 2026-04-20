@@ -78,7 +78,6 @@ func TestForkVolumeIsolation(t *testing.T) {
 	cfg := loadE2EConfig(t)
 	token := e2eToken(t, cfg)
 	client := newClientWithToken(t, cfg, token)
-	sandbox := claimSandbox(t, client, cfg)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -100,16 +99,8 @@ func TestForkVolumeIsolation(t *testing.T) {
 		_, _ = client.DeleteVolume(cleanupCtx, sourceVolume.ID)
 	})
 
-	initialMountPoint := fmt.Sprintf("/mnt/src-init-%d", time.Now().UnixNano())
-	initialMount, err := sandbox.Mount(ctx, sourceVolume.ID, initialMountPoint, nil)
-	if err != nil {
-		t.Fatalf("mount source volume failed: %v", err)
-	}
-	if _, err := sandbox.WriteFile(ctx, initialMountPoint+"/hello.txt", []byte("source-original\n")); err != nil {
+	if _, err := client.WriteVolumeFile(ctx, sourceVolume.ID, "/hello.txt", []byte("source-original\n")); err != nil {
 		t.Fatalf("write source file failed: %v", err)
-	}
-	if _, err := sandbox.Unmount(ctx, sourceVolume.ID, initialMount.MountSessionID); err != nil {
-		t.Fatalf("unmount source volume failed: %v", err)
 	}
 
 	forkedVolume, err := client.ForkVolume(ctx, sourceVolume.ID, nil)
@@ -129,45 +120,16 @@ func TestForkVolumeIsolation(t *testing.T) {
 		_, _ = client.DeleteVolume(cleanupCtx, forkedVolume.ID)
 	})
 
-	sourceMountPoint := fmt.Sprintf("/mnt/src-%d", time.Now().UnixNano())
-	sourceMount, err := sandbox.Mount(ctx, sourceVolume.ID, sourceMountPoint, nil)
-	if err != nil {
-		t.Fatalf("mount source volume for verification failed: %v", err)
-	}
-	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cleanupCancel()
-		_, _ = sandbox.Unmount(cleanupCtx, sourceVolume.ID, sourceMount.MountSessionID)
-	})
-
-	forkMountPoint := fmt.Sprintf("/mnt/fork-%d", time.Now().UnixNano())
-	forkMount, err := sandbox.Mount(ctx, forkedVolume.ID, forkMountPoint, nil)
-	if err != nil {
-		t.Fatalf("mount forked volume failed: %v", err)
-	}
-	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cleanupCancel()
-		_, _ = sandbox.Unmount(cleanupCtx, forkedVolume.ID, forkMount.MountSessionID)
-	})
-
-	if _, err := sandbox.WriteFile(ctx, forkMountPoint+"/hello.txt", []byte("fork-updated\n")); err != nil {
+	if _, err := client.WriteVolumeFile(ctx, forkedVolume.ID, "/hello.txt", []byte("fork-updated\n")); err != nil {
 		t.Fatalf("write fork file failed: %v", err)
 	}
 
-	sourceContent, err := sandbox.ReadFile(ctx, sourceMountPoint+"/hello.txt")
+	sourceContent, err := client.ReadVolumeFile(ctx, sourceVolume.ID, "/hello.txt")
 	if err != nil {
 		t.Fatalf("read source file failed: %v", err)
 	}
 	if string(sourceContent) != "source-original\n" {
 		t.Fatalf("source volume was modified by fork write, got %q", string(sourceContent))
-	}
-
-	if _, err := sandbox.Unmount(ctx, sourceVolume.ID, sourceMount.MountSessionID); err != nil {
-		t.Fatalf("unmount source verification mount failed: %v", err)
-	}
-	if _, err := sandbox.Unmount(ctx, forkedVolume.ID, forkMount.MountSessionID); err != nil {
-		t.Fatalf("unmount fork verification mount failed: %v", err)
 	}
 
 	if _, err := client.DeleteVolume(ctx, forkedVolume.ID); err != nil {

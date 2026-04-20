@@ -937,6 +937,14 @@ type AuthRegisterPostForbidden ErrorEnvelope
 
 func (*AuthRegisterPostForbidden) authRegisterPostRes() {}
 
+type AuthWebLoginExchangePostBadRequest ErrorEnvelope
+
+func (*AuthWebLoginExchangePostBadRequest) authWebLoginExchangePostRes() {}
+
+type AuthWebLoginExchangePostUnauthorized ErrorEnvelope
+
+func (*AuthWebLoginExchangePostUnauthorized) authWebLoginExchangePostRes() {}
+
 type BearerAuth struct {
 	Token string
 	Roles []string
@@ -1176,9 +1184,8 @@ func (s *ChangeRequestMetadata) init() ChangeRequestMetadata {
 
 // Ref: #/components/schemas/ClaimMountRequest
 type ClaimMountRequest struct {
-	SandboxvolumeID string          `json:"sandboxvolume_id"`
-	MountPoint      string          `json:"mount_point"`
-	VolumeConfig    OptVolumeConfig `json:"volume_config"`
+	SandboxvolumeID string `json:"sandboxvolume_id"`
+	MountPoint      string `json:"mount_point"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
@@ -1191,11 +1198,6 @@ func (s *ClaimMountRequest) GetMountPoint() string {
 	return s.MountPoint
 }
 
-// GetVolumeConfig returns the value of VolumeConfig.
-func (s *ClaimMountRequest) GetVolumeConfig() OptVolumeConfig {
-	return s.VolumeConfig
-}
-
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
 func (s *ClaimMountRequest) SetSandboxvolumeID(val string) {
 	s.SandboxvolumeID = val
@@ -1206,23 +1208,11 @@ func (s *ClaimMountRequest) SetMountPoint(val string) {
 	s.MountPoint = val
 }
 
-// SetVolumeConfig sets the value of VolumeConfig.
-func (s *ClaimMountRequest) SetVolumeConfig(val OptVolumeConfig) {
-	s.VolumeConfig = val
-}
-
 // Ref: #/components/schemas/ClaimRequest
 type ClaimRequest struct {
 	Template OptString           `json:"template"`
 	Config   OptSandboxConfig    `json:"config"`
 	Mounts   []ClaimMountRequest `json:"mounts"`
-	// When true, claim waits best-effort for requested bootstrap mounts to
-	// reach a terminal state before returning. The wait is bounded by
-	// `mount_wait_timeout_ms`.
-	WaitForMounts OptBool `json:"wait_for_mounts"`
-	// Optional best-effort wait budget in milliseconds for bootstrap
-	// mounts when `wait_for_mounts` is true.
-	MountWaitTimeoutMs OptInt32 `json:"mount_wait_timeout_ms"`
 }
 
 // GetTemplate returns the value of Template.
@@ -1240,16 +1230,6 @@ func (s *ClaimRequest) GetMounts() []ClaimMountRequest {
 	return s.Mounts
 }
 
-// GetWaitForMounts returns the value of WaitForMounts.
-func (s *ClaimRequest) GetWaitForMounts() OptBool {
-	return s.WaitForMounts
-}
-
-// GetMountWaitTimeoutMs returns the value of MountWaitTimeoutMs.
-func (s *ClaimRequest) GetMountWaitTimeoutMs() OptInt32 {
-	return s.MountWaitTimeoutMs
-}
-
 // SetTemplate sets the value of Template.
 func (s *ClaimRequest) SetTemplate(val OptString) {
 	s.Template = val
@@ -1263,16 +1243,6 @@ func (s *ClaimRequest) SetConfig(val OptSandboxConfig) {
 // SetMounts sets the value of Mounts.
 func (s *ClaimRequest) SetMounts(val []ClaimMountRequest) {
 	s.Mounts = val
-}
-
-// SetWaitForMounts sets the value of WaitForMounts.
-func (s *ClaimRequest) SetWaitForMounts(val OptBool) {
-	s.WaitForMounts = val
-}
-
-// SetMountWaitTimeoutMs sets the value of MountWaitTimeoutMs.
-func (s *ClaimRequest) SetMountWaitTimeoutMs(val OptInt32) {
-	s.MountWaitTimeoutMs = val
 }
 
 // Ref: #/components/schemas/ClaimResponse
@@ -2099,11 +2069,7 @@ type CreateSandboxVolumeRequest struct {
 	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
 	// Default POSIX GID used by external volume access paths that do not carry caller identity. Defaults
 	// to 0 when omitted on create.
-	DefaultPosixGid OptInt64  `json:"default_posix_gid"`
-	CacheSize       OptString `json:"cache_size"`
-	Prefetch        OptInt    `json:"prefetch"`
-	BufferSize      OptString `json:"buffer_size"`
-	Writeback       OptBool   `json:"writeback"`
+	DefaultPosixGid OptInt64 `json:"default_posix_gid"`
 	// Access mode for the volume. Defaults to RWO when omitted.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
 }
@@ -2116,26 +2082,6 @@ func (s *CreateSandboxVolumeRequest) GetDefaultPosixUID() OptInt64 {
 // GetDefaultPosixGid returns the value of DefaultPosixGid.
 func (s *CreateSandboxVolumeRequest) GetDefaultPosixGid() OptInt64 {
 	return s.DefaultPosixGid
-}
-
-// GetCacheSize returns the value of CacheSize.
-func (s *CreateSandboxVolumeRequest) GetCacheSize() OptString {
-	return s.CacheSize
-}
-
-// GetPrefetch returns the value of Prefetch.
-func (s *CreateSandboxVolumeRequest) GetPrefetch() OptInt {
-	return s.Prefetch
-}
-
-// GetBufferSize returns the value of BufferSize.
-func (s *CreateSandboxVolumeRequest) GetBufferSize() OptString {
-	return s.BufferSize
-}
-
-// GetWriteback returns the value of Writeback.
-func (s *CreateSandboxVolumeRequest) GetWriteback() OptBool {
-	return s.Writeback
 }
 
 // GetAccessMode returns the value of AccessMode.
@@ -2151,26 +2097,6 @@ func (s *CreateSandboxVolumeRequest) SetDefaultPosixUID(val OptInt64) {
 // SetDefaultPosixGid sets the value of DefaultPosixGid.
 func (s *CreateSandboxVolumeRequest) SetDefaultPosixGid(val OptInt64) {
 	s.DefaultPosixGid = val
-}
-
-// SetCacheSize sets the value of CacheSize.
-func (s *CreateSandboxVolumeRequest) SetCacheSize(val OptString) {
-	s.CacheSize = val
-}
-
-// SetPrefetch sets the value of Prefetch.
-func (s *CreateSandboxVolumeRequest) SetPrefetch(val OptInt) {
-	s.Prefetch = val
-}
-
-// SetBufferSize sets the value of BufferSize.
-func (s *CreateSandboxVolumeRequest) SetBufferSize(val OptString) {
-	s.BufferSize = val
-}
-
-// SetWriteback sets the value of Writeback.
-func (s *CreateSandboxVolumeRequest) SetWriteback(val OptBool) {
-	s.Writeback = val
 }
 
 // SetAccessMode sets the value of AccessMode.
@@ -3579,11 +3505,7 @@ type ForkVolumeRequest struct {
 	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
 	// Override the default POSIX GID for external volume access paths. Inherits from the source volume
 	// when omitted.
-	DefaultPosixGid OptInt64  `json:"default_posix_gid"`
-	CacheSize       OptString `json:"cache_size"`
-	Prefetch        OptInt    `json:"prefetch"`
-	BufferSize      OptString `json:"buffer_size"`
-	Writeback       OptBool   `json:"writeback"`
+	DefaultPosixGid OptInt64 `json:"default_posix_gid"`
 	// Access mode for the volume. Defaults to RWO when omitted.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
 }
@@ -3596,26 +3518,6 @@ func (s *ForkVolumeRequest) GetDefaultPosixUID() OptInt64 {
 // GetDefaultPosixGid returns the value of DefaultPosixGid.
 func (s *ForkVolumeRequest) GetDefaultPosixGid() OptInt64 {
 	return s.DefaultPosixGid
-}
-
-// GetCacheSize returns the value of CacheSize.
-func (s *ForkVolumeRequest) GetCacheSize() OptString {
-	return s.CacheSize
-}
-
-// GetPrefetch returns the value of Prefetch.
-func (s *ForkVolumeRequest) GetPrefetch() OptInt {
-	return s.Prefetch
-}
-
-// GetBufferSize returns the value of BufferSize.
-func (s *ForkVolumeRequest) GetBufferSize() OptString {
-	return s.BufferSize
-}
-
-// GetWriteback returns the value of Writeback.
-func (s *ForkVolumeRequest) GetWriteback() OptBool {
-	return s.Writeback
 }
 
 // GetAccessMode returns the value of AccessMode.
@@ -3631,26 +3533,6 @@ func (s *ForkVolumeRequest) SetDefaultPosixUID(val OptInt64) {
 // SetDefaultPosixGid sets the value of DefaultPosixGid.
 func (s *ForkVolumeRequest) SetDefaultPosixGid(val OptInt64) {
 	s.DefaultPosixGid = val
-}
-
-// SetCacheSize sets the value of CacheSize.
-func (s *ForkVolumeRequest) SetCacheSize(val OptString) {
-	s.CacheSize = val
-}
-
-// SetPrefetch sets the value of Prefetch.
-func (s *ForkVolumeRequest) SetPrefetch(val OptInt) {
-	s.Prefetch = val
-}
-
-// SetBufferSize sets the value of BufferSize.
-func (s *ForkVolumeRequest) SetBufferSize(val OptString) {
-	s.BufferSize = val
-}
-
-// SetWriteback sets the value of Writeback.
-func (s *ForkVolumeRequest) SetWriteback(val OptBool) {
-	s.Writeback = val
 }
 
 // SetAccessMode sets the value of AccessMode.
@@ -4125,102 +4007,6 @@ func (s MetricsGetOK) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-// Ref: #/components/schemas/MountRequest
-type MountRequest struct {
-	SandboxvolumeID string          `json:"sandboxvolume_id"`
-	SandboxID       OptString       `json:"sandbox_id"`
-	MountPoint      string          `json:"mount_point"`
-	VolumeConfig    OptVolumeConfig `json:"volume_config"`
-}
-
-// GetSandboxvolumeID returns the value of SandboxvolumeID.
-func (s *MountRequest) GetSandboxvolumeID() string {
-	return s.SandboxvolumeID
-}
-
-// GetSandboxID returns the value of SandboxID.
-func (s *MountRequest) GetSandboxID() OptString {
-	return s.SandboxID
-}
-
-// GetMountPoint returns the value of MountPoint.
-func (s *MountRequest) GetMountPoint() string {
-	return s.MountPoint
-}
-
-// GetVolumeConfig returns the value of VolumeConfig.
-func (s *MountRequest) GetVolumeConfig() OptVolumeConfig {
-	return s.VolumeConfig
-}
-
-// SetSandboxvolumeID sets the value of SandboxvolumeID.
-func (s *MountRequest) SetSandboxvolumeID(val string) {
-	s.SandboxvolumeID = val
-}
-
-// SetSandboxID sets the value of SandboxID.
-func (s *MountRequest) SetSandboxID(val OptString) {
-	s.SandboxID = val
-}
-
-// SetMountPoint sets the value of MountPoint.
-func (s *MountRequest) SetMountPoint(val string) {
-	s.MountPoint = val
-}
-
-// SetVolumeConfig sets the value of VolumeConfig.
-func (s *MountRequest) SetVolumeConfig(val OptVolumeConfig) {
-	s.VolumeConfig = val
-}
-
-// Ref: #/components/schemas/MountResponse
-type MountResponse struct {
-	SandboxvolumeID string `json:"sandboxvolume_id"`
-	MountPoint      string `json:"mount_point"`
-	MountedAt       string `json:"mounted_at"`
-	MountSessionID  string `json:"mount_session_id"`
-}
-
-// GetSandboxvolumeID returns the value of SandboxvolumeID.
-func (s *MountResponse) GetSandboxvolumeID() string {
-	return s.SandboxvolumeID
-}
-
-// GetMountPoint returns the value of MountPoint.
-func (s *MountResponse) GetMountPoint() string {
-	return s.MountPoint
-}
-
-// GetMountedAt returns the value of MountedAt.
-func (s *MountResponse) GetMountedAt() string {
-	return s.MountedAt
-}
-
-// GetMountSessionID returns the value of MountSessionID.
-func (s *MountResponse) GetMountSessionID() string {
-	return s.MountSessionID
-}
-
-// SetSandboxvolumeID sets the value of SandboxvolumeID.
-func (s *MountResponse) SetSandboxvolumeID(val string) {
-	s.SandboxvolumeID = val
-}
-
-// SetMountPoint sets the value of MountPoint.
-func (s *MountResponse) SetMountPoint(val string) {
-	s.MountPoint = val
-}
-
-// SetMountedAt sets the value of MountedAt.
-func (s *MountResponse) SetMountedAt(val string) {
-	s.MountedAt = val
-}
-
-// SetMountSessionID sets the value of MountSessionID.
-func (s *MountResponse) SetMountSessionID(val string) {
-	s.MountSessionID = val
-}
-
 // Ref: #/components/schemas/MountStatus
 type MountStatus struct {
 	SandboxvolumeID    string           `json:"sandboxvolume_id"`
@@ -4228,7 +4014,6 @@ type MountStatus struct {
 	State              MountStatusState `json:"state"`
 	MountedAt          OptString        `json:"mounted_at"`
 	MountedDurationSec OptInt64         `json:"mounted_duration_sec"`
-	MountSessionID     OptString        `json:"mount_session_id"`
 	ErrorCode          OptString        `json:"error_code"`
 	ErrorMessage       OptString        `json:"error_message"`
 }
@@ -4256,11 +4041,6 @@ func (s *MountStatus) GetMountedAt() OptString {
 // GetMountedDurationSec returns the value of MountedDurationSec.
 func (s *MountStatus) GetMountedDurationSec() OptInt64 {
 	return s.MountedDurationSec
-}
-
-// GetMountSessionID returns the value of MountSessionID.
-func (s *MountStatus) GetMountSessionID() OptString {
-	return s.MountSessionID
 }
 
 // GetErrorCode returns the value of ErrorCode.
@@ -4296,11 +4076,6 @@ func (s *MountStatus) SetMountedAt(val OptString) {
 // SetMountedDurationSec sets the value of MountedDurationSec.
 func (s *MountStatus) SetMountedDurationSec(val OptInt64) {
 	s.MountedDurationSec = val
-}
-
-// SetMountSessionID sets the value of MountSessionID.
-func (s *MountStatus) SetMountSessionID(val OptString) {
-	s.MountSessionID = val
 }
 
 // SetErrorCode sets the value of ErrorCode.
@@ -6774,52 +6549,6 @@ func (o OptLoginResponse) Get() (v LoginResponse, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptLoginResponse) Or(d LoginResponse) LoginResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptMountResponse returns new OptMountResponse with value set to v.
-func NewOptMountResponse(v MountResponse) OptMountResponse {
-	return OptMountResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptMountResponse is optional MountResponse.
-type OptMountResponse struct {
-	Value MountResponse
-	Set   bool
-}
-
-// IsSet returns true if OptMountResponse was set.
-func (o OptMountResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptMountResponse) Reset() {
-	var v MountResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptMountResponse) SetTo(v MountResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptMountResponse) Get() (v MountResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptMountResponse) Or(d MountResponse) MountResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9751,52 +9480,6 @@ func (o OptSuccessMessageResponseData) Or(d SuccessMessageResponseData) SuccessM
 	return d
 }
 
-// NewOptSuccessMountStatusResponseData returns new OptSuccessMountStatusResponseData with value set to v.
-func NewOptSuccessMountStatusResponseData(v SuccessMountStatusResponseData) OptSuccessMountStatusResponseData {
-	return OptSuccessMountStatusResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessMountStatusResponseData is optional SuccessMountStatusResponseData.
-type OptSuccessMountStatusResponseData struct {
-	Value SuccessMountStatusResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessMountStatusResponseData was set.
-func (o OptSuccessMountStatusResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessMountStatusResponseData) Reset() {
-	var v SuccessMountStatusResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessMountStatusResponseData) SetTo(v SuccessMountStatusResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessMountStatusResponseData) Get() (v SuccessMountStatusResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessMountStatusResponseData) Or(d SuccessMountStatusResponseData) SuccessMountStatusResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSuccessMovedResponseData returns new OptSuccessMovedResponseData with value set to v.
 func NewOptSuccessMovedResponseData(v SuccessMovedResponseData) OptSuccessMovedResponseData {
 	return OptSuccessMovedResponseData{
@@ -10257,52 +9940,6 @@ func (o OptSuccessTemplateListResponseData) Or(d SuccessTemplateListResponseData
 	return d
 }
 
-// NewOptSuccessUnmountedResponseData returns new OptSuccessUnmountedResponseData with value set to v.
-func NewOptSuccessUnmountedResponseData(v SuccessUnmountedResponseData) OptSuccessUnmountedResponseData {
-	return OptSuccessUnmountedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessUnmountedResponseData is optional SuccessUnmountedResponseData.
-type OptSuccessUnmountedResponseData struct {
-	Value SuccessUnmountedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessUnmountedResponseData was set.
-func (o OptSuccessUnmountedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessUnmountedResponseData) Reset() {
-	var v SuccessUnmountedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessUnmountedResponseData) SetTo(v SuccessUnmountedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessUnmountedResponseData) Get() (v SuccessUnmountedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessUnmountedResponseData) Or(d SuccessUnmountedResponseData) SuccessUnmountedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSuccessWrittenResponseData returns new OptSuccessWrittenResponseData with value set to v.
 func NewOptSuccessWrittenResponseData(v SuccessWrittenResponseData) OptSuccessWrittenResponseData {
 	return OptSuccessWrittenResponseData{
@@ -10757,52 +10394,6 @@ func (o OptVolumeAccessMode) Get() (v VolumeAccessMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptVolumeAccessMode) Or(d VolumeAccessMode) VolumeAccessMode {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptVolumeConfig returns new OptVolumeConfig with value set to v.
-func NewOptVolumeConfig(v VolumeConfig) OptVolumeConfig {
-	return OptVolumeConfig{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptVolumeConfig is optional VolumeConfig.
-type OptVolumeConfig struct {
-	Value VolumeConfig
-	Set   bool
-}
-
-// IsSet returns true if OptVolumeConfig was set.
-func (o OptVolumeConfig) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptVolumeConfig) Reset() {
-	var v VolumeConfig
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptVolumeConfig) SetTo(v VolumeConfig) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptVolumeConfig) Get() (v VolumeConfig, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptVolumeConfig) Or(d VolumeConfig) VolumeConfig {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -13691,6 +13282,7 @@ type SandboxTemplateSpec struct {
 	Tags          []string                      `json:"tags"`
 	MainContainer OptContainerSpec              `json:"mainContainer"`
 	WarmProcesses []WarmProcessSpec             `json:"warmProcesses"`
+	VolumeMounts  []VolumeMountSpec             `json:"volumeMounts"`
 	Pod           OptPodSpecOverride            `json:"pod"`
 	Network       OptSandboxNetworkPolicy       `json:"network"`
 	Pool          OptPoolStrategy               `json:"pool"`
@@ -13724,6 +13316,11 @@ func (s *SandboxTemplateSpec) GetMainContainer() OptContainerSpec {
 // GetWarmProcesses returns the value of WarmProcesses.
 func (s *SandboxTemplateSpec) GetWarmProcesses() []WarmProcessSpec {
 	return s.WarmProcesses
+}
+
+// GetVolumeMounts returns the value of VolumeMounts.
+func (s *SandboxTemplateSpec) GetVolumeMounts() []VolumeMountSpec {
+	return s.VolumeMounts
 }
 
 // GetPod returns the value of Pod.
@@ -13789,6 +13386,11 @@ func (s *SandboxTemplateSpec) SetMainContainer(val OptContainerSpec) {
 // SetWarmProcesses sets the value of WarmProcesses.
 func (s *SandboxTemplateSpec) SetWarmProcesses(val []WarmProcessSpec) {
 	s.WarmProcesses = val
+}
+
+// SetVolumeMounts sets the value of VolumeMounts.
+func (s *SandboxTemplateSpec) SetVolumeMounts(val []VolumeMountSpec) {
+	s.VolumeMounts = val
 }
 
 // SetPod sets the value of Pod.
@@ -13976,10 +13578,6 @@ type SandboxVolume struct {
 	SourceVolumeID  OptNilString `json:"source_volume_id"`
 	DefaultPosixUID OptNilInt64  `json:"default_posix_uid"`
 	DefaultPosixGid OptNilInt64  `json:"default_posix_gid"`
-	CacheSize       string       `json:"cache_size"`
-	Prefetch        OptInt       `json:"prefetch"`
-	BufferSize      string       `json:"buffer_size"`
-	Writeback       OptBool      `json:"writeback"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
 	CreatedAt  time.Time           `json:"created_at"`
@@ -14014,26 +13612,6 @@ func (s *SandboxVolume) GetDefaultPosixUID() OptNilInt64 {
 // GetDefaultPosixGid returns the value of DefaultPosixGid.
 func (s *SandboxVolume) GetDefaultPosixGid() OptNilInt64 {
 	return s.DefaultPosixGid
-}
-
-// GetCacheSize returns the value of CacheSize.
-func (s *SandboxVolume) GetCacheSize() string {
-	return s.CacheSize
-}
-
-// GetPrefetch returns the value of Prefetch.
-func (s *SandboxVolume) GetPrefetch() OptInt {
-	return s.Prefetch
-}
-
-// GetBufferSize returns the value of BufferSize.
-func (s *SandboxVolume) GetBufferSize() string {
-	return s.BufferSize
-}
-
-// GetWriteback returns the value of Writeback.
-func (s *SandboxVolume) GetWriteback() OptBool {
-	return s.Writeback
 }
 
 // GetAccessMode returns the value of AccessMode.
@@ -14079,26 +13657,6 @@ func (s *SandboxVolume) SetDefaultPosixUID(val OptNilInt64) {
 // SetDefaultPosixGid sets the value of DefaultPosixGid.
 func (s *SandboxVolume) SetDefaultPosixGid(val OptNilInt64) {
 	s.DefaultPosixGid = val
-}
-
-// SetCacheSize sets the value of CacheSize.
-func (s *SandboxVolume) SetCacheSize(val string) {
-	s.CacheSize = val
-}
-
-// SetPrefetch sets the value of Prefetch.
-func (s *SandboxVolume) SetPrefetch(val OptInt) {
-	s.Prefetch = val
-}
-
-// SetBufferSize sets the value of BufferSize.
-func (s *SandboxVolume) SetBufferSize(val string) {
-	s.BufferSize = val
-}
-
-// SetWriteback sets the value of Writeback.
-func (s *SandboxVolume) SetWriteback(val OptBool) {
-	s.Writeback = val
 }
 
 // SetAccessMode sets the value of AccessMode.
@@ -15437,6 +14995,7 @@ func (*SuccessLoginResponse) authLoginPostRes()               {}
 func (*SuccessLoginResponse) authOidcProviderCallbackGetRes() {}
 func (*SuccessLoginResponse) authRefreshPostRes()             {}
 func (*SuccessLoginResponse) authRegisterPostRes()            {}
+func (*SuccessLoginResponse) authWebLoginExchangePostRes()    {}
 
 type SuccessLoginResponseSuccess bool
 
@@ -15514,102 +15073,6 @@ const (
 func (SuccessMessageResponseSuccess) AllValues() []SuccessMessageResponseSuccess {
 	return []SuccessMessageResponseSuccess{
 		SuccessMessageResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessMountResponse
-type SuccessMountResponse struct {
-	Success SuccessMountResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptMountResponse `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessMountResponse) GetSuccess() SuccessMountResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessMountResponse) GetData() OptMountResponse {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessMountResponse) SetSuccess(val SuccessMountResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessMountResponse) SetData(val OptMountResponse) {
-	s.Data = val
-}
-
-type SuccessMountResponseSuccess bool
-
-const (
-	SuccessMountResponseSuccessTrue SuccessMountResponseSuccess = true
-)
-
-// AllValues returns all SuccessMountResponseSuccess values.
-func (SuccessMountResponseSuccess) AllValues() []SuccessMountResponseSuccess {
-	return []SuccessMountResponseSuccess{
-		SuccessMountResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessMountStatusResponse
-type SuccessMountStatusResponse struct {
-	Success SuccessMountStatusResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptSuccessMountStatusResponseData `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessMountStatusResponse) GetSuccess() SuccessMountStatusResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessMountStatusResponse) GetData() OptSuccessMountStatusResponseData {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessMountStatusResponse) SetSuccess(val SuccessMountStatusResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessMountStatusResponse) SetData(val OptSuccessMountStatusResponseData) {
-	s.Data = val
-}
-
-type SuccessMountStatusResponseData struct {
-	Mounts []MountStatus `json:"mounts"`
-}
-
-// GetMounts returns the value of Mounts.
-func (s *SuccessMountStatusResponseData) GetMounts() []MountStatus {
-	return s.Mounts
-}
-
-// SetMounts sets the value of Mounts.
-func (s *SuccessMountStatusResponseData) SetMounts(val []MountStatus) {
-	s.Mounts = val
-}
-
-type SuccessMountStatusResponseSuccess bool
-
-const (
-	SuccessMountStatusResponseSuccessTrue SuccessMountStatusResponseSuccess = true
-)
-
-// AllValues returns all SuccessMountStatusResponseSuccess values.
-func (SuccessMountStatusResponseSuccess) AllValues() []SuccessMountStatusResponseSuccess {
-	return []SuccessMountStatusResponseSuccess{
-		SuccessMountStatusResponseSuccessTrue,
 	}
 }
 
@@ -16895,61 +16358,6 @@ const (
 func (SuccessTemplateResponseSuccess) AllValues() []SuccessTemplateResponseSuccess {
 	return []SuccessTemplateResponseSuccess{
 		SuccessTemplateResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessUnmountedResponse
-type SuccessUnmountedResponse struct {
-	Success SuccessUnmountedResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptSuccessUnmountedResponseData `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessUnmountedResponse) GetSuccess() SuccessUnmountedResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessUnmountedResponse) GetData() OptSuccessUnmountedResponseData {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessUnmountedResponse) SetSuccess(val SuccessUnmountedResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessUnmountedResponse) SetData(val OptSuccessUnmountedResponseData) {
-	s.Data = val
-}
-
-type SuccessUnmountedResponseData struct {
-	Unmounted OptBool `json:"unmounted"`
-}
-
-// GetUnmounted returns the value of Unmounted.
-func (s *SuccessUnmountedResponseData) GetUnmounted() OptBool {
-	return s.Unmounted
-}
-
-// SetUnmounted sets the value of Unmounted.
-func (s *SuccessUnmountedResponseData) SetUnmounted(val OptBool) {
-	s.Unmounted = val
-}
-
-type SuccessUnmountedResponseSuccess bool
-
-const (
-	SuccessUnmountedResponseSuccessTrue SuccessUnmountedResponseSuccess = true
-)
-
-// AllValues returns all SuccessUnmountedResponseSuccess values.
-func (SuccessUnmountedResponseSuccess) AllValues() []SuccessUnmountedResponseSuccess {
-	return []SuccessUnmountedResponseSuccess{
-		SuccessUnmountedResponseSuccessTrue,
 	}
 }
 
@@ -18619,32 +18027,6 @@ func (s *TrafficRuleAppProtocol) UnmarshalText(data []byte) error {
 	}
 }
 
-// Ref: #/components/schemas/UnmountRequest
-type UnmountRequest struct {
-	SandboxvolumeID string `json:"sandboxvolume_id"`
-	MountSessionID  string `json:"mount_session_id"`
-}
-
-// GetSandboxvolumeID returns the value of SandboxvolumeID.
-func (s *UnmountRequest) GetSandboxvolumeID() string {
-	return s.SandboxvolumeID
-}
-
-// GetMountSessionID returns the value of MountSessionID.
-func (s *UnmountRequest) GetMountSessionID() string {
-	return s.MountSessionID
-}
-
-// SetSandboxvolumeID sets the value of SandboxvolumeID.
-func (s *UnmountRequest) SetSandboxvolumeID(val string) {
-	s.SandboxvolumeID = val
-}
-
-// SetMountSessionID sets the value of MountSessionID.
-func (s *UnmountRequest) SetMountSessionID(val string) {
-	s.MountSessionID = val
-}
-
 // Ref: #/components/schemas/UpdateExposedPortsRequest
 type UpdateExposedPortsRequest struct {
 	Ports []ExposedPortConfig `json:"ports"`
@@ -19096,52 +18478,41 @@ func (s *VolumeAccessMode) UnmarshalText(data []byte) error {
 	}
 }
 
-// Ref: #/components/schemas/VolumeConfig
-type VolumeConfig struct {
-	CacheSize  OptString `json:"cache_size"`
-	Prefetch   OptInt32  `json:"prefetch"`
-	BufferSize OptString `json:"buffer_size"`
-	Writeback  OptBool   `json:"writeback"`
+// Ref: #/components/schemas/VolumeMountSpec
+type VolumeMountSpec struct {
+	Name      string  `json:"name"`
+	MountPath string  `json:"mountPath"`
+	ReadOnly  OptBool `json:"readOnly"`
 }
 
-// GetCacheSize returns the value of CacheSize.
-func (s *VolumeConfig) GetCacheSize() OptString {
-	return s.CacheSize
+// GetName returns the value of Name.
+func (s *VolumeMountSpec) GetName() string {
+	return s.Name
 }
 
-// GetPrefetch returns the value of Prefetch.
-func (s *VolumeConfig) GetPrefetch() OptInt32 {
-	return s.Prefetch
+// GetMountPath returns the value of MountPath.
+func (s *VolumeMountSpec) GetMountPath() string {
+	return s.MountPath
 }
 
-// GetBufferSize returns the value of BufferSize.
-func (s *VolumeConfig) GetBufferSize() OptString {
-	return s.BufferSize
+// GetReadOnly returns the value of ReadOnly.
+func (s *VolumeMountSpec) GetReadOnly() OptBool {
+	return s.ReadOnly
 }
 
-// GetWriteback returns the value of Writeback.
-func (s *VolumeConfig) GetWriteback() OptBool {
-	return s.Writeback
+// SetName sets the value of Name.
+func (s *VolumeMountSpec) SetName(val string) {
+	s.Name = val
 }
 
-// SetCacheSize sets the value of CacheSize.
-func (s *VolumeConfig) SetCacheSize(val OptString) {
-	s.CacheSize = val
+// SetMountPath sets the value of MountPath.
+func (s *VolumeMountSpec) SetMountPath(val string) {
+	s.MountPath = val
 }
 
-// SetPrefetch sets the value of Prefetch.
-func (s *VolumeConfig) SetPrefetch(val OptInt32) {
-	s.Prefetch = val
-}
-
-// SetBufferSize sets the value of BufferSize.
-func (s *VolumeConfig) SetBufferSize(val OptString) {
-	s.BufferSize = val
-}
-
-// SetWriteback sets the value of Writeback.
-func (s *VolumeConfig) SetWriteback(val OptBool) {
-	s.Writeback = val
+// SetReadOnly sets the value of ReadOnly.
+func (s *VolumeMountSpec) SetReadOnly(val OptBool) {
+	s.ReadOnly = val
 }
 
 // Ref: #/components/schemas/VolumeSyncBootstrap
@@ -19766,6 +19137,38 @@ func (s *WarmProcessSpecType) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/WebLoginExchangeRequest
+type WebLoginExchangeRequest struct {
+	// Short-lived one-time code returned to the web login callback.
+	LoginCode string `json:"login_code"`
+	// Exact return URL used when the login code was created.
+	ReturnURL string `json:"return_url"`
+}
+
+// GetLoginCode returns the value of LoginCode.
+func (s *WebLoginExchangeRequest) GetLoginCode() string {
+	return s.LoginCode
+}
+
+// GetReturnURL returns the value of ReturnURL.
+func (s *WebLoginExchangeRequest) GetReturnURL() string {
+	return s.ReturnURL
+}
+
+// SetLoginCode sets the value of LoginCode.
+func (s *WebLoginExchangeRequest) SetLoginCode(val string) {
+	s.LoginCode = val
+}
+
+// SetReturnURL sets the value of ReturnURL.
+func (s *WebLoginExchangeRequest) SetReturnURL(val string) {
+	s.ReturnURL = val
+}
+
+// Per-sandbox webhook configuration. Sandbox0 delivers webhook events at least once and consumers
+// should deduplicate by event_id. For sandbox lifecycle events, procd persists signed delivery
+// records to a manager-owned SandboxVolume outside the workspace before dispatch; manager also emits
+// sandbox.deleted during pod deletion cleanup.
 // Ref: #/components/schemas/WebhookConfig
 type WebhookConfig struct {
 	// Required when webhook is enabled. Target URL that receives event callbacks.
