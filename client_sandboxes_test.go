@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
@@ -39,21 +38,8 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		if body.Mounts[0].SandboxvolumeID != "vol_1" || body.Mounts[0].MountPoint != "/workspace/data" {
 			t.Fatalf("mount[0] = %+v, want vol_1:/workspace/data", body.Mounts[0])
 		}
-		volumeConfig, ok := body.Mounts[1].VolumeConfig.Get()
-		if !ok {
-			t.Fatal("mount[1].volume_config not set")
-		}
-		writeback, ok := volumeConfig.Writeback.Get()
-		if !ok || !writeback {
-			t.Fatalf("mount[1].volume_config.writeback = %v, want true", writeback)
-		}
-		waitForMounts, ok := body.WaitForMounts.Get()
-		if !ok || !waitForMounts {
-			t.Fatalf("wait_for_mounts = %v, want true", waitForMounts)
-		}
-		timeout, ok := body.MountWaitTimeoutMs.Get()
-		if !ok || timeout != 45000 {
-			t.Fatalf("mount_wait_timeout_ms = %d, want 45000", timeout)
+		if body.Mounts[1].SandboxvolumeID != "vol_2" || body.Mounts[1].MountPoint != "/workspace/readonly" {
+			t.Fatalf("mount[1] = %+v, want vol_2:/workspace/readonly", body.Mounts[1])
 		}
 
 		writeJSON(t, w, http.StatusCreated, map[string]any{
@@ -76,18 +62,15 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 	})
 	defer server.Close()
 
-	volumeConfig := apispec.VolumeConfig{Writeback: apispec.NewOptBool(true)}
 	sandbox, err := client.ClaimSandbox(
 		context.Background(),
 		"default",
 		WithSandboxTTL(300),
-		WithSandboxBootstrapMount("vol_1", "/workspace/data", nil),
+		WithSandboxBootstrapMount("vol_1", "/workspace/data"),
 		WithSandboxBootstrapMounts(SandboxBootstrapMount{
 			SandboxVolumeID: "vol_2",
 			MountPoint:      "/workspace/readonly",
-			VolumeConfig:    &volumeConfig,
 		}),
-		WithSandboxBootstrapMountWait(45*time.Second),
 	)
 	if err != nil {
 		t.Fatalf("ClaimSandbox() error = %v", err)

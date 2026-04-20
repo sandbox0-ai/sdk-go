@@ -183,7 +183,8 @@ type APIV1SandboxesIDLogsGetParams struct {
 	ID string
 	// Pod container name. Defaults to the sandbox main container.
 	Container OptString `json:",omitempty,omitzero"`
-	// Maximum number of log lines to return from the end of the log.
+	// Maximum number of Kubernetes log lines read from the end of the log before procd service log
+	// filtering.
 	TailLines OptInt64 `json:",omitempty,omitzero"`
 	// Maximum response log payload bytes read from Kubernetes. Defaults only apply when follow is false.
 	LimitBytes OptInt64 `json:",omitempty,omitzero"`
@@ -224,21 +225,6 @@ type APIV1SandboxesIDRefreshPostParams struct {
 
 // APIV1SandboxesIDResumePostParams is parameters of POST /api/v1/sandboxes/{id}/resume operation.
 type APIV1SandboxesIDResumePostParams struct {
-	ID string
-}
-
-// APIV1SandboxesIDSandboxvolumesMountPostParams is parameters of POST /api/v1/sandboxes/{id}/sandboxvolumes/mount operation.
-type APIV1SandboxesIDSandboxvolumesMountPostParams struct {
-	ID string
-}
-
-// APIV1SandboxesIDSandboxvolumesStatusGetParams is parameters of GET /api/v1/sandboxes/{id}/sandboxvolumes/status operation.
-type APIV1SandboxesIDSandboxvolumesStatusGetParams struct {
-	ID string
-}
-
-// APIV1SandboxesIDSandboxvolumesUnmountPostParams is parameters of POST /api/v1/sandboxes/{id}/sandboxvolumes/unmount operation.
-type APIV1SandboxesIDSandboxvolumesUnmountPostParams struct {
 	ID string
 }
 
@@ -431,6 +417,9 @@ type AuthOidcProviderDeviceStartPostParams struct {
 type AuthOidcProviderLoginGetParams struct {
 	Provider  string
 	ReturnURL OptString `json:",omitempty,omitzero"`
+	// When true, the OIDC callback redirects to return_url with a short-lived login_code for server-side
+	// exchange.
+	WebLogin OptBool `json:",omitempty,omitzero"`
 }
 
 // RegionsIDDeleteParams is parameters of DELETE /regions/{id} operation.

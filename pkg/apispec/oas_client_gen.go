@@ -324,9 +324,12 @@ type Invoker interface {
 	APIV1SandboxesIDGet(ctx context.Context, params APIV1SandboxesIDGetParams, options ...RequestOption) (APIV1SandboxesIDGetRes, error)
 	// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
 	//
-	// Returns Kubernetes container logs for the sandbox pod.
+	// Returns sandbox process output mirrored through the sandbox main container.
+	// Procd service logs are filtered out and remain available through Kubernetes pod logs.
 	// When `follow=false`, the response is a bounded text/plain snapshot.
 	// When `follow=true`, the response is a text/plain stream until the client disconnects.
+	// Kubernetes log selection parameters such as `tail_lines` and `limit_bytes`
+	// are applied before procd service log filtering.
 	//
 	// GET /api/v1/sandboxes/{id}/logs
 	APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error)
@@ -366,24 +369,6 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/resume
 	APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
-	// APIV1SandboxesIDSandboxvolumesMountPost invokes POST /api/v1/sandboxes/{id}/sandboxvolumes/mount operation.
-	//
-	// Mount sandbox volume in sandbox.
-	//
-	// POST /api/v1/sandboxes/{id}/sandboxvolumes/mount
-	APIV1SandboxesIDSandboxvolumesMountPost(ctx context.Context, request *MountRequest, params APIV1SandboxesIDSandboxvolumesMountPostParams, options ...RequestOption) (*SuccessMountResponse, error)
-	// APIV1SandboxesIDSandboxvolumesStatusGet invokes GET /api/v1/sandboxes/{id}/sandboxvolumes/status operation.
-	//
-	// Get sandbox volume mount status.
-	//
-	// GET /api/v1/sandboxes/{id}/sandboxvolumes/status
-	APIV1SandboxesIDSandboxvolumesStatusGet(ctx context.Context, params APIV1SandboxesIDSandboxvolumesStatusGetParams, options ...RequestOption) (*SuccessMountStatusResponse, error)
-	// APIV1SandboxesIDSandboxvolumesUnmountPost invokes POST /api/v1/sandboxes/{id}/sandboxvolumes/unmount operation.
-	//
-	// Unmount sandbox volume.
-	//
-	// POST /api/v1/sandboxes/{id}/sandboxvolumes/unmount
-	APIV1SandboxesIDSandboxvolumesUnmountPost(ctx context.Context, request *UnmountRequest, params APIV1SandboxesIDSandboxvolumesUnmountPostParams, options ...RequestOption) (*SuccessUnmountedResponse, error)
 	// APIV1SandboxesIDStatusGet invokes GET /api/v1/sandboxes/{id}/status operation.
 	//
 	// Get sandbox status.
@@ -660,6 +645,12 @@ type Invoker interface {
 	//
 	// POST /auth/register
 	AuthRegisterPost(ctx context.Context, request *RegisterRequest, options ...RequestOption) (AuthRegisterPostRes, error)
+	// AuthWebLoginExchangePost invokes POST /auth/web-login/exchange operation.
+	//
+	// Exchanges a short-lived, one-time browser login handoff code for Sandbox0 tokens.
+	//
+	// POST /auth/web-login/exchange
+	AuthWebLoginExchangePost(ctx context.Context, request *WebLoginExchangeRequest, options ...RequestOption) (AuthWebLoginExchangePostRes, error)
 	// HealthzGet invokes GET /healthz operation.
 	//
 	// Health check.
@@ -5278,9 +5269,12 @@ func (c *Client) sendAPIV1SandboxesIDGet(ctx context.Context, params APIV1Sandbo
 
 // APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
 //
-// Returns Kubernetes container logs for the sandbox pod.
+// Returns sandbox process output mirrored through the sandbox main container.
+// Procd service logs are filtered out and remain available through Kubernetes pod logs.
 // When `follow=false`, the response is a bounded text/plain snapshot.
 // When `follow=true`, the response is a text/plain stream until the client disconnects.
+// Kubernetes log selection parameters such as `tail_lines` and `limit_bytes`
+// are applied before procd service log filtering.
 //
 // GET /api/v1/sandboxes/{id}/logs
 func (c *Client) APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error) {
@@ -6199,354 +6193,6 @@ func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, params APIV
 	}
 
 	result, err := decodeAPIV1SandboxesIDResumePostResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDSandboxvolumesMountPost invokes POST /api/v1/sandboxes/{id}/sandboxvolumes/mount operation.
-//
-// Mount sandbox volume in sandbox.
-//
-// POST /api/v1/sandboxes/{id}/sandboxvolumes/mount
-func (c *Client) APIV1SandboxesIDSandboxvolumesMountPost(ctx context.Context, request *MountRequest, params APIV1SandboxesIDSandboxvolumesMountPostParams, options ...RequestOption) (*SuccessMountResponse, error) {
-	res, err := c.sendAPIV1SandboxesIDSandboxvolumesMountPost(ctx, request, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDSandboxvolumesMountPost(ctx context.Context, request *MountRequest, params APIV1SandboxesIDSandboxvolumesMountPostParams, requestOptions ...RequestOption) (res *SuccessMountResponse, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/sandboxvolumes/mount"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAPIV1SandboxesIDSandboxvolumesMountPostRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSandboxvolumesMountPostOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDSandboxvolumesMountPostResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDSandboxvolumesStatusGet invokes GET /api/v1/sandboxes/{id}/sandboxvolumes/status operation.
-//
-// Get sandbox volume mount status.
-//
-// GET /api/v1/sandboxes/{id}/sandboxvolumes/status
-func (c *Client) APIV1SandboxesIDSandboxvolumesStatusGet(ctx context.Context, params APIV1SandboxesIDSandboxvolumesStatusGetParams, options ...RequestOption) (*SuccessMountStatusResponse, error) {
-	res, err := c.sendAPIV1SandboxesIDSandboxvolumesStatusGet(ctx, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDSandboxvolumesStatusGet(ctx context.Context, params APIV1SandboxesIDSandboxvolumesStatusGetParams, requestOptions ...RequestOption) (res *SuccessMountStatusResponse, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/sandboxvolumes/status"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSandboxvolumesStatusGetOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDSandboxvolumesStatusGetResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDSandboxvolumesUnmountPost invokes POST /api/v1/sandboxes/{id}/sandboxvolumes/unmount operation.
-//
-// Unmount sandbox volume.
-//
-// POST /api/v1/sandboxes/{id}/sandboxvolumes/unmount
-func (c *Client) APIV1SandboxesIDSandboxvolumesUnmountPost(ctx context.Context, request *UnmountRequest, params APIV1SandboxesIDSandboxvolumesUnmountPostParams, options ...RequestOption) (*SuccessUnmountedResponse, error) {
-	res, err := c.sendAPIV1SandboxesIDSandboxvolumesUnmountPost(ctx, request, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDSandboxvolumesUnmountPost(ctx context.Context, request *UnmountRequest, params APIV1SandboxesIDSandboxvolumesUnmountPostParams, requestOptions ...RequestOption) (res *SuccessUnmountedResponse, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/sandboxvolumes/unmount"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAPIV1SandboxesIDSandboxvolumesUnmountPostRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSandboxvolumesUnmountPostOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDSandboxvolumesUnmountPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -11374,6 +11020,23 @@ func (c *Client) sendAuthOidcProviderLoginGet(ctx context.Context, params AuthOi
 			return res, errors.Wrap(err, "encode query")
 		}
 	}
+	{
+		// Encode "web_login" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "web_login",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.WebLogin.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
 	u.RawQuery = q.Values().Encode()
 
 	r, err := ht.NewRequest(ctx, "GET", u)
@@ -11596,6 +11259,71 @@ func (c *Client) sendAuthRegisterPost(ctx context.Context, request *RegisterRequ
 	}
 
 	result, err := decodeAuthRegisterPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AuthWebLoginExchangePost invokes POST /auth/web-login/exchange operation.
+//
+// Exchanges a short-lived, one-time browser login handoff code for Sandbox0 tokens.
+//
+// POST /auth/web-login/exchange
+func (c *Client) AuthWebLoginExchangePost(ctx context.Context, request *WebLoginExchangeRequest, options ...RequestOption) (AuthWebLoginExchangePostRes, error) {
+	res, err := c.sendAuthWebLoginExchangePost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAuthWebLoginExchangePost(ctx context.Context, request *WebLoginExchangeRequest, requestOptions ...RequestOption) (res AuthWebLoginExchangePostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/auth/web-login/exchange"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAuthWebLoginExchangePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAuthWebLoginExchangePostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

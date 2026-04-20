@@ -112,8 +112,7 @@ if err != nil {
 sandbox, err := client.ClaimSandbox(
     ctx,
     "default",
-    sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/data", nil),
-    sandbox0.WithSandboxBootstrapMountWait(45*time.Second),
+    sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/data"),
 )
 if err != nil {
     log.Fatal(err)

@@ -193,6 +193,10 @@ type AuthRegisterPostRes interface {
 	authRegisterPostRes()
 }
 
+type AuthWebLoginExchangePostRes interface {
+	authWebLoginExchangePostRes()
+}
+
 type HealthzGetRes interface {
 	healthzGetRes()
 }
