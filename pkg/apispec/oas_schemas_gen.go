@@ -1315,6 +1315,258 @@ func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
 	s.BootstrapMounts = val
 }
 
+// Ref: #/components/schemas/CloneVolumeFileEntry
+type CloneVolumeFileEntry struct {
+	// Source sandbox volume ID. It must belong to the same team as the target volume.
+	SourceVolumeID string `json:"source_volume_id"`
+	// Source regular file path inside the source volume.
+	SourcePath string `json:"source_path"`
+	// Destination file path inside the target volume.
+	TargetPath string `json:"target_path"`
+	// Replace an existing destination file. Existing directories are never overwritten.
+	Overwrite OptBool `json:"overwrite"`
+	// Create missing parent directories under the target path.
+	CreateParents OptBool `json:"create_parents"`
+}
+
+// GetSourceVolumeID returns the value of SourceVolumeID.
+func (s *CloneVolumeFileEntry) GetSourceVolumeID() string {
+	return s.SourceVolumeID
+}
+
+// GetSourcePath returns the value of SourcePath.
+func (s *CloneVolumeFileEntry) GetSourcePath() string {
+	return s.SourcePath
+}
+
+// GetTargetPath returns the value of TargetPath.
+func (s *CloneVolumeFileEntry) GetTargetPath() string {
+	return s.TargetPath
+}
+
+// GetOverwrite returns the value of Overwrite.
+func (s *CloneVolumeFileEntry) GetOverwrite() OptBool {
+	return s.Overwrite
+}
+
+// GetCreateParents returns the value of CreateParents.
+func (s *CloneVolumeFileEntry) GetCreateParents() OptBool {
+	return s.CreateParents
+}
+
+// SetSourceVolumeID sets the value of SourceVolumeID.
+func (s *CloneVolumeFileEntry) SetSourceVolumeID(val string) {
+	s.SourceVolumeID = val
+}
+
+// SetSourcePath sets the value of SourcePath.
+func (s *CloneVolumeFileEntry) SetSourcePath(val string) {
+	s.SourcePath = val
+}
+
+// SetTargetPath sets the value of TargetPath.
+func (s *CloneVolumeFileEntry) SetTargetPath(val string) {
+	s.TargetPath = val
+}
+
+// SetOverwrite sets the value of Overwrite.
+func (s *CloneVolumeFileEntry) SetOverwrite(val OptBool) {
+	s.Overwrite = val
+}
+
+// SetCreateParents sets the value of CreateParents.
+func (s *CloneVolumeFileEntry) SetCreateParents(val OptBool) {
+	s.CreateParents = val
+}
+
+// Ref: #/components/schemas/CloneVolumeFileResult
+type CloneVolumeFileResult struct {
+	SourceVolumeID string                    `json:"source_volume_id"`
+	SourcePath     string                    `json:"source_path"`
+	TargetPath     string                    `json:"target_path"`
+	Mode           CloneVolumeFileResultMode `json:"mode"`
+	SizeBytes      uint64                    `json:"size_bytes"`
+}
+
+// GetSourceVolumeID returns the value of SourceVolumeID.
+func (s *CloneVolumeFileResult) GetSourceVolumeID() string {
+	return s.SourceVolumeID
+}
+
+// GetSourcePath returns the value of SourcePath.
+func (s *CloneVolumeFileResult) GetSourcePath() string {
+	return s.SourcePath
+}
+
+// GetTargetPath returns the value of TargetPath.
+func (s *CloneVolumeFileResult) GetTargetPath() string {
+	return s.TargetPath
+}
+
+// GetMode returns the value of Mode.
+func (s *CloneVolumeFileResult) GetMode() CloneVolumeFileResultMode {
+	return s.Mode
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *CloneVolumeFileResult) GetSizeBytes() uint64 {
+	return s.SizeBytes
+}
+
+// SetSourceVolumeID sets the value of SourceVolumeID.
+func (s *CloneVolumeFileResult) SetSourceVolumeID(val string) {
+	s.SourceVolumeID = val
+}
+
+// SetSourcePath sets the value of SourcePath.
+func (s *CloneVolumeFileResult) SetSourcePath(val string) {
+	s.SourcePath = val
+}
+
+// SetTargetPath sets the value of TargetPath.
+func (s *CloneVolumeFileResult) SetTargetPath(val string) {
+	s.TargetPath = val
+}
+
+// SetMode sets the value of Mode.
+func (s *CloneVolumeFileResult) SetMode(val CloneVolumeFileResultMode) {
+	s.Mode = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *CloneVolumeFileResult) SetSizeBytes(val uint64) {
+	s.SizeBytes = val
+}
+
+type CloneVolumeFileResultMode string
+
+const (
+	CloneVolumeFileResultModeCow  CloneVolumeFileResultMode = "cow"
+	CloneVolumeFileResultModeCopy CloneVolumeFileResultMode = "copy"
+)
+
+// AllValues returns all CloneVolumeFileResultMode values.
+func (CloneVolumeFileResultMode) AllValues() []CloneVolumeFileResultMode {
+	return []CloneVolumeFileResultMode{
+		CloneVolumeFileResultModeCow,
+		CloneVolumeFileResultModeCopy,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CloneVolumeFileResultMode) MarshalText() ([]byte, error) {
+	switch s {
+	case CloneVolumeFileResultModeCow:
+		return []byte(s), nil
+	case CloneVolumeFileResultModeCopy:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CloneVolumeFileResultMode) UnmarshalText(data []byte) error {
+	switch CloneVolumeFileResultMode(data) {
+	case CloneVolumeFileResultModeCow:
+		*s = CloneVolumeFileResultModeCow
+		return nil
+	case CloneVolumeFileResultModeCopy:
+		*s = CloneVolumeFileResultModeCopy
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/CloneVolumeFilesRequest
+type CloneVolumeFilesRequest struct {
+	// Clone strategy. cow_or_copy prefers copy-on-write and falls back to server-side copy.
+	Mode OptCloneVolumeFilesRequestMode `json:"mode"`
+	// Batch atomicity flag. Only true is currently supported.
+	Atomic  OptBool                `json:"atomic"`
+	Entries []CloneVolumeFileEntry `json:"entries"`
+}
+
+// GetMode returns the value of Mode.
+func (s *CloneVolumeFilesRequest) GetMode() OptCloneVolumeFilesRequestMode {
+	return s.Mode
+}
+
+// GetAtomic returns the value of Atomic.
+func (s *CloneVolumeFilesRequest) GetAtomic() OptBool {
+	return s.Atomic
+}
+
+// GetEntries returns the value of Entries.
+func (s *CloneVolumeFilesRequest) GetEntries() []CloneVolumeFileEntry {
+	return s.Entries
+}
+
+// SetMode sets the value of Mode.
+func (s *CloneVolumeFilesRequest) SetMode(val OptCloneVolumeFilesRequestMode) {
+	s.Mode = val
+}
+
+// SetAtomic sets the value of Atomic.
+func (s *CloneVolumeFilesRequest) SetAtomic(val OptBool) {
+	s.Atomic = val
+}
+
+// SetEntries sets the value of Entries.
+func (s *CloneVolumeFilesRequest) SetEntries(val []CloneVolumeFileEntry) {
+	s.Entries = val
+}
+
+// Clone strategy. cow_or_copy prefers copy-on-write and falls back to server-side copy.
+type CloneVolumeFilesRequestMode string
+
+const (
+	CloneVolumeFilesRequestModeCowOrCopy   CloneVolumeFilesRequestMode = "cow_or_copy"
+	CloneVolumeFilesRequestModeCowRequired CloneVolumeFilesRequestMode = "cow_required"
+	CloneVolumeFilesRequestModeCopy        CloneVolumeFilesRequestMode = "copy"
+)
+
+// AllValues returns all CloneVolumeFilesRequestMode values.
+func (CloneVolumeFilesRequestMode) AllValues() []CloneVolumeFilesRequestMode {
+	return []CloneVolumeFilesRequestMode{
+		CloneVolumeFilesRequestModeCowOrCopy,
+		CloneVolumeFilesRequestModeCowRequired,
+		CloneVolumeFilesRequestModeCopy,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CloneVolumeFilesRequestMode) MarshalText() ([]byte, error) {
+	switch s {
+	case CloneVolumeFilesRequestModeCowOrCopy:
+		return []byte(s), nil
+	case CloneVolumeFilesRequestModeCowRequired:
+		return []byte(s), nil
+	case CloneVolumeFilesRequestModeCopy:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CloneVolumeFilesRequestMode) UnmarshalText(data []byte) error {
+	switch CloneVolumeFilesRequestMode(data) {
+	case CloneVolumeFilesRequestModeCowOrCopy:
+		*s = CloneVolumeFilesRequestModeCowOrCopy
+		return nil
+	case CloneVolumeFilesRequestModeCowRequired:
+		*s = CloneVolumeFilesRequestModeCowRequired
+		return nil
+	case CloneVolumeFilesRequestModeCopy:
+		*s = CloneVolumeFilesRequestModeCopy
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
 	Image           string             `json:"image"`
@@ -3182,6 +3434,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                         {
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesPostRes()                                  {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                         {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDFilesClonePostRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()                       {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                            {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()         {}
@@ -4801,6 +5054,52 @@ func (o OptClaimResponse) Get() (v ClaimResponse, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptClaimResponse) Or(d ClaimResponse) ClaimResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCloneVolumeFilesRequestMode returns new OptCloneVolumeFilesRequestMode with value set to v.
+func NewOptCloneVolumeFilesRequestMode(v CloneVolumeFilesRequestMode) OptCloneVolumeFilesRequestMode {
+	return OptCloneVolumeFilesRequestMode{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCloneVolumeFilesRequestMode is optional CloneVolumeFilesRequestMode.
+type OptCloneVolumeFilesRequestMode struct {
+	Value CloneVolumeFilesRequestMode
+	Set   bool
+}
+
+// IsSet returns true if OptCloneVolumeFilesRequestMode was set.
+func (o OptCloneVolumeFilesRequestMode) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCloneVolumeFilesRequestMode) Reset() {
+	var v CloneVolumeFilesRequestMode
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCloneVolumeFilesRequestMode) SetTo(v CloneVolumeFilesRequestMode) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCloneVolumeFilesRequestMode) Get() (v CloneVolumeFilesRequestMode, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCloneVolumeFilesRequestMode) Or(d CloneVolumeFilesRequestMode) CloneVolumeFilesRequestMode {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9060,6 +9359,52 @@ func (o OptSuccessAuthProvidersResponseData) Get() (v SuccessAuthProvidersRespon
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessAuthProvidersResponseData) Or(d SuccessAuthProvidersResponseData) SuccessAuthProvidersResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessCloneVolumeFilesResponseData returns new OptSuccessCloneVolumeFilesResponseData with value set to v.
+func NewOptSuccessCloneVolumeFilesResponseData(v SuccessCloneVolumeFilesResponseData) OptSuccessCloneVolumeFilesResponseData {
+	return OptSuccessCloneVolumeFilesResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessCloneVolumeFilesResponseData is optional SuccessCloneVolumeFilesResponseData.
+type OptSuccessCloneVolumeFilesResponseData struct {
+	Value SuccessCloneVolumeFilesResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessCloneVolumeFilesResponseData was set.
+func (o OptSuccessCloneVolumeFilesResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessCloneVolumeFilesResponseData) Reset() {
+	var v SuccessCloneVolumeFilesResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessCloneVolumeFilesResponseData) SetTo(v SuccessCloneVolumeFilesResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessCloneVolumeFilesResponseData) Get() (v SuccessCloneVolumeFilesResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessCloneVolumeFilesResponseData) Or(d SuccessCloneVolumeFilesResponseData) SuccessCloneVolumeFilesResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -14050,6 +14395,63 @@ const (
 func (SuccessClaimResponseSuccess) AllValues() []SuccessClaimResponseSuccess {
 	return []SuccessClaimResponseSuccess{
 		SuccessClaimResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessCloneVolumeFilesResponse
+type SuccessCloneVolumeFilesResponse struct {
+	Success SuccessCloneVolumeFilesResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessCloneVolumeFilesResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessCloneVolumeFilesResponse) GetSuccess() SuccessCloneVolumeFilesResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessCloneVolumeFilesResponse) GetData() OptSuccessCloneVolumeFilesResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessCloneVolumeFilesResponse) SetSuccess(val SuccessCloneVolumeFilesResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessCloneVolumeFilesResponse) SetData(val OptSuccessCloneVolumeFilesResponseData) {
+	s.Data = val
+}
+
+func (*SuccessCloneVolumeFilesResponse) aPIV1SandboxvolumesIDFilesClonePostRes() {}
+
+type SuccessCloneVolumeFilesResponseData struct {
+	Entries []CloneVolumeFileResult `json:"entries"`
+}
+
+// GetEntries returns the value of Entries.
+func (s *SuccessCloneVolumeFilesResponseData) GetEntries() []CloneVolumeFileResult {
+	return s.Entries
+}
+
+// SetEntries sets the value of Entries.
+func (s *SuccessCloneVolumeFilesResponseData) SetEntries(val []CloneVolumeFileResult) {
+	s.Entries = val
+}
+
+type SuccessCloneVolumeFilesResponseSuccess bool
+
+const (
+	SuccessCloneVolumeFilesResponseSuccessTrue SuccessCloneVolumeFilesResponseSuccess = true
+)
+
+// AllValues returns all SuccessCloneVolumeFilesResponseSuccess values.
+func (SuccessCloneVolumeFilesResponseSuccess) AllValues() []SuccessCloneVolumeFilesResponseSuccess {
+	return []SuccessCloneVolumeFilesResponseSuccess{
+		SuccessCloneVolumeFilesResponseSuccessTrue,
 	}
 }
 

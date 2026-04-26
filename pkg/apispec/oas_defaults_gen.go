@@ -3,6 +3,30 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *CloneVolumeFileEntry) setDefaults() {
+	{
+		val := bool(false)
+		s.Overwrite.SetTo(val)
+	}
+	{
+		val := bool(false)
+		s.CreateParents.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *CloneVolumeFilesRequest) setDefaults() {
+	{
+		val := CloneVolumeFilesRequestMode("cow_or_copy")
+		s.Mode.SetTo(val)
+	}
+	{
+		val := bool(true)
+		s.Atomic.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *CreateSandboxVolumeRequest) setDefaults() {
 	{
 		val := int64(0)
