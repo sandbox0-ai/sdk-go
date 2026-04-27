@@ -73,6 +73,30 @@ func TestVolumeFileOperations(t *testing.T) {
 	if _, err := client.MoveVolumeFile(ctx, volume.ID, filePath, movedPath); err != nil {
 		t.Fatalf("move volume file failed: %v", err)
 	}
+	clonedPath := baseDir + "/cloned.txt"
+	results, err := client.CloneVolumeFiles(ctx, volume.ID, apispec.CloneVolumeFilesRequest{
+		Entries: []apispec.CloneVolumeFileEntry{
+			{
+				SourceVolumeID: volume.ID,
+				SourcePath:     movedPath,
+				TargetPath:     clonedPath,
+				CreateParents:  apispec.NewOptBool(true),
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("clone volume file failed: %v", err)
+	}
+	if len(results) != 1 || results[0].TargetPath != clonedPath {
+		t.Fatalf("clone results = %+v, want target %s", results, clonedPath)
+	}
+	clonedContent, err := client.ReadVolumeFile(ctx, volume.ID, clonedPath)
+	if err != nil {
+		t.Fatalf("read cloned volume file failed: %v", err)
+	}
+	if string(clonedContent) != "hello volume" {
+		t.Fatalf("cloned volume file = %q, want %q", string(clonedContent), "hello volume")
+	}
 
 	conn, _, err := client.ConnectWatchVolumeFile(ctx, volume.ID)
 	if err != nil {

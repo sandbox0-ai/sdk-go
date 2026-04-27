@@ -240,6 +240,11 @@ type APIV1SandboxvolumesIDDeleteParams struct {
 	Force OptBool `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxvolumesIDFilesClonePostParams is parameters of POST /api/v1/sandboxvolumes/{id}/files/clone operation.
+type APIV1SandboxvolumesIDFilesClonePostParams struct {
+	ID string
+}
+
 // APIV1SandboxvolumesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id}/files operation.
 type APIV1SandboxvolumesIDFilesDeleteParams struct {
 	ID   string
