@@ -101,10 +101,6 @@ type APIV1SandboxvolumesIDDeleteRes interface {
 	aPIV1SandboxvolumesIDDeleteRes()
 }
 
-type APIV1SandboxvolumesIDFilesClonePostRes interface {
-	aPIV1SandboxvolumesIDFilesClonePostRes()
-}
-
 type APIV1SandboxvolumesIDFilesGetRes interface {
 	aPIV1SandboxvolumesIDFilesGetRes()
 }

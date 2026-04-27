@@ -127,24 +127,6 @@ func (c *Client) MoveVolumeFile(ctx context.Context, volumeID, source, destinati
 	return resp, nil
 }
 
-// CloneVolumeFiles clones files from source volumes into a target volume.
-func (c *Client) CloneVolumeFiles(ctx context.Context, volumeID string, request apispec.CloneVolumeFilesRequest) ([]apispec.CloneVolumeFileResult, error) {
-	resp, err := c.api.APIV1SandboxvolumesIDFilesClonePost(ctx, &request, apispec.APIV1SandboxvolumesIDFilesClonePostParams{ID: volumeID})
-	if err != nil {
-		return nil, err
-	}
-	switch response := resp.(type) {
-	case *apispec.SuccessCloneVolumeFilesResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
-		return data.Entries, nil
-	default:
-		return nil, apiErrorFromResponse(response)
-	}
-}
-
 // ConnectWatchVolumeFile opens a WebSocket stream for volume file watch events.
 func (c *Client) ConnectWatchVolumeFile(ctx context.Context, volumeID string) (*websocket.Conn, *http.Response, error) {
 	wsURL, err := c.websocketURL("/api/v1/sandboxvolumes/" + volumeID + "/files/watch")
