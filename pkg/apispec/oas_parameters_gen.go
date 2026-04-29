@@ -320,67 +320,6 @@ type APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams struct {
 	SnapshotID string
 }
 
-// APIV1SandboxvolumesIDSyncBootstrapArchiveGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/bootstrap/archive operation.
-type APIV1SandboxvolumesIDSyncBootstrapArchiveGetParams struct {
-	ID         string
-	SnapshotID string
-}
-
-// APIV1SandboxvolumesIDSyncBootstrapPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/sync/bootstrap operation.
-type APIV1SandboxvolumesIDSyncBootstrapPostParams struct {
-	ID string
-}
-
-// APIV1SandboxvolumesIDSyncChangesGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/changes operation.
-type APIV1SandboxvolumesIDSyncChangesGetParams struct {
-	ID    string
-	After OptInt64 `json:",omitempty,omitzero"`
-	Limit OptInt32 `json:",omitempty,omitzero"`
-}
-
-// APIV1SandboxvolumesIDSyncConflictsConflictIDPutParams is parameters of PUT /api/v1/sandboxvolumes/{id}/sync/conflicts/{conflict_id} operation.
-type APIV1SandboxvolumesIDSyncConflictsConflictIDPutParams struct {
-	ID         string
-	ConflictID string
-}
-
-// APIV1SandboxvolumesIDSyncConflictsGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/conflicts operation.
-type APIV1SandboxvolumesIDSyncConflictsGetParams struct {
-	ID     string
-	Status OptString `json:",omitempty,omitzero"`
-	Limit  OptInt32  `json:",omitempty,omitzero"`
-}
-
-// APIV1SandboxvolumesIDSyncReplayPayloadGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/replay-payload operation.
-type APIV1SandboxvolumesIDSyncReplayPayloadGetParams struct {
-	ID         string
-	ContentRef string
-}
-
-// APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams is parameters of POST /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/changes operation.
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostParams struct {
-	ID        string
-	ReplicaID string
-}
-
-// APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutParams is parameters of PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id}/cursor operation.
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutParams struct {
-	ID        string
-	ReplicaID string
-}
-
-// APIV1SandboxvolumesIDSyncReplicasReplicaIDGetParams is parameters of GET /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDGetParams struct {
-	ID        string
-	ReplicaID string
-}
-
-// APIV1SandboxvolumesIDSyncReplicasReplicaIDPutParams is parameters of PUT /api/v1/sandboxvolumes/{id}/sync/replicas/{replica_id} operation.
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDPutParams struct {
-	ID        string
-	ReplicaID string
-}
-
 // APIV1TemplatesIDDeleteParams is parameters of DELETE /api/v1/templates/{id} operation.
 type APIV1TemplatesIDDeleteParams struct {
 	ID string
