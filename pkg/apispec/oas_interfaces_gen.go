@@ -121,38 +121,6 @@ type APIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes interface {
 	aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()
 }
 
-type APIV1SandboxvolumesIDSyncBootstrapArchiveGetRes interface {
-	aPIV1SandboxvolumesIDSyncBootstrapArchiveGetRes()
-}
-
-type APIV1SandboxvolumesIDSyncBootstrapPostRes interface {
-	aPIV1SandboxvolumesIDSyncBootstrapPostRes()
-}
-
-type APIV1SandboxvolumesIDSyncChangesGetRes interface {
-	aPIV1SandboxvolumesIDSyncChangesGetRes()
-}
-
-type APIV1SandboxvolumesIDSyncConflictsConflictIDPutRes interface {
-	aPIV1SandboxvolumesIDSyncConflictsConflictIDPutRes()
-}
-
-type APIV1SandboxvolumesIDSyncReplayPayloadGetRes interface {
-	aPIV1SandboxvolumesIDSyncReplayPayloadGetRes()
-}
-
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes interface {
-	aPIV1SandboxvolumesIDSyncReplicasReplicaIDChangesPostRes()
-}
-
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes interface {
-	aPIV1SandboxvolumesIDSyncReplicasReplicaIDCursorPutRes()
-}
-
-type APIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes interface {
-	aPIV1SandboxvolumesIDSyncReplicasReplicaIDGetRes()
-}
-
 type APIV1TemplatesIDGetRes interface {
 	aPIV1TemplatesIDGetRes()
 }
