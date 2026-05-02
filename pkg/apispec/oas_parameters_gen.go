@@ -213,6 +213,16 @@ type APIV1SandboxesIDPausePostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDPublicGatewayGetParams is parameters of GET /api/v1/sandboxes/{id}/public-gateway operation.
+type APIV1SandboxesIDPublicGatewayGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDPublicGatewayPutParams is parameters of PUT /api/v1/sandboxes/{id}/public-gateway operation.
+type APIV1SandboxesIDPublicGatewayPutParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDPutParams is parameters of PUT /api/v1/sandboxes/{id} operation.
 type APIV1SandboxesIDPutParams struct {
 	ID string

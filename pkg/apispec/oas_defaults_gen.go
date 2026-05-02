@@ -15,6 +15,22 @@ func (s *CreateSandboxVolumeRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *PublicGatewayAuth) setDefaults() {
+	{
+		val := PublicGatewayAuthMode("none")
+		s.Mode = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *PublicGatewayRoute) setDefaults() {
+	{
+		val := string("/")
+		s.PathPrefix.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxConfig) setDefaults() {
 	{
 		val := bool(true)

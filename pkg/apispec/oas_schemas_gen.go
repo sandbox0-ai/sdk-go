@@ -458,6 +458,14 @@ type APIV1SandboxesIDPausePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
 
+type APIV1SandboxesIDPublicGatewayPutBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDPublicGatewayPutBadRequest) aPIV1SandboxesIDPublicGatewayPutRes() {}
+
+type APIV1SandboxesIDPublicGatewayPutNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDPublicGatewayPutNotFound) aPIV1SandboxesIDPublicGatewayPutRes() {}
+
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -2848,6 +2856,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()             {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()      {}
 func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPutRes()             {}
 func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxesIDPublicGatewayGetRes()            {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
 func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
@@ -6588,6 +6597,190 @@ func (o OptProcessType) Or(d ProcessType) ProcessType {
 	return d
 }
 
+// NewOptPublicGatewayAuth returns new OptPublicGatewayAuth with value set to v.
+func NewOptPublicGatewayAuth(v PublicGatewayAuth) OptPublicGatewayAuth {
+	return OptPublicGatewayAuth{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPublicGatewayAuth is optional PublicGatewayAuth.
+type OptPublicGatewayAuth struct {
+	Value PublicGatewayAuth
+	Set   bool
+}
+
+// IsSet returns true if OptPublicGatewayAuth was set.
+func (o OptPublicGatewayAuth) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPublicGatewayAuth) Reset() {
+	var v PublicGatewayAuth
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPublicGatewayAuth) SetTo(v PublicGatewayAuth) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPublicGatewayAuth) Get() (v PublicGatewayAuth, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPublicGatewayAuth) Or(d PublicGatewayAuth) PublicGatewayAuth {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptPublicGatewayCORS returns new OptPublicGatewayCORS with value set to v.
+func NewOptPublicGatewayCORS(v PublicGatewayCORS) OptPublicGatewayCORS {
+	return OptPublicGatewayCORS{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPublicGatewayCORS is optional PublicGatewayCORS.
+type OptPublicGatewayCORS struct {
+	Value PublicGatewayCORS
+	Set   bool
+}
+
+// IsSet returns true if OptPublicGatewayCORS was set.
+func (o OptPublicGatewayCORS) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPublicGatewayCORS) Reset() {
+	var v PublicGatewayCORS
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPublicGatewayCORS) SetTo(v PublicGatewayCORS) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPublicGatewayCORS) Get() (v PublicGatewayCORS, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPublicGatewayCORS) Or(d PublicGatewayCORS) PublicGatewayCORS {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptPublicGatewayConfig returns new OptPublicGatewayConfig with value set to v.
+func NewOptPublicGatewayConfig(v PublicGatewayConfig) OptPublicGatewayConfig {
+	return OptPublicGatewayConfig{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPublicGatewayConfig is optional PublicGatewayConfig.
+type OptPublicGatewayConfig struct {
+	Value PublicGatewayConfig
+	Set   bool
+}
+
+// IsSet returns true if OptPublicGatewayConfig was set.
+func (o OptPublicGatewayConfig) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPublicGatewayConfig) Reset() {
+	var v PublicGatewayConfig
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPublicGatewayConfig) SetTo(v PublicGatewayConfig) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPublicGatewayConfig) Get() (v PublicGatewayConfig, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPublicGatewayConfig) Or(d PublicGatewayConfig) PublicGatewayConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptPublicGatewayRateLimit returns new OptPublicGatewayRateLimit with value set to v.
+func NewOptPublicGatewayRateLimit(v PublicGatewayRateLimit) OptPublicGatewayRateLimit {
+	return OptPublicGatewayRateLimit{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPublicGatewayRateLimit is optional PublicGatewayRateLimit.
+type OptPublicGatewayRateLimit struct {
+	Value PublicGatewayRateLimit
+	Set   bool
+}
+
+// IsSet returns true if OptPublicGatewayRateLimit was set.
+func (o OptPublicGatewayRateLimit) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPublicGatewayRateLimit) Reset() {
+	var v PublicGatewayRateLimit
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPublicGatewayRateLimit) SetTo(v PublicGatewayRateLimit) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPublicGatewayRateLimit) Get() (v PublicGatewayRateLimit, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPublicGatewayRateLimit) Or(d PublicGatewayRateLimit) PublicGatewayRateLimit {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptREPLConfig returns new OptREPLConfig with value set to v.
 func NewOptREPLConfig(v REPLConfig) OptREPLConfig {
 	return OptREPLConfig{
@@ -8612,6 +8805,52 @@ func (o OptSuccessMovedResponseData) Or(d SuccessMovedResponseData) SuccessMoved
 	return d
 }
 
+// NewOptSuccessPublicGatewayResponseData returns new OptSuccessPublicGatewayResponseData with value set to v.
+func NewOptSuccessPublicGatewayResponseData(v SuccessPublicGatewayResponseData) OptSuccessPublicGatewayResponseData {
+	return OptSuccessPublicGatewayResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessPublicGatewayResponseData is optional SuccessPublicGatewayResponseData.
+type OptSuccessPublicGatewayResponseData struct {
+	Value SuccessPublicGatewayResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessPublicGatewayResponseData was set.
+func (o OptSuccessPublicGatewayResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessPublicGatewayResponseData) Reset() {
+	var v SuccessPublicGatewayResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessPublicGatewayResponseData) SetTo(v SuccessPublicGatewayResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessPublicGatewayResponseData) Get() (v SuccessPublicGatewayResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessPublicGatewayResponseData) Or(d SuccessPublicGatewayResponseData) SuccessPublicGatewayResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSuccessRegionListResponseData returns new OptSuccessRegionListResponseData with value set to v.
 func NewOptSuccessRegionListResponseData(v SuccessRegionListResponseData) OptSuccessRegionListResponseData {
 	return OptSuccessRegionListResponseData{
@@ -9896,6 +10135,349 @@ func (s *ProjectionSpec) SetUsernamePassword(val *UsernamePasswordProjection) {
 	s.UsernamePassword = val
 }
 
+// Ref: #/components/schemas/PublicGatewayAuth
+type PublicGatewayAuth struct {
+	Mode PublicGatewayAuthMode `json:"mode"`
+	// Hex SHA-256 of the accepted bearer token. Required when mode is bearer.
+	BearerTokenSHA256 OptString `json:"bearer_token_sha256"`
+	// Required header name when mode is header.
+	HeaderName OptString `json:"header_name"`
+	// Hex SHA-256 of the required header value when mode is header.
+	HeaderValueSHA256 OptString `json:"header_value_sha256"`
+}
+
+// GetMode returns the value of Mode.
+func (s *PublicGatewayAuth) GetMode() PublicGatewayAuthMode {
+	return s.Mode
+}
+
+// GetBearerTokenSHA256 returns the value of BearerTokenSHA256.
+func (s *PublicGatewayAuth) GetBearerTokenSHA256() OptString {
+	return s.BearerTokenSHA256
+}
+
+// GetHeaderName returns the value of HeaderName.
+func (s *PublicGatewayAuth) GetHeaderName() OptString {
+	return s.HeaderName
+}
+
+// GetHeaderValueSHA256 returns the value of HeaderValueSHA256.
+func (s *PublicGatewayAuth) GetHeaderValueSHA256() OptString {
+	return s.HeaderValueSHA256
+}
+
+// SetMode sets the value of Mode.
+func (s *PublicGatewayAuth) SetMode(val PublicGatewayAuthMode) {
+	s.Mode = val
+}
+
+// SetBearerTokenSHA256 sets the value of BearerTokenSHA256.
+func (s *PublicGatewayAuth) SetBearerTokenSHA256(val OptString) {
+	s.BearerTokenSHA256 = val
+}
+
+// SetHeaderName sets the value of HeaderName.
+func (s *PublicGatewayAuth) SetHeaderName(val OptString) {
+	s.HeaderName = val
+}
+
+// SetHeaderValueSHA256 sets the value of HeaderValueSHA256.
+func (s *PublicGatewayAuth) SetHeaderValueSHA256(val OptString) {
+	s.HeaderValueSHA256 = val
+}
+
+type PublicGatewayAuthMode string
+
+const (
+	PublicGatewayAuthModeNone   PublicGatewayAuthMode = "none"
+	PublicGatewayAuthModeBearer PublicGatewayAuthMode = "bearer"
+	PublicGatewayAuthModeHeader PublicGatewayAuthMode = "header"
+)
+
+// AllValues returns all PublicGatewayAuthMode values.
+func (PublicGatewayAuthMode) AllValues() []PublicGatewayAuthMode {
+	return []PublicGatewayAuthMode{
+		PublicGatewayAuthModeNone,
+		PublicGatewayAuthModeBearer,
+		PublicGatewayAuthModeHeader,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s PublicGatewayAuthMode) MarshalText() ([]byte, error) {
+	switch s {
+	case PublicGatewayAuthModeNone:
+		return []byte(s), nil
+	case PublicGatewayAuthModeBearer:
+		return []byte(s), nil
+	case PublicGatewayAuthModeHeader:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *PublicGatewayAuthMode) UnmarshalText(data []byte) error {
+	switch PublicGatewayAuthMode(data) {
+	case PublicGatewayAuthModeNone:
+		*s = PublicGatewayAuthModeNone
+		return nil
+	case PublicGatewayAuthModeBearer:
+		*s = PublicGatewayAuthModeBearer
+		return nil
+	case PublicGatewayAuthModeHeader:
+		*s = PublicGatewayAuthModeHeader
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/PublicGatewayCORS
+type PublicGatewayCORS struct {
+	AllowedOrigins   []string `json:"allowed_origins"`
+	AllowedMethods   []string `json:"allowed_methods"`
+	AllowedHeaders   []string `json:"allowed_headers"`
+	ExposeHeaders    []string `json:"expose_headers"`
+	AllowCredentials OptBool  `json:"allow_credentials"`
+	MaxAgeSeconds    OptInt32 `json:"max_age_seconds"`
+}
+
+// GetAllowedOrigins returns the value of AllowedOrigins.
+func (s *PublicGatewayCORS) GetAllowedOrigins() []string {
+	return s.AllowedOrigins
+}
+
+// GetAllowedMethods returns the value of AllowedMethods.
+func (s *PublicGatewayCORS) GetAllowedMethods() []string {
+	return s.AllowedMethods
+}
+
+// GetAllowedHeaders returns the value of AllowedHeaders.
+func (s *PublicGatewayCORS) GetAllowedHeaders() []string {
+	return s.AllowedHeaders
+}
+
+// GetExposeHeaders returns the value of ExposeHeaders.
+func (s *PublicGatewayCORS) GetExposeHeaders() []string {
+	return s.ExposeHeaders
+}
+
+// GetAllowCredentials returns the value of AllowCredentials.
+func (s *PublicGatewayCORS) GetAllowCredentials() OptBool {
+	return s.AllowCredentials
+}
+
+// GetMaxAgeSeconds returns the value of MaxAgeSeconds.
+func (s *PublicGatewayCORS) GetMaxAgeSeconds() OptInt32 {
+	return s.MaxAgeSeconds
+}
+
+// SetAllowedOrigins sets the value of AllowedOrigins.
+func (s *PublicGatewayCORS) SetAllowedOrigins(val []string) {
+	s.AllowedOrigins = val
+}
+
+// SetAllowedMethods sets the value of AllowedMethods.
+func (s *PublicGatewayCORS) SetAllowedMethods(val []string) {
+	s.AllowedMethods = val
+}
+
+// SetAllowedHeaders sets the value of AllowedHeaders.
+func (s *PublicGatewayCORS) SetAllowedHeaders(val []string) {
+	s.AllowedHeaders = val
+}
+
+// SetExposeHeaders sets the value of ExposeHeaders.
+func (s *PublicGatewayCORS) SetExposeHeaders(val []string) {
+	s.ExposeHeaders = val
+}
+
+// SetAllowCredentials sets the value of AllowCredentials.
+func (s *PublicGatewayCORS) SetAllowCredentials(val OptBool) {
+	s.AllowCredentials = val
+}
+
+// SetMaxAgeSeconds sets the value of MaxAgeSeconds.
+func (s *PublicGatewayCORS) SetMaxAgeSeconds(val OptInt32) {
+	s.MaxAgeSeconds = val
+}
+
+// Ref: #/components/schemas/PublicGatewayConfig
+type PublicGatewayConfig struct {
+	// Enables request-level public gateway enforcement for sandbox public traffic.
+	Enabled bool                 `json:"enabled"`
+	Routes  []PublicGatewayRoute `json:"routes"`
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *PublicGatewayConfig) GetEnabled() bool {
+	return s.Enabled
+}
+
+// GetRoutes returns the value of Routes.
+func (s *PublicGatewayConfig) GetRoutes() []PublicGatewayRoute {
+	return s.Routes
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *PublicGatewayConfig) SetEnabled(val bool) {
+	s.Enabled = val
+}
+
+// SetRoutes sets the value of Routes.
+func (s *PublicGatewayConfig) SetRoutes(val []PublicGatewayRoute) {
+	s.Routes = val
+}
+
+// Ref: #/components/schemas/PublicGatewayRateLimit
+type PublicGatewayRateLimit struct {
+	Rps   int32 `json:"rps"`
+	Burst int32 `json:"burst"`
+}
+
+// GetRps returns the value of Rps.
+func (s *PublicGatewayRateLimit) GetRps() int32 {
+	return s.Rps
+}
+
+// GetBurst returns the value of Burst.
+func (s *PublicGatewayRateLimit) GetBurst() int32 {
+	return s.Burst
+}
+
+// SetRps sets the value of Rps.
+func (s *PublicGatewayRateLimit) SetRps(val int32) {
+	s.Rps = val
+}
+
+// SetBurst sets the value of Burst.
+func (s *PublicGatewayRateLimit) SetBurst(val int32) {
+	s.Burst = val
+}
+
+// Ref: #/components/schemas/PublicGatewayRoute
+type PublicGatewayRoute struct {
+	// Stable route id. Must be a DNS label and unique within the sandbox policy.
+	ID   string `json:"id"`
+	Port int32  `json:"port"`
+	// Request path prefix matched before proxying to the sandbox port.
+	PathPrefix OptString `json:"path_prefix"`
+	// Allowed HTTP methods. Empty allows every method.
+	Methods []string `json:"methods"`
+	// Optional replacement prefix applied before proxying.
+	RewritePrefix OptNilString              `json:"rewrite_prefix"`
+	Auth          OptPublicGatewayAuth      `json:"auth"`
+	Cors          OptPublicGatewayCORS      `json:"cors"`
+	RateLimit     OptPublicGatewayRateLimit `json:"rate_limit"`
+	// Per-route upstream timeout in seconds. Zero disables the route override.
+	TimeoutSeconds OptInt32 `json:"timeout_seconds"`
+	// Route-level resume gate for public gateway traffic. Evaluated only when
+	// sandbox auto_resume is true.
+	Resume bool `json:"resume"`
+}
+
+// GetID returns the value of ID.
+func (s *PublicGatewayRoute) GetID() string {
+	return s.ID
+}
+
+// GetPort returns the value of Port.
+func (s *PublicGatewayRoute) GetPort() int32 {
+	return s.Port
+}
+
+// GetPathPrefix returns the value of PathPrefix.
+func (s *PublicGatewayRoute) GetPathPrefix() OptString {
+	return s.PathPrefix
+}
+
+// GetMethods returns the value of Methods.
+func (s *PublicGatewayRoute) GetMethods() []string {
+	return s.Methods
+}
+
+// GetRewritePrefix returns the value of RewritePrefix.
+func (s *PublicGatewayRoute) GetRewritePrefix() OptNilString {
+	return s.RewritePrefix
+}
+
+// GetAuth returns the value of Auth.
+func (s *PublicGatewayRoute) GetAuth() OptPublicGatewayAuth {
+	return s.Auth
+}
+
+// GetCors returns the value of Cors.
+func (s *PublicGatewayRoute) GetCors() OptPublicGatewayCORS {
+	return s.Cors
+}
+
+// GetRateLimit returns the value of RateLimit.
+func (s *PublicGatewayRoute) GetRateLimit() OptPublicGatewayRateLimit {
+	return s.RateLimit
+}
+
+// GetTimeoutSeconds returns the value of TimeoutSeconds.
+func (s *PublicGatewayRoute) GetTimeoutSeconds() OptInt32 {
+	return s.TimeoutSeconds
+}
+
+// GetResume returns the value of Resume.
+func (s *PublicGatewayRoute) GetResume() bool {
+	return s.Resume
+}
+
+// SetID sets the value of ID.
+func (s *PublicGatewayRoute) SetID(val string) {
+	s.ID = val
+}
+
+// SetPort sets the value of Port.
+func (s *PublicGatewayRoute) SetPort(val int32) {
+	s.Port = val
+}
+
+// SetPathPrefix sets the value of PathPrefix.
+func (s *PublicGatewayRoute) SetPathPrefix(val OptString) {
+	s.PathPrefix = val
+}
+
+// SetMethods sets the value of Methods.
+func (s *PublicGatewayRoute) SetMethods(val []string) {
+	s.Methods = val
+}
+
+// SetRewritePrefix sets the value of RewritePrefix.
+func (s *PublicGatewayRoute) SetRewritePrefix(val OptNilString) {
+	s.RewritePrefix = val
+}
+
+// SetAuth sets the value of Auth.
+func (s *PublicGatewayRoute) SetAuth(val OptPublicGatewayAuth) {
+	s.Auth = val
+}
+
+// SetCors sets the value of Cors.
+func (s *PublicGatewayRoute) SetCors(val OptPublicGatewayCORS) {
+	s.Cors = val
+}
+
+// SetRateLimit sets the value of RateLimit.
+func (s *PublicGatewayRoute) SetRateLimit(val OptPublicGatewayRateLimit) {
+	s.RateLimit = val
+}
+
+// SetTimeoutSeconds sets the value of TimeoutSeconds.
+func (s *PublicGatewayRoute) SetTimeoutSeconds(val OptInt32) {
+	s.TimeoutSeconds = val
+}
+
+// SetResume sets the value of Resume.
+func (s *PublicGatewayRoute) SetResume(val bool) {
+	s.Resume = val
+}
+
 // Ref: #/components/schemas/REPLConfig
 type REPLConfig struct {
 	Name        string              `json:"name"`
@@ -10745,17 +11327,18 @@ func (s *SSHPublicKey) SetUpdatedAt(val time.Time) {
 
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID           string                  `json:"id"`
-	TemplateID   string                  `json:"template_id"`
-	TeamID       string                  `json:"team_id"`
-	UserID       OptString               `json:"user_id"`
-	Status       string                  `json:"status"`
-	Paused       bool                    `json:"paused"`
-	PowerState   SandboxPowerState       `json:"power_state"`
-	AutoResume   bool                    `json:"auto_resume"`
-	ExposedPorts []ExposedPortConfig     `json:"exposed_ports"`
-	PodName      string                  `json:"pod_name"`
-	SSH          OptSandboxSSHConnection `json:"ssh"`
+	ID            string                  `json:"id"`
+	TemplateID    string                  `json:"template_id"`
+	TeamID        string                  `json:"team_id"`
+	UserID        OptString               `json:"user_id"`
+	Status        string                  `json:"status"`
+	Paused        bool                    `json:"paused"`
+	PowerState    SandboxPowerState       `json:"power_state"`
+	AutoResume    bool                    `json:"auto_resume"`
+	ExposedPorts  []ExposedPortConfig     `json:"exposed_ports"`
+	PublicGateway OptPublicGatewayConfig  `json:"public_gateway"`
+	PodName       string                  `json:"pod_name"`
+	SSH           OptSandboxSSHConnection `json:"ssh"`
 	// Soft expiration timestamp. Zero value means not set.
 	ExpiresAt time.Time `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
@@ -10807,6 +11390,11 @@ func (s *Sandbox) GetAutoResume() bool {
 // GetExposedPorts returns the value of ExposedPorts.
 func (s *Sandbox) GetExposedPorts() []ExposedPortConfig {
 	return s.ExposedPorts
+}
+
+// GetPublicGateway returns the value of PublicGateway.
+func (s *Sandbox) GetPublicGateway() OptPublicGatewayConfig {
+	return s.PublicGateway
 }
 
 // GetPodName returns the value of PodName.
@@ -10884,6 +11472,11 @@ func (s *Sandbox) SetExposedPorts(val []ExposedPortConfig) {
 	s.ExposedPorts = val
 }
 
+// SetPublicGateway sets the value of PublicGateway.
+func (s *Sandbox) SetPublicGateway(val OptPublicGatewayConfig) {
+	s.PublicGateway = val
+}
+
 // SetPodName sets the value of PodName.
 func (s *Sandbox) SetPodName(val string) {
 	s.PodName = val
@@ -10923,8 +11516,9 @@ type SandboxConfig struct {
 	Webhook OptWebhookConfig        `json:"webhook"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
-	AutoResume   OptBool             `json:"auto_resume"`
-	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
+	AutoResume    OptBool                `json:"auto_resume"`
+	ExposedPorts  []ExposedPortConfig    `json:"exposed_ports"`
+	PublicGateway OptPublicGatewayConfig `json:"public_gateway"`
 }
 
 // GetEnvVars returns the value of EnvVars.
@@ -10962,6 +11556,11 @@ func (s *SandboxConfig) GetExposedPorts() []ExposedPortConfig {
 	return s.ExposedPorts
 }
 
+// GetPublicGateway returns the value of PublicGateway.
+func (s *SandboxConfig) GetPublicGateway() OptPublicGatewayConfig {
+	return s.PublicGateway
+}
+
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxConfig) SetEnvVars(val OptSandboxConfigEnvVars) {
 	s.EnvVars = val
@@ -10995,6 +11594,11 @@ func (s *SandboxConfig) SetAutoResume(val OptBool) {
 // SetExposedPorts sets the value of ExposedPorts.
 func (s *SandboxConfig) SetExposedPorts(val []ExposedPortConfig) {
 	s.ExposedPorts = val
+}
+
+// SetPublicGateway sets the value of PublicGateway.
+func (s *SandboxConfig) SetPublicGateway(val OptPublicGatewayConfig) {
+	s.PublicGateway = val
 }
 
 type SandboxConfigEnvVars map[string]string
@@ -12141,8 +12745,9 @@ type SandboxUpdateConfig struct {
 	Network OptSandboxNetworkPolicy `json:"network"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
-	AutoResume   OptBool             `json:"auto_resume"`
-	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
+	AutoResume    OptBool                `json:"auto_resume"`
+	ExposedPorts  []ExposedPortConfig    `json:"exposed_ports"`
+	PublicGateway OptPublicGatewayConfig `json:"public_gateway"`
 }
 
 // GetTTL returns the value of TTL.
@@ -12170,6 +12775,11 @@ func (s *SandboxUpdateConfig) GetExposedPorts() []ExposedPortConfig {
 	return s.ExposedPorts
 }
 
+// GetPublicGateway returns the value of PublicGateway.
+func (s *SandboxUpdateConfig) GetPublicGateway() OptPublicGatewayConfig {
+	return s.PublicGateway
+}
+
 // SetTTL sets the value of TTL.
 func (s *SandboxUpdateConfig) SetTTL(val OptInt32) {
 	s.TTL = val
@@ -12193,6 +12803,11 @@ func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
 // SetExposedPorts sets the value of ExposedPorts.
 func (s *SandboxUpdateConfig) SetExposedPorts(val []ExposedPortConfig) {
 	s.ExposedPorts = val
+}
+
+// SetPublicGateway sets the value of PublicGateway.
+func (s *SandboxUpdateConfig) SetPublicGateway(val OptPublicGatewayConfig) {
+	s.PublicGateway = val
 }
 
 // Ref: #/components/schemas/SandboxUpdateRequest
@@ -13811,6 +14426,86 @@ const (
 func (SuccessPauseSandboxResponseSuccess) AllValues() []SuccessPauseSandboxResponseSuccess {
 	return []SuccessPauseSandboxResponseSuccess{
 		SuccessPauseSandboxResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessPublicGatewayResponse
+type SuccessPublicGatewayResponse struct {
+	Success SuccessPublicGatewayResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessPublicGatewayResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessPublicGatewayResponse) GetSuccess() SuccessPublicGatewayResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessPublicGatewayResponse) GetData() OptSuccessPublicGatewayResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessPublicGatewayResponse) SetSuccess(val SuccessPublicGatewayResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessPublicGatewayResponse) SetData(val OptSuccessPublicGatewayResponseData) {
+	s.Data = val
+}
+
+func (*SuccessPublicGatewayResponse) aPIV1SandboxesIDPublicGatewayGetRes() {}
+func (*SuccessPublicGatewayResponse) aPIV1SandboxesIDPublicGatewayPutRes() {}
+
+type SuccessPublicGatewayResponseData struct {
+	SandboxID      string              `json:"sandbox_id"`
+	PublicGateway  PublicGatewayConfig `json:"public_gateway"`
+	ExposureDomain OptString           `json:"exposure_domain"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SuccessPublicGatewayResponseData) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetPublicGateway returns the value of PublicGateway.
+func (s *SuccessPublicGatewayResponseData) GetPublicGateway() PublicGatewayConfig {
+	return s.PublicGateway
+}
+
+// GetExposureDomain returns the value of ExposureDomain.
+func (s *SuccessPublicGatewayResponseData) GetExposureDomain() OptString {
+	return s.ExposureDomain
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SuccessPublicGatewayResponseData) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetPublicGateway sets the value of PublicGateway.
+func (s *SuccessPublicGatewayResponseData) SetPublicGateway(val PublicGatewayConfig) {
+	s.PublicGateway = val
+}
+
+// SetExposureDomain sets the value of ExposureDomain.
+func (s *SuccessPublicGatewayResponseData) SetExposureDomain(val OptString) {
+	s.ExposureDomain = val
+}
+
+type SuccessPublicGatewayResponseSuccess bool
+
+const (
+	SuccessPublicGatewayResponseSuccessTrue SuccessPublicGatewayResponseSuccess = true
+)
+
+// AllValues returns all SuccessPublicGatewayResponseSuccess values.
+func (SuccessPublicGatewayResponseSuccess) AllValues() []SuccessPublicGatewayResponseSuccess {
+	return []SuccessPublicGatewayResponseSuccess{
+		SuccessPublicGatewayResponseSuccessTrue,
 	}
 }
 
