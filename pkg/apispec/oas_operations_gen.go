@@ -46,6 +46,8 @@ const (
 	APIV1SandboxesIDNetworkGetOperation                          OperationName = "APIV1SandboxesIDNetworkGet"
 	APIV1SandboxesIDNetworkPutOperation                          OperationName = "APIV1SandboxesIDNetworkPut"
 	APIV1SandboxesIDPausePostOperation                           OperationName = "APIV1SandboxesIDPausePost"
+	APIV1SandboxesIDPublicGatewayGetOperation                    OperationName = "APIV1SandboxesIDPublicGatewayGet"
+	APIV1SandboxesIDPublicGatewayPutOperation                    OperationName = "APIV1SandboxesIDPublicGatewayPut"
 	APIV1SandboxesIDPutOperation                                 OperationName = "APIV1SandboxesIDPut"
 	APIV1SandboxesIDRefreshPostOperation                         OperationName = "APIV1SandboxesIDRefreshPost"
 	APIV1SandboxesIDResumePostOperation                          OperationName = "APIV1SandboxesIDResumePost"

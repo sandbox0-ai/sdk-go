@@ -351,6 +351,20 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/pause
 	APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	// APIV1SandboxesIDPublicGatewayGet invokes GET /api/v1/sandboxes/{id}/public-gateway operation.
+	//
+	// Get sandbox public gateway policy.
+	//
+	// GET /api/v1/sandboxes/{id}/public-gateway
+	APIV1SandboxesIDPublicGatewayGet(ctx context.Context, params APIV1SandboxesIDPublicGatewayGetParams, options ...RequestOption) (APIV1SandboxesIDPublicGatewayGetRes, error)
+	// APIV1SandboxesIDPublicGatewayPut invokes PUT /api/v1/sandboxes/{id}/public-gateway operation.
+	//
+	// Replaces the request-level public gateway policy for sandbox public traffic.
+	// When enabled, matching routes control method, path, authentication, CORS,
+	// per-route rate limits, timeout, rewrite, and paused sandbox auto-resume.
+	//
+	// PUT /api/v1/sandboxes/{id}/public-gateway
+	APIV1SandboxesIDPublicGatewayPut(ctx context.Context, request *PublicGatewayConfig, params APIV1SandboxesIDPublicGatewayPutParams, options ...RequestOption) (APIV1SandboxesIDPublicGatewayPutRes, error)
 	// APIV1SandboxesIDPut invokes PUT /api/v1/sandboxes/{id} operation.
 	//
 	// Update sandbox configuration.
@@ -5786,6 +5800,239 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1
 	}
 
 	result, err := decodeAPIV1SandboxesIDPausePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPublicGatewayGet invokes GET /api/v1/sandboxes/{id}/public-gateway operation.
+//
+// Get sandbox public gateway policy.
+//
+// GET /api/v1/sandboxes/{id}/public-gateway
+func (c *Client) APIV1SandboxesIDPublicGatewayGet(ctx context.Context, params APIV1SandboxesIDPublicGatewayGetParams, options ...RequestOption) (APIV1SandboxesIDPublicGatewayGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPublicGatewayGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPublicGatewayGet(ctx context.Context, params APIV1SandboxesIDPublicGatewayGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPublicGatewayGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/public-gateway"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPublicGatewayGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPublicGatewayGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPublicGatewayPut invokes PUT /api/v1/sandboxes/{id}/public-gateway operation.
+//
+// Replaces the request-level public gateway policy for sandbox public traffic.
+// When enabled, matching routes control method, path, authentication, CORS,
+// per-route rate limits, timeout, rewrite, and paused sandbox auto-resume.
+//
+// PUT /api/v1/sandboxes/{id}/public-gateway
+func (c *Client) APIV1SandboxesIDPublicGatewayPut(ctx context.Context, request *PublicGatewayConfig, params APIV1SandboxesIDPublicGatewayPutParams, options ...RequestOption) (APIV1SandboxesIDPublicGatewayPutRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPublicGatewayPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPublicGatewayPut(ctx context.Context, request *PublicGatewayConfig, params APIV1SandboxesIDPublicGatewayPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPublicGatewayPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/public-gateway"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDPublicGatewayPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPublicGatewayPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPublicGatewayPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

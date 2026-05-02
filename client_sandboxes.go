@@ -109,6 +109,14 @@ func WithSandboxNetworkPolicy(policy apispec.SandboxNetworkPolicy) SandboxOption
 	}
 }
 
+// WithSandboxPublicGateway sets the sandbox public gateway policy at claim time.
+func WithSandboxPublicGateway(publicGateway apispec.PublicGatewayConfig) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.PublicGateway = apispec.NewOptPublicGatewayConfig(normalizePublicGatewayConfig(publicGateway))
+	}
+}
+
 // WithSandboxAutoResume controls whether paused sandbox auto resumes on access.
 // Default is false when unset.
 func WithSandboxAutoResume(enabled bool) SandboxOption {
@@ -148,6 +156,7 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 
 // ClaimSandboxRequest claims a sandbox using a fully constructed request.
 func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimRequest) (*Sandbox, error) {
+	req = normalizeClaimRequest(req)
 	resp, err := c.api.APIV1SandboxesPost(ctx, &req)
 	if err != nil {
 		return nil, err
@@ -198,6 +207,7 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 
 // UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
+	request = normalizeSandboxUpdateRequest(request)
 	resp, err := c.api.APIV1SandboxesIDPut(ctx, &request, apispec.APIV1SandboxesIDPutParams{ID: sandboxID})
 	if err != nil {
 		return nil, err

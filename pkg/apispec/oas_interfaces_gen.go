@@ -77,6 +77,14 @@ type APIV1SandboxesIDPausePostRes interface {
 	aPIV1SandboxesIDPausePostRes()
 }
 
+type APIV1SandboxesIDPublicGatewayGetRes interface {
+	aPIV1SandboxesIDPublicGatewayGetRes()
+}
+
+type APIV1SandboxesIDPublicGatewayPutRes interface {
+	aPIV1SandboxesIDPublicGatewayPutRes()
+}
+
 type APIV1SandboxesIDPutRes interface {
 	aPIV1SandboxesIDPutRes()
 }
