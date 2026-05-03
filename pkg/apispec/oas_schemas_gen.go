@@ -2851,10 +2851,6 @@ func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsDeleteRes()          {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsGetRes()             {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPortDeleteRes()      {}
-func (*ErrorEnvelope) aPIV1SandboxesIDExposedPortsPutRes()             {}
 func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDPublicGatewayGetRes()            {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
@@ -2929,48 +2925,6 @@ func (s *ExecCandidate) SetName(val string) {
 // SetArgs sets the value of Args.
 func (s *ExecCandidate) SetArgs(val []string) {
 	s.Args = val
-}
-
-// Ref: #/components/schemas/ExposedPortConfig
-type ExposedPortConfig struct {
-	Port int32 `json:"port"`
-	// Port-level resume gate for public exposure traffic. Evaluated only when
-	// sandbox auto_resume is true. Priority: sandbox auto_resume (global gate)
-	// > exposed_ports[].resume (per-port gate).
-	Resume bool `json:"resume"`
-	// The full public URL to access this exposed port.
-	// Format: https://<sandboxName>--p<port>.<regionID>.<rootDomain>.
-	PublicURL OptString `json:"public_url"`
-}
-
-// GetPort returns the value of Port.
-func (s *ExposedPortConfig) GetPort() int32 {
-	return s.Port
-}
-
-// GetResume returns the value of Resume.
-func (s *ExposedPortConfig) GetResume() bool {
-	return s.Resume
-}
-
-// GetPublicURL returns the value of PublicURL.
-func (s *ExposedPortConfig) GetPublicURL() OptString {
-	return s.PublicURL
-}
-
-// SetPort sets the value of Port.
-func (s *ExposedPortConfig) SetPort(val int32) {
-	s.Port = val
-}
-
-// SetResume sets the value of Resume.
-func (s *ExposedPortConfig) SetResume(val bool) {
-	s.Resume = val
-}
-
-// SetPublicURL sets the value of PublicURL.
-func (s *ExposedPortConfig) SetPublicURL(val OptString) {
-	s.PublicURL = val
 }
 
 // Ref: #/components/schemas/FileContentResponse
@@ -8529,52 +8483,6 @@ func (o OptSuccessDeletedResponseData) Or(d SuccessDeletedResponseData) SuccessD
 	return d
 }
 
-// NewOptSuccessExposedPortsResponseData returns new OptSuccessExposedPortsResponseData with value set to v.
-func NewOptSuccessExposedPortsResponseData(v SuccessExposedPortsResponseData) OptSuccessExposedPortsResponseData {
-	return OptSuccessExposedPortsResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessExposedPortsResponseData is optional SuccessExposedPortsResponseData.
-type OptSuccessExposedPortsResponseData struct {
-	Value SuccessExposedPortsResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessExposedPortsResponseData was set.
-func (o OptSuccessExposedPortsResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessExposedPortsResponseData) Reset() {
-	var v SuccessExposedPortsResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessExposedPortsResponseData) SetTo(v SuccessExposedPortsResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessExposedPortsResponseData) Get() (v SuccessExposedPortsResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessExposedPortsResponseData) Or(d SuccessExposedPortsResponseData) SuccessExposedPortsResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSuccessFileListResponseData returns new OptSuccessFileListResponseData with value set to v.
 func NewOptSuccessFileListResponseData(v SuccessFileListResponseData) OptSuccessFileListResponseData {
 	return OptSuccessFileListResponseData{
@@ -11335,7 +11243,6 @@ type Sandbox struct {
 	Paused        bool                    `json:"paused"`
 	PowerState    SandboxPowerState       `json:"power_state"`
 	AutoResume    bool                    `json:"auto_resume"`
-	ExposedPorts  []ExposedPortConfig     `json:"exposed_ports"`
 	PublicGateway OptPublicGatewayConfig  `json:"public_gateway"`
 	PodName       string                  `json:"pod_name"`
 	SSH           OptSandboxSSHConnection `json:"ssh"`
@@ -11385,11 +11292,6 @@ func (s *Sandbox) GetPowerState() SandboxPowerState {
 // GetAutoResume returns the value of AutoResume.
 func (s *Sandbox) GetAutoResume() bool {
 	return s.AutoResume
-}
-
-// GetExposedPorts returns the value of ExposedPorts.
-func (s *Sandbox) GetExposedPorts() []ExposedPortConfig {
-	return s.ExposedPorts
 }
 
 // GetPublicGateway returns the value of PublicGateway.
@@ -11467,11 +11369,6 @@ func (s *Sandbox) SetAutoResume(val bool) {
 	s.AutoResume = val
 }
 
-// SetExposedPorts sets the value of ExposedPorts.
-func (s *Sandbox) SetExposedPorts(val []ExposedPortConfig) {
-	s.ExposedPorts = val
-}
-
 // SetPublicGateway sets the value of PublicGateway.
 func (s *Sandbox) SetPublicGateway(val OptPublicGatewayConfig) {
 	s.PublicGateway = val
@@ -11517,7 +11414,6 @@ type SandboxConfig struct {
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume    OptBool                `json:"auto_resume"`
-	ExposedPorts  []ExposedPortConfig    `json:"exposed_ports"`
 	PublicGateway OptPublicGatewayConfig `json:"public_gateway"`
 }
 
@@ -11549,11 +11445,6 @@ func (s *SandboxConfig) GetWebhook() OptWebhookConfig {
 // GetAutoResume returns the value of AutoResume.
 func (s *SandboxConfig) GetAutoResume() OptBool {
 	return s.AutoResume
-}
-
-// GetExposedPorts returns the value of ExposedPorts.
-func (s *SandboxConfig) GetExposedPorts() []ExposedPortConfig {
-	return s.ExposedPorts
 }
 
 // GetPublicGateway returns the value of PublicGateway.
@@ -11589,11 +11480,6 @@ func (s *SandboxConfig) SetWebhook(val OptWebhookConfig) {
 // SetAutoResume sets the value of AutoResume.
 func (s *SandboxConfig) SetAutoResume(val OptBool) {
 	s.AutoResume = val
-}
-
-// SetExposedPorts sets the value of ExposedPorts.
-func (s *SandboxConfig) SetExposedPorts(val []ExposedPortConfig) {
-	s.ExposedPorts = val
 }
 
 // SetPublicGateway sets the value of PublicGateway.
@@ -12746,7 +12632,6 @@ type SandboxUpdateConfig struct {
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume    OptBool                `json:"auto_resume"`
-	ExposedPorts  []ExposedPortConfig    `json:"exposed_ports"`
 	PublicGateway OptPublicGatewayConfig `json:"public_gateway"`
 }
 
@@ -12768,11 +12653,6 @@ func (s *SandboxUpdateConfig) GetNetwork() OptSandboxNetworkPolicy {
 // GetAutoResume returns the value of AutoResume.
 func (s *SandboxUpdateConfig) GetAutoResume() OptBool {
 	return s.AutoResume
-}
-
-// GetExposedPorts returns the value of ExposedPorts.
-func (s *SandboxUpdateConfig) GetExposedPorts() []ExposedPortConfig {
-	return s.ExposedPorts
 }
 
 // GetPublicGateway returns the value of PublicGateway.
@@ -12798,11 +12678,6 @@ func (s *SandboxUpdateConfig) SetNetwork(val OptSandboxNetworkPolicy) {
 // SetAutoResume sets the value of AutoResume.
 func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
 	s.AutoResume = val
-}
-
-// SetExposedPorts sets the value of ExposedPorts.
-func (s *SandboxUpdateConfig) SetExposedPorts(val []ExposedPortConfig) {
-	s.ExposedPorts = val
 }
 
 // SetPublicGateway sets the value of PublicGateway.
@@ -13868,90 +13743,6 @@ const (
 func (SuccessDeviceLoginStartResponseSuccess) AllValues() []SuccessDeviceLoginStartResponseSuccess {
 	return []SuccessDeviceLoginStartResponseSuccess{
 		SuccessDeviceLoginStartResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
-// Ref: #/components/schemas/SuccessExposedPortsResponse
-type SuccessExposedPortsResponse struct {
-	Success SuccessExposedPortsResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptSuccessExposedPortsResponseData `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessExposedPortsResponse) GetSuccess() SuccessExposedPortsResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessExposedPortsResponse) GetData() OptSuccessExposedPortsResponseData {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessExposedPortsResponse) SetSuccess(val SuccessExposedPortsResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessExposedPortsResponse) SetData(val OptSuccessExposedPortsResponseData) {
-	s.Data = val
-}
-
-func (*SuccessExposedPortsResponse) aPIV1SandboxesIDExposedPortsDeleteRes()     {}
-func (*SuccessExposedPortsResponse) aPIV1SandboxesIDExposedPortsGetRes()        {}
-func (*SuccessExposedPortsResponse) aPIV1SandboxesIDExposedPortsPortDeleteRes() {}
-func (*SuccessExposedPortsResponse) aPIV1SandboxesIDExposedPortsPutRes()        {}
-
-type SuccessExposedPortsResponseData struct {
-	SandboxID    string              `json:"sandbox_id"`
-	ExposedPorts []ExposedPortConfig `json:"exposed_ports"`
-	// The base exposure domain (e.g., "aws-us-east-1.sandbox0.app").
-	// Useful for clients that need to construct URLs manually.
-	ExposureDomain OptString `json:"exposure_domain"`
-}
-
-// GetSandboxID returns the value of SandboxID.
-func (s *SuccessExposedPortsResponseData) GetSandboxID() string {
-	return s.SandboxID
-}
-
-// GetExposedPorts returns the value of ExposedPorts.
-func (s *SuccessExposedPortsResponseData) GetExposedPorts() []ExposedPortConfig {
-	return s.ExposedPorts
-}
-
-// GetExposureDomain returns the value of ExposureDomain.
-func (s *SuccessExposedPortsResponseData) GetExposureDomain() OptString {
-	return s.ExposureDomain
-}
-
-// SetSandboxID sets the value of SandboxID.
-func (s *SuccessExposedPortsResponseData) SetSandboxID(val string) {
-	s.SandboxID = val
-}
-
-// SetExposedPorts sets the value of ExposedPorts.
-func (s *SuccessExposedPortsResponseData) SetExposedPorts(val []ExposedPortConfig) {
-	s.ExposedPorts = val
-}
-
-// SetExposureDomain sets the value of ExposureDomain.
-func (s *SuccessExposedPortsResponseData) SetExposureDomain(val OptString) {
-	s.ExposureDomain = val
-}
-
-type SuccessExposedPortsResponseSuccess bool
-
-const (
-	SuccessExposedPortsResponseSuccessTrue SuccessExposedPortsResponseSuccess = true
-)
-
-// AllValues returns all SuccessExposedPortsResponseSuccess values.
-func (SuccessExposedPortsResponseSuccess) AllValues() []SuccessExposedPortsResponseSuccess {
-	return []SuccessExposedPortsResponseSuccess{
-		SuccessExposedPortsResponseSuccessTrue,
 	}
 }
 
@@ -16422,21 +16213,6 @@ func (s *TrafficRuleAppProtocol) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
-}
-
-// Ref: #/components/schemas/UpdateExposedPortsRequest
-type UpdateExposedPortsRequest struct {
-	Ports []ExposedPortConfig `json:"ports"`
-}
-
-// GetPorts returns the value of Ports.
-func (s *UpdateExposedPortsRequest) GetPorts() []ExposedPortConfig {
-	return s.Ports
-}
-
-// SetPorts sets the value of Ports.
-func (s *UpdateExposedPortsRequest) SetPorts(val []ExposedPortConfig) {
-	s.Ports = val
 }
 
 // Ref: #/components/schemas/UpdateRegionRequest
