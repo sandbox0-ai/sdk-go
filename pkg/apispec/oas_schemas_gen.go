@@ -194,6 +194,30 @@ type APIKeysPostForbidden ErrorEnvelope
 
 func (*APIKeysPostForbidden) aPIKeysPostRes() {}
 
+type APIV1ObservabilityLogsGetBadRequest ErrorEnvelope
+
+func (*APIV1ObservabilityLogsGetBadRequest) aPIV1ObservabilityLogsGetRes() {}
+
+type APIV1ObservabilityLogsGetForbidden ErrorEnvelope
+
+func (*APIV1ObservabilityLogsGetForbidden) aPIV1ObservabilityLogsGetRes() {}
+
+type APIV1ObservabilityLogsGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1ObservabilityLogsGetServiceUnavailable) aPIV1ObservabilityLogsGetRes() {}
+
+type APIV1ObservabilityTracesGetBadRequest ErrorEnvelope
+
+func (*APIV1ObservabilityTracesGetBadRequest) aPIV1ObservabilityTracesGetRes() {}
+
+type APIV1ObservabilityTracesGetForbidden ErrorEnvelope
+
+func (*APIV1ObservabilityTracesGetForbidden) aPIV1ObservabilityTracesGetRes() {}
+
+type APIV1ObservabilityTracesGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1ObservabilityTracesGetServiceUnavailable) aPIV1ObservabilityTracesGetRes() {}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -3970,6 +3994,278 @@ func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 	s.MatchFields = val
 }
 
+// Ref: #/components/schemas/ObservabilityLogRecord
+type ObservabilityLogRecord struct {
+	Timestamp          OptString                                   `json:"timestamp"`
+	TraceID            OptString                                   `json:"trace_id"`
+	SpanID             OptString                                   `json:"span_id"`
+	SeverityText       OptString                                   `json:"severity_text"`
+	SeverityNumber     OptInt                                      `json:"severity_number"`
+	Body               OptString                                   `json:"body"`
+	ResourceAttributes OptObservabilityLogRecordResourceAttributes `json:"resource_attributes"`
+	Attributes         OptObservabilityLogRecordAttributes         `json:"attributes"`
+}
+
+// GetTimestamp returns the value of Timestamp.
+func (s *ObservabilityLogRecord) GetTimestamp() OptString {
+	return s.Timestamp
+}
+
+// GetTraceID returns the value of TraceID.
+func (s *ObservabilityLogRecord) GetTraceID() OptString {
+	return s.TraceID
+}
+
+// GetSpanID returns the value of SpanID.
+func (s *ObservabilityLogRecord) GetSpanID() OptString {
+	return s.SpanID
+}
+
+// GetSeverityText returns the value of SeverityText.
+func (s *ObservabilityLogRecord) GetSeverityText() OptString {
+	return s.SeverityText
+}
+
+// GetSeverityNumber returns the value of SeverityNumber.
+func (s *ObservabilityLogRecord) GetSeverityNumber() OptInt {
+	return s.SeverityNumber
+}
+
+// GetBody returns the value of Body.
+func (s *ObservabilityLogRecord) GetBody() OptString {
+	return s.Body
+}
+
+// GetResourceAttributes returns the value of ResourceAttributes.
+func (s *ObservabilityLogRecord) GetResourceAttributes() OptObservabilityLogRecordResourceAttributes {
+	return s.ResourceAttributes
+}
+
+// GetAttributes returns the value of Attributes.
+func (s *ObservabilityLogRecord) GetAttributes() OptObservabilityLogRecordAttributes {
+	return s.Attributes
+}
+
+// SetTimestamp sets the value of Timestamp.
+func (s *ObservabilityLogRecord) SetTimestamp(val OptString) {
+	s.Timestamp = val
+}
+
+// SetTraceID sets the value of TraceID.
+func (s *ObservabilityLogRecord) SetTraceID(val OptString) {
+	s.TraceID = val
+}
+
+// SetSpanID sets the value of SpanID.
+func (s *ObservabilityLogRecord) SetSpanID(val OptString) {
+	s.SpanID = val
+}
+
+// SetSeverityText sets the value of SeverityText.
+func (s *ObservabilityLogRecord) SetSeverityText(val OptString) {
+	s.SeverityText = val
+}
+
+// SetSeverityNumber sets the value of SeverityNumber.
+func (s *ObservabilityLogRecord) SetSeverityNumber(val OptInt) {
+	s.SeverityNumber = val
+}
+
+// SetBody sets the value of Body.
+func (s *ObservabilityLogRecord) SetBody(val OptString) {
+	s.Body = val
+}
+
+// SetResourceAttributes sets the value of ResourceAttributes.
+func (s *ObservabilityLogRecord) SetResourceAttributes(val OptObservabilityLogRecordResourceAttributes) {
+	s.ResourceAttributes = val
+}
+
+// SetAttributes sets the value of Attributes.
+func (s *ObservabilityLogRecord) SetAttributes(val OptObservabilityLogRecordAttributes) {
+	s.Attributes = val
+}
+
+type ObservabilityLogRecordAttributes map[string]string
+
+func (s *ObservabilityLogRecordAttributes) init() ObservabilityLogRecordAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+type ObservabilityLogRecordResourceAttributes map[string]string
+
+func (s *ObservabilityLogRecordResourceAttributes) init() ObservabilityLogRecordResourceAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ObservabilityTraceSpan
+type ObservabilityTraceSpan struct {
+	Timestamp          OptString                                   `json:"timestamp"`
+	TraceID            OptString                                   `json:"trace_id"`
+	SpanID             OptString                                   `json:"span_id"`
+	ParentSpanID       OptString                                   `json:"parent_span_id"`
+	ServiceName        OptString                                   `json:"service_name"`
+	Name               OptString                                   `json:"name"`
+	Kind               OptString                                   `json:"kind"`
+	DurationNano       OptInt64                                    `json:"duration_nano"`
+	StatusCode         OptString                                   `json:"status_code"`
+	StatusMessage      OptString                                   `json:"status_message"`
+	ResourceAttributes OptObservabilityTraceSpanResourceAttributes `json:"resource_attributes"`
+	Attributes         OptObservabilityTraceSpanAttributes         `json:"attributes"`
+}
+
+// GetTimestamp returns the value of Timestamp.
+func (s *ObservabilityTraceSpan) GetTimestamp() OptString {
+	return s.Timestamp
+}
+
+// GetTraceID returns the value of TraceID.
+func (s *ObservabilityTraceSpan) GetTraceID() OptString {
+	return s.TraceID
+}
+
+// GetSpanID returns the value of SpanID.
+func (s *ObservabilityTraceSpan) GetSpanID() OptString {
+	return s.SpanID
+}
+
+// GetParentSpanID returns the value of ParentSpanID.
+func (s *ObservabilityTraceSpan) GetParentSpanID() OptString {
+	return s.ParentSpanID
+}
+
+// GetServiceName returns the value of ServiceName.
+func (s *ObservabilityTraceSpan) GetServiceName() OptString {
+	return s.ServiceName
+}
+
+// GetName returns the value of Name.
+func (s *ObservabilityTraceSpan) GetName() OptString {
+	return s.Name
+}
+
+// GetKind returns the value of Kind.
+func (s *ObservabilityTraceSpan) GetKind() OptString {
+	return s.Kind
+}
+
+// GetDurationNano returns the value of DurationNano.
+func (s *ObservabilityTraceSpan) GetDurationNano() OptInt64 {
+	return s.DurationNano
+}
+
+// GetStatusCode returns the value of StatusCode.
+func (s *ObservabilityTraceSpan) GetStatusCode() OptString {
+	return s.StatusCode
+}
+
+// GetStatusMessage returns the value of StatusMessage.
+func (s *ObservabilityTraceSpan) GetStatusMessage() OptString {
+	return s.StatusMessage
+}
+
+// GetResourceAttributes returns the value of ResourceAttributes.
+func (s *ObservabilityTraceSpan) GetResourceAttributes() OptObservabilityTraceSpanResourceAttributes {
+	return s.ResourceAttributes
+}
+
+// GetAttributes returns the value of Attributes.
+func (s *ObservabilityTraceSpan) GetAttributes() OptObservabilityTraceSpanAttributes {
+	return s.Attributes
+}
+
+// SetTimestamp sets the value of Timestamp.
+func (s *ObservabilityTraceSpan) SetTimestamp(val OptString) {
+	s.Timestamp = val
+}
+
+// SetTraceID sets the value of TraceID.
+func (s *ObservabilityTraceSpan) SetTraceID(val OptString) {
+	s.TraceID = val
+}
+
+// SetSpanID sets the value of SpanID.
+func (s *ObservabilityTraceSpan) SetSpanID(val OptString) {
+	s.SpanID = val
+}
+
+// SetParentSpanID sets the value of ParentSpanID.
+func (s *ObservabilityTraceSpan) SetParentSpanID(val OptString) {
+	s.ParentSpanID = val
+}
+
+// SetServiceName sets the value of ServiceName.
+func (s *ObservabilityTraceSpan) SetServiceName(val OptString) {
+	s.ServiceName = val
+}
+
+// SetName sets the value of Name.
+func (s *ObservabilityTraceSpan) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetKind sets the value of Kind.
+func (s *ObservabilityTraceSpan) SetKind(val OptString) {
+	s.Kind = val
+}
+
+// SetDurationNano sets the value of DurationNano.
+func (s *ObservabilityTraceSpan) SetDurationNano(val OptInt64) {
+	s.DurationNano = val
+}
+
+// SetStatusCode sets the value of StatusCode.
+func (s *ObservabilityTraceSpan) SetStatusCode(val OptString) {
+	s.StatusCode = val
+}
+
+// SetStatusMessage sets the value of StatusMessage.
+func (s *ObservabilityTraceSpan) SetStatusMessage(val OptString) {
+	s.StatusMessage = val
+}
+
+// SetResourceAttributes sets the value of ResourceAttributes.
+func (s *ObservabilityTraceSpan) SetResourceAttributes(val OptObservabilityTraceSpanResourceAttributes) {
+	s.ResourceAttributes = val
+}
+
+// SetAttributes sets the value of Attributes.
+func (s *ObservabilityTraceSpan) SetAttributes(val OptObservabilityTraceSpanAttributes) {
+	s.Attributes = val
+}
+
+type ObservabilityTraceSpanAttributes map[string]string
+
+func (s *ObservabilityTraceSpanAttributes) init() ObservabilityTraceSpanAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+type ObservabilityTraceSpanResourceAttributes map[string]string
+
+func (s *ObservabilityTraceSpanResourceAttributes) init() ObservabilityTraceSpanResourceAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
 // NewOptAPIV1SandboxesGetStatus returns new OptAPIV1SandboxesGetStatus with value set to v.
 func NewOptAPIV1SandboxesGetStatus(v APIV1SandboxesGetStatus) OptAPIV1SandboxesGetStatus {
 	return OptAPIV1SandboxesGetStatus{
@@ -6177,6 +6473,190 @@ func (o OptNodeSelector) Get() (v NodeSelector, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptNodeSelector) Or(d NodeSelector) NodeSelector {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptObservabilityLogRecordAttributes returns new OptObservabilityLogRecordAttributes with value set to v.
+func NewOptObservabilityLogRecordAttributes(v ObservabilityLogRecordAttributes) OptObservabilityLogRecordAttributes {
+	return OptObservabilityLogRecordAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptObservabilityLogRecordAttributes is optional ObservabilityLogRecordAttributes.
+type OptObservabilityLogRecordAttributes struct {
+	Value ObservabilityLogRecordAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptObservabilityLogRecordAttributes was set.
+func (o OptObservabilityLogRecordAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptObservabilityLogRecordAttributes) Reset() {
+	var v ObservabilityLogRecordAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptObservabilityLogRecordAttributes) SetTo(v ObservabilityLogRecordAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptObservabilityLogRecordAttributes) Get() (v ObservabilityLogRecordAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptObservabilityLogRecordAttributes) Or(d ObservabilityLogRecordAttributes) ObservabilityLogRecordAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptObservabilityLogRecordResourceAttributes returns new OptObservabilityLogRecordResourceAttributes with value set to v.
+func NewOptObservabilityLogRecordResourceAttributes(v ObservabilityLogRecordResourceAttributes) OptObservabilityLogRecordResourceAttributes {
+	return OptObservabilityLogRecordResourceAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptObservabilityLogRecordResourceAttributes is optional ObservabilityLogRecordResourceAttributes.
+type OptObservabilityLogRecordResourceAttributes struct {
+	Value ObservabilityLogRecordResourceAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptObservabilityLogRecordResourceAttributes was set.
+func (o OptObservabilityLogRecordResourceAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptObservabilityLogRecordResourceAttributes) Reset() {
+	var v ObservabilityLogRecordResourceAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptObservabilityLogRecordResourceAttributes) SetTo(v ObservabilityLogRecordResourceAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptObservabilityLogRecordResourceAttributes) Get() (v ObservabilityLogRecordResourceAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptObservabilityLogRecordResourceAttributes) Or(d ObservabilityLogRecordResourceAttributes) ObservabilityLogRecordResourceAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptObservabilityTraceSpanAttributes returns new OptObservabilityTraceSpanAttributes with value set to v.
+func NewOptObservabilityTraceSpanAttributes(v ObservabilityTraceSpanAttributes) OptObservabilityTraceSpanAttributes {
+	return OptObservabilityTraceSpanAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptObservabilityTraceSpanAttributes is optional ObservabilityTraceSpanAttributes.
+type OptObservabilityTraceSpanAttributes struct {
+	Value ObservabilityTraceSpanAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptObservabilityTraceSpanAttributes was set.
+func (o OptObservabilityTraceSpanAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptObservabilityTraceSpanAttributes) Reset() {
+	var v ObservabilityTraceSpanAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptObservabilityTraceSpanAttributes) SetTo(v ObservabilityTraceSpanAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptObservabilityTraceSpanAttributes) Get() (v ObservabilityTraceSpanAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptObservabilityTraceSpanAttributes) Or(d ObservabilityTraceSpanAttributes) ObservabilityTraceSpanAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptObservabilityTraceSpanResourceAttributes returns new OptObservabilityTraceSpanResourceAttributes with value set to v.
+func NewOptObservabilityTraceSpanResourceAttributes(v ObservabilityTraceSpanResourceAttributes) OptObservabilityTraceSpanResourceAttributes {
+	return OptObservabilityTraceSpanResourceAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptObservabilityTraceSpanResourceAttributes is optional ObservabilityTraceSpanResourceAttributes.
+type OptObservabilityTraceSpanResourceAttributes struct {
+	Value ObservabilityTraceSpanResourceAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptObservabilityTraceSpanResourceAttributes was set.
+func (o OptObservabilityTraceSpanResourceAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptObservabilityTraceSpanResourceAttributes) Reset() {
+	var v ObservabilityTraceSpanResourceAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptObservabilityTraceSpanResourceAttributes) SetTo(v ObservabilityTraceSpanResourceAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptObservabilityTraceSpanResourceAttributes) Get() (v ObservabilityTraceSpanResourceAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptObservabilityTraceSpanResourceAttributes) Or(d ObservabilityTraceSpanResourceAttributes) ObservabilityTraceSpanResourceAttributes {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8707,6 +9187,98 @@ func (o OptSuccessMovedResponseData) Get() (v SuccessMovedResponseData, ok bool)
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessMovedResponseData) Or(d SuccessMovedResponseData) SuccessMovedResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessObservabilityLogRecordListResponseData returns new OptSuccessObservabilityLogRecordListResponseData with value set to v.
+func NewOptSuccessObservabilityLogRecordListResponseData(v SuccessObservabilityLogRecordListResponseData) OptSuccessObservabilityLogRecordListResponseData {
+	return OptSuccessObservabilityLogRecordListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessObservabilityLogRecordListResponseData is optional SuccessObservabilityLogRecordListResponseData.
+type OptSuccessObservabilityLogRecordListResponseData struct {
+	Value SuccessObservabilityLogRecordListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessObservabilityLogRecordListResponseData was set.
+func (o OptSuccessObservabilityLogRecordListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessObservabilityLogRecordListResponseData) Reset() {
+	var v SuccessObservabilityLogRecordListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessObservabilityLogRecordListResponseData) SetTo(v SuccessObservabilityLogRecordListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessObservabilityLogRecordListResponseData) Get() (v SuccessObservabilityLogRecordListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessObservabilityLogRecordListResponseData) Or(d SuccessObservabilityLogRecordListResponseData) SuccessObservabilityLogRecordListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessObservabilityTraceSpanListResponseData returns new OptSuccessObservabilityTraceSpanListResponseData with value set to v.
+func NewOptSuccessObservabilityTraceSpanListResponseData(v SuccessObservabilityTraceSpanListResponseData) OptSuccessObservabilityTraceSpanListResponseData {
+	return OptSuccessObservabilityTraceSpanListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessObservabilityTraceSpanListResponseData is optional SuccessObservabilityTraceSpanListResponseData.
+type OptSuccessObservabilityTraceSpanListResponseData struct {
+	Value SuccessObservabilityTraceSpanListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessObservabilityTraceSpanListResponseData was set.
+func (o OptSuccessObservabilityTraceSpanListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessObservabilityTraceSpanListResponseData) Reset() {
+	var v SuccessObservabilityTraceSpanListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessObservabilityTraceSpanListResponseData) SetTo(v SuccessObservabilityTraceSpanListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessObservabilityTraceSpanListResponseData) Get() (v SuccessObservabilityTraceSpanListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessObservabilityTraceSpanListResponseData) Or(d SuccessObservabilityTraceSpanListResponseData) SuccessObservabilityTraceSpanListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -14174,6 +14746,120 @@ const (
 func (SuccessMovedResponseSuccess) AllValues() []SuccessMovedResponseSuccess {
 	return []SuccessMovedResponseSuccess{
 		SuccessMovedResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessObservabilityLogRecordListResponse
+type SuccessObservabilityLogRecordListResponse struct {
+	Success SuccessObservabilityLogRecordListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessObservabilityLogRecordListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessObservabilityLogRecordListResponse) GetSuccess() SuccessObservabilityLogRecordListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessObservabilityLogRecordListResponse) GetData() OptSuccessObservabilityLogRecordListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessObservabilityLogRecordListResponse) SetSuccess(val SuccessObservabilityLogRecordListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessObservabilityLogRecordListResponse) SetData(val OptSuccessObservabilityLogRecordListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessObservabilityLogRecordListResponse) aPIV1ObservabilityLogsGetRes() {}
+
+type SuccessObservabilityLogRecordListResponseData struct {
+	Logs []ObservabilityLogRecord `json:"logs"`
+}
+
+// GetLogs returns the value of Logs.
+func (s *SuccessObservabilityLogRecordListResponseData) GetLogs() []ObservabilityLogRecord {
+	return s.Logs
+}
+
+// SetLogs sets the value of Logs.
+func (s *SuccessObservabilityLogRecordListResponseData) SetLogs(val []ObservabilityLogRecord) {
+	s.Logs = val
+}
+
+type SuccessObservabilityLogRecordListResponseSuccess bool
+
+const (
+	SuccessObservabilityLogRecordListResponseSuccessTrue SuccessObservabilityLogRecordListResponseSuccess = true
+)
+
+// AllValues returns all SuccessObservabilityLogRecordListResponseSuccess values.
+func (SuccessObservabilityLogRecordListResponseSuccess) AllValues() []SuccessObservabilityLogRecordListResponseSuccess {
+	return []SuccessObservabilityLogRecordListResponseSuccess{
+		SuccessObservabilityLogRecordListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessObservabilityTraceSpanListResponse
+type SuccessObservabilityTraceSpanListResponse struct {
+	Success SuccessObservabilityTraceSpanListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessObservabilityTraceSpanListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessObservabilityTraceSpanListResponse) GetSuccess() SuccessObservabilityTraceSpanListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessObservabilityTraceSpanListResponse) GetData() OptSuccessObservabilityTraceSpanListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessObservabilityTraceSpanListResponse) SetSuccess(val SuccessObservabilityTraceSpanListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessObservabilityTraceSpanListResponse) SetData(val OptSuccessObservabilityTraceSpanListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessObservabilityTraceSpanListResponse) aPIV1ObservabilityTracesGetRes() {}
+
+type SuccessObservabilityTraceSpanListResponseData struct {
+	Spans []ObservabilityTraceSpan `json:"spans"`
+}
+
+// GetSpans returns the value of Spans.
+func (s *SuccessObservabilityTraceSpanListResponseData) GetSpans() []ObservabilityTraceSpan {
+	return s.Spans
+}
+
+// SetSpans sets the value of Spans.
+func (s *SuccessObservabilityTraceSpanListResponseData) SetSpans(val []ObservabilityTraceSpan) {
+	s.Spans = val
+}
+
+type SuccessObservabilityTraceSpanListResponseSuccess bool
+
+const (
+	SuccessObservabilityTraceSpanListResponseSuccessTrue SuccessObservabilityTraceSpanListResponseSuccess = true
+)
+
+// AllValues returns all SuccessObservabilityTraceSpanListResponseSuccess values.
+func (SuccessObservabilityTraceSpanListResponseSuccess) AllValues() []SuccessObservabilityTraceSpanListResponseSuccess {
+	return []SuccessObservabilityTraceSpanListResponseSuccess{
+		SuccessObservabilityTraceSpanListResponseSuccessTrue,
 	}
 }
 
