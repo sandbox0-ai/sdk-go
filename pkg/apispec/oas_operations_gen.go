@@ -16,8 +16,6 @@ const (
 	APIV1CredentialSourcesNameGetOperation                       OperationName = "APIV1CredentialSourcesNameGet"
 	APIV1CredentialSourcesNamePutOperation                       OperationName = "APIV1CredentialSourcesNamePut"
 	APIV1CredentialSourcesPostOperation                          OperationName = "APIV1CredentialSourcesPost"
-	APIV1ObservabilityLogsGetOperation                           OperationName = "APIV1ObservabilityLogsGet"
-	APIV1ObservabilityTracesGetOperation                         OperationName = "APIV1ObservabilityTracesGet"
 	APIV1RegistryCredentialsPostOperation                        OperationName = "APIV1RegistryCredentialsPost"
 	APIV1SandboxesGetOperation                                   OperationName = "APIV1SandboxesGet"
 	APIV1SandboxesIDContextsCtxIDDeleteOperation                 OperationName = "APIV1SandboxesIDContextsCtxIDDelete"

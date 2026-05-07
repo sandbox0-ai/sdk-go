@@ -27,32 +27,6 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
-// APIV1ObservabilityLogsGetParams is parameters of GET /api/v1/observability/logs operation.
-type APIV1ObservabilityLogsGetParams struct {
-	// Filter logs by sandbox id when available in resource attributes.
-	SandboxID OptString `json:",omitempty,omitzero"`
-	// Filter logs by OpenTelemetry trace id.
-	TraceID OptString `json:",omitempty,omitzero"`
-	// Include logs at or after this timestamp.
-	StartTime OptDateTime `json:",omitempty,omitzero"`
-	// Include logs at or before this timestamp.
-	EndTime OptDateTime `json:",omitempty,omitzero"`
-	Limit   OptInt      `json:",omitempty,omitzero"`
-}
-
-// APIV1ObservabilityTracesGetParams is parameters of GET /api/v1/observability/traces operation.
-type APIV1ObservabilityTracesGetParams struct {
-	// Filter spans by sandbox id when available in resource attributes.
-	SandboxID OptString `json:",omitempty,omitzero"`
-	// Filter spans by OpenTelemetry trace id.
-	TraceID OptString `json:",omitempty,omitzero"`
-	// Include spans at or after this timestamp.
-	StartTime OptDateTime `json:",omitempty,omitzero"`
-	// Include spans at or before this timestamp.
-	EndTime OptDateTime `json:",omitempty,omitzero"`
-	Limit   OptInt      `json:",omitempty,omitzero"`
-}
-
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
 type APIV1SandboxesGetParams struct {
 	// Filter by sandbox status.

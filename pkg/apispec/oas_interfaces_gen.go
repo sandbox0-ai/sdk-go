@@ -25,14 +25,6 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
-type APIV1ObservabilityLogsGetRes interface {
-	aPIV1ObservabilityLogsGetRes()
-}
-
-type APIV1ObservabilityTracesGetRes interface {
-	aPIV1ObservabilityTracesGetRes()
-}
-
 type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
 }
