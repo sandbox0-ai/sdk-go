@@ -1020,6 +1020,8 @@ func (s CredentialProjectionType) Validate() error {
 		return nil
 	case "username_password":
 		return nil
+	case "ssh_proxy":
+		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
@@ -1055,6 +1057,8 @@ func (s CredentialSourceResolverKind) Validate() error {
 	case "static_tls_client_certificate":
 		return nil
 	case "static_username_password":
+		return nil
+	case "static_ssh_private_key":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
@@ -1192,6 +1196,8 @@ func (s EgressAuthProtocol) Validate() error {
 	case "grpc":
 		return nil
 	case "tls":
+		return nil
+	case "ssh":
 		return nil
 	case "socks5":
 		return nil
