@@ -6038,6 +6038,8 @@ func (s *CredentialProjectionType) Decode(d *jx.Decoder) error {
 		*s = CredentialProjectionTypeTLSClientCertificate
 	case CredentialProjectionTypeUsernamePassword:
 		*s = CredentialProjectionTypeUsernamePassword
+	case CredentialProjectionTypeSSHProxy:
+		*s = CredentialProjectionTypeSSHProxy
 	default:
 		*s = CredentialProjectionType(v)
 	}
@@ -6259,6 +6261,8 @@ func (s *CredentialSourceResolverKind) Decode(d *jx.Decoder) error {
 		*s = CredentialSourceResolverKindStaticTLSClientCertificate
 	case CredentialSourceResolverKindStaticUsernamePassword:
 		*s = CredentialSourceResolverKindStaticUsernamePassword
+	case CredentialSourceResolverKindStaticSSHPrivateKey:
+		*s = CredentialSourceResolverKindStaticSSHPrivateKey
 	default:
 		*s = CredentialSourceResolverKind(v)
 	}
@@ -6432,12 +6436,19 @@ func (s *CredentialSourceWriteSpec) encodeFields(e *jx.Encoder) {
 			s.StaticUsernamePassword.Encode(e)
 		}
 	}
+	{
+		if s.StaticSSHPrivateKey.Set {
+			e.FieldStart("staticSSHPrivateKey")
+			s.StaticSSHPrivateKey.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfCredentialSourceWriteSpec = [3]string{
+var jsonFieldsNameOfCredentialSourceWriteSpec = [4]string{
 	0: "staticHeaders",
 	1: "staticTLSClientCertificate",
 	2: "staticUsernamePassword",
+	3: "staticSSHPrivateKey",
 }
 
 // Decode decodes CredentialSourceWriteSpec from json.
@@ -6477,6 +6488,16 @@ func (s *CredentialSourceWriteSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"staticUsernamePassword\"")
+			}
+		case "staticSSHPrivateKey":
+			if err := func() error {
+				s.StaticSSHPrivateKey.Reset()
+				if err := s.StaticSSHPrivateKey.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"staticSSHPrivateKey\"")
 			}
 		default:
 			return d.Skip()
@@ -7269,6 +7290,8 @@ func (s *EgressAuthProtocol) Decode(d *jx.Decoder) error {
 		*s = EgressAuthProtocolGrpc
 	case EgressAuthProtocolTLS:
 		*s = EgressAuthProtocolTLS
+	case EgressAuthProtocolSSH:
+		*s = EgressAuthProtocolSSH
 	case EgressAuthProtocolSocks5:
 		*s = EgressAuthProtocolSocks5
 	case EgressAuthProtocolMqtt:
@@ -7398,9 +7421,15 @@ func (s *EgressCredentialRule) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
+	{
+		if s.HttpMatch.Set {
+			e.FieldStart("httpMatch")
+			s.HttpMatch.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfEgressCredentialRule = [8]string{
+var jsonFieldsNameOfEgressCredentialRule = [9]string{
 	0: "name",
 	1: "credentialRef",
 	2: "rollout",
@@ -7409,6 +7438,7 @@ var jsonFieldsNameOfEgressCredentialRule = [8]string{
 	5: "failurePolicy",
 	6: "domains",
 	7: "ports",
+	8: "httpMatch",
 }
 
 // Decode decodes EgressCredentialRule from json.
@@ -7416,7 +7446,7 @@ func (s *EgressCredentialRule) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode EgressCredentialRule to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -7518,6 +7548,16 @@ func (s *EgressCredentialRule) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"ports\"")
 			}
+		case "httpMatch":
+			if err := func() error {
+				s.HttpMatch.Reset()
+				if err := s.HttpMatch.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"httpMatch\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -7527,8 +7567,9 @@ func (s *EgressCredentialRule) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00000010,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -9147,6 +9188,341 @@ func (s *HTTPHeadersProjection) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *HTTPHeadersProjection) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPMatch) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPMatch) encodeFields(e *jx.Encoder) {
+	{
+		if s.Methods != nil {
+			e.FieldStart("methods")
+			e.ArrStart()
+			for _, elem := range s.Methods {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Paths != nil {
+			e.FieldStart("paths")
+			e.ArrStart()
+			for _, elem := range s.Paths {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.PathPrefixes != nil {
+			e.FieldStart("pathPrefixes")
+			e.ArrStart()
+			for _, elem := range s.PathPrefixes {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Query != nil {
+			e.FieldStart("query")
+			e.ArrStart()
+			for _, elem := range s.Query {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Headers != nil {
+			e.FieldStart("headers")
+			e.ArrStart()
+			for _, elem := range s.Headers {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPMatch = [5]string{
+	0: "methods",
+	1: "paths",
+	2: "pathPrefixes",
+	3: "query",
+	4: "headers",
+}
+
+// Decode decodes HTTPMatch from json.
+func (s *HTTPMatch) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPMatch to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "methods":
+			if err := func() error {
+				s.Methods = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Methods = append(s.Methods, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"methods\"")
+			}
+		case "paths":
+			if err := func() error {
+				s.Paths = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Paths = append(s.Paths, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"paths\"")
+			}
+		case "pathPrefixes":
+			if err := func() error {
+				s.PathPrefixes = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.PathPrefixes = append(s.PathPrefixes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"pathPrefixes\"")
+			}
+		case "query":
+			if err := func() error {
+				s.Query = make([]HTTPValueMatch, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem HTTPValueMatch
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Query = append(s.Query, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"query\"")
+			}
+		case "headers":
+			if err := func() error {
+				s.Headers = make([]HTTPValueMatch, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem HTTPValueMatch
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Headers = append(s.Headers, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"headers\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPMatch")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPMatch) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPMatch) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPValueMatch) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPValueMatch) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Values != nil {
+			e.FieldStart("values")
+			e.ArrStart()
+			for _, elem := range s.Values {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Present.Set {
+			e.FieldStart("present")
+			s.Present.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPValueMatch = [3]string{
+	0: "name",
+	1: "values",
+	2: "present",
+}
+
+// Decode decodes HTTPValueMatch from json.
+func (s *HTTPValueMatch) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPValueMatch to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "values":
+			if err := func() error {
+				s.Values = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Values = append(s.Values, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"values\"")
+			}
+		case "present":
+			if err := func() error {
+				s.Present.Reset()
+				if err := s.Present.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"present\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPValueMatch")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfHTTPValueMatch) {
+					name = jsonFieldsNameOfHTTPValueMatch[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPValueMatch) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPValueMatch) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -12081,6 +12457,39 @@ func (s *OptHTTPHeadersProjection) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes HTTPMatch as json.
+func (o OptHTTPMatch) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes HTTPMatch from json.
+func (o *OptHTTPMatch) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptHTTPMatch to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptHTTPMatch) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptHTTPMatch) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes int as json.
 func (o OptInt) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -13298,6 +13707,39 @@ func (s *OptResumeSandboxResponse) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SSHProxyProjection as json.
+func (o OptSSHProxyProjection) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SSHProxyProjection from json.
+func (o *OptSSHProxyProjection) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSSHProxyProjection to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSSHProxyProjection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSSHProxyProjection) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SSHPublicKey as json.
 func (o OptSSHPublicKey) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -13924,6 +14366,39 @@ func (s OptStaticHeadersSourceSpecValues) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptStaticHeadersSourceSpecValues) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes StaticSSHPrivateKeySourceSpec as json.
+func (o OptStaticSSHPrivateKeySourceSpec) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes StaticSSHPrivateKeySourceSpec from json.
+func (o *OptStaticSSHPrivateKeySourceSpec) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptStaticSSHPrivateKeySourceSpec to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptStaticSSHPrivateKeySourceSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptStaticSSHPrivateKeySourceSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -16420,13 +16895,20 @@ func (s *ProjectionSpec) encodeFields(e *jx.Encoder) {
 			s.UsernamePassword.Encode(e)
 		}
 	}
+	{
+		if s.SshProxy.Set {
+			e.FieldStart("sshProxy")
+			s.SshProxy.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfProjectionSpec = [4]string{
+var jsonFieldsNameOfProjectionSpec = [5]string{
 	0: "type",
 	1: "httpHeaders",
 	2: "tlsClientCertificate",
 	3: "usernamePassword",
+	4: "sshProxy",
 }
 
 // Decode decodes ProjectionSpec from json.
@@ -16481,6 +16963,16 @@ func (s *ProjectionSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"usernamePassword\"")
+			}
+		case "sshProxy":
+			if err := func() error {
+				s.SshProxy.Reset()
+				if err := s.SshProxy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sshProxy\"")
 			}
 		default:
 			return d.Skip()
@@ -19911,6 +20403,129 @@ func (s *ResumeSandboxResponse) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ResumeSandboxResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SSHProxyProjection) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SSHProxyProjection) encodeFields(e *jx.Encoder) {
+	{
+		if s.SandboxPublicKeys != nil {
+			e.FieldStart("sandboxPublicKeys")
+			e.ArrStart()
+			for _, elem := range s.SandboxPublicKeys {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.UpstreamUsername.Set {
+			e.FieldStart("upstreamUsername")
+			s.UpstreamUsername.Encode(e)
+		}
+	}
+	{
+		if s.KnownHosts != nil {
+			e.FieldStart("knownHosts")
+			e.ArrStart()
+			for _, elem := range s.KnownHosts {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfSSHProxyProjection = [3]string{
+	0: "sandboxPublicKeys",
+	1: "upstreamUsername",
+	2: "knownHosts",
+}
+
+// Decode decodes SSHProxyProjection from json.
+func (s *SSHProxyProjection) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SSHProxyProjection to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "sandboxPublicKeys":
+			if err := func() error {
+				s.SandboxPublicKeys = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.SandboxPublicKeys = append(s.SandboxPublicKeys, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandboxPublicKeys\"")
+			}
+		case "upstreamUsername":
+			if err := func() error {
+				s.UpstreamUsername.Reset()
+				if err := s.UpstreamUsername.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"upstreamUsername\"")
+			}
+		case "knownHosts":
+			if err := func() error {
+				s.KnownHosts = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.KnownHosts = append(s.KnownHosts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"knownHosts\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SSHProxyProjection")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SSHProxyProjection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SSHProxyProjection) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -23929,6 +24544,119 @@ func (s StaticHeadersSourceSpecValues) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *StaticHeadersSourceSpecValues) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *StaticSSHPrivateKeySourceSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *StaticSSHPrivateKeySourceSpec) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("privateKeyPem")
+		e.Str(s.PrivateKeyPem)
+	}
+	{
+		if s.Passphrase.Set {
+			e.FieldStart("passphrase")
+			s.Passphrase.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfStaticSSHPrivateKeySourceSpec = [2]string{
+	0: "privateKeyPem",
+	1: "passphrase",
+}
+
+// Decode decodes StaticSSHPrivateKeySourceSpec from json.
+func (s *StaticSSHPrivateKeySourceSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode StaticSSHPrivateKeySourceSpec to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "privateKeyPem":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.PrivateKeyPem = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"privateKeyPem\"")
+			}
+		case "passphrase":
+			if err := func() error {
+				s.Passphrase.Reset()
+				if err := s.Passphrase.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"passphrase\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode StaticSSHPrivateKeySourceSpec")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfStaticSSHPrivateKeySourceSpec) {
+					name = jsonFieldsNameOfStaticSSHPrivateKeySourceSpec[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *StaticSSHPrivateKeySourceSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *StaticSSHPrivateKeySourceSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

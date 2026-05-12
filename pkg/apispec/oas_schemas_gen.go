@@ -1950,6 +1950,7 @@ const (
 	CredentialProjectionTypeHTTPHeaders          CredentialProjectionType = "http_headers"
 	CredentialProjectionTypeTLSClientCertificate CredentialProjectionType = "tls_client_certificate"
 	CredentialProjectionTypeUsernamePassword     CredentialProjectionType = "username_password"
+	CredentialProjectionTypeSSHProxy             CredentialProjectionType = "ssh_proxy"
 )
 
 // AllValues returns all CredentialProjectionType values.
@@ -1958,6 +1959,7 @@ func (CredentialProjectionType) AllValues() []CredentialProjectionType {
 		CredentialProjectionTypeHTTPHeaders,
 		CredentialProjectionTypeTLSClientCertificate,
 		CredentialProjectionTypeUsernamePassword,
+		CredentialProjectionTypeSSHProxy,
 	}
 }
 
@@ -1969,6 +1971,8 @@ func (s CredentialProjectionType) MarshalText() ([]byte, error) {
 	case CredentialProjectionTypeTLSClientCertificate:
 		return []byte(s), nil
 	case CredentialProjectionTypeUsernamePassword:
+		return []byte(s), nil
+	case CredentialProjectionTypeSSHProxy:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -1986,6 +1990,9 @@ func (s *CredentialProjectionType) UnmarshalText(data []byte) error {
 		return nil
 	case CredentialProjectionTypeUsernamePassword:
 		*s = CredentialProjectionTypeUsernamePassword
+		return nil
+	case CredentialProjectionTypeSSHProxy:
+		*s = CredentialProjectionTypeSSHProxy
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -2069,6 +2076,7 @@ const (
 	CredentialSourceResolverKindStaticHeaders              CredentialSourceResolverKind = "static_headers"
 	CredentialSourceResolverKindStaticTLSClientCertificate CredentialSourceResolverKind = "static_tls_client_certificate"
 	CredentialSourceResolverKindStaticUsernamePassword     CredentialSourceResolverKind = "static_username_password"
+	CredentialSourceResolverKindStaticSSHPrivateKey        CredentialSourceResolverKind = "static_ssh_private_key"
 )
 
 // AllValues returns all CredentialSourceResolverKind values.
@@ -2077,6 +2085,7 @@ func (CredentialSourceResolverKind) AllValues() []CredentialSourceResolverKind {
 		CredentialSourceResolverKindStaticHeaders,
 		CredentialSourceResolverKindStaticTLSClientCertificate,
 		CredentialSourceResolverKindStaticUsernamePassword,
+		CredentialSourceResolverKindStaticSSHPrivateKey,
 	}
 }
 
@@ -2088,6 +2097,8 @@ func (s CredentialSourceResolverKind) MarshalText() ([]byte, error) {
 	case CredentialSourceResolverKindStaticTLSClientCertificate:
 		return []byte(s), nil
 	case CredentialSourceResolverKindStaticUsernamePassword:
+		return []byte(s), nil
+	case CredentialSourceResolverKindStaticSSHPrivateKey:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -2105,6 +2116,9 @@ func (s *CredentialSourceResolverKind) UnmarshalText(data []byte) error {
 		return nil
 	case CredentialSourceResolverKindStaticUsernamePassword:
 		*s = CredentialSourceResolverKindStaticUsernamePassword
+		return nil
+	case CredentialSourceResolverKindStaticSSHPrivateKey:
+		*s = CredentialSourceResolverKindStaticSSHPrivateKey
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -2153,6 +2167,7 @@ type CredentialSourceWriteSpec struct {
 	StaticHeaders              OptStaticHeadersSourceSpec              `json:"staticHeaders"`
 	StaticTLSClientCertificate OptStaticTLSClientCertificateSourceSpec `json:"staticTLSClientCertificate"`
 	StaticUsernamePassword     OptStaticUsernamePasswordSourceSpec     `json:"staticUsernamePassword"`
+	StaticSSHPrivateKey        OptStaticSSHPrivateKeySourceSpec        `json:"staticSSHPrivateKey"`
 }
 
 // GetStaticHeaders returns the value of StaticHeaders.
@@ -2170,6 +2185,11 @@ func (s *CredentialSourceWriteSpec) GetStaticUsernamePassword() OptStaticUsernam
 	return s.StaticUsernamePassword
 }
 
+// GetStaticSSHPrivateKey returns the value of StaticSSHPrivateKey.
+func (s *CredentialSourceWriteSpec) GetStaticSSHPrivateKey() OptStaticSSHPrivateKeySourceSpec {
+	return s.StaticSSHPrivateKey
+}
+
 // SetStaticHeaders sets the value of StaticHeaders.
 func (s *CredentialSourceWriteSpec) SetStaticHeaders(val OptStaticHeadersSourceSpec) {
 	s.StaticHeaders = val
@@ -2183,6 +2203,11 @@ func (s *CredentialSourceWriteSpec) SetStaticTLSClientCertificate(val OptStaticT
 // SetStaticUsernamePassword sets the value of StaticUsernamePassword.
 func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsernamePasswordSourceSpec) {
 	s.StaticUsernamePassword = val
+}
+
+// SetStaticSSHPrivateKey sets the value of StaticSSHPrivateKey.
+func (s *CredentialSourceWriteSpec) SetStaticSSHPrivateKey(val OptStaticSSHPrivateKeySourceSpec) {
+	s.StaticSSHPrivateKey = val
 }
 
 // Ref: #/components/schemas/CurrentAPIKeyResponse
@@ -2508,6 +2533,7 @@ const (
 	EgressAuthProtocolHTTPS  EgressAuthProtocol = "https"
 	EgressAuthProtocolGrpc   EgressAuthProtocol = "grpc"
 	EgressAuthProtocolTLS    EgressAuthProtocol = "tls"
+	EgressAuthProtocolSSH    EgressAuthProtocol = "ssh"
 	EgressAuthProtocolSocks5 EgressAuthProtocol = "socks5"
 	EgressAuthProtocolMqtt   EgressAuthProtocol = "mqtt"
 	EgressAuthProtocolRedis  EgressAuthProtocol = "redis"
@@ -2520,6 +2546,7 @@ func (EgressAuthProtocol) AllValues() []EgressAuthProtocol {
 		EgressAuthProtocolHTTPS,
 		EgressAuthProtocolGrpc,
 		EgressAuthProtocolTLS,
+		EgressAuthProtocolSSH,
 		EgressAuthProtocolSocks5,
 		EgressAuthProtocolMqtt,
 		EgressAuthProtocolRedis,
@@ -2536,6 +2563,8 @@ func (s EgressAuthProtocol) MarshalText() ([]byte, error) {
 	case EgressAuthProtocolGrpc:
 		return []byte(s), nil
 	case EgressAuthProtocolTLS:
+		return []byte(s), nil
+	case EgressAuthProtocolSSH:
 		return []byte(s), nil
 	case EgressAuthProtocolSocks5:
 		return []byte(s), nil
@@ -2562,6 +2591,9 @@ func (s *EgressAuthProtocol) UnmarshalText(data []byte) error {
 		return nil
 	case EgressAuthProtocolTLS:
 		*s = EgressAuthProtocolTLS
+		return nil
+	case EgressAuthProtocolSSH:
+		*s = EgressAuthProtocolSSH
 		return nil
 	case EgressAuthProtocolSocks5:
 		*s = EgressAuthProtocolSocks5
@@ -2633,7 +2665,8 @@ type EgressCredentialRule struct {
 	// Domain match list for the rule.
 	Domains []string `json:"domains"`
 	// Port/protocol constraints for the rule.
-	Ports []PortSpec `json:"ports"`
+	Ports     []PortSpec   `json:"ports"`
+	HttpMatch OptHTTPMatch `json:"httpMatch"`
 }
 
 // GetName returns the value of Name.
@@ -2676,6 +2709,11 @@ func (s *EgressCredentialRule) GetPorts() []PortSpec {
 	return s.Ports
 }
 
+// GetHttpMatch returns the value of HttpMatch.
+func (s *EgressCredentialRule) GetHttpMatch() OptHTTPMatch {
+	return s.HttpMatch
+}
+
 // SetName sets the value of Name.
 func (s *EgressCredentialRule) SetName(val OptString) {
 	s.Name = val
@@ -2714,6 +2752,11 @@ func (s *EgressCredentialRule) SetDomains(val []string) {
 // SetPorts sets the value of Ports.
 func (s *EgressCredentialRule) SetPorts(val []PortSpec) {
 	s.Ports = val
+}
+
+// SetHttpMatch sets the value of HttpMatch.
+func (s *EgressCredentialRule) SetHttpMatch(val OptHTTPMatch) {
+	s.HttpMatch = val
 }
 
 // Ref: #/components/schemas/EgressTLSMode
@@ -3335,6 +3378,111 @@ func (s *HTTPHeadersProjection) GetHeaders() []ProjectedHeader {
 // SetHeaders sets the value of Headers.
 func (s *HTTPHeadersProjection) SetHeaders(val []ProjectedHeader) {
 	s.Headers = val
+}
+
+// Request-level matcher for HTTP-family egress credential rules.
+// Ref: #/components/schemas/HTTPMatch
+type HTTPMatch struct {
+	// HTTP methods matched case-insensitively after uppercasing.
+	Methods []string `json:"methods"`
+	// Exact URL path matches.
+	Paths []string `json:"paths"`
+	// URL path prefix matches.
+	PathPrefixes []string `json:"pathPrefixes"`
+	// Decoded query parameter matchers.
+	Query []HTTPValueMatch `json:"query"`
+	// HTTP request header matchers.
+	Headers []HTTPValueMatch `json:"headers"`
+}
+
+// GetMethods returns the value of Methods.
+func (s *HTTPMatch) GetMethods() []string {
+	return s.Methods
+}
+
+// GetPaths returns the value of Paths.
+func (s *HTTPMatch) GetPaths() []string {
+	return s.Paths
+}
+
+// GetPathPrefixes returns the value of PathPrefixes.
+func (s *HTTPMatch) GetPathPrefixes() []string {
+	return s.PathPrefixes
+}
+
+// GetQuery returns the value of Query.
+func (s *HTTPMatch) GetQuery() []HTTPValueMatch {
+	return s.Query
+}
+
+// GetHeaders returns the value of Headers.
+func (s *HTTPMatch) GetHeaders() []HTTPValueMatch {
+	return s.Headers
+}
+
+// SetMethods sets the value of Methods.
+func (s *HTTPMatch) SetMethods(val []string) {
+	s.Methods = val
+}
+
+// SetPaths sets the value of Paths.
+func (s *HTTPMatch) SetPaths(val []string) {
+	s.Paths = val
+}
+
+// SetPathPrefixes sets the value of PathPrefixes.
+func (s *HTTPMatch) SetPathPrefixes(val []string) {
+	s.PathPrefixes = val
+}
+
+// SetQuery sets the value of Query.
+func (s *HTTPMatch) SetQuery(val []HTTPValueMatch) {
+	s.Query = val
+}
+
+// SetHeaders sets the value of Headers.
+func (s *HTTPMatch) SetHeaders(val []HTTPValueMatch) {
+	s.Headers = val
+}
+
+// Ref: #/components/schemas/HTTPValueMatch
+type HTTPValueMatch struct {
+	// Header or query parameter name.
+	Name string `json:"name"`
+	// Accepted values. Empty with present=true requires only presence.
+	Values []string `json:"values"`
+	// When true and values is empty, only parameter/header presence is required.
+	Present OptBool `json:"present"`
+}
+
+// GetName returns the value of Name.
+func (s *HTTPValueMatch) GetName() string {
+	return s.Name
+}
+
+// GetValues returns the value of Values.
+func (s *HTTPValueMatch) GetValues() []string {
+	return s.Values
+}
+
+// GetPresent returns the value of Present.
+func (s *HTTPValueMatch) GetPresent() OptBool {
+	return s.Present
+}
+
+// SetName sets the value of Name.
+func (s *HTTPValueMatch) SetName(val string) {
+	s.Name = val
+}
+
+// SetValues sets the value of Values.
+func (s *HTTPValueMatch) SetValues(val []string) {
+	s.Values = val
+}
+
+// SetPresent sets the value of Present.
+func (s *HTTPValueMatch) SetPresent(val OptBool) {
+	s.Present = val
 }
 
 // Ref: #/components/schemas/Identity
@@ -5534,6 +5682,52 @@ func (o OptHTTPHeadersProjection) Or(d HTTPHeadersProjection) HTTPHeadersProject
 	return d
 }
 
+// NewOptHTTPMatch returns new OptHTTPMatch with value set to v.
+func NewOptHTTPMatch(v HTTPMatch) OptHTTPMatch {
+	return OptHTTPMatch{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPMatch is optional HTTPMatch.
+type OptHTTPMatch struct {
+	Value HTTPMatch
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPMatch was set.
+func (o OptHTTPMatch) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPMatch) Reset() {
+	var v HTTPMatch
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPMatch) SetTo(v HTTPMatch) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPMatch) Get() (v HTTPMatch, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPMatch) Or(d HTTPMatch) HTTPMatch {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
 	return OptInt{
@@ -7195,6 +7389,52 @@ func (o OptResumeSandboxResponse) Or(d ResumeSandboxResponse) ResumeSandboxRespo
 	return d
 }
 
+// NewOptSSHProxyProjection returns new OptSSHProxyProjection with value set to v.
+func NewOptSSHProxyProjection(v SSHProxyProjection) OptSSHProxyProjection {
+	return OptSSHProxyProjection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSSHProxyProjection is optional SSHProxyProjection.
+type OptSSHProxyProjection struct {
+	Value SSHProxyProjection
+	Set   bool
+}
+
+// IsSet returns true if OptSSHProxyProjection was set.
+func (o OptSSHProxyProjection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSSHProxyProjection) Reset() {
+	var v SSHProxyProjection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSSHProxyProjection) SetTo(v SSHProxyProjection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSSHProxyProjection) Get() (v SSHProxyProjection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSSHProxyProjection) Or(d SSHProxyProjection) SSHProxyProjection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSSHPublicKey returns new OptSSHPublicKey with value set to v.
 func NewOptSSHPublicKey(v SSHPublicKey) OptSSHPublicKey {
 	return OptSSHPublicKey{
@@ -8063,6 +8303,52 @@ func (o OptStaticHeadersSourceSpecValues) Get() (v StaticHeadersSourceSpecValues
 
 // Or returns value if set, or given parameter if does not.
 func (o OptStaticHeadersSourceSpecValues) Or(d StaticHeadersSourceSpecValues) StaticHeadersSourceSpecValues {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptStaticSSHPrivateKeySourceSpec returns new OptStaticSSHPrivateKeySourceSpec with value set to v.
+func NewOptStaticSSHPrivateKeySourceSpec(v StaticSSHPrivateKeySourceSpec) OptStaticSSHPrivateKeySourceSpec {
+	return OptStaticSSHPrivateKeySourceSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticSSHPrivateKeySourceSpec is optional StaticSSHPrivateKeySourceSpec.
+type OptStaticSSHPrivateKeySourceSpec struct {
+	Value StaticSSHPrivateKeySourceSpec
+	Set   bool
+}
+
+// IsSet returns true if OptStaticSSHPrivateKeySourceSpec was set.
+func (o OptStaticSSHPrivateKeySourceSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticSSHPrivateKeySourceSpec) Reset() {
+	var v StaticSSHPrivateKeySourceSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticSSHPrivateKeySourceSpec) SetTo(v StaticSSHPrivateKeySourceSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticSSHPrivateKeySourceSpec) Get() (v StaticSSHPrivateKeySourceSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticSSHPrivateKeySourceSpec) Or(d StaticSSHPrivateKeySourceSpec) StaticSSHPrivateKeySourceSpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10001,6 +10287,7 @@ type ProjectionSpec struct {
 	HttpHeaders          OptHTTPHeadersProjection        `json:"httpHeaders"`
 	TlsClientCertificate *TLSClientCertificateProjection `json:"tlsClientCertificate"`
 	UsernamePassword     *UsernamePasswordProjection     `json:"usernamePassword"`
+	SshProxy             OptSSHProxyProjection           `json:"sshProxy"`
 }
 
 // GetType returns the value of Type.
@@ -10023,6 +10310,11 @@ func (s *ProjectionSpec) GetUsernamePassword() *UsernamePasswordProjection {
 	return s.UsernamePassword
 }
 
+// GetSshProxy returns the value of SshProxy.
+func (s *ProjectionSpec) GetSshProxy() OptSSHProxyProjection {
+	return s.SshProxy
+}
+
 // SetType sets the value of Type.
 func (s *ProjectionSpec) SetType(val CredentialProjectionType) {
 	s.Type = val
@@ -10041,6 +10333,11 @@ func (s *ProjectionSpec) SetTlsClientCertificate(val *TLSClientCertificateProjec
 // SetUsernamePassword sets the value of UsernamePassword.
 func (s *ProjectionSpec) SetUsernamePassword(val *UsernamePasswordProjection) {
 	s.UsernamePassword = val
+}
+
+// SetSshProxy sets the value of SshProxy.
+func (s *ProjectionSpec) SetSshProxy(val OptSSHProxyProjection) {
+	s.SshProxy = val
 }
 
 // Ref: #/components/schemas/PublicGatewayAuth
@@ -11139,6 +11436,47 @@ func (s *ResumeSandboxResponse) SetPowerState(val SandboxPowerState) {
 // SetRestoredMemory sets the value of RestoredMemory.
 func (s *ResumeSandboxResponse) SetRestoredMemory(val OptString) {
 	s.RestoredMemory = val
+}
+
+// Transparent SSH proxy projection used for SSH egress re-origination.
+// Ref: #/components/schemas/SSHProxyProjection
+type SSHProxyProjection struct {
+	// Fake public keys accepted from sandbox-side SSH clients.
+	SandboxPublicKeys []string `json:"sandboxPublicKeys"`
+	// Username used by netd when authenticating to the upstream SSH server.
+	UpstreamUsername OptString `json:"upstreamUsername"`
+	// OpenSSH known_hosts entries used to verify upstream host keys.
+	KnownHosts []string `json:"knownHosts"`
+}
+
+// GetSandboxPublicKeys returns the value of SandboxPublicKeys.
+func (s *SSHProxyProjection) GetSandboxPublicKeys() []string {
+	return s.SandboxPublicKeys
+}
+
+// GetUpstreamUsername returns the value of UpstreamUsername.
+func (s *SSHProxyProjection) GetUpstreamUsername() OptString {
+	return s.UpstreamUsername
+}
+
+// GetKnownHosts returns the value of KnownHosts.
+func (s *SSHProxyProjection) GetKnownHosts() []string {
+	return s.KnownHosts
+}
+
+// SetSandboxPublicKeys sets the value of SandboxPublicKeys.
+func (s *SSHProxyProjection) SetSandboxPublicKeys(val []string) {
+	s.SandboxPublicKeys = val
+}
+
+// SetUpstreamUsername sets the value of UpstreamUsername.
+func (s *SSHProxyProjection) SetUpstreamUsername(val OptString) {
+	s.UpstreamUsername = val
+}
+
+// SetKnownHosts sets the value of KnownHosts.
+func (s *SSHProxyProjection) SetKnownHosts(val []string) {
+	s.KnownHosts = val
 }
 
 // Ref: #/components/schemas/SSHPublicKey
@@ -12961,6 +13299,32 @@ func (s *StaticHeadersSourceSpecValues) init() StaticHeadersSourceSpecValues {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/StaticSSHPrivateKeySourceSpec
+type StaticSSHPrivateKeySourceSpec struct {
+	PrivateKeyPem string    `json:"privateKeyPem"`
+	Passphrase    OptString `json:"passphrase"`
+}
+
+// GetPrivateKeyPem returns the value of PrivateKeyPem.
+func (s *StaticSSHPrivateKeySourceSpec) GetPrivateKeyPem() string {
+	return s.PrivateKeyPem
+}
+
+// GetPassphrase returns the value of Passphrase.
+func (s *StaticSSHPrivateKeySourceSpec) GetPassphrase() OptString {
+	return s.Passphrase
+}
+
+// SetPrivateKeyPem sets the value of PrivateKeyPem.
+func (s *StaticSSHPrivateKeySourceSpec) SetPrivateKeyPem(val string) {
+	s.PrivateKeyPem = val
+}
+
+// SetPassphrase sets the value of Passphrase.
+func (s *StaticSSHPrivateKeySourceSpec) SetPassphrase(val OptString) {
+	s.Passphrase = val
 }
 
 // Ref: #/components/schemas/StaticTLSClientCertificateSourceSpec
