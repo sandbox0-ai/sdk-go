@@ -25,6 +25,14 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
+type APIV1FunctionsIDGetRes interface {
+	aPIV1FunctionsIDGetRes()
+}
+
+type APIV1FunctionsPostRes interface {
+	aPIV1FunctionsPostRes()
+}
+
 type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
 }
@@ -79,6 +87,14 @@ type APIV1SandboxesIDRefreshPostRes interface {
 
 type APIV1SandboxesIDResumePostRes interface {
 	aPIV1SandboxesIDResumePostRes()
+}
+
+type APIV1SandboxesIDServicesGetRes interface {
+	aPIV1SandboxesIDServicesGetRes()
+}
+
+type APIV1SandboxesIDServicesPutRes interface {
+	aPIV1SandboxesIDServicesPutRes()
 }
 
 type APIV1SandboxesIDStatusGetRes interface {

@@ -15,6 +15,14 @@ func (s *CreateSandboxVolumeRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *FunctionRevisionCreateRequest) setDefaults() {
+	{
+		val := bool(true)
+		s.Promote.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *PublicGatewayAuth) setDefaults() {
 	{
 		val := PublicGatewayAuthMode("none")

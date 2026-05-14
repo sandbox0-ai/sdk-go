@@ -52,6 +52,48 @@ func encodeAPIV1CredentialSourcesPostRequest(
 	return nil
 }
 
+func encodeAPIV1FunctionsIDAliasesAliasPutRequest(
+	req *FunctionAliasUpdateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1FunctionsIDRevisionsPostRequest(
+	req *FunctionRevisionCreateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1FunctionsPostRequest(
+	req *FunctionCreateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAPIV1RegistryCredentialsPostRequest(
 	req OptRegistryCredentialsRequest,
 	r *http.Request,
@@ -222,6 +264,20 @@ func encodeAPIV1SandboxesIDRefreshPostRequest(
 		if req.Set {
 			req.Encode(e)
 		}
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1SandboxesIDServicesPutRequest(
+	req *SandboxServicesUpdateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
 	}
 	encoded := e.Bytes()
 	ht.SetBody(r, bytes.NewReader(encoded), contentType)
