@@ -117,6 +117,14 @@ func WithSandboxPublicGateway(publicGateway apispec.PublicGatewayConfig) Sandbox
 	}
 }
 
+// WithSandboxServices sets sandbox services at claim time.
+func WithSandboxServices(services []apispec.SandboxAppService) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.Services = normalizeSandboxServices(services)
+	}
+}
+
 // WithSandboxAutoResume controls whether paused sandbox auto resumes on access.
 // Default is false when unset.
 func WithSandboxAutoResume(enabled bool) SandboxOption {

@@ -146,6 +146,58 @@ func TestClaimSandboxWithPublicGatewayOption(t *testing.T) {
 	}
 }
 
+func TestClaimSandboxWithServicesOption(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		body := decodeClaimRequest(t, r)
+
+		config, ok := body.Config.Get()
+		if !ok {
+			t.Fatal("config not set")
+		}
+		if len(config.Services) != 1 {
+			t.Fatalf("services count = %d, want 1", len(config.Services))
+		}
+		service := config.Services[0]
+		if service.ID != "api" || service.Port != 8080 {
+			t.Fatalf("service = %+v, want api service on port 8080", service)
+		}
+		if !service.Ingress.Public || len(service.Ingress.Routes) != 1 {
+			t.Fatalf("ingress = %+v, want one public route", service.Ingress)
+		}
+
+		writeJSON(t, w, http.StatusCreated, map[string]any{
+			"success": true,
+			"data": map[string]any{
+				"sandbox_id": "sb_123",
+				"template":   "default",
+				"pod_name":   "pod-a",
+				"status":     "running",
+			},
+		})
+	})
+	defer server.Close()
+
+	_, err := client.ClaimSandbox(
+		context.Background(),
+		"default",
+		WithSandboxServices([]apispec.SandboxAppService{
+			{
+				ID:   "api",
+				Port: 8080,
+				Ingress: apispec.SandboxAppServiceIngress{
+					Public: true,
+					Routes: []apispec.SandboxAppServiceRoute{
+						{ID: "api", Resume: true},
+					},
+				},
+			},
+		}),
+	)
+	if err != nil {
+		t.Fatalf("ClaimSandbox() error = %v", err)
+	}
+}
+
 func decodeClaimRequest(t *testing.T, r *http.Request) apispec.ClaimRequest {
 	t.Helper()
 
