@@ -27,6 +27,27 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
+// APIV1FunctionsIDAliasesAliasPutParams is parameters of PUT /api/v1/functions/{id}/aliases/{alias} operation.
+type APIV1FunctionsIDAliasesAliasPutParams struct {
+	ID    string
+	Alias string
+}
+
+// APIV1FunctionsIDGetParams is parameters of GET /api/v1/functions/{id} operation.
+type APIV1FunctionsIDGetParams struct {
+	ID string
+}
+
+// APIV1FunctionsIDRevisionsGetParams is parameters of GET /api/v1/functions/{id}/revisions operation.
+type APIV1FunctionsIDRevisionsGetParams struct {
+	ID string
+}
+
+// APIV1FunctionsIDRevisionsPostParams is parameters of POST /api/v1/functions/{id}/revisions operation.
+type APIV1FunctionsIDRevisionsPostParams struct {
+	ID string
+}
+
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
 type APIV1SandboxesGetParams struct {
 	// Filter by sandbox status.
@@ -214,6 +235,16 @@ type APIV1SandboxesIDRefreshPostParams struct {
 
 // APIV1SandboxesIDResumePostParams is parameters of POST /api/v1/sandboxes/{id}/resume operation.
 type APIV1SandboxesIDResumePostParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDServicesGetParams is parameters of GET /api/v1/sandboxes/{id}/services operation.
+type APIV1SandboxesIDServicesGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDServicesPutParams is parameters of PUT /api/v1/sandboxes/{id}/services operation.
+type APIV1SandboxesIDServicesPutParams struct {
 	ID string
 }
 
