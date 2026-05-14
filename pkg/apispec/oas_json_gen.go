@@ -1322,82 +1322,6 @@ func (s *APIV1SandboxesIDPausePostNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDPublicGatewayPutBadRequest as json.
-func (s *APIV1SandboxesIDPublicGatewayPutBadRequest) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesIDPublicGatewayPutBadRequest from json.
-func (s *APIV1SandboxesIDPublicGatewayPutBadRequest) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDPublicGatewayPutBadRequest to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesIDPublicGatewayPutBadRequest(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDPublicGatewayPutBadRequest) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDPublicGatewayPutBadRequest) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes APIV1SandboxesIDPublicGatewayPutNotFound as json.
-func (s *APIV1SandboxesIDPublicGatewayPutNotFound) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesIDPublicGatewayPutNotFound from json.
-func (s *APIV1SandboxesIDPublicGatewayPutNotFound) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDPublicGatewayPutNotFound to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesIDPublicGatewayPutNotFound(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDPublicGatewayPutNotFound) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDPublicGatewayPutNotFound) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes APIV1SandboxesIDPutBadRequest as json.
 func (s *APIV1SandboxesIDPutBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -14641,138 +14565,6 @@ func (s *OptProcessType) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes PublicGatewayAuth as json.
-func (o OptPublicGatewayAuth) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes PublicGatewayAuth from json.
-func (o *OptPublicGatewayAuth) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptPublicGatewayAuth to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptPublicGatewayAuth) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptPublicGatewayAuth) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PublicGatewayCORS as json.
-func (o OptPublicGatewayCORS) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes PublicGatewayCORS from json.
-func (o *OptPublicGatewayCORS) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptPublicGatewayCORS to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptPublicGatewayCORS) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptPublicGatewayCORS) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PublicGatewayConfig as json.
-func (o OptPublicGatewayConfig) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes PublicGatewayConfig from json.
-func (o *OptPublicGatewayConfig) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptPublicGatewayConfig to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptPublicGatewayConfig) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptPublicGatewayConfig) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PublicGatewayRateLimit as json.
-func (o OptPublicGatewayRateLimit) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes PublicGatewayRateLimit from json.
-func (o *OptPublicGatewayRateLimit) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptPublicGatewayRateLimit to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptPublicGatewayRateLimit) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptPublicGatewayRateLimit) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes REPLConfig as json.
 func (o OptREPLConfig) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -15231,6 +15023,105 @@ func (s OptSandboxAppServiceHealth) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandboxAppServiceHealth) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAppServiceRouteAuth as json.
+func (o OptSandboxAppServiceRouteAuth) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxAppServiceRouteAuth from json.
+func (o *OptSandboxAppServiceRouteAuth) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAppServiceRouteAuth to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAppServiceRouteAuth) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAppServiceRouteAuth) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAppServiceRouteCORS as json.
+func (o OptSandboxAppServiceRouteCORS) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxAppServiceRouteCORS from json.
+func (o *OptSandboxAppServiceRouteCORS) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAppServiceRouteCORS to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAppServiceRouteCORS) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAppServiceRouteCORS) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAppServiceRouteRateLimit as json.
+func (o OptSandboxAppServiceRouteRateLimit) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxAppServiceRouteRateLimit from json.
+func (o *OptSandboxAppServiceRouteRateLimit) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAppServiceRouteRateLimit to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAppServiceRouteRateLimit) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAppServiceRouteRateLimit) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -16557,39 +16448,6 @@ func (s OptSuccessMovedResponseData) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSuccessMovedResponseData) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes SuccessPublicGatewayResponseData as json.
-func (o OptSuccessPublicGatewayResponseData) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes SuccessPublicGatewayResponseData from json.
-func (o *OptSuccessPublicGatewayResponseData) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptSuccessPublicGatewayResponseData to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptSuccessPublicGatewayResponseData) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptSuccessPublicGatewayResponseData) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -18753,895 +18611,6 @@ func (s *ProjectionSpec) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ProjectionSpec) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PublicGatewayAuth) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PublicGatewayAuth) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("mode")
-		s.Mode.Encode(e)
-	}
-	{
-		if s.BearerTokenSHA256.Set {
-			e.FieldStart("bearer_token_sha256")
-			s.BearerTokenSHA256.Encode(e)
-		}
-	}
-	{
-		if s.HeaderName.Set {
-			e.FieldStart("header_name")
-			s.HeaderName.Encode(e)
-		}
-	}
-	{
-		if s.HeaderValueSHA256.Set {
-			e.FieldStart("header_value_sha256")
-			s.HeaderValueSHA256.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfPublicGatewayAuth = [4]string{
-	0: "mode",
-	1: "bearer_token_sha256",
-	2: "header_name",
-	3: "header_value_sha256",
-}
-
-// Decode decodes PublicGatewayAuth from json.
-func (s *PublicGatewayAuth) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayAuth to nil")
-	}
-	var requiredBitSet [1]uint8
-	s.setDefaults()
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "mode":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Mode.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"mode\"")
-			}
-		case "bearer_token_sha256":
-			if err := func() error {
-				s.BearerTokenSHA256.Reset()
-				if err := s.BearerTokenSHA256.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"bearer_token_sha256\"")
-			}
-		case "header_name":
-			if err := func() error {
-				s.HeaderName.Reset()
-				if err := s.HeaderName.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"header_name\"")
-			}
-		case "header_value_sha256":
-			if err := func() error {
-				s.HeaderValueSHA256.Reset()
-				if err := s.HeaderValueSHA256.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"header_value_sha256\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PublicGatewayAuth")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfPublicGatewayAuth) {
-					name = jsonFieldsNameOfPublicGatewayAuth[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PublicGatewayAuth) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayAuth) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PublicGatewayAuthMode as json.
-func (s PublicGatewayAuthMode) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes PublicGatewayAuthMode from json.
-func (s *PublicGatewayAuthMode) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayAuthMode to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch PublicGatewayAuthMode(v) {
-	case PublicGatewayAuthModeNone:
-		*s = PublicGatewayAuthModeNone
-	case PublicGatewayAuthModeBearer:
-		*s = PublicGatewayAuthModeBearer
-	case PublicGatewayAuthModeHeader:
-		*s = PublicGatewayAuthModeHeader
-	default:
-		*s = PublicGatewayAuthMode(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s PublicGatewayAuthMode) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayAuthMode) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PublicGatewayCORS) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PublicGatewayCORS) encodeFields(e *jx.Encoder) {
-	{
-		if s.AllowedOrigins != nil {
-			e.FieldStart("allowed_origins")
-			e.ArrStart()
-			for _, elem := range s.AllowedOrigins {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.AllowedMethods != nil {
-			e.FieldStart("allowed_methods")
-			e.ArrStart()
-			for _, elem := range s.AllowedMethods {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.AllowedHeaders != nil {
-			e.FieldStart("allowed_headers")
-			e.ArrStart()
-			for _, elem := range s.AllowedHeaders {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.ExposeHeaders != nil {
-			e.FieldStart("expose_headers")
-			e.ArrStart()
-			for _, elem := range s.ExposeHeaders {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.AllowCredentials.Set {
-			e.FieldStart("allow_credentials")
-			s.AllowCredentials.Encode(e)
-		}
-	}
-	{
-		if s.MaxAgeSeconds.Set {
-			e.FieldStart("max_age_seconds")
-			s.MaxAgeSeconds.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfPublicGatewayCORS = [6]string{
-	0: "allowed_origins",
-	1: "allowed_methods",
-	2: "allowed_headers",
-	3: "expose_headers",
-	4: "allow_credentials",
-	5: "max_age_seconds",
-}
-
-// Decode decodes PublicGatewayCORS from json.
-func (s *PublicGatewayCORS) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayCORS to nil")
-	}
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "allowed_origins":
-			if err := func() error {
-				s.AllowedOrigins = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.AllowedOrigins = append(s.AllowedOrigins, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"allowed_origins\"")
-			}
-		case "allowed_methods":
-			if err := func() error {
-				s.AllowedMethods = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.AllowedMethods = append(s.AllowedMethods, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"allowed_methods\"")
-			}
-		case "allowed_headers":
-			if err := func() error {
-				s.AllowedHeaders = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.AllowedHeaders = append(s.AllowedHeaders, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"allowed_headers\"")
-			}
-		case "expose_headers":
-			if err := func() error {
-				s.ExposeHeaders = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.ExposeHeaders = append(s.ExposeHeaders, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"expose_headers\"")
-			}
-		case "allow_credentials":
-			if err := func() error {
-				s.AllowCredentials.Reset()
-				if err := s.AllowCredentials.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"allow_credentials\"")
-			}
-		case "max_age_seconds":
-			if err := func() error {
-				s.MaxAgeSeconds.Reset()
-				if err := s.MaxAgeSeconds.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"max_age_seconds\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PublicGatewayCORS")
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PublicGatewayCORS) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayCORS) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PublicGatewayConfig) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PublicGatewayConfig) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("enabled")
-		e.Bool(s.Enabled)
-	}
-	{
-		if s.Routes != nil {
-			e.FieldStart("routes")
-			e.ArrStart()
-			for _, elem := range s.Routes {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-}
-
-var jsonFieldsNameOfPublicGatewayConfig = [2]string{
-	0: "enabled",
-	1: "routes",
-}
-
-// Decode decodes PublicGatewayConfig from json.
-func (s *PublicGatewayConfig) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayConfig to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "enabled":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Bool()
-				s.Enabled = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"enabled\"")
-			}
-		case "routes":
-			if err := func() error {
-				s.Routes = make([]PublicGatewayRoute, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem PublicGatewayRoute
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.Routes = append(s.Routes, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"routes\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PublicGatewayConfig")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfPublicGatewayConfig) {
-					name = jsonFieldsNameOfPublicGatewayConfig[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PublicGatewayConfig) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayConfig) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PublicGatewayRateLimit) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PublicGatewayRateLimit) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("rps")
-		e.Int32(s.Rps)
-	}
-	{
-		e.FieldStart("burst")
-		e.Int32(s.Burst)
-	}
-}
-
-var jsonFieldsNameOfPublicGatewayRateLimit = [2]string{
-	0: "rps",
-	1: "burst",
-}
-
-// Decode decodes PublicGatewayRateLimit from json.
-func (s *PublicGatewayRateLimit) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayRateLimit to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "rps":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int32()
-				s.Rps = int32(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"rps\"")
-			}
-		case "burst":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int32()
-				s.Burst = int32(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"burst\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PublicGatewayRateLimit")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfPublicGatewayRateLimit) {
-					name = jsonFieldsNameOfPublicGatewayRateLimit[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PublicGatewayRateLimit) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayRateLimit) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PublicGatewayRoute) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PublicGatewayRoute) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		e.Str(s.ID)
-	}
-	{
-		e.FieldStart("port")
-		e.Int32(s.Port)
-	}
-	{
-		if s.PathPrefix.Set {
-			e.FieldStart("path_prefix")
-			s.PathPrefix.Encode(e)
-		}
-	}
-	{
-		if s.Methods != nil {
-			e.FieldStart("methods")
-			e.ArrStart()
-			for _, elem := range s.Methods {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.RewritePrefix.Set {
-			e.FieldStart("rewrite_prefix")
-			s.RewritePrefix.Encode(e)
-		}
-	}
-	{
-		if s.Auth.Set {
-			e.FieldStart("auth")
-			s.Auth.Encode(e)
-		}
-	}
-	{
-		if s.Cors.Set {
-			e.FieldStart("cors")
-			s.Cors.Encode(e)
-		}
-	}
-	{
-		if s.RateLimit.Set {
-			e.FieldStart("rate_limit")
-			s.RateLimit.Encode(e)
-		}
-	}
-	{
-		if s.TimeoutSeconds.Set {
-			e.FieldStart("timeout_seconds")
-			s.TimeoutSeconds.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("resume")
-		e.Bool(s.Resume)
-	}
-}
-
-var jsonFieldsNameOfPublicGatewayRoute = [10]string{
-	0: "id",
-	1: "port",
-	2: "path_prefix",
-	3: "methods",
-	4: "rewrite_prefix",
-	5: "auth",
-	6: "cors",
-	7: "rate_limit",
-	8: "timeout_seconds",
-	9: "resume",
-}
-
-// Decode decodes PublicGatewayRoute from json.
-func (s *PublicGatewayRoute) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PublicGatewayRoute to nil")
-	}
-	var requiredBitSet [2]uint8
-	s.setDefaults()
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.ID = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "port":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int32()
-				s.Port = int32(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"port\"")
-			}
-		case "path_prefix":
-			if err := func() error {
-				s.PathPrefix.Reset()
-				if err := s.PathPrefix.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"path_prefix\"")
-			}
-		case "methods":
-			if err := func() error {
-				s.Methods = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.Methods = append(s.Methods, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"methods\"")
-			}
-		case "rewrite_prefix":
-			if err := func() error {
-				s.RewritePrefix.Reset()
-				if err := s.RewritePrefix.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"rewrite_prefix\"")
-			}
-		case "auth":
-			if err := func() error {
-				s.Auth.Reset()
-				if err := s.Auth.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"auth\"")
-			}
-		case "cors":
-			if err := func() error {
-				s.Cors.Reset()
-				if err := s.Cors.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cors\"")
-			}
-		case "rate_limit":
-			if err := func() error {
-				s.RateLimit.Reset()
-				if err := s.RateLimit.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"rate_limit\"")
-			}
-		case "timeout_seconds":
-			if err := func() error {
-				s.TimeoutSeconds.Reset()
-				if err := s.TimeoutSeconds.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"timeout_seconds\"")
-			}
-		case "resume":
-			requiredBitSet[1] |= 1 << 1
-			if err := func() error {
-				v, err := d.Bool()
-				s.Resume = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"resume\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PublicGatewayRoute")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
-		0b00000011,
-		0b00000010,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfPublicGatewayRoute) {
-					name = jsonFieldsNameOfPublicGatewayRoute[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PublicGatewayRoute) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PublicGatewayRoute) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -22526,12 +21495,6 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.PublicGateway.Set {
-			e.FieldStart("public_gateway")
-			s.PublicGateway.Encode(e)
-		}
-	}
-	{
 		if s.Mounts != nil {
 			e.FieldStart("mounts")
 			e.ArrStart()
@@ -22569,7 +21532,7 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [17]string{
+var jsonFieldsNameOfSandbox = [16]string{
 	0:  "id",
 	1:  "template_id",
 	2:  "team_id",
@@ -22579,14 +21542,13 @@ var jsonFieldsNameOfSandbox = [17]string{
 	6:  "power_state",
 	7:  "auto_resume",
 	8:  "services",
-	9:  "public_gateway",
-	10: "mounts",
-	11: "pod_name",
-	12: "ssh",
-	13: "expires_at",
-	14: "hard_expires_at",
-	15: "claimed_at",
-	16: "created_at",
+	9:  "mounts",
+	10: "pod_name",
+	11: "ssh",
+	12: "expires_at",
+	13: "hard_expires_at",
+	14: "claimed_at",
+	15: "created_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -22594,7 +21556,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode Sandbox to nil")
 	}
-	var requiredBitSet [3]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -22707,16 +21669,6 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"services\"")
 			}
-		case "public_gateway":
-			if err := func() error {
-				s.PublicGateway.Reset()
-				if err := s.PublicGateway.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"public_gateway\"")
-			}
 		case "mounts":
 			if err := func() error {
 				s.Mounts = make([]ClaimMountRequest, 0)
@@ -22735,7 +21687,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"mounts\"")
 			}
 		case "pod_name":
-			requiredBitSet[1] |= 1 << 3
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
 				s.PodName = string(v)
@@ -22757,7 +21709,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"ssh\"")
 			}
 		case "expires_at":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -22769,7 +21721,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "hard_expires_at":
-			requiredBitSet[1] |= 1 << 6
+			requiredBitSet[1] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.HardExpiresAt = v
@@ -22781,7 +21733,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"hard_expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[1] |= 1 << 7
+			requiredBitSet[1] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -22793,7 +21745,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[2] |= 1 << 0
+			requiredBitSet[1] |= 1 << 7
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -22813,10 +21765,9 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [3]uint8{
+	for i, mask := range [2]uint8{
 		0b11110111,
-		0b11101000,
-		0b00000001,
+		0b11110100,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -23475,6 +22426,507 @@ func (s *SandboxAppServiceRoute) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SandboxAppServiceRouteAuth) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxAppServiceRouteAuth) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("mode")
+		s.Mode.Encode(e)
+	}
+	{
+		if s.BearerTokenSHA256.Set {
+			e.FieldStart("bearer_token_sha256")
+			s.BearerTokenSHA256.Encode(e)
+		}
+	}
+	{
+		if s.HeaderName.Set {
+			e.FieldStart("header_name")
+			s.HeaderName.Encode(e)
+		}
+	}
+	{
+		if s.HeaderValueSHA256.Set {
+			e.FieldStart("header_value_sha256")
+			s.HeaderValueSHA256.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxAppServiceRouteAuth = [4]string{
+	0: "mode",
+	1: "bearer_token_sha256",
+	2: "header_name",
+	3: "header_value_sha256",
+}
+
+// Decode decodes SandboxAppServiceRouteAuth from json.
+func (s *SandboxAppServiceRouteAuth) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAppServiceRouteAuth to nil")
+	}
+	var requiredBitSet [1]uint8
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "mode":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Mode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mode\"")
+			}
+		case "bearer_token_sha256":
+			if err := func() error {
+				s.BearerTokenSHA256.Reset()
+				if err := s.BearerTokenSHA256.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"bearer_token_sha256\"")
+			}
+		case "header_name":
+			if err := func() error {
+				s.HeaderName.Reset()
+				if err := s.HeaderName.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"header_name\"")
+			}
+		case "header_value_sha256":
+			if err := func() error {
+				s.HeaderValueSHA256.Reset()
+				if err := s.HeaderValueSHA256.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"header_value_sha256\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxAppServiceRouteAuth")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxAppServiceRouteAuth) {
+					name = jsonFieldsNameOfSandboxAppServiceRouteAuth[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxAppServiceRouteAuth) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAppServiceRouteAuth) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAppServiceRouteAuthMode as json.
+func (s SandboxAppServiceRouteAuthMode) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxAppServiceRouteAuthMode from json.
+func (s *SandboxAppServiceRouteAuthMode) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAppServiceRouteAuthMode to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxAppServiceRouteAuthMode(v) {
+	case SandboxAppServiceRouteAuthModeNone:
+		*s = SandboxAppServiceRouteAuthModeNone
+	case SandboxAppServiceRouteAuthModeBearer:
+		*s = SandboxAppServiceRouteAuthModeBearer
+	case SandboxAppServiceRouteAuthModeHeader:
+		*s = SandboxAppServiceRouteAuthModeHeader
+	default:
+		*s = SandboxAppServiceRouteAuthMode(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxAppServiceRouteAuthMode) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAppServiceRouteAuthMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxAppServiceRouteCORS) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxAppServiceRouteCORS) encodeFields(e *jx.Encoder) {
+	{
+		if s.AllowedOrigins != nil {
+			e.FieldStart("allowed_origins")
+			e.ArrStart()
+			for _, elem := range s.AllowedOrigins {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.AllowedMethods != nil {
+			e.FieldStart("allowed_methods")
+			e.ArrStart()
+			for _, elem := range s.AllowedMethods {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.AllowedHeaders != nil {
+			e.FieldStart("allowed_headers")
+			e.ArrStart()
+			for _, elem := range s.AllowedHeaders {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.ExposeHeaders != nil {
+			e.FieldStart("expose_headers")
+			e.ArrStart()
+			for _, elem := range s.ExposeHeaders {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.AllowCredentials.Set {
+			e.FieldStart("allow_credentials")
+			s.AllowCredentials.Encode(e)
+		}
+	}
+	{
+		if s.MaxAgeSeconds.Set {
+			e.FieldStart("max_age_seconds")
+			s.MaxAgeSeconds.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxAppServiceRouteCORS = [6]string{
+	0: "allowed_origins",
+	1: "allowed_methods",
+	2: "allowed_headers",
+	3: "expose_headers",
+	4: "allow_credentials",
+	5: "max_age_seconds",
+}
+
+// Decode decodes SandboxAppServiceRouteCORS from json.
+func (s *SandboxAppServiceRouteCORS) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAppServiceRouteCORS to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "allowed_origins":
+			if err := func() error {
+				s.AllowedOrigins = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.AllowedOrigins = append(s.AllowedOrigins, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowed_origins\"")
+			}
+		case "allowed_methods":
+			if err := func() error {
+				s.AllowedMethods = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.AllowedMethods = append(s.AllowedMethods, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowed_methods\"")
+			}
+		case "allowed_headers":
+			if err := func() error {
+				s.AllowedHeaders = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.AllowedHeaders = append(s.AllowedHeaders, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowed_headers\"")
+			}
+		case "expose_headers":
+			if err := func() error {
+				s.ExposeHeaders = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.ExposeHeaders = append(s.ExposeHeaders, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"expose_headers\"")
+			}
+		case "allow_credentials":
+			if err := func() error {
+				s.AllowCredentials.Reset()
+				if err := s.AllowCredentials.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allow_credentials\"")
+			}
+		case "max_age_seconds":
+			if err := func() error {
+				s.MaxAgeSeconds.Reset()
+				if err := s.MaxAgeSeconds.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"max_age_seconds\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxAppServiceRouteCORS")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxAppServiceRouteCORS) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAppServiceRouteCORS) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxAppServiceRouteRateLimit) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxAppServiceRouteRateLimit) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("rps")
+		e.Int32(s.Rps)
+	}
+	{
+		e.FieldStart("burst")
+		e.Int32(s.Burst)
+	}
+}
+
+var jsonFieldsNameOfSandboxAppServiceRouteRateLimit = [2]string{
+	0: "rps",
+	1: "burst",
+}
+
+// Decode decodes SandboxAppServiceRouteRateLimit from json.
+func (s *SandboxAppServiceRouteRateLimit) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAppServiceRouteRateLimit to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "rps":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int32()
+				s.Rps = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"rps\"")
+			}
+		case "burst":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int32()
+				s.Burst = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"burst\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxAppServiceRouteRateLimit")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxAppServiceRouteRateLimit) {
+					name = jsonFieldsNameOfSandboxAppServiceRouteRateLimit[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxAppServiceRouteRateLimit) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAppServiceRouteRateLimit) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SandboxAppServiceRuntime) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -24028,15 +23480,9 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
-	{
-		if s.PublicGateway.Set {
-			e.FieldStart("public_gateway")
-			s.PublicGateway.Encode(e)
-		}
-	}
 }
 
-var jsonFieldsNameOfSandboxConfig = [8]string{
+var jsonFieldsNameOfSandboxConfig = [7]string{
 	0: "env_vars",
 	1: "ttl",
 	2: "hard_ttl",
@@ -24044,7 +23490,6 @@ var jsonFieldsNameOfSandboxConfig = [8]string{
 	4: "webhook",
 	5: "auto_resume",
 	6: "services",
-	7: "public_gateway",
 }
 
 // Decode decodes SandboxConfig from json.
@@ -24132,16 +23577,6 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"services\"")
-			}
-		case "public_gateway":
-			if err := func() error {
-				s.PublicGateway.Reset()
-				if err := s.PublicGateway.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"public_gateway\"")
 			}
 		default:
 			return d.Skip()
@@ -26682,21 +26117,14 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
-	{
-		if s.PublicGateway.Set {
-			e.FieldStart("public_gateway")
-			s.PublicGateway.Encode(e)
-		}
-	}
 }
 
-var jsonFieldsNameOfSandboxUpdateConfig = [6]string{
+var jsonFieldsNameOfSandboxUpdateConfig = [5]string{
 	0: "ttl",
 	1: "hard_ttl",
 	2: "network",
 	3: "auto_resume",
 	4: "services",
-	5: "public_gateway",
 }
 
 // Decode decodes SandboxUpdateConfig from json.
@@ -26764,16 +26192,6 @@ func (s *SandboxUpdateConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"services\"")
-			}
-		case "public_gateway":
-			if err := func() error {
-				s.PublicGateway.Reset()
-				if err := s.PublicGateway.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"public_gateway\"")
 			}
 		default:
 			return d.Skip()
@@ -33663,277 +33081,6 @@ func (s *SuccessPauseSandboxResponseSuccess) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *SuccessPublicGatewayResponse) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *SuccessPublicGatewayResponse) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("success")
-		s.Success.Encode(e)
-	}
-	{
-		if s.Data.Set {
-			e.FieldStart("data")
-			s.Data.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfSuccessPublicGatewayResponse = [2]string{
-	0: "success",
-	1: "data",
-}
-
-// Decode decodes SuccessPublicGatewayResponse from json.
-func (s *SuccessPublicGatewayResponse) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SuccessPublicGatewayResponse to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "success":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Success.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"success\"")
-			}
-		case "data":
-			if err := func() error {
-				s.Data.Reset()
-				if err := s.Data.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"data\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode SuccessPublicGatewayResponse")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfSuccessPublicGatewayResponse) {
-					name = jsonFieldsNameOfSuccessPublicGatewayResponse[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *SuccessPublicGatewayResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SuccessPublicGatewayResponse) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *SuccessPublicGatewayResponseData) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *SuccessPublicGatewayResponseData) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("sandbox_id")
-		e.Str(s.SandboxID)
-	}
-	{
-		e.FieldStart("public_gateway")
-		s.PublicGateway.Encode(e)
-	}
-	{
-		if s.ExposureDomain.Set {
-			e.FieldStart("exposure_domain")
-			s.ExposureDomain.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfSuccessPublicGatewayResponseData = [3]string{
-	0: "sandbox_id",
-	1: "public_gateway",
-	2: "exposure_domain",
-}
-
-// Decode decodes SuccessPublicGatewayResponseData from json.
-func (s *SuccessPublicGatewayResponseData) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SuccessPublicGatewayResponseData to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "sandbox_id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.SandboxID = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"sandbox_id\"")
-			}
-		case "public_gateway":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				if err := s.PublicGateway.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"public_gateway\"")
-			}
-		case "exposure_domain":
-			if err := func() error {
-				s.ExposureDomain.Reset()
-				if err := s.ExposureDomain.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"exposure_domain\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode SuccessPublicGatewayResponseData")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfSuccessPublicGatewayResponseData) {
-					name = jsonFieldsNameOfSuccessPublicGatewayResponseData[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *SuccessPublicGatewayResponseData) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SuccessPublicGatewayResponseData) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes SuccessPublicGatewayResponseSuccess as json.
-func (s SuccessPublicGatewayResponseSuccess) Encode(e *jx.Encoder) {
-	e.Bool(bool(s))
-}
-
-// Decode decodes SuccessPublicGatewayResponseSuccess from json.
-func (s *SuccessPublicGatewayResponseSuccess) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SuccessPublicGatewayResponseSuccess to nil")
-	}
-	v, err := d.Bool()
-	if err != nil {
-		return err
-	}
-	*s = SuccessPublicGatewayResponseSuccess(v)
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s SuccessPublicGatewayResponseSuccess) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SuccessPublicGatewayResponseSuccess) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
 func (s *SuccessRefreshResponse) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -36195,11 +35342,18 @@ func (s *SuccessSandboxServicesResponseData) encodeFields(e *jx.Encoder) {
 		}
 		e.ArrEnd()
 	}
+	{
+		if s.ExposureDomain.Set {
+			e.FieldStart("exposure_domain")
+			s.ExposureDomain.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfSuccessSandboxServicesResponseData = [2]string{
+var jsonFieldsNameOfSuccessSandboxServicesResponseData = [3]string{
 	0: "sandbox_id",
 	1: "services",
+	2: "exposure_domain",
 }
 
 // Decode decodes SuccessSandboxServicesResponseData from json.
@@ -36240,6 +35394,16 @@ func (s *SuccessSandboxServicesResponseData) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"services\"")
+			}
+		case "exposure_domain":
+			if err := func() error {
+				s.ExposureDomain.Reset()
+				if err := s.ExposureDomain.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exposure_domain\"")
 			}
 		default:
 			return d.Skip()

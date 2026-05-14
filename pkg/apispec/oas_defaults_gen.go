@@ -23,18 +23,10 @@ func (s *FunctionRevisionCreateRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *PublicGatewayAuth) setDefaults() {
+func (s *SandboxAppServiceRouteAuth) setDefaults() {
 	{
-		val := PublicGatewayAuthMode("none")
+		val := SandboxAppServiceRouteAuthMode("none")
 		s.Mode = val
-	}
-}
-
-// setDefaults set default value of fields.
-func (s *PublicGatewayRoute) setDefaults() {
-	{
-		val := string("/")
-		s.PathPrefix.SetTo(val)
 	}
 }
 
