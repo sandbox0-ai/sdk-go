@@ -273,22 +273,6 @@ func (s *APIV1SandboxesIDPausePostNotFound) Validate() error {
 	return nil
 }
 
-func (s *APIV1SandboxesIDPublicGatewayPutBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *APIV1SandboxesIDPublicGatewayPutNotFound) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *APIV1SandboxesIDPutBadRequest) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -1822,120 +1806,6 @@ func (s *ProjectionSpec) Validate() error {
 	return nil
 }
 
-func (s *PublicGatewayAuth) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Mode.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "mode",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s PublicGatewayAuthMode) Validate() error {
-	switch s {
-	case "none":
-		return nil
-	case "bearer":
-		return nil
-	case "header":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s *PublicGatewayConfig) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if s.Routes == nil {
-			return nil // optional
-		}
-		if err := (validate.Array{
-			MinLength:    0,
-			MinLengthSet: false,
-			MaxLength:    32,
-			MaxLengthSet: true,
-		}).ValidateLength(len(s.Routes)); err != nil {
-			return errors.Wrap(err, "array")
-		}
-		var failures []validate.FieldError
-		for i, elem := range s.Routes {
-			if err := func() error {
-				if err := elem.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				failures = append(failures, validate.FieldError{
-					Name:  fmt.Sprintf("[%d]", i),
-					Error: err,
-				})
-			}
-		}
-		if len(failures) > 0 {
-			return &validate.Error{Fields: failures}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "routes",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *PublicGatewayRoute) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if value, ok := s.Auth.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "auth",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
 func (s *REPLConfig) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2291,24 +2161,6 @@ func (s *Sandbox) Validate() error {
 			Error: err,
 		})
 	}
-	if err := func() error {
-		if value, ok := s.PublicGateway.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "public_gateway",
-			Error: err,
-		})
-	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -2421,6 +2273,42 @@ func (s *SandboxAppServiceRoute) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s *SandboxAppServiceRouteAuth) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Mode.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "mode",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SandboxAppServiceRouteAuthMode) Validate() error {
+	switch s {
+	case "none":
+		return nil
+	case "bearer":
+		return nil
+	case "header":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *SandboxAppServiceRuntime) Validate() error {
@@ -2546,24 +2434,6 @@ func (s *SandboxConfig) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "services",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if value, ok := s.PublicGateway.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "public_gateway",
 			Error: err,
 		})
 	}
@@ -2957,24 +2827,6 @@ func (s *SandboxUpdateConfig) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "services",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if value, ok := s.PublicGateway.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "public_gateway",
 			Error: err,
 		})
 	}
@@ -4651,79 +4503,6 @@ func (s *SuccessPauseSandboxResponse) Validate() error {
 }
 
 func (s SuccessPauseSandboxResponseSuccess) Validate() error {
-	switch s {
-	case true:
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s *SuccessPublicGatewayResponse) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Success.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "success",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if value, ok := s.Data.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "data",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *SuccessPublicGatewayResponseData) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.PublicGateway.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "public_gateway",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s SuccessPublicGatewayResponseSuccess) Validate() error {
 	switch s {
 	case true:
 		return nil

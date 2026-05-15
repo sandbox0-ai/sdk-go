@@ -92,60 +92,6 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 	}
 }
 
-func TestClaimSandboxWithPublicGatewayOption(t *testing.T) {
-	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
-		body := decodeClaimRequest(t, r)
-
-		config, ok := body.Config.Get()
-		if !ok {
-			t.Fatal("config not set")
-		}
-		publicGateway, ok := config.PublicGateway.Get()
-		if !ok {
-			t.Fatal("public gateway not set")
-		}
-		if !publicGateway.Enabled {
-			t.Fatal("public gateway enabled = false, want true")
-		}
-		if len(publicGateway.Routes) != 1 {
-			t.Fatalf("routes count = %d, want 1", len(publicGateway.Routes))
-		}
-		route := publicGateway.Routes[0]
-		if route.ID != "api" || route.Port != 8080 || !route.Resume {
-			t.Fatalf("route = %+v, want api route on port 8080 with resume", route)
-		}
-
-		writeJSON(t, w, http.StatusCreated, map[string]any{
-			"success": true,
-			"data": map[string]any{
-				"sandbox_id": "sb_123",
-				"template":   "default",
-				"pod_name":   "pod-a",
-				"status":     "running",
-			},
-		})
-	})
-	defer server.Close()
-
-	_, err := client.ClaimSandbox(
-		context.Background(),
-		"default",
-		WithSandboxPublicGateway(apispec.PublicGatewayConfig{
-			Enabled: true,
-			Routes: []apispec.PublicGatewayRoute{
-				{
-					ID:     "api",
-					Port:   8080,
-					Resume: true,
-				},
-			},
-		}),
-	)
-	if err != nil {
-		t.Fatalf("ClaimSandbox() error = %v", err)
-	}
-}
-
 func TestClaimSandboxWithServicesOption(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		body := decodeClaimRequest(t, r)
