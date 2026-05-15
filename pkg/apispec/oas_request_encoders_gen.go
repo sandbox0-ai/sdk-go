@@ -66,6 +66,20 @@ func encodeAPIV1FunctionsIDAliasesAliasPutRequest(
 	return nil
 }
 
+func encodeAPIV1FunctionsIDPutRequest(
+	req *FunctionUpdateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAPIV1FunctionsIDRevisionsPostRequest(
 	req *FunctionRevisionCreateRequest,
 	r *http.Request,

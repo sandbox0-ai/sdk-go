@@ -85,6 +85,61 @@ func TestClientFunctions(t *testing.T) {
 		}
 	})
 
+	t.Run("update and delete", func(t *testing.T) {
+		client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+			switch {
+			case r.Method == http.MethodPut && r.URL.Path == "/api/v1/functions/fn-1":
+				var body apispec.FunctionUpdateRequest
+				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					t.Fatalf("decode update request: %v", err)
+				}
+				if got := body.Name.Or(""); got != "new-name" {
+					t.Fatalf("name = %q, want new-name", got)
+				}
+				if enabled := body.Enabled.Or(true); enabled {
+					t.Fatalf("enabled = true, want false")
+				}
+				record := functionRecord()
+				record["name"] = "new-name"
+				record["enabled"] = false
+				writeJSON(t, w, http.StatusOK, map[string]any{
+					"success": true,
+					"data": map[string]any{
+						"function": record,
+					},
+				})
+			case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/functions/fn-1":
+				record := functionRecord()
+				record["deleted_at"] = "2026-05-14T01:00:00Z"
+				writeJSON(t, w, http.StatusOK, map[string]any{
+					"success": true,
+					"data": map[string]any{
+						"function": record,
+					},
+				})
+			default:
+				t.Fatalf("unexpected request %s %s", r.Method, r.URL.Path)
+			}
+		})
+		defer server.Close()
+
+		updated, err := client.UpdateFunctionWithOptions(context.Background(), "fn-1", WithFunctionUpdateName("new-name"), WithFunctionEnabled(false))
+		if err != nil {
+			t.Fatalf("UpdateFunctionWithOptions() error = %v", err)
+		}
+		if updated.Enabled {
+			t.Fatal("updated.Enabled = true, want false")
+		}
+
+		deleted, err := client.DeleteFunction(context.Background(), "fn-1")
+		if err != nil {
+			t.Fatalf("DeleteFunction() error = %v", err)
+		}
+		if _, ok := deleted.DeletedAt.Get(); !ok {
+			t.Fatal("DeletedAt missing")
+		}
+	})
+
 	t.Run("revision and alias", func(t *testing.T) {
 		client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 			switch {
@@ -93,6 +148,13 @@ func TestClientFunctions(t *testing.T) {
 					"success": true,
 					"data": map[string]any{
 						"revisions": []any{functionRevision(1)},
+					},
+				})
+			case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/fn-1/revisions/2":
+				writeJSON(t, w, http.StatusOK, map[string]any{
+					"success": true,
+					"data": map[string]any{
+						"revision": functionRevision(2),
 					},
 				})
 			case r.Method == http.MethodPost && r.URL.Path == "/api/v1/functions/fn-1/revisions":
@@ -108,6 +170,20 @@ func TestClientFunctions(t *testing.T) {
 					"data": map[string]any{
 						"revision": functionRevision(2),
 						"promoted": false,
+					},
+				})
+			case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/fn-1/aliases":
+				writeJSON(t, w, http.StatusOK, map[string]any{
+					"success": true,
+					"data": map[string]any{
+						"aliases": []any{functionAlias(1)},
+					},
+				})
+			case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/fn-1/aliases/production":
+				writeJSON(t, w, http.StatusOK, map[string]any{
+					"success": true,
+					"data": map[string]any{
+						"alias": functionAlias(1),
 					},
 				})
 			case r.Method == http.MethodPut && r.URL.Path == "/api/v1/functions/fn-1/aliases/production":
@@ -138,6 +214,14 @@ func TestClientFunctions(t *testing.T) {
 			t.Fatalf("len(revisions) = %d, want 1", len(revisions))
 		}
 
+		revision, err := client.GetFunctionRevision(context.Background(), "fn-1", 2)
+		if err != nil {
+			t.Fatalf("GetFunctionRevision() error = %v", err)
+		}
+		if revision.RevisionNumber != 2 {
+			t.Fatalf("revision number = %d, want 2", revision.RevisionNumber)
+		}
+
 		created, err := client.CreateFunctionRevisionFromSandbox(context.Background(), "fn-1", "sbx-1", "web-v2", WithFunctionRevisionPromote(false))
 		if err != nil {
 			t.Fatalf("CreateFunctionRevisionFromSandbox() error = %v", err)
@@ -146,12 +230,68 @@ func TestClientFunctions(t *testing.T) {
 			t.Fatal("Promoted = true, want false")
 		}
 
+		aliases, err := client.ListFunctionAliases(context.Background(), "fn-1")
+		if err != nil {
+			t.Fatalf("ListFunctionAliases() error = %v", err)
+		}
+		if len(aliases) != 1 {
+			t.Fatalf("len(aliases) = %d, want 1", len(aliases))
+		}
+
+		gotAlias, err := client.GetFunctionAlias(context.Background(), "fn-1", "production")
+		if err != nil {
+			t.Fatalf("GetFunctionAlias() error = %v", err)
+		}
+		if gotAlias.Alias != "production" {
+			t.Fatalf("alias = %q, want production", gotAlias.Alias)
+		}
+
 		alias, err := client.SetFunctionAlias(context.Background(), "fn-1", "production", 2)
 		if err != nil {
 			t.Fatalf("SetFunctionAlias() error = %v", err)
 		}
 		if alias.RevisionNumber != 2 {
 			t.Fatalf("alias revision = %d, want 2", alias.RevisionNumber)
+		}
+	})
+
+	t.Run("runtime lifecycle", func(t *testing.T) {
+		client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+			switch {
+			case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/fn-1/runtime":
+				writeJSON(t, w, http.StatusOK, functionRuntimeResponse("active"))
+			case r.Method == http.MethodPost && r.URL.Path == "/api/v1/functions/fn-1/runtime/restart":
+				writeJSON(t, w, http.StatusOK, functionRuntimeResponse("idle"))
+			case r.Method == http.MethodPost && r.URL.Path == "/api/v1/functions/fn-1/runtime/recycle":
+				writeJSON(t, w, http.StatusOK, functionRuntimeResponse("idle"))
+			default:
+				t.Fatalf("unexpected request %s %s", r.Method, r.URL.Path)
+			}
+		})
+		defer server.Close()
+
+		runtime, err := client.GetFunctionRuntime(context.Background(), "fn-1")
+		if err != nil {
+			t.Fatalf("GetFunctionRuntime() error = %v", err)
+		}
+		if runtime.State != apispec.FunctionRuntimeStateActive {
+			t.Fatalf("runtime state = %q, want active", runtime.State)
+		}
+
+		restarted, err := client.RestartFunctionRuntime(context.Background(), "fn-1")
+		if err != nil {
+			t.Fatalf("RestartFunctionRuntime() error = %v", err)
+		}
+		if restarted.State != apispec.FunctionRuntimeStateIdle {
+			t.Fatalf("restart state = %q, want idle", restarted.State)
+		}
+
+		recycled, err := client.RecycleFunctionRuntime(context.Background(), "fn-1")
+		if err != nil {
+			t.Fatalf("RecycleFunctionRuntime() error = %v", err)
+		}
+		if recycled.State != apispec.FunctionRuntimeStateIdle {
+			t.Fatalf("recycle state = %q, want idle", recycled.State)
 		}
 	})
 }
@@ -195,6 +335,7 @@ func functionRecord() map[string]any {
 		"slug":               "web",
 		"domain_label":       "web",
 		"active_revision_id": "rev-1",
+		"enabled":            true,
 		"created_at":         "2026-05-14T00:00:00Z",
 		"updated_at":         "2026-05-14T00:00:00Z",
 		"host":               "web.sandbox0.site",
@@ -230,5 +371,25 @@ func functionAlias(number int) map[string]any {
 		"revision_id":     "rev-1",
 		"revision_number": number,
 		"updated_at":      "2026-05-14T00:00:00Z",
+	}
+}
+
+func functionRuntimeResponse(state string) map[string]any {
+	runtime := map[string]any{
+		"function_id":        "fn-1",
+		"revision_id":        "rev-1",
+		"revision_number":    1,
+		"state":              state,
+		"runtime_updated_at": "2026-05-14T00:00:00Z",
+	}
+	if state == "active" {
+		runtime["runtime_sandbox_id"] = "sb-runtime"
+		runtime["runtime_context_id"] = "ctx-runtime"
+	}
+	return map[string]any{
+		"success": true,
+		"data": map[string]any{
+			"runtime": runtime,
+		},
 	}
 }
