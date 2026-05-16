@@ -2771,6 +2771,81 @@ func (s *EgressCredentialRule) SetHttpMatch(val OptHTTPMatch) {
 	s.HttpMatch = val
 }
 
+// Customer-managed transparent egress proxy for allowed TCP traffic.
+// Ref: #/components/schemas/EgressProxyPolicy
+type EgressProxyPolicy struct {
+	Type EgressProxyType `json:"type"`
+	// SOCKS5 proxy endpoint in host:port form.
+	Address string `json:"address"`
+	// Optional credential binding ref using a username_password projection.
+	CredentialRef OptString `json:"credentialRef"`
+}
+
+// GetType returns the value of Type.
+func (s *EgressProxyPolicy) GetType() EgressProxyType {
+	return s.Type
+}
+
+// GetAddress returns the value of Address.
+func (s *EgressProxyPolicy) GetAddress() string {
+	return s.Address
+}
+
+// GetCredentialRef returns the value of CredentialRef.
+func (s *EgressProxyPolicy) GetCredentialRef() OptString {
+	return s.CredentialRef
+}
+
+// SetType sets the value of Type.
+func (s *EgressProxyPolicy) SetType(val EgressProxyType) {
+	s.Type = val
+}
+
+// SetAddress sets the value of Address.
+func (s *EgressProxyPolicy) SetAddress(val string) {
+	s.Address = val
+}
+
+// SetCredentialRef sets the value of CredentialRef.
+func (s *EgressProxyPolicy) SetCredentialRef(val OptString) {
+	s.CredentialRef = val
+}
+
+// Ref: #/components/schemas/EgressProxyType
+type EgressProxyType string
+
+const (
+	EgressProxyTypeSocks5 EgressProxyType = "socks5"
+)
+
+// AllValues returns all EgressProxyType values.
+func (EgressProxyType) AllValues() []EgressProxyType {
+	return []EgressProxyType{
+		EgressProxyTypeSocks5,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressProxyType) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressProxyTypeSocks5:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressProxyType) UnmarshalText(data []byte) error {
+	switch EgressProxyType(data) {
+	case EgressProxyTypeSocks5:
+		*s = EgressProxyTypeSocks5
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/EgressTLSMode
 type EgressTLSMode string
 
@@ -4641,6 +4716,7 @@ type NetworkEgressPolicy struct {
 	// These rules are orthogonal to allow/deny matching and are intended for
 	// destination-scoped outbound auth behavior.
 	CredentialRules []EgressCredentialRule `json:"credentialRules"`
+	Proxy           OptEgressProxyPolicy   `json:"proxy"`
 }
 
 // GetAllowedCidrs returns the value of AllowedCidrs.
@@ -4683,6 +4759,11 @@ func (s *NetworkEgressPolicy) GetCredentialRules() []EgressCredentialRule {
 	return s.CredentialRules
 }
 
+// GetProxy returns the value of Proxy.
+func (s *NetworkEgressPolicy) GetProxy() OptEgressProxyPolicy {
+	return s.Proxy
+}
+
 // SetAllowedCidrs sets the value of AllowedCidrs.
 func (s *NetworkEgressPolicy) SetAllowedCidrs(val []string) {
 	s.AllowedCidrs = val
@@ -4721,6 +4802,11 @@ func (s *NetworkEgressPolicy) SetTrafficRules(val []TrafficRule) {
 // SetCredentialRules sets the value of CredentialRules.
 func (s *NetworkEgressPolicy) SetCredentialRules(val []EgressCredentialRule) {
 	s.CredentialRules = val
+}
+
+// SetProxy sets the value of Proxy.
+func (s *NetworkEgressPolicy) SetProxy(val OptEgressProxyPolicy) {
+	s.Proxy = val
 }
 
 // Ref: #/components/schemas/NodeAffinity
@@ -5879,6 +5965,52 @@ func (o OptEgressAuthRolloutMode) Get() (v EgressAuthRolloutMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptEgressAuthRolloutMode) Or(d EgressAuthRolloutMode) EgressAuthRolloutMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressProxyPolicy returns new OptEgressProxyPolicy with value set to v.
+func NewOptEgressProxyPolicy(v EgressProxyPolicy) OptEgressProxyPolicy {
+	return OptEgressProxyPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressProxyPolicy is optional EgressProxyPolicy.
+type OptEgressProxyPolicy struct {
+	Value EgressProxyPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptEgressProxyPolicy was set.
+func (o OptEgressProxyPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressProxyPolicy) Reset() {
+	var v EgressProxyPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressProxyPolicy) SetTo(v EgressProxyPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressProxyPolicy) Get() (v EgressProxyPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressProxyPolicy) Or(d EgressProxyPolicy) EgressProxyPolicy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
