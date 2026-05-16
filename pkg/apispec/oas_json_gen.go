@@ -5540,6 +5540,12 @@ func (s *CreateSandboxVolumeRequest) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 	{
+		if s.SnapshotID.Set {
+			e.FieldStart("snapshot_id")
+			s.SnapshotID.Encode(e)
+		}
+	}
+	{
 		if s.DefaultPosixUID.Set {
 			e.FieldStart("default_posix_uid")
 			s.DefaultPosixUID.Encode(e)
@@ -5559,10 +5565,11 @@ func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateSandboxVolumeRequest = [3]string{
-	0: "default_posix_uid",
-	1: "default_posix_gid",
-	2: "access_mode",
+var jsonFieldsNameOfCreateSandboxVolumeRequest = [4]string{
+	0: "snapshot_id",
+	1: "default_posix_uid",
+	2: "default_posix_gid",
+	3: "access_mode",
 }
 
 // Decode decodes CreateSandboxVolumeRequest from json.
@@ -5574,6 +5581,16 @@ func (s *CreateSandboxVolumeRequest) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "snapshot_id":
+			if err := func() error {
+				s.SnapshotID.Reset()
+				if err := s.SnapshotID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"snapshot_id\"")
+			}
 		case "default_posix_uid":
 			if err := func() error {
 				s.DefaultPosixUID.Reset()
@@ -7615,6 +7632,172 @@ func (s *EgressCredentialRule) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *EgressProxyPolicy) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *EgressProxyPolicy) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("type")
+		s.Type.Encode(e)
+	}
+	{
+		e.FieldStart("address")
+		e.Str(s.Address)
+	}
+	{
+		if s.CredentialRef.Set {
+			e.FieldStart("credentialRef")
+			s.CredentialRef.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfEgressProxyPolicy = [3]string{
+	0: "type",
+	1: "address",
+	2: "credentialRef",
+}
+
+// Decode decodes EgressProxyPolicy from json.
+func (s *EgressProxyPolicy) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode EgressProxyPolicy to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "type":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "address":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Address = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"address\"")
+			}
+		case "credentialRef":
+			if err := func() error {
+				s.CredentialRef.Reset()
+				if err := s.CredentialRef.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"credentialRef\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode EgressProxyPolicy")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfEgressProxyPolicy) {
+					name = jsonFieldsNameOfEgressProxyPolicy[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *EgressProxyPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *EgressProxyPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes EgressProxyType as json.
+func (s EgressProxyType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes EgressProxyType from json.
+func (s *EgressProxyType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode EgressProxyType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch EgressProxyType(v) {
+	case EgressProxyTypeSocks5:
+		*s = EgressProxyTypeSocks5
+	default:
+		*s = EgressProxyType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s EgressProxyType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *EgressProxyType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes EgressTLSMode as json.
 func (s EgressTLSMode) Encode(e *jx.Encoder) {
 	e.Str(string(s))
@@ -9350,14 +9533,28 @@ func (s *FunctionRestoreMount) encodeFields(e *jx.Encoder) {
 		e.Str(s.SandboxvolumeID)
 	}
 	{
+		if s.SourceSandboxvolumeID.Set {
+			e.FieldStart("source_sandboxvolume_id")
+			s.SourceSandboxvolumeID.Encode(e)
+		}
+	}
+	{
+		if s.SnapshotID.Set {
+			e.FieldStart("snapshot_id")
+			s.SnapshotID.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("mount_point")
 		e.Str(s.MountPoint)
 	}
 }
 
-var jsonFieldsNameOfFunctionRestoreMount = [2]string{
+var jsonFieldsNameOfFunctionRestoreMount = [4]string{
 	0: "sandboxvolume_id",
-	1: "mount_point",
+	1: "source_sandboxvolume_id",
+	2: "snapshot_id",
+	3: "mount_point",
 }
 
 // Decode decodes FunctionRestoreMount from json.
@@ -9381,8 +9578,28 @@ func (s *FunctionRestoreMount) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"sandboxvolume_id\"")
 			}
+		case "source_sandboxvolume_id":
+			if err := func() error {
+				s.SourceSandboxvolumeID.Reset()
+				if err := s.SourceSandboxvolumeID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_sandboxvolume_id\"")
+			}
+		case "snapshot_id":
+			if err := func() error {
+				s.SnapshotID.Reset()
+				if err := s.SnapshotID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"snapshot_id\"")
+			}
 		case "mount_point":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.MountPoint = string(v)
@@ -9403,7 +9620,7 @@ func (s *FunctionRestoreMount) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -12081,9 +12298,15 @@ func (s *NetworkEgressPolicy) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
+	{
+		if s.Proxy.Set {
+			e.FieldStart("proxy")
+			s.Proxy.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfNetworkEgressPolicy = [8]string{
+var jsonFieldsNameOfNetworkEgressPolicy = [9]string{
 	0: "allowedCidrs",
 	1: "allowedDomains",
 	2: "allowedPorts",
@@ -12092,6 +12315,7 @@ var jsonFieldsNameOfNetworkEgressPolicy = [8]string{
 	5: "deniedPorts",
 	6: "trafficRules",
 	7: "credentialRules",
+	8: "proxy",
 }
 
 // Decode decodes NetworkEgressPolicy from json.
@@ -12245,6 +12469,16 @@ func (s *NetworkEgressPolicy) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"credentialRules\"")
+			}
+		case "proxy":
+			if err := func() error {
+				s.Proxy.Reset()
+				if err := s.Proxy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"proxy\"")
 			}
 		default:
 			return d.Skip()
@@ -13408,6 +13642,39 @@ func (s OptEgressAuthRolloutMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptEgressAuthRolloutMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes EgressProxyPolicy as json.
+func (o OptEgressProxyPolicy) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes EgressProxyPolicy from json.
+func (o *OptEgressProxyPolicy) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptEgressProxyPolicy to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptEgressProxyPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptEgressProxyPolicy) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

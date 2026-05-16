@@ -1790,6 +1790,8 @@ func (s *CreateSSHPublicKeyRequest) SetPublicKey(val string) {
 
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
 type CreateSandboxVolumeRequest struct {
+	// Optional snapshot ID used to initialize the new volume from immutable snapshot state.
+	SnapshotID OptString `json:"snapshot_id"`
 	// Default POSIX UID used by external volume access paths that do not carry caller identity. Defaults
 	// to 0 when omitted on create.
 	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
@@ -1798,6 +1800,11 @@ type CreateSandboxVolumeRequest struct {
 	DefaultPosixGid OptInt64 `json:"default_posix_gid"`
 	// Access mode for the volume. Defaults to RWO when omitted.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *CreateSandboxVolumeRequest) GetSnapshotID() OptString {
+	return s.SnapshotID
 }
 
 // GetDefaultPosixUID returns the value of DefaultPosixUID.
@@ -1813,6 +1820,11 @@ func (s *CreateSandboxVolumeRequest) GetDefaultPosixGid() OptInt64 {
 // GetAccessMode returns the value of AccessMode.
 func (s *CreateSandboxVolumeRequest) GetAccessMode() OptVolumeAccessMode {
 	return s.AccessMode
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *CreateSandboxVolumeRequest) SetSnapshotID(val OptString) {
+	s.SnapshotID = val
 }
 
 // SetDefaultPosixUID sets the value of DefaultPosixUID.
@@ -2759,6 +2771,81 @@ func (s *EgressCredentialRule) SetHttpMatch(val OptHTTPMatch) {
 	s.HttpMatch = val
 }
 
+// Customer-managed transparent egress proxy for allowed TCP traffic.
+// Ref: #/components/schemas/EgressProxyPolicy
+type EgressProxyPolicy struct {
+	Type EgressProxyType `json:"type"`
+	// SOCKS5 proxy endpoint in host:port form.
+	Address string `json:"address"`
+	// Optional credential binding ref using a username_password projection.
+	CredentialRef OptString `json:"credentialRef"`
+}
+
+// GetType returns the value of Type.
+func (s *EgressProxyPolicy) GetType() EgressProxyType {
+	return s.Type
+}
+
+// GetAddress returns the value of Address.
+func (s *EgressProxyPolicy) GetAddress() string {
+	return s.Address
+}
+
+// GetCredentialRef returns the value of CredentialRef.
+func (s *EgressProxyPolicy) GetCredentialRef() OptString {
+	return s.CredentialRef
+}
+
+// SetType sets the value of Type.
+func (s *EgressProxyPolicy) SetType(val EgressProxyType) {
+	s.Type = val
+}
+
+// SetAddress sets the value of Address.
+func (s *EgressProxyPolicy) SetAddress(val string) {
+	s.Address = val
+}
+
+// SetCredentialRef sets the value of CredentialRef.
+func (s *EgressProxyPolicy) SetCredentialRef(val OptString) {
+	s.CredentialRef = val
+}
+
+// Ref: #/components/schemas/EgressProxyType
+type EgressProxyType string
+
+const (
+	EgressProxyTypeSocks5 EgressProxyType = "socks5"
+)
+
+// AllValues returns all EgressProxyType values.
+func (EgressProxyType) AllValues() []EgressProxyType {
+	return []EgressProxyType{
+		EgressProxyTypeSocks5,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s EgressProxyType) MarshalText() ([]byte, error) {
+	switch s {
+	case EgressProxyTypeSocks5:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *EgressProxyType) UnmarshalText(data []byte) error {
+	switch EgressProxyType(data) {
+	case EgressProxyTypeSocks5:
+		*s = EgressProxyTypeSocks5
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/EgressTLSMode
 type EgressTLSMode string
 
@@ -3454,13 +3541,28 @@ func (s *FunctionRecord) SetURL(val string) {
 
 // Ref: #/components/schemas/FunctionRestoreMount
 type FunctionRestoreMount struct {
+	// Revision-owned SandboxVolume prepared when the function revision was published.
 	SandboxvolumeID string `json:"sandboxvolume_id"`
-	MountPoint      string `json:"mount_point"`
+	// Source SandboxVolume captured when the function revision was published.
+	SourceSandboxvolumeID OptString `json:"source_sandboxvolume_id"`
+	// Immutable source volume snapshot captured for this function revision.
+	SnapshotID OptString `json:"snapshot_id"`
+	MountPoint string    `json:"mount_point"`
 }
 
 // GetSandboxvolumeID returns the value of SandboxvolumeID.
 func (s *FunctionRestoreMount) GetSandboxvolumeID() string {
 	return s.SandboxvolumeID
+}
+
+// GetSourceSandboxvolumeID returns the value of SourceSandboxvolumeID.
+func (s *FunctionRestoreMount) GetSourceSandboxvolumeID() OptString {
+	return s.SourceSandboxvolumeID
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *FunctionRestoreMount) GetSnapshotID() OptString {
+	return s.SnapshotID
 }
 
 // GetMountPoint returns the value of MountPoint.
@@ -3471,6 +3573,16 @@ func (s *FunctionRestoreMount) GetMountPoint() string {
 // SetSandboxvolumeID sets the value of SandboxvolumeID.
 func (s *FunctionRestoreMount) SetSandboxvolumeID(val string) {
 	s.SandboxvolumeID = val
+}
+
+// SetSourceSandboxvolumeID sets the value of SourceSandboxvolumeID.
+func (s *FunctionRestoreMount) SetSourceSandboxvolumeID(val OptString) {
+	s.SourceSandboxvolumeID = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *FunctionRestoreMount) SetSnapshotID(val OptString) {
+	s.SnapshotID = val
 }
 
 // SetMountPoint sets the value of MountPoint.
@@ -4414,6 +4526,7 @@ type NetworkEgressPolicy struct {
 	// These rules are orthogonal to allow/deny matching and are intended for
 	// destination-scoped outbound auth behavior.
 	CredentialRules []EgressCredentialRule `json:"credentialRules"`
+	Proxy           OptEgressProxyPolicy   `json:"proxy"`
 }
 
 // GetAllowedCidrs returns the value of AllowedCidrs.
@@ -4456,6 +4569,11 @@ func (s *NetworkEgressPolicy) GetCredentialRules() []EgressCredentialRule {
 	return s.CredentialRules
 }
 
+// GetProxy returns the value of Proxy.
+func (s *NetworkEgressPolicy) GetProxy() OptEgressProxyPolicy {
+	return s.Proxy
+}
+
 // SetAllowedCidrs sets the value of AllowedCidrs.
 func (s *NetworkEgressPolicy) SetAllowedCidrs(val []string) {
 	s.AllowedCidrs = val
@@ -4494,6 +4612,11 @@ func (s *NetworkEgressPolicy) SetTrafficRules(val []TrafficRule) {
 // SetCredentialRules sets the value of CredentialRules.
 func (s *NetworkEgressPolicy) SetCredentialRules(val []EgressCredentialRule) {
 	s.CredentialRules = val
+}
+
+// SetProxy sets the value of Proxy.
+func (s *NetworkEgressPolicy) SetProxy(val OptEgressProxyPolicy) {
+	s.Proxy = val
 }
 
 // Ref: #/components/schemas/NodeAffinity
@@ -5652,6 +5775,52 @@ func (o OptEgressAuthRolloutMode) Get() (v EgressAuthRolloutMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptEgressAuthRolloutMode) Or(d EgressAuthRolloutMode) EgressAuthRolloutMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptEgressProxyPolicy returns new OptEgressProxyPolicy with value set to v.
+func NewOptEgressProxyPolicy(v EgressProxyPolicy) OptEgressProxyPolicy {
+	return OptEgressProxyPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptEgressProxyPolicy is optional EgressProxyPolicy.
+type OptEgressProxyPolicy struct {
+	Value EgressProxyPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptEgressProxyPolicy was set.
+func (o OptEgressProxyPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptEgressProxyPolicy) Reset() {
+	var v EgressProxyPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptEgressProxyPolicy) SetTo(v EgressProxyPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptEgressProxyPolicy) Get() (v EgressProxyPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptEgressProxyPolicy) Or(d EgressProxyPolicy) EgressProxyPolicy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
