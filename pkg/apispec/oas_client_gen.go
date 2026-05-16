@@ -146,18 +146,43 @@ type Invoker interface {
 	//
 	// GET /api/v1/functions
 	APIV1FunctionsGet(ctx context.Context, options ...RequestOption) (*SuccessFunctionListResponse, error)
+	// APIV1FunctionsIDAliasesAliasGet invokes GET /api/v1/functions/{id}/aliases/{alias} operation.
+	//
+	// Get function alias.
+	//
+	// GET /api/v1/functions/{id}/aliases/{alias}
+	APIV1FunctionsIDAliasesAliasGet(ctx context.Context, params APIV1FunctionsIDAliasesAliasGetParams, options ...RequestOption) (APIV1FunctionsIDAliasesAliasGetRes, error)
 	// APIV1FunctionsIDAliasesAliasPut invokes PUT /api/v1/functions/{id}/aliases/{alias} operation.
 	//
 	// Point a function alias at a revision.
 	//
 	// PUT /api/v1/functions/{id}/aliases/{alias}
 	APIV1FunctionsIDAliasesAliasPut(ctx context.Context, request *FunctionAliasUpdateRequest, params APIV1FunctionsIDAliasesAliasPutParams, options ...RequestOption) (*SuccessFunctionAliasResponse, error)
+	// APIV1FunctionsIDAliasesGet invokes GET /api/v1/functions/{id}/aliases operation.
+	//
+	// List function aliases.
+	//
+	// GET /api/v1/functions/{id}/aliases
+	APIV1FunctionsIDAliasesGet(ctx context.Context, params APIV1FunctionsIDAliasesGetParams, options ...RequestOption) (*SuccessFunctionAliasListResponse, error)
+	// APIV1FunctionsIDDelete invokes DELETE /api/v1/functions/{id} operation.
+	//
+	// Soft-deletes the function, disables its host, and schedules best-effort runtime and revision
+	// volume cleanup. The function slug and domain label remain reserved.
+	//
+	// DELETE /api/v1/functions/{id}
+	APIV1FunctionsIDDelete(ctx context.Context, params APIV1FunctionsIDDeleteParams, options ...RequestOption) (APIV1FunctionsIDDeleteRes, error)
 	// APIV1FunctionsIDGet invokes GET /api/v1/functions/{id} operation.
 	//
 	// Get function.
 	//
 	// GET /api/v1/functions/{id}
 	APIV1FunctionsIDGet(ctx context.Context, params APIV1FunctionsIDGetParams, options ...RequestOption) (APIV1FunctionsIDGetRes, error)
+	// APIV1FunctionsIDPut invokes PUT /api/v1/functions/{id} operation.
+	//
+	// Update function lifecycle state.
+	//
+	// PUT /api/v1/functions/{id}
+	APIV1FunctionsIDPut(ctx context.Context, request *FunctionUpdateRequest, params APIV1FunctionsIDPutParams, options ...RequestOption) (APIV1FunctionsIDPutRes, error)
 	// APIV1FunctionsIDRevisionsGet invokes GET /api/v1/functions/{id}/revisions operation.
 	//
 	// List function revisions.
@@ -170,6 +195,32 @@ type Invoker interface {
 	//
 	// POST /api/v1/functions/{id}/revisions
 	APIV1FunctionsIDRevisionsPost(ctx context.Context, request *FunctionRevisionCreateRequest, params APIV1FunctionsIDRevisionsPostParams, options ...RequestOption) (*SuccessFunctionRevisionCreateResponse, error)
+	// APIV1FunctionsIDRevisionsRevisionNumberGet invokes GET /api/v1/functions/{id}/revisions/{revision_number} operation.
+	//
+	// Get function revision.
+	//
+	// GET /api/v1/functions/{id}/revisions/{revision_number}
+	APIV1FunctionsIDRevisionsRevisionNumberGet(ctx context.Context, params APIV1FunctionsIDRevisionsRevisionNumberGetParams, options ...RequestOption) (APIV1FunctionsIDRevisionsRevisionNumberGetRes, error)
+	// APIV1FunctionsIDRuntimeGet invokes GET /api/v1/functions/{id}/runtime operation.
+	//
+	// Get active function runtime.
+	//
+	// GET /api/v1/functions/{id}/runtime
+	APIV1FunctionsIDRuntimeGet(ctx context.Context, params APIV1FunctionsIDRuntimeGetParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
+	// APIV1FunctionsIDRuntimeRecyclePost invokes POST /api/v1/functions/{id}/runtime/recycle operation.
+	//
+	// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
+	// next function request starts a fresh runtime.
+	//
+	// POST /api/v1/functions/{id}/runtime/recycle
+	APIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, params APIV1FunctionsIDRuntimeRecyclePostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
+	// APIV1FunctionsIDRuntimeRestartPost invokes POST /api/v1/functions/{id}/runtime/restart operation.
+	//
+	// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
+	// next function request starts a fresh runtime.
+	//
+	// POST /api/v1/functions/{id}/runtime/restart
+	APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
 	// APIV1FunctionsPost invokes POST /api/v1/functions operation.
 	//
 	// Creates a function, revision 1, and the production alias from an existing sandbox service.
@@ -1954,6 +2005,138 @@ func (c *Client) sendAPIV1FunctionsGet(ctx context.Context, requestOptions ...Re
 	return result, nil
 }
 
+// APIV1FunctionsIDAliasesAliasGet invokes GET /api/v1/functions/{id}/aliases/{alias} operation.
+//
+// Get function alias.
+//
+// GET /api/v1/functions/{id}/aliases/{alias}
+func (c *Client) APIV1FunctionsIDAliasesAliasGet(ctx context.Context, params APIV1FunctionsIDAliasesAliasGetParams, options ...RequestOption) (APIV1FunctionsIDAliasesAliasGetRes, error) {
+	res, err := c.sendAPIV1FunctionsIDAliasesAliasGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDAliasesAliasGet(ctx context.Context, params APIV1FunctionsIDAliasesAliasGetParams, requestOptions ...RequestOption) (res APIV1FunctionsIDAliasesAliasGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/aliases/"
+	{
+		// Encode "alias" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "alias",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Alias))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDAliasesAliasGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDAliasesAliasGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1FunctionsIDAliasesAliasPut invokes PUT /api/v1/functions/{id}/aliases/{alias} operation.
 //
 // Point a function alias at a revision.
@@ -2089,6 +2272,234 @@ func (c *Client) sendAPIV1FunctionsIDAliasesAliasPut(ctx context.Context, reques
 	return result, nil
 }
 
+// APIV1FunctionsIDAliasesGet invokes GET /api/v1/functions/{id}/aliases operation.
+//
+// List function aliases.
+//
+// GET /api/v1/functions/{id}/aliases
+func (c *Client) APIV1FunctionsIDAliasesGet(ctx context.Context, params APIV1FunctionsIDAliasesGetParams, options ...RequestOption) (*SuccessFunctionAliasListResponse, error) {
+	res, err := c.sendAPIV1FunctionsIDAliasesGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDAliasesGet(ctx context.Context, params APIV1FunctionsIDAliasesGetParams, requestOptions ...RequestOption) (res *SuccessFunctionAliasListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/aliases"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDAliasesGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDAliasesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDDelete invokes DELETE /api/v1/functions/{id} operation.
+//
+// Soft-deletes the function, disables its host, and schedules best-effort runtime and revision
+// volume cleanup. The function slug and domain label remain reserved.
+//
+// DELETE /api/v1/functions/{id}
+func (c *Client) APIV1FunctionsIDDelete(ctx context.Context, params APIV1FunctionsIDDeleteParams, options ...RequestOption) (APIV1FunctionsIDDeleteRes, error) {
+	res, err := c.sendAPIV1FunctionsIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDDelete(ctx context.Context, params APIV1FunctionsIDDeleteParams, requestOptions ...RequestOption) (res APIV1FunctionsIDDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1FunctionsIDGet invokes GET /api/v1/functions/{id} operation.
 //
 // Get function.
@@ -2195,6 +2606,122 @@ func (c *Client) sendAPIV1FunctionsIDGet(ctx context.Context, params APIV1Functi
 	}
 
 	result, err := decodeAPIV1FunctionsIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDPut invokes PUT /api/v1/functions/{id} operation.
+//
+// Update function lifecycle state.
+//
+// PUT /api/v1/functions/{id}
+func (c *Client) APIV1FunctionsIDPut(ctx context.Context, request *FunctionUpdateRequest, params APIV1FunctionsIDPutParams, options ...RequestOption) (APIV1FunctionsIDPutRes, error) {
+	res, err := c.sendAPIV1FunctionsIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDPut(ctx context.Context, request *FunctionUpdateRequest, params APIV1FunctionsIDPutParams, requestOptions ...RequestOption) (res APIV1FunctionsIDPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1FunctionsIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2426,6 +2953,482 @@ func (c *Client) sendAPIV1FunctionsIDRevisionsPost(ctx context.Context, request 
 	}
 
 	result, err := decodeAPIV1FunctionsIDRevisionsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDRevisionsRevisionNumberGet invokes GET /api/v1/functions/{id}/revisions/{revision_number} operation.
+//
+// Get function revision.
+//
+// GET /api/v1/functions/{id}/revisions/{revision_number}
+func (c *Client) APIV1FunctionsIDRevisionsRevisionNumberGet(ctx context.Context, params APIV1FunctionsIDRevisionsRevisionNumberGetParams, options ...RequestOption) (APIV1FunctionsIDRevisionsRevisionNumberGetRes, error) {
+	res, err := c.sendAPIV1FunctionsIDRevisionsRevisionNumberGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDRevisionsRevisionNumberGet(ctx context.Context, params APIV1FunctionsIDRevisionsRevisionNumberGetParams, requestOptions ...RequestOption) (res APIV1FunctionsIDRevisionsRevisionNumberGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/revisions/"
+	{
+		// Encode "revision_number" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "revision_number",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.Int32ToString(params.RevisionNumber))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDRevisionsRevisionNumberGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDRevisionsRevisionNumberGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDRuntimeGet invokes GET /api/v1/functions/{id}/runtime operation.
+//
+// Get active function runtime.
+//
+// GET /api/v1/functions/{id}/runtime
+func (c *Client) APIV1FunctionsIDRuntimeGet(ctx context.Context, params APIV1FunctionsIDRuntimeGetParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error) {
+	res, err := c.sendAPIV1FunctionsIDRuntimeGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDRuntimeGet(ctx context.Context, params APIV1FunctionsIDRuntimeGetParams, requestOptions ...RequestOption) (res *SuccessFunctionRuntimeResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/runtime"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDRuntimeGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDRuntimeGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDRuntimeRecyclePost invokes POST /api/v1/functions/{id}/runtime/recycle operation.
+//
+// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
+// next function request starts a fresh runtime.
+//
+// POST /api/v1/functions/{id}/runtime/recycle
+func (c *Client) APIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, params APIV1FunctionsIDRuntimeRecyclePostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error) {
+	res, err := c.sendAPIV1FunctionsIDRuntimeRecyclePost(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, params APIV1FunctionsIDRuntimeRecyclePostParams, requestOptions ...RequestOption) (res *SuccessFunctionRuntimeResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/runtime/recycle"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDRuntimeRecyclePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDRuntimeRecyclePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1FunctionsIDRuntimeRestartPost invokes POST /api/v1/functions/{id}/runtime/restart operation.
+//
+// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
+// next function request starts a fresh runtime.
+//
+// POST /api/v1/functions/{id}/runtime/restart
+func (c *Client) APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error) {
+	res, err := c.sendAPIV1FunctionsIDRuntimeRestartPost(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, requestOptions ...RequestOption) (res *SuccessFunctionRuntimeResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/functions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/runtime/restart"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1FunctionsIDRuntimeRestartPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1FunctionsIDRuntimeRestartPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
