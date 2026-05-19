@@ -27,6 +27,16 @@ func FunctionSource(sandboxID, serviceID string) apispec.FunctionSourceRequest {
 	}
 }
 
+// FunctionAutoscaling builds function runtime pool autoscaling settings.
+func FunctionAutoscaling(minWarm, maxActive, targetConcurrency, scaleDownAfterSeconds int32) apispec.FunctionAutoscaling {
+	return apispec.FunctionAutoscaling{
+		MinWarm:               minWarm,
+		MaxActive:             maxActive,
+		TargetConcurrency:     targetConcurrency,
+		ScaleDownAfterSeconds: scaleDownAfterSeconds,
+	}
+}
+
 // FunctionCreateOption configures CreateFunctionFromSandbox.
 type FunctionCreateOption func(*apispec.FunctionCreateRequest)
 
@@ -34,6 +44,13 @@ type FunctionCreateOption func(*apispec.FunctionCreateRequest)
 func WithFunctionName(name string) FunctionCreateOption {
 	return func(req *apispec.FunctionCreateRequest) {
 		req.Name = apispec.NewOptString(name)
+	}
+}
+
+// WithFunctionAutoscaling sets runtime pool autoscaling settings at create time.
+func WithFunctionAutoscaling(autoscaling apispec.FunctionAutoscaling) FunctionCreateOption {
+	return func(req *apispec.FunctionCreateRequest) {
+		req.Autoscaling = apispec.NewOptFunctionAutoscaling(autoscaling)
 	}
 }
 
@@ -51,6 +68,13 @@ func WithFunctionUpdateName(name string) FunctionUpdateOption {
 func WithFunctionEnabled(enabled bool) FunctionUpdateOption {
 	return func(req *apispec.FunctionUpdateRequest) {
 		req.Enabled = apispec.NewOptBool(enabled)
+	}
+}
+
+// WithFunctionUpdateAutoscaling updates runtime pool autoscaling settings.
+func WithFunctionUpdateAutoscaling(autoscaling apispec.FunctionAutoscaling) FunctionUpdateOption {
+	return func(req *apispec.FunctionUpdateRequest) {
+		req.Autoscaling = apispec.NewOptFunctionAutoscaling(autoscaling)
 	}
 }
 
