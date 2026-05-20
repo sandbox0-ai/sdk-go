@@ -209,15 +209,15 @@ type Invoker interface {
 	APIV1FunctionsIDRuntimeGet(ctx context.Context, params APIV1FunctionsIDRuntimeGetParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
 	// APIV1FunctionsIDRuntimeRecyclePost invokes POST /api/v1/functions/{id}/runtime/recycle operation.
 	//
-	// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
-	// next function request starts a fresh runtime.
+	// Deletes the current restored runtime pool when one exists and clears the runtime mapping; the next
+	// function request starts fresh runtime instances.
 	//
 	// POST /api/v1/functions/{id}/runtime/recycle
 	APIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, params APIV1FunctionsIDRuntimeRecyclePostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
 	// APIV1FunctionsIDRuntimeRestartPost invokes POST /api/v1/functions/{id}/runtime/restart operation.
 	//
-	// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
-	// next function request starts a fresh runtime.
+	// Deletes the current restored runtime pool when one exists and clears the runtime mapping; the next
+	// function request starts fresh runtime instances.
 	//
 	// POST /api/v1/functions/{id}/runtime/restart
 	APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
@@ -3208,8 +3208,8 @@ func (c *Client) sendAPIV1FunctionsIDRuntimeGet(ctx context.Context, params APIV
 
 // APIV1FunctionsIDRuntimeRecyclePost invokes POST /api/v1/functions/{id}/runtime/recycle operation.
 //
-// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
-// next function request starts a fresh runtime.
+// Deletes the current restored runtime pool when one exists and clears the runtime mapping; the next
+// function request starts fresh runtime instances.
 //
 // POST /api/v1/functions/{id}/runtime/recycle
 func (c *Client) APIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, params APIV1FunctionsIDRuntimeRecyclePostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error) {
@@ -3323,8 +3323,8 @@ func (c *Client) sendAPIV1FunctionsIDRuntimeRecyclePost(ctx context.Context, par
 
 // APIV1FunctionsIDRuntimeRestartPost invokes POST /api/v1/functions/{id}/runtime/restart operation.
 //
-// Deletes the current restored runtime sandbox when one exists and clears the runtime mapping; the
-// next function request starts a fresh runtime.
+// Deletes the current restored runtime pool when one exists and clears the runtime mapping; the next
+// function request starts fresh runtime instances.
 //
 // POST /api/v1/functions/{id}/runtime/restart
 func (c *Client) APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error) {

@@ -9142,6 +9142,154 @@ func (s *FunctionAliasUpdateRequest) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *FunctionAutoscaling) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionAutoscaling) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("min_warm")
+		e.Int32(s.MinWarm)
+	}
+	{
+		e.FieldStart("max_active")
+		e.Int32(s.MaxActive)
+	}
+	{
+		e.FieldStart("target_concurrency")
+		e.Int32(s.TargetConcurrency)
+	}
+	{
+		e.FieldStart("scale_down_after_seconds")
+		e.Int32(s.ScaleDownAfterSeconds)
+	}
+}
+
+var jsonFieldsNameOfFunctionAutoscaling = [4]string{
+	0: "min_warm",
+	1: "max_active",
+	2: "target_concurrency",
+	3: "scale_down_after_seconds",
+}
+
+// Decode decodes FunctionAutoscaling from json.
+func (s *FunctionAutoscaling) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionAutoscaling to nil")
+	}
+	var requiredBitSet [1]uint8
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "min_warm":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int32()
+				s.MinWarm = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"min_warm\"")
+			}
+		case "max_active":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int32()
+				s.MaxActive = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"max_active\"")
+			}
+		case "target_concurrency":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int32()
+				s.TargetConcurrency = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"target_concurrency\"")
+			}
+		case "scale_down_after_seconds":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int32()
+				s.ScaleDownAfterSeconds = int32(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"scale_down_after_seconds\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionAutoscaling")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionAutoscaling) {
+					name = jsonFieldsNameOfFunctionAutoscaling[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionAutoscaling) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionAutoscaling) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *FunctionCreateRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -9160,11 +9308,18 @@ func (s *FunctionCreateRequest) encodeFields(e *jx.Encoder) {
 		e.FieldStart("source")
 		s.Source.Encode(e)
 	}
+	{
+		if s.Autoscaling.Set {
+			e.FieldStart("autoscaling")
+			s.Autoscaling.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfFunctionCreateRequest = [2]string{
+var jsonFieldsNameOfFunctionCreateRequest = [3]string{
 	0: "name",
 	1: "source",
+	2: "autoscaling",
 }
 
 // Decode decodes FunctionCreateRequest from json.
@@ -9195,6 +9350,16 @@ func (s *FunctionCreateRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"source\"")
+			}
+		case "autoscaling":
+			if err := func() error {
+				s.Autoscaling.Reset()
+				if err := s.Autoscaling.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"autoscaling\"")
 			}
 		default:
 			return d.Skip()
@@ -9292,6 +9457,10 @@ func (s *FunctionRecord) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Enabled)
 	}
 	{
+		e.FieldStart("autoscaling")
+		s.Autoscaling.Encode(e)
+	}
+	{
 		if s.CreatedBy.Set {
 			e.FieldStart("created_by")
 			s.CreatedBy.Encode(e)
@@ -9321,7 +9490,7 @@ func (s *FunctionRecord) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfFunctionRecord = [13]string{
+var jsonFieldsNameOfFunctionRecord = [14]string{
 	0:  "id",
 	1:  "team_id",
 	2:  "name",
@@ -9329,12 +9498,13 @@ var jsonFieldsNameOfFunctionRecord = [13]string{
 	4:  "domain_label",
 	5:  "active_revision_id",
 	6:  "enabled",
-	7:  "created_by",
-	8:  "created_at",
-	9:  "updated_at",
-	10: "deleted_at",
-	11: "host",
-	12: "url",
+	7:  "autoscaling",
+	8:  "created_by",
+	9:  "created_at",
+	10: "updated_at",
+	11: "deleted_at",
+	12: "host",
+	13: "url",
 }
 
 // Decode decodes FunctionRecord from json.
@@ -9428,6 +9598,16 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"enabled\"")
 			}
+		case "autoscaling":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				if err := s.Autoscaling.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"autoscaling\"")
+			}
 		case "created_by":
 			if err := func() error {
 				s.CreatedBy.Reset()
@@ -9439,7 +9619,7 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_by\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -9451,7 +9631,7 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -9473,7 +9653,7 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"deleted_at\"")
 			}
 		case "host":
-			requiredBitSet[1] |= 1 << 3
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := d.Str()
 				s.Host = string(v)
@@ -9485,7 +9665,7 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"host\"")
 			}
 		case "url":
-			requiredBitSet[1] |= 1 << 4
+			requiredBitSet[1] |= 1 << 5
 			if err := func() error {
 				v, err := d.Str()
 				s.URL = string(v)
@@ -9506,8 +9686,8 @@ func (s *FunctionRecord) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b01011111,
-		0b00011011,
+		0b11011111,
+		0b00110110,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -10139,6 +10319,366 @@ func (s *FunctionRevisionCreateRequest) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *FunctionRuntimeInstance) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionRuntimeInstance) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		e.Str(s.ID)
+	}
+	{
+		e.FieldStart("team_id")
+		e.Str(s.TeamID)
+	}
+	{
+		e.FieldStart("function_id")
+		e.Str(s.FunctionID)
+	}
+	{
+		e.FieldStart("revision_id")
+		e.Str(s.RevisionID)
+	}
+	{
+		e.FieldStart("sandbox_id")
+		e.Str(s.SandboxID)
+	}
+	{
+		if s.ContextID.Set {
+			e.FieldStart("context_id")
+			s.ContextID.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("state")
+		s.State.Encode(e)
+	}
+	{
+		if s.LastError.Set {
+			e.FieldStart("last_error")
+			s.LastError.Encode(e)
+		}
+	}
+	{
+		if s.ReadyAt.Set {
+			e.FieldStart("ready_at")
+			s.ReadyAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.LastUsedAt.Set {
+			e.FieldStart("last_used_at")
+			s.LastUsedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.DrainingAt.Set {
+			e.FieldStart("draining_at")
+			s.DrainingAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.FailedAt.Set {
+			e.FieldStart("failed_at")
+			s.FailedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+}
+
+var jsonFieldsNameOfFunctionRuntimeInstance = [14]string{
+	0:  "id",
+	1:  "team_id",
+	2:  "function_id",
+	3:  "revision_id",
+	4:  "sandbox_id",
+	5:  "context_id",
+	6:  "state",
+	7:  "last_error",
+	8:  "ready_at",
+	9:  "last_used_at",
+	10: "draining_at",
+	11: "failed_at",
+	12: "created_at",
+	13: "updated_at",
+}
+
+// Decode decodes FunctionRuntimeInstance from json.
+func (s *FunctionRuntimeInstance) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRuntimeInstance to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "team_id":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.TeamID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"team_id\"")
+			}
+		case "function_id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.FunctionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"function_id\"")
+			}
+		case "revision_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.RevisionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"revision_id\"")
+			}
+		case "sandbox_id":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.SandboxID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_id\"")
+			}
+		case "context_id":
+			if err := func() error {
+				s.ContextID.Reset()
+				if err := s.ContextID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"context_id\"")
+			}
+		case "state":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				if err := s.State.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"state\"")
+			}
+		case "last_error":
+			if err := func() error {
+				s.LastError.Reset()
+				if err := s.LastError.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_error\"")
+			}
+		case "ready_at":
+			if err := func() error {
+				s.ReadyAt.Reset()
+				if err := s.ReadyAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ready_at\"")
+			}
+		case "last_used_at":
+			if err := func() error {
+				s.LastUsedAt.Reset()
+				if err := s.LastUsedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used_at\"")
+			}
+		case "draining_at":
+			if err := func() error {
+				s.DrainingAt.Reset()
+				if err := s.DrainingAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"draining_at\"")
+			}
+		case "failed_at":
+			if err := func() error {
+				s.FailedAt.Reset()
+				if err := s.FailedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"failed_at\"")
+			}
+		case "created_at":
+			requiredBitSet[1] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[1] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionRuntimeInstance")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b01011111,
+		0b00110000,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionRuntimeInstance) {
+					name = jsonFieldsNameOfFunctionRuntimeInstance[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionRuntimeInstance) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRuntimeInstance) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRuntimeInstanceState as json.
+func (s FunctionRuntimeInstanceState) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes FunctionRuntimeInstanceState from json.
+func (s *FunctionRuntimeInstanceState) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRuntimeInstanceState to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch FunctionRuntimeInstanceState(v) {
+	case FunctionRuntimeInstanceStateStarting:
+		*s = FunctionRuntimeInstanceStateStarting
+	case FunctionRuntimeInstanceStateReady:
+		*s = FunctionRuntimeInstanceStateReady
+	case FunctionRuntimeInstanceStateDraining:
+		*s = FunctionRuntimeInstanceStateDraining
+	case FunctionRuntimeInstanceStateFailed:
+		*s = FunctionRuntimeInstanceStateFailed
+	default:
+		*s = FunctionRuntimeInstanceState(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRuntimeInstanceState) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRuntimeInstanceState) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes FunctionRuntimeState as json.
 func (s FunctionRuntimeState) Encode(e *jx.Encoder) {
 	e.Str(string(s))
@@ -10207,6 +10747,10 @@ func (s *FunctionRuntimeStatus) encodeFields(e *jx.Encoder) {
 		s.State.Encode(e)
 	}
 	{
+		e.FieldStart("autoscaling")
+		s.Autoscaling.Encode(e)
+	}
+	{
 		if s.RuntimeSandboxID.Set {
 			e.FieldStart("runtime_sandbox_id")
 			s.RuntimeSandboxID.Encode(e)
@@ -10224,16 +10768,28 @@ func (s *FunctionRuntimeStatus) encodeFields(e *jx.Encoder) {
 			s.RuntimeUpdatedAt.Encode(e, json.EncodeDateTime)
 		}
 	}
+	{
+		if s.Instances != nil {
+			e.FieldStart("instances")
+			e.ArrStart()
+			for _, elem := range s.Instances {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
 }
 
-var jsonFieldsNameOfFunctionRuntimeStatus = [7]string{
+var jsonFieldsNameOfFunctionRuntimeStatus = [9]string{
 	0: "function_id",
 	1: "revision_id",
 	2: "revision_number",
 	3: "state",
-	4: "runtime_sandbox_id",
-	5: "runtime_context_id",
-	6: "runtime_updated_at",
+	4: "autoscaling",
+	5: "runtime_sandbox_id",
+	6: "runtime_context_id",
+	7: "runtime_updated_at",
+	8: "instances",
 }
 
 // Decode decodes FunctionRuntimeStatus from json.
@@ -10241,7 +10797,7 @@ func (s *FunctionRuntimeStatus) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode FunctionRuntimeStatus to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -10291,6 +10847,16 @@ func (s *FunctionRuntimeStatus) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"state\"")
 			}
+		case "autoscaling":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Autoscaling.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"autoscaling\"")
+			}
 		case "runtime_sandbox_id":
 			if err := func() error {
 				s.RuntimeSandboxID.Reset()
@@ -10321,6 +10887,23 @@ func (s *FunctionRuntimeStatus) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"runtime_updated_at\"")
 			}
+		case "instances":
+			if err := func() error {
+				s.Instances = make([]FunctionRuntimeInstance, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem FunctionRuntimeInstance
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Instances = append(s.Instances, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"instances\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -10330,8 +10913,9 @@ func (s *FunctionRuntimeStatus) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00001111,
+	for i, mask := range [2]uint8{
+		0b00011111,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -10511,11 +11095,18 @@ func (s *FunctionUpdateRequest) encodeFields(e *jx.Encoder) {
 			s.Enabled.Encode(e)
 		}
 	}
+	{
+		if s.Autoscaling.Set {
+			e.FieldStart("autoscaling")
+			s.Autoscaling.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfFunctionUpdateRequest = [2]string{
+var jsonFieldsNameOfFunctionUpdateRequest = [3]string{
 	0: "name",
 	1: "enabled",
+	2: "autoscaling",
 }
 
 // Decode decodes FunctionUpdateRequest from json.
@@ -10545,6 +11136,16 @@ func (s *FunctionUpdateRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"enabled\"")
+			}
+		case "autoscaling":
+			if err := func() error {
+				s.Autoscaling.Reset()
+				if err := s.Autoscaling.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"autoscaling\"")
 			}
 		default:
 			return d.Skip()
@@ -14293,6 +14894,39 @@ func (s OptForkVolumeRequest) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptForkVolumeRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionAutoscaling as json.
+func (o OptFunctionAutoscaling) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes FunctionAutoscaling from json.
+func (o *OptFunctionAutoscaling) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionAutoscaling to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionAutoscaling) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionAutoscaling) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -26128,6 +26762,8 @@ func (s *SandboxSummaryStatus) Decode(d *jx.Decoder) error {
 		*s = SandboxSummaryStatusFailed
 	case SandboxSummaryStatusCompleted:
 		*s = SandboxSummaryStatusCompleted
+	case SandboxSummaryStatusTerminating:
+		*s = SandboxSummaryStatusTerminating
 	default:
 		*s = SandboxSummaryStatus(v)
 	}

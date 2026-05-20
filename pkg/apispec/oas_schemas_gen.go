@@ -221,10 +221,11 @@ func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes
 type APIV1SandboxesGetStatus string
 
 const (
-	APIV1SandboxesGetStatusStarting  APIV1SandboxesGetStatus = "starting"
-	APIV1SandboxesGetStatusRunning   APIV1SandboxesGetStatus = "running"
-	APIV1SandboxesGetStatusFailed    APIV1SandboxesGetStatus = "failed"
-	APIV1SandboxesGetStatusCompleted APIV1SandboxesGetStatus = "completed"
+	APIV1SandboxesGetStatusStarting    APIV1SandboxesGetStatus = "starting"
+	APIV1SandboxesGetStatusRunning     APIV1SandboxesGetStatus = "running"
+	APIV1SandboxesGetStatusFailed      APIV1SandboxesGetStatus = "failed"
+	APIV1SandboxesGetStatusCompleted   APIV1SandboxesGetStatus = "completed"
+	APIV1SandboxesGetStatusTerminating APIV1SandboxesGetStatus = "terminating"
 )
 
 // AllValues returns all APIV1SandboxesGetStatus values.
@@ -234,6 +235,7 @@ func (APIV1SandboxesGetStatus) AllValues() []APIV1SandboxesGetStatus {
 		APIV1SandboxesGetStatusRunning,
 		APIV1SandboxesGetStatusFailed,
 		APIV1SandboxesGetStatusCompleted,
+		APIV1SandboxesGetStatusTerminating,
 	}
 }
 
@@ -247,6 +249,8 @@ func (s APIV1SandboxesGetStatus) MarshalText() ([]byte, error) {
 	case APIV1SandboxesGetStatusFailed:
 		return []byte(s), nil
 	case APIV1SandboxesGetStatusCompleted:
+		return []byte(s), nil
+	case APIV1SandboxesGetStatusTerminating:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -267,6 +271,9 @@ func (s *APIV1SandboxesGetStatus) UnmarshalText(data []byte) error {
 		return nil
 	case APIV1SandboxesGetStatusCompleted:
 		*s = APIV1SandboxesGetStatusCompleted
+		return nil
+	case APIV1SandboxesGetStatusTerminating:
+		*s = APIV1SandboxesGetStatusTerminating
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -3390,11 +3397,66 @@ func (s *FunctionAliasUpdateRequest) SetRevisionNumber(val int32) {
 	s.RevisionNumber = val
 }
 
+// Function runtime pool autoscaling settings. target_concurrency is a soft routing and scale-out
+// signal; it is not a strong distributed per-instance concurrency semaphore.
+// Ref: #/components/schemas/FunctionAutoscaling
+type FunctionAutoscaling struct {
+	// Minimum ready runtime sandboxes the autoscaler keeps after traffic has created capacity.
+	MinWarm int32 `json:"min_warm"`
+	// Hard upper bound for active runtime sandboxes for the function.
+	MaxActive int32 `json:"max_active"`
+	// Soft per-runtime in-flight request target used for routing and scale-out.
+	TargetConcurrency int32 `json:"target_concurrency"`
+	// Idle time before the autoscaler removes extra runtime sandboxes above min_warm.
+	ScaleDownAfterSeconds int32 `json:"scale_down_after_seconds"`
+}
+
+// GetMinWarm returns the value of MinWarm.
+func (s *FunctionAutoscaling) GetMinWarm() int32 {
+	return s.MinWarm
+}
+
+// GetMaxActive returns the value of MaxActive.
+func (s *FunctionAutoscaling) GetMaxActive() int32 {
+	return s.MaxActive
+}
+
+// GetTargetConcurrency returns the value of TargetConcurrency.
+func (s *FunctionAutoscaling) GetTargetConcurrency() int32 {
+	return s.TargetConcurrency
+}
+
+// GetScaleDownAfterSeconds returns the value of ScaleDownAfterSeconds.
+func (s *FunctionAutoscaling) GetScaleDownAfterSeconds() int32 {
+	return s.ScaleDownAfterSeconds
+}
+
+// SetMinWarm sets the value of MinWarm.
+func (s *FunctionAutoscaling) SetMinWarm(val int32) {
+	s.MinWarm = val
+}
+
+// SetMaxActive sets the value of MaxActive.
+func (s *FunctionAutoscaling) SetMaxActive(val int32) {
+	s.MaxActive = val
+}
+
+// SetTargetConcurrency sets the value of TargetConcurrency.
+func (s *FunctionAutoscaling) SetTargetConcurrency(val int32) {
+	s.TargetConcurrency = val
+}
+
+// SetScaleDownAfterSeconds sets the value of ScaleDownAfterSeconds.
+func (s *FunctionAutoscaling) SetScaleDownAfterSeconds(val int32) {
+	s.ScaleDownAfterSeconds = val
+}
+
 // Ref: #/components/schemas/FunctionCreateRequest
 type FunctionCreateRequest struct {
 	// Function display name. Defaults to the source service name or ID when omitted.
-	Name   OptString             `json:"name"`
-	Source FunctionSourceRequest `json:"source"`
+	Name        OptString              `json:"name"`
+	Source      FunctionSourceRequest  `json:"source"`
+	Autoscaling OptFunctionAutoscaling `json:"autoscaling"`
 }
 
 // GetName returns the value of Name.
@@ -3407,6 +3469,11 @@ func (s *FunctionCreateRequest) GetSource() FunctionSourceRequest {
 	return s.Source
 }
 
+// GetAutoscaling returns the value of Autoscaling.
+func (s *FunctionCreateRequest) GetAutoscaling() OptFunctionAutoscaling {
+	return s.Autoscaling
+}
+
 // SetName sets the value of Name.
 func (s *FunctionCreateRequest) SetName(val OptString) {
 	s.Name = val
@@ -3417,19 +3484,25 @@ func (s *FunctionCreateRequest) SetSource(val FunctionSourceRequest) {
 	s.Source = val
 }
 
+// SetAutoscaling sets the value of Autoscaling.
+func (s *FunctionCreateRequest) SetAutoscaling(val OptFunctionAutoscaling) {
+	s.Autoscaling = val
+}
+
 // Merged schema.
 // Ref: #/components/schemas/FunctionRecord
 type FunctionRecord struct {
-	ID               string    `json:"id"`
-	TeamID           string    `json:"team_id"`
-	Name             string    `json:"name"`
-	Slug             string    `json:"slug"`
-	DomainLabel      string    `json:"domain_label"`
-	ActiveRevisionID OptString `json:"active_revision_id"`
-	Enabled          bool      `json:"enabled"`
-	CreatedBy        OptString `json:"created_by"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID               string              `json:"id"`
+	TeamID           string              `json:"team_id"`
+	Name             string              `json:"name"`
+	Slug             string              `json:"slug"`
+	DomainLabel      string              `json:"domain_label"`
+	ActiveRevisionID OptString           `json:"active_revision_id"`
+	Enabled          bool                `json:"enabled"`
+	Autoscaling      FunctionAutoscaling `json:"autoscaling"`
+	CreatedBy        OptString           `json:"created_by"`
+	CreatedAt        time.Time           `json:"created_at"`
+	UpdatedAt        time.Time           `json:"updated_at"`
 	// Set when the function has been soft-deleted. Deleted functions are hidden from normal list/get
 	// APIs and do not serve traffic.
 	DeletedAt OptDateTime `json:"deleted_at"`
@@ -3470,6 +3543,11 @@ func (s *FunctionRecord) GetActiveRevisionID() OptString {
 // GetEnabled returns the value of Enabled.
 func (s *FunctionRecord) GetEnabled() bool {
 	return s.Enabled
+}
+
+// GetAutoscaling returns the value of Autoscaling.
+func (s *FunctionRecord) GetAutoscaling() FunctionAutoscaling {
+	return s.Autoscaling
 }
 
 // GetCreatedBy returns the value of CreatedBy.
@@ -3535,6 +3613,11 @@ func (s *FunctionRecord) SetActiveRevisionID(val OptString) {
 // SetEnabled sets the value of Enabled.
 func (s *FunctionRecord) SetEnabled(val bool) {
 	s.Enabled = val
+}
+
+// SetAutoscaling sets the value of Autoscaling.
+func (s *FunctionRecord) SetAutoscaling(val FunctionAutoscaling) {
+	s.Autoscaling = val
 }
 
 // SetCreatedBy sets the value of CreatedBy.
@@ -3631,7 +3714,7 @@ type FunctionRevision struct {
 	// is restored.
 	RestoreMounts   []FunctionRestoreMount `json:"restore_mounts"`
 	ServiceSnapshot SandboxAppService      `json:"service_snapshot"`
-	// Current restored runtime sandbox, when the source sandbox no longer exists.
+	// Current restored runtime sandbox serving the revision, if one exists.
 	RuntimeSandboxID OptString `json:"runtime_sandbox_id"`
 	// Current runtime process context inside the restored runtime sandbox.
 	RuntimeContextID OptString `json:"runtime_context_id"`
@@ -3808,6 +3891,220 @@ func (s *FunctionRevisionCreateRequest) SetPromote(val OptBool) {
 	s.Promote = val
 }
 
+// Ref: #/components/schemas/FunctionRuntimeInstance
+type FunctionRuntimeInstance struct {
+	ID         string                       `json:"id"`
+	TeamID     string                       `json:"team_id"`
+	FunctionID string                       `json:"function_id"`
+	RevisionID string                       `json:"revision_id"`
+	SandboxID  string                       `json:"sandbox_id"`
+	ContextID  OptString                    `json:"context_id"`
+	State      FunctionRuntimeInstanceState `json:"state"`
+	LastError  OptString                    `json:"last_error"`
+	ReadyAt    OptDateTime                  `json:"ready_at"`
+	LastUsedAt OptDateTime                  `json:"last_used_at"`
+	DrainingAt OptDateTime                  `json:"draining_at"`
+	FailedAt   OptDateTime                  `json:"failed_at"`
+	CreatedAt  time.Time                    `json:"created_at"`
+	UpdatedAt  time.Time                    `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *FunctionRuntimeInstance) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *FunctionRuntimeInstance) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetFunctionID returns the value of FunctionID.
+func (s *FunctionRuntimeInstance) GetFunctionID() string {
+	return s.FunctionID
+}
+
+// GetRevisionID returns the value of RevisionID.
+func (s *FunctionRuntimeInstance) GetRevisionID() string {
+	return s.RevisionID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *FunctionRuntimeInstance) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetContextID returns the value of ContextID.
+func (s *FunctionRuntimeInstance) GetContextID() OptString {
+	return s.ContextID
+}
+
+// GetState returns the value of State.
+func (s *FunctionRuntimeInstance) GetState() FunctionRuntimeInstanceState {
+	return s.State
+}
+
+// GetLastError returns the value of LastError.
+func (s *FunctionRuntimeInstance) GetLastError() OptString {
+	return s.LastError
+}
+
+// GetReadyAt returns the value of ReadyAt.
+func (s *FunctionRuntimeInstance) GetReadyAt() OptDateTime {
+	return s.ReadyAt
+}
+
+// GetLastUsedAt returns the value of LastUsedAt.
+func (s *FunctionRuntimeInstance) GetLastUsedAt() OptDateTime {
+	return s.LastUsedAt
+}
+
+// GetDrainingAt returns the value of DrainingAt.
+func (s *FunctionRuntimeInstance) GetDrainingAt() OptDateTime {
+	return s.DrainingAt
+}
+
+// GetFailedAt returns the value of FailedAt.
+func (s *FunctionRuntimeInstance) GetFailedAt() OptDateTime {
+	return s.FailedAt
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *FunctionRuntimeInstance) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *FunctionRuntimeInstance) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *FunctionRuntimeInstance) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *FunctionRuntimeInstance) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetFunctionID sets the value of FunctionID.
+func (s *FunctionRuntimeInstance) SetFunctionID(val string) {
+	s.FunctionID = val
+}
+
+// SetRevisionID sets the value of RevisionID.
+func (s *FunctionRuntimeInstance) SetRevisionID(val string) {
+	s.RevisionID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *FunctionRuntimeInstance) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetContextID sets the value of ContextID.
+func (s *FunctionRuntimeInstance) SetContextID(val OptString) {
+	s.ContextID = val
+}
+
+// SetState sets the value of State.
+func (s *FunctionRuntimeInstance) SetState(val FunctionRuntimeInstanceState) {
+	s.State = val
+}
+
+// SetLastError sets the value of LastError.
+func (s *FunctionRuntimeInstance) SetLastError(val OptString) {
+	s.LastError = val
+}
+
+// SetReadyAt sets the value of ReadyAt.
+func (s *FunctionRuntimeInstance) SetReadyAt(val OptDateTime) {
+	s.ReadyAt = val
+}
+
+// SetLastUsedAt sets the value of LastUsedAt.
+func (s *FunctionRuntimeInstance) SetLastUsedAt(val OptDateTime) {
+	s.LastUsedAt = val
+}
+
+// SetDrainingAt sets the value of DrainingAt.
+func (s *FunctionRuntimeInstance) SetDrainingAt(val OptDateTime) {
+	s.DrainingAt = val
+}
+
+// SetFailedAt sets the value of FailedAt.
+func (s *FunctionRuntimeInstance) SetFailedAt(val OptDateTime) {
+	s.FailedAt = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *FunctionRuntimeInstance) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *FunctionRuntimeInstance) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/FunctionRuntimeInstanceState
+type FunctionRuntimeInstanceState string
+
+const (
+	FunctionRuntimeInstanceStateStarting FunctionRuntimeInstanceState = "starting"
+	FunctionRuntimeInstanceStateReady    FunctionRuntimeInstanceState = "ready"
+	FunctionRuntimeInstanceStateDraining FunctionRuntimeInstanceState = "draining"
+	FunctionRuntimeInstanceStateFailed   FunctionRuntimeInstanceState = "failed"
+)
+
+// AllValues returns all FunctionRuntimeInstanceState values.
+func (FunctionRuntimeInstanceState) AllValues() []FunctionRuntimeInstanceState {
+	return []FunctionRuntimeInstanceState{
+		FunctionRuntimeInstanceStateStarting,
+		FunctionRuntimeInstanceStateReady,
+		FunctionRuntimeInstanceStateDraining,
+		FunctionRuntimeInstanceStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRuntimeInstanceState) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRuntimeInstanceStateStarting:
+		return []byte(s), nil
+	case FunctionRuntimeInstanceStateReady:
+		return []byte(s), nil
+	case FunctionRuntimeInstanceStateDraining:
+		return []byte(s), nil
+	case FunctionRuntimeInstanceStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRuntimeInstanceState) UnmarshalText(data []byte) error {
+	switch FunctionRuntimeInstanceState(data) {
+	case FunctionRuntimeInstanceStateStarting:
+		*s = FunctionRuntimeInstanceStateStarting
+		return nil
+	case FunctionRuntimeInstanceStateReady:
+		*s = FunctionRuntimeInstanceStateReady
+		return nil
+	case FunctionRuntimeInstanceStateDraining:
+		*s = FunctionRuntimeInstanceStateDraining
+		return nil
+	case FunctionRuntimeInstanceStateFailed:
+		*s = FunctionRuntimeInstanceStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/FunctionRuntimeState
 type FunctionRuntimeState string
 
@@ -3863,12 +4160,16 @@ type FunctionRuntimeStatus struct {
 	RevisionID     string               `json:"revision_id"`
 	RevisionNumber int32                `json:"revision_number"`
 	State          FunctionRuntimeState `json:"state"`
-	// Current restored runtime sandbox, if one exists.
+	Autoscaling    FunctionAutoscaling  `json:"autoscaling"`
+	// Compatibility summary for one current restored runtime sandbox, if one exists. Use instances for
+	// the full runtime pool.
 	RuntimeSandboxID OptString `json:"runtime_sandbox_id"`
-	// Current runtime process context, if one exists.
+	// Compatibility summary for one current runtime process context, if one exists. Use instances for
+	// the full runtime pool.
 	RuntimeContextID OptString `json:"runtime_context_id"`
 	// Last time the runtime mapping was updated.
-	RuntimeUpdatedAt OptDateTime `json:"runtime_updated_at"`
+	RuntimeUpdatedAt OptDateTime               `json:"runtime_updated_at"`
+	Instances        []FunctionRuntimeInstance `json:"instances"`
 }
 
 // GetFunctionID returns the value of FunctionID.
@@ -3891,6 +4192,11 @@ func (s *FunctionRuntimeStatus) GetState() FunctionRuntimeState {
 	return s.State
 }
 
+// GetAutoscaling returns the value of Autoscaling.
+func (s *FunctionRuntimeStatus) GetAutoscaling() FunctionAutoscaling {
+	return s.Autoscaling
+}
+
 // GetRuntimeSandboxID returns the value of RuntimeSandboxID.
 func (s *FunctionRuntimeStatus) GetRuntimeSandboxID() OptString {
 	return s.RuntimeSandboxID
@@ -3904,6 +4210,11 @@ func (s *FunctionRuntimeStatus) GetRuntimeContextID() OptString {
 // GetRuntimeUpdatedAt returns the value of RuntimeUpdatedAt.
 func (s *FunctionRuntimeStatus) GetRuntimeUpdatedAt() OptDateTime {
 	return s.RuntimeUpdatedAt
+}
+
+// GetInstances returns the value of Instances.
+func (s *FunctionRuntimeStatus) GetInstances() []FunctionRuntimeInstance {
+	return s.Instances
 }
 
 // SetFunctionID sets the value of FunctionID.
@@ -3926,6 +4237,11 @@ func (s *FunctionRuntimeStatus) SetState(val FunctionRuntimeState) {
 	s.State = val
 }
 
+// SetAutoscaling sets the value of Autoscaling.
+func (s *FunctionRuntimeStatus) SetAutoscaling(val FunctionAutoscaling) {
+	s.Autoscaling = val
+}
+
 // SetRuntimeSandboxID sets the value of RuntimeSandboxID.
 func (s *FunctionRuntimeStatus) SetRuntimeSandboxID(val OptString) {
 	s.RuntimeSandboxID = val
@@ -3939,6 +4255,11 @@ func (s *FunctionRuntimeStatus) SetRuntimeContextID(val OptString) {
 // SetRuntimeUpdatedAt sets the value of RuntimeUpdatedAt.
 func (s *FunctionRuntimeStatus) SetRuntimeUpdatedAt(val OptDateTime) {
 	s.RuntimeUpdatedAt = val
+}
+
+// SetInstances sets the value of Instances.
+func (s *FunctionRuntimeStatus) SetInstances(val []FunctionRuntimeInstance) {
+	s.Instances = val
 }
 
 // Ref: #/components/schemas/FunctionSourceRequest
@@ -3973,7 +4294,8 @@ type FunctionUpdateRequest struct {
 	Name OptString `json:"name"`
 	// Whether the function host should serve traffic. Disabled functions do not restore runtime
 	// sandboxes.
-	Enabled OptBool `json:"enabled"`
+	Enabled     OptBool                `json:"enabled"`
+	Autoscaling OptFunctionAutoscaling `json:"autoscaling"`
 }
 
 // GetName returns the value of Name.
@@ -3986,6 +4308,11 @@ func (s *FunctionUpdateRequest) GetEnabled() OptBool {
 	return s.Enabled
 }
 
+// GetAutoscaling returns the value of Autoscaling.
+func (s *FunctionUpdateRequest) GetAutoscaling() OptFunctionAutoscaling {
+	return s.Autoscaling
+}
+
 // SetName sets the value of Name.
 func (s *FunctionUpdateRequest) SetName(val OptString) {
 	s.Name = val
@@ -3994,6 +4321,11 @@ func (s *FunctionUpdateRequest) SetName(val OptString) {
 // SetEnabled sets the value of Enabled.
 func (s *FunctionUpdateRequest) SetEnabled(val OptBool) {
 	s.Enabled = val
+}
+
+// SetAutoscaling sets the value of Autoscaling.
+func (s *FunctionUpdateRequest) SetAutoscaling(val OptFunctionAutoscaling) {
+	s.Autoscaling = val
 }
 
 // Ref: #/components/schemas/GatewayMetadata
@@ -6379,6 +6711,52 @@ func (o OptForkVolumeRequest) Get() (v ForkVolumeRequest, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionAutoscaling returns new OptFunctionAutoscaling with value set to v.
+func NewOptFunctionAutoscaling(v FunctionAutoscaling) OptFunctionAutoscaling {
+	return OptFunctionAutoscaling{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionAutoscaling is optional FunctionAutoscaling.
+type OptFunctionAutoscaling struct {
+	Value FunctionAutoscaling
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionAutoscaling was set.
+func (o OptFunctionAutoscaling) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionAutoscaling) Reset() {
+	var v FunctionAutoscaling
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionAutoscaling) SetTo(v FunctionAutoscaling) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionAutoscaling) Get() (v FunctionAutoscaling, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionAutoscaling) Or(d FunctionAutoscaling) FunctionAutoscaling {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -13170,11 +13548,15 @@ func (s *SandboxAppServiceRouteRateLimit) SetBurst(val int32) {
 
 // Ref: #/components/schemas/SandboxAppServiceRuntime
 type SandboxAppServiceRuntime struct {
-	Type            SandboxAppServiceRuntimeType       `json:"type"`
-	Command         []string                           `json:"command"`
-	Cwd             OptString                          `json:"cwd"`
-	EnvVars         OptSandboxAppServiceRuntimeEnvVars `json:"env_vars"`
-	WarmProcessName OptString                          `json:"warm_process_name"`
+	// Runtime strategy for restarting a service when it is restored as a function runtime.
+	Type SandboxAppServiceRuntimeType `json:"type"`
+	// Process argv used when type is cmd.
+	Command []string                           `json:"command"`
+	Cwd     OptString                          `json:"cwd"`
+	EnvVars OptSandboxAppServiceRuntimeEnvVars `json:"env_vars"`
+	// Warm process alias or context ID used when type is warm_process. Function runtimes require this to
+	// reference an existing cmd warm process.
+	WarmProcessName OptString `json:"warm_process_name"`
 }
 
 // GetType returns the value of Type.
@@ -13238,6 +13620,7 @@ func (s *SandboxAppServiceRuntimeEnvVars) init() SandboxAppServiceRuntimeEnvVars
 	return m
 }
 
+// Runtime strategy for restarting a service when it is restored as a function runtime.
 type SandboxAppServiceRuntimeType string
 
 const (
@@ -14285,10 +14668,11 @@ func (s *SandboxSummary) SetHardExpiresAt(val time.Time) {
 type SandboxSummaryStatus string
 
 const (
-	SandboxSummaryStatusStarting  SandboxSummaryStatus = "starting"
-	SandboxSummaryStatusRunning   SandboxSummaryStatus = "running"
-	SandboxSummaryStatusFailed    SandboxSummaryStatus = "failed"
-	SandboxSummaryStatusCompleted SandboxSummaryStatus = "completed"
+	SandboxSummaryStatusStarting    SandboxSummaryStatus = "starting"
+	SandboxSummaryStatusRunning     SandboxSummaryStatus = "running"
+	SandboxSummaryStatusFailed      SandboxSummaryStatus = "failed"
+	SandboxSummaryStatusCompleted   SandboxSummaryStatus = "completed"
+	SandboxSummaryStatusTerminating SandboxSummaryStatus = "terminating"
 )
 
 // AllValues returns all SandboxSummaryStatus values.
@@ -14298,6 +14682,7 @@ func (SandboxSummaryStatus) AllValues() []SandboxSummaryStatus {
 		SandboxSummaryStatusRunning,
 		SandboxSummaryStatusFailed,
 		SandboxSummaryStatusCompleted,
+		SandboxSummaryStatusTerminating,
 	}
 }
 
@@ -14311,6 +14696,8 @@ func (s SandboxSummaryStatus) MarshalText() ([]byte, error) {
 	case SandboxSummaryStatusFailed:
 		return []byte(s), nil
 	case SandboxSummaryStatusCompleted:
+		return []byte(s), nil
+	case SandboxSummaryStatusTerminating:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -14331,6 +14718,9 @@ func (s *SandboxSummaryStatus) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxSummaryStatusCompleted:
 		*s = SandboxSummaryStatusCompleted
+		return nil
+	case SandboxSummaryStatusTerminating:
+		*s = SandboxSummaryStatusTerminating
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)

@@ -26,11 +26,24 @@ func TestClientFunctions(t *testing.T) {
 			if got := body.Name.Or(""); got != "web-fn" {
 				t.Fatalf("name = %q, want web-fn", got)
 			}
+			autoscaling, ok := body.Autoscaling.Get()
+			if !ok {
+				t.Fatal("autoscaling missing")
+			}
+			if autoscaling.MinWarm != 1 || autoscaling.MaxActive != 3 || autoscaling.TargetConcurrency != 7 || autoscaling.ScaleDownAfterSeconds != 60 {
+				t.Fatalf("autoscaling = %#v, want 1/3/7/60", autoscaling)
+			}
 			writeJSON(t, w, http.StatusCreated, functionCreateResponse())
 		})
 		defer server.Close()
 
-		result, err := client.CreateFunctionFromSandbox(context.Background(), "sbx-1", "web", WithFunctionName("web-fn"))
+		result, err := client.CreateFunctionFromSandbox(
+			context.Background(),
+			"sbx-1",
+			"web",
+			WithFunctionName("web-fn"),
+			WithFunctionAutoscaling(FunctionAutoscaling(1, 3, 7, 60)),
+		)
 		if err != nil {
 			t.Fatalf("CreateFunctionFromSandbox() error = %v", err)
 		}
@@ -99,6 +112,13 @@ func TestClientFunctions(t *testing.T) {
 				if enabled := body.Enabled.Or(true); enabled {
 					t.Fatalf("enabled = true, want false")
 				}
+				autoscaling, ok := body.Autoscaling.Get()
+				if !ok {
+					t.Fatal("autoscaling missing")
+				}
+				if autoscaling.MinWarm != 0 || autoscaling.MaxActive != 5 || autoscaling.TargetConcurrency != 10 || autoscaling.ScaleDownAfterSeconds != 120 {
+					t.Fatalf("autoscaling = %#v, want 0/5/10/120", autoscaling)
+				}
 				record := functionRecord()
 				record["name"] = "new-name"
 				record["enabled"] = false
@@ -123,7 +143,13 @@ func TestClientFunctions(t *testing.T) {
 		})
 		defer server.Close()
 
-		updated, err := client.UpdateFunctionWithOptions(context.Background(), "fn-1", WithFunctionUpdateName("new-name"), WithFunctionEnabled(false))
+		updated, err := client.UpdateFunctionWithOptions(
+			context.Background(),
+			"fn-1",
+			WithFunctionUpdateName("new-name"),
+			WithFunctionEnabled(false),
+			WithFunctionUpdateAutoscaling(FunctionAutoscaling(0, 5, 10, 120)),
+		)
 		if err != nil {
 			t.Fatalf("UpdateFunctionWithOptions() error = %v", err)
 		}
@@ -336,6 +362,7 @@ func functionRecord() map[string]any {
 		"domain_label":       "web",
 		"active_revision_id": "rev-1",
 		"enabled":            true,
+		"autoscaling":        functionAutoscalingMap(),
 		"created_at":         "2026-05-14T00:00:00Z",
 		"updated_at":         "2026-05-14T00:00:00Z",
 		"host":               "web.sandbox0.site",
@@ -380,7 +407,9 @@ func functionRuntimeResponse(state string) map[string]any {
 		"revision_id":        "rev-1",
 		"revision_number":    1,
 		"state":              state,
+		"autoscaling":        functionAutoscalingMap(),
 		"runtime_updated_at": "2026-05-14T00:00:00Z",
+		"instances":          []any{},
 	}
 	if state == "active" {
 		runtime["runtime_sandbox_id"] = "sb-runtime"
@@ -391,5 +420,14 @@ func functionRuntimeResponse(state string) map[string]any {
 		"data": map[string]any{
 			"runtime": runtime,
 		},
+	}
+}
+
+func functionAutoscalingMap() map[string]any {
+	return map[string]any{
+		"min_warm":                 0,
+		"max_active":               20,
+		"target_concurrency":       80,
+		"scale_down_after_seconds": 300,
 	}
 }
