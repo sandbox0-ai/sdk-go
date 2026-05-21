@@ -1722,6 +1722,40 @@ func (s *FunctionRevision) Validate() error {
 	return nil
 }
 
+func (s *FunctionRuntimeEvent) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Phase.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "phase",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.ReadinessState.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "readiness_state",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *FunctionRuntimeInstance) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -1739,6 +1773,17 @@ func (s *FunctionRuntimeInstance) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.ReadinessState.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "readiness_state",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -1752,6 +1797,42 @@ func (s FunctionRuntimeInstanceState) Validate() error {
 	case "ready":
 		return nil
 	case "draining":
+		return nil
+	case "failed":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s FunctionRuntimePhase) Validate() error {
+	switch s {
+	case "disabled":
+		return nil
+	case "idle":
+		return nil
+	case "provisioning":
+		return nil
+	case "starting":
+		return nil
+	case "ready":
+		return nil
+	case "draining":
+		return nil
+	case "failed":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s FunctionRuntimeReadinessState) Validate() error {
+	switch s {
+	case "unknown":
+		return nil
+	case "checking":
+		return nil
+	case "ready":
 		return nil
 	case "failed":
 		return nil
@@ -1791,6 +1872,17 @@ func (s *FunctionRuntimeStatus) Validate() error {
 		})
 	}
 	if err := func() error {
+		if err := s.Phase.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "phase",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if err := s.Autoscaling.Validate(); err != nil {
 			return err
 		}
@@ -1798,6 +1890,17 @@ func (s *FunctionRuntimeStatus) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "autoscaling",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.ReadinessState.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "readiness_state",
 			Error: err,
 		})
 	}
@@ -1823,6 +1926,31 @@ func (s *FunctionRuntimeStatus) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "instances",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
+		for i, elem := range s.RecentEvents {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "recent_events",
 			Error: err,
 		})
 	}
@@ -2025,6 +2153,31 @@ func (s *NetworkEgressPolicy) Validate() error {
 	}
 	if err := func() error {
 		var failures []validate.FieldError
+		for i, elem := range s.ProtocolRules {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "protocolRules",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		var failures []validate.FieldError
 		for i, elem := range s.CredentialRules {
 			if err := func() error {
 				if err := elem.Validate(); err != nil {
@@ -2145,6 +2298,56 @@ func (s *ProjectionSpec) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s *ProtocolRule) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Protocol.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "protocol",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.TlsMode.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "tlsMode",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s ProtocolRuleProtocol) Validate() error {
+	switch s {
+	case "mcp":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *REPLConfig) Validate() error {

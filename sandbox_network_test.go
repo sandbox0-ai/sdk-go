@@ -25,6 +25,27 @@ func TestSandboxUpdateNetworkPolicyWithEgressProxy(t *testing.T) {
 		if !ok {
 			t.Fatal("egress policy not set")
 		}
+		if len(egress.ProtocolRules) != 1 {
+			t.Fatalf("protocolRules count = %d, want 1", len(egress.ProtocolRules))
+		}
+		protocolRule := egress.ProtocolRules[0]
+		if protocolRule.Protocol != apispec.ProtocolRuleProtocolMcp {
+			t.Fatalf("protocol rule protocol = %q, want mcp", protocolRule.Protocol)
+		}
+		mcp, ok := protocolRule.Mcp.Get()
+		if !ok {
+			t.Fatal("mcp policy not set")
+		}
+		tools, ok := mcp.Tools.Get()
+		if !ok {
+			t.Fatal("mcp tools policy not set")
+		}
+		if len(tools.Allowed) != 1 || tools.Allowed[0] != "read_file" {
+			t.Fatalf("allowed tools = %#v, want read_file", tools.Allowed)
+		}
+		if len(tools.Denied) != 1 || tools.Denied[0] != "run_command" {
+			t.Fatalf("denied tools = %#v, want run_command", tools.Denied)
+		}
 		proxy, ok := egress.Proxy.Get()
 		if !ok {
 			t.Fatal("egress proxy not set")
@@ -60,6 +81,26 @@ func TestSandboxUpdateNetworkPolicyWithEgressProxy(t *testing.T) {
 					Protocol: apispec.NewOptString("tcp"),
 				}},
 				AppProtocols: []apispec.TrafficRuleAppProtocol{apispec.TrafficRuleAppProtocolTLS},
+			}},
+			ProtocolRules: []apispec.ProtocolRule{{
+				Name:     apispec.NewOptString("internal-mcp"),
+				Protocol: apispec.ProtocolRuleProtocolMcp,
+				Domains:  []string{"api.internal.example.com"},
+				Ports: []apispec.PortSpec{{
+					Port:     443,
+					Protocol: apispec.NewOptString("tcp"),
+				}},
+				TlsMode: apispec.NewOptEgressTLSMode(apispec.EgressTLSModeTerminateReoriginate),
+				HttpMatch: apispec.NewOptHTTPMatch(apispec.HTTPMatch{
+					Methods: []string{http.MethodPost},
+					Paths:   []string{"/mcp"},
+				}),
+				Mcp: apispec.NewOptMCPProtocolRule(apispec.MCPProtocolRule{
+					Tools: apispec.NewOptMCPToolPolicy(apispec.MCPToolPolicy{
+						Allowed: []string{"read_file"},
+						Denied:  []string{"run_command"},
+					}),
+				}),
 			}},
 			Proxy: apispec.NewOptEgressProxyPolicy(apispec.EgressProxyPolicy{
 				Type:          apispec.EgressProxyTypeSocks5,
