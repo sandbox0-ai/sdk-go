@@ -402,11 +402,19 @@ func functionAlias(number int) map[string]any {
 }
 
 func functionRuntimeResponse(state string) map[string]any {
+	phase := "idle"
+	readinessState := "unknown"
+	if state == "active" {
+		phase = "ready"
+		readinessState = "ready"
+	}
 	runtime := map[string]any{
 		"function_id":        "fn-1",
 		"revision_id":        "rev-1",
 		"revision_number":    1,
 		"state":              state,
+		"phase":              phase,
+		"readiness_state":    readinessState,
 		"autoscaling":        functionAutoscalingMap(),
 		"runtime_updated_at": "2026-05-14T00:00:00Z",
 		"instances":          []any{},

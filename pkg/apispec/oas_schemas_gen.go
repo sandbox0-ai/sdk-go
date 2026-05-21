@@ -3891,22 +3891,172 @@ func (s *FunctionRevisionCreateRequest) SetPromote(val OptBool) {
 	s.Promote = val
 }
 
+// Ref: #/components/schemas/FunctionRuntimeEvent
+type FunctionRuntimeEvent struct {
+	ID                string                        `json:"id"`
+	TeamID            string                        `json:"team_id"`
+	FunctionID        string                        `json:"function_id"`
+	RevisionID        string                        `json:"revision_id"`
+	RuntimeInstanceID OptString                     `json:"runtime_instance_id"`
+	RuntimeSandboxID  OptString                     `json:"runtime_sandbox_id"`
+	RuntimeContextID  OptString                     `json:"runtime_context_id"`
+	Phase             FunctionRuntimePhase          `json:"phase"`
+	ReadinessState    FunctionRuntimeReadinessState `json:"readiness_state"`
+	Reason            OptString                     `json:"reason"`
+	Message           OptString                     `json:"message"`
+	StartupDurationMs OptInt32                      `json:"startup_duration_ms"`
+	CreatedAt         time.Time                     `json:"created_at"`
+}
+
+// GetID returns the value of ID.
+func (s *FunctionRuntimeEvent) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *FunctionRuntimeEvent) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetFunctionID returns the value of FunctionID.
+func (s *FunctionRuntimeEvent) GetFunctionID() string {
+	return s.FunctionID
+}
+
+// GetRevisionID returns the value of RevisionID.
+func (s *FunctionRuntimeEvent) GetRevisionID() string {
+	return s.RevisionID
+}
+
+// GetRuntimeInstanceID returns the value of RuntimeInstanceID.
+func (s *FunctionRuntimeEvent) GetRuntimeInstanceID() OptString {
+	return s.RuntimeInstanceID
+}
+
+// GetRuntimeSandboxID returns the value of RuntimeSandboxID.
+func (s *FunctionRuntimeEvent) GetRuntimeSandboxID() OptString {
+	return s.RuntimeSandboxID
+}
+
+// GetRuntimeContextID returns the value of RuntimeContextID.
+func (s *FunctionRuntimeEvent) GetRuntimeContextID() OptString {
+	return s.RuntimeContextID
+}
+
+// GetPhase returns the value of Phase.
+func (s *FunctionRuntimeEvent) GetPhase() FunctionRuntimePhase {
+	return s.Phase
+}
+
+// GetReadinessState returns the value of ReadinessState.
+func (s *FunctionRuntimeEvent) GetReadinessState() FunctionRuntimeReadinessState {
+	return s.ReadinessState
+}
+
+// GetReason returns the value of Reason.
+func (s *FunctionRuntimeEvent) GetReason() OptString {
+	return s.Reason
+}
+
+// GetMessage returns the value of Message.
+func (s *FunctionRuntimeEvent) GetMessage() OptString {
+	return s.Message
+}
+
+// GetStartupDurationMs returns the value of StartupDurationMs.
+func (s *FunctionRuntimeEvent) GetStartupDurationMs() OptInt32 {
+	return s.StartupDurationMs
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *FunctionRuntimeEvent) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// SetID sets the value of ID.
+func (s *FunctionRuntimeEvent) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *FunctionRuntimeEvent) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetFunctionID sets the value of FunctionID.
+func (s *FunctionRuntimeEvent) SetFunctionID(val string) {
+	s.FunctionID = val
+}
+
+// SetRevisionID sets the value of RevisionID.
+func (s *FunctionRuntimeEvent) SetRevisionID(val string) {
+	s.RevisionID = val
+}
+
+// SetRuntimeInstanceID sets the value of RuntimeInstanceID.
+func (s *FunctionRuntimeEvent) SetRuntimeInstanceID(val OptString) {
+	s.RuntimeInstanceID = val
+}
+
+// SetRuntimeSandboxID sets the value of RuntimeSandboxID.
+func (s *FunctionRuntimeEvent) SetRuntimeSandboxID(val OptString) {
+	s.RuntimeSandboxID = val
+}
+
+// SetRuntimeContextID sets the value of RuntimeContextID.
+func (s *FunctionRuntimeEvent) SetRuntimeContextID(val OptString) {
+	s.RuntimeContextID = val
+}
+
+// SetPhase sets the value of Phase.
+func (s *FunctionRuntimeEvent) SetPhase(val FunctionRuntimePhase) {
+	s.Phase = val
+}
+
+// SetReadinessState sets the value of ReadinessState.
+func (s *FunctionRuntimeEvent) SetReadinessState(val FunctionRuntimeReadinessState) {
+	s.ReadinessState = val
+}
+
+// SetReason sets the value of Reason.
+func (s *FunctionRuntimeEvent) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// SetMessage sets the value of Message.
+func (s *FunctionRuntimeEvent) SetMessage(val OptString) {
+	s.Message = val
+}
+
+// SetStartupDurationMs sets the value of StartupDurationMs.
+func (s *FunctionRuntimeEvent) SetStartupDurationMs(val OptInt32) {
+	s.StartupDurationMs = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *FunctionRuntimeEvent) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
 // Ref: #/components/schemas/FunctionRuntimeInstance
 type FunctionRuntimeInstance struct {
-	ID         string                       `json:"id"`
-	TeamID     string                       `json:"team_id"`
-	FunctionID string                       `json:"function_id"`
-	RevisionID string                       `json:"revision_id"`
-	SandboxID  string                       `json:"sandbox_id"`
-	ContextID  OptString                    `json:"context_id"`
-	State      FunctionRuntimeInstanceState `json:"state"`
-	LastError  OptString                    `json:"last_error"`
-	ReadyAt    OptDateTime                  `json:"ready_at"`
-	LastUsedAt OptDateTime                  `json:"last_used_at"`
-	DrainingAt OptDateTime                  `json:"draining_at"`
-	FailedAt   OptDateTime                  `json:"failed_at"`
-	CreatedAt  time.Time                    `json:"created_at"`
-	UpdatedAt  time.Time                    `json:"updated_at"`
+	ID                string                        `json:"id"`
+	TeamID            string                        `json:"team_id"`
+	FunctionID        string                        `json:"function_id"`
+	RevisionID        string                        `json:"revision_id"`
+	SandboxID         string                        `json:"sandbox_id"`
+	ContextID         OptString                     `json:"context_id"`
+	State             FunctionRuntimeInstanceState  `json:"state"`
+	ReadinessState    FunctionRuntimeReadinessState `json:"readiness_state"`
+	StartupDurationMs OptInt32                      `json:"startup_duration_ms"`
+	LastError         OptString                     `json:"last_error"`
+	LastErrorAt       OptDateTime                   `json:"last_error_at"`
+	ReadyAt           OptDateTime                   `json:"ready_at"`
+	LastUsedAt        OptDateTime                   `json:"last_used_at"`
+	DrainingAt        OptDateTime                   `json:"draining_at"`
+	FailedAt          OptDateTime                   `json:"failed_at"`
+	CreatedAt         time.Time                     `json:"created_at"`
+	UpdatedAt         time.Time                     `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -3944,9 +4094,24 @@ func (s *FunctionRuntimeInstance) GetState() FunctionRuntimeInstanceState {
 	return s.State
 }
 
+// GetReadinessState returns the value of ReadinessState.
+func (s *FunctionRuntimeInstance) GetReadinessState() FunctionRuntimeReadinessState {
+	return s.ReadinessState
+}
+
+// GetStartupDurationMs returns the value of StartupDurationMs.
+func (s *FunctionRuntimeInstance) GetStartupDurationMs() OptInt32 {
+	return s.StartupDurationMs
+}
+
 // GetLastError returns the value of LastError.
 func (s *FunctionRuntimeInstance) GetLastError() OptString {
 	return s.LastError
+}
+
+// GetLastErrorAt returns the value of LastErrorAt.
+func (s *FunctionRuntimeInstance) GetLastErrorAt() OptDateTime {
+	return s.LastErrorAt
 }
 
 // GetReadyAt returns the value of ReadyAt.
@@ -4014,9 +4179,24 @@ func (s *FunctionRuntimeInstance) SetState(val FunctionRuntimeInstanceState) {
 	s.State = val
 }
 
+// SetReadinessState sets the value of ReadinessState.
+func (s *FunctionRuntimeInstance) SetReadinessState(val FunctionRuntimeReadinessState) {
+	s.ReadinessState = val
+}
+
+// SetStartupDurationMs sets the value of StartupDurationMs.
+func (s *FunctionRuntimeInstance) SetStartupDurationMs(val OptInt32) {
+	s.StartupDurationMs = val
+}
+
 // SetLastError sets the value of LastError.
 func (s *FunctionRuntimeInstance) SetLastError(val OptString) {
 	s.LastError = val
+}
+
+// SetLastErrorAt sets the value of LastErrorAt.
+func (s *FunctionRuntimeInstance) SetLastErrorAt(val OptDateTime) {
+	s.LastErrorAt = val
 }
 
 // SetReadyAt sets the value of ReadyAt.
@@ -4105,6 +4285,139 @@ func (s *FunctionRuntimeInstanceState) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/FunctionRuntimePhase
+type FunctionRuntimePhase string
+
+const (
+	FunctionRuntimePhaseDisabled     FunctionRuntimePhase = "disabled"
+	FunctionRuntimePhaseIdle         FunctionRuntimePhase = "idle"
+	FunctionRuntimePhaseProvisioning FunctionRuntimePhase = "provisioning"
+	FunctionRuntimePhaseStarting     FunctionRuntimePhase = "starting"
+	FunctionRuntimePhaseReady        FunctionRuntimePhase = "ready"
+	FunctionRuntimePhaseDraining     FunctionRuntimePhase = "draining"
+	FunctionRuntimePhaseFailed       FunctionRuntimePhase = "failed"
+)
+
+// AllValues returns all FunctionRuntimePhase values.
+func (FunctionRuntimePhase) AllValues() []FunctionRuntimePhase {
+	return []FunctionRuntimePhase{
+		FunctionRuntimePhaseDisabled,
+		FunctionRuntimePhaseIdle,
+		FunctionRuntimePhaseProvisioning,
+		FunctionRuntimePhaseStarting,
+		FunctionRuntimePhaseReady,
+		FunctionRuntimePhaseDraining,
+		FunctionRuntimePhaseFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRuntimePhase) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRuntimePhaseDisabled:
+		return []byte(s), nil
+	case FunctionRuntimePhaseIdle:
+		return []byte(s), nil
+	case FunctionRuntimePhaseProvisioning:
+		return []byte(s), nil
+	case FunctionRuntimePhaseStarting:
+		return []byte(s), nil
+	case FunctionRuntimePhaseReady:
+		return []byte(s), nil
+	case FunctionRuntimePhaseDraining:
+		return []byte(s), nil
+	case FunctionRuntimePhaseFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRuntimePhase) UnmarshalText(data []byte) error {
+	switch FunctionRuntimePhase(data) {
+	case FunctionRuntimePhaseDisabled:
+		*s = FunctionRuntimePhaseDisabled
+		return nil
+	case FunctionRuntimePhaseIdle:
+		*s = FunctionRuntimePhaseIdle
+		return nil
+	case FunctionRuntimePhaseProvisioning:
+		*s = FunctionRuntimePhaseProvisioning
+		return nil
+	case FunctionRuntimePhaseStarting:
+		*s = FunctionRuntimePhaseStarting
+		return nil
+	case FunctionRuntimePhaseReady:
+		*s = FunctionRuntimePhaseReady
+		return nil
+	case FunctionRuntimePhaseDraining:
+		*s = FunctionRuntimePhaseDraining
+		return nil
+	case FunctionRuntimePhaseFailed:
+		*s = FunctionRuntimePhaseFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/FunctionRuntimeReadinessState
+type FunctionRuntimeReadinessState string
+
+const (
+	FunctionRuntimeReadinessStateUnknown  FunctionRuntimeReadinessState = "unknown"
+	FunctionRuntimeReadinessStateChecking FunctionRuntimeReadinessState = "checking"
+	FunctionRuntimeReadinessStateReady    FunctionRuntimeReadinessState = "ready"
+	FunctionRuntimeReadinessStateFailed   FunctionRuntimeReadinessState = "failed"
+)
+
+// AllValues returns all FunctionRuntimeReadinessState values.
+func (FunctionRuntimeReadinessState) AllValues() []FunctionRuntimeReadinessState {
+	return []FunctionRuntimeReadinessState{
+		FunctionRuntimeReadinessStateUnknown,
+		FunctionRuntimeReadinessStateChecking,
+		FunctionRuntimeReadinessStateReady,
+		FunctionRuntimeReadinessStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRuntimeReadinessState) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRuntimeReadinessStateUnknown:
+		return []byte(s), nil
+	case FunctionRuntimeReadinessStateChecking:
+		return []byte(s), nil
+	case FunctionRuntimeReadinessStateReady:
+		return []byte(s), nil
+	case FunctionRuntimeReadinessStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRuntimeReadinessState) UnmarshalText(data []byte) error {
+	switch FunctionRuntimeReadinessState(data) {
+	case FunctionRuntimeReadinessStateUnknown:
+		*s = FunctionRuntimeReadinessStateUnknown
+		return nil
+	case FunctionRuntimeReadinessStateChecking:
+		*s = FunctionRuntimeReadinessStateChecking
+		return nil
+	case FunctionRuntimeReadinessStateReady:
+		*s = FunctionRuntimeReadinessStateReady
+		return nil
+	case FunctionRuntimeReadinessStateFailed:
+		*s = FunctionRuntimeReadinessStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/FunctionRuntimeState
 type FunctionRuntimeState string
 
@@ -4156,11 +4469,13 @@ func (s *FunctionRuntimeState) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/FunctionRuntimeStatus
 type FunctionRuntimeStatus struct {
-	FunctionID     string               `json:"function_id"`
-	RevisionID     string               `json:"revision_id"`
-	RevisionNumber int32                `json:"revision_number"`
-	State          FunctionRuntimeState `json:"state"`
-	Autoscaling    FunctionAutoscaling  `json:"autoscaling"`
+	FunctionID     string                        `json:"function_id"`
+	RevisionID     string                        `json:"revision_id"`
+	RevisionNumber int32                         `json:"revision_number"`
+	State          FunctionRuntimeState          `json:"state"`
+	Phase          FunctionRuntimePhase          `json:"phase"`
+	Autoscaling    FunctionAutoscaling           `json:"autoscaling"`
+	ReadinessState FunctionRuntimeReadinessState `json:"readiness_state"`
 	// Compatibility summary for one current restored runtime sandbox, if one exists. Use instances for
 	// the full runtime pool.
 	RuntimeSandboxID OptString `json:"runtime_sandbox_id"`
@@ -4168,8 +4483,12 @@ type FunctionRuntimeStatus struct {
 	// the full runtime pool.
 	RuntimeContextID OptString `json:"runtime_context_id"`
 	// Last time the runtime mapping was updated.
-	RuntimeUpdatedAt OptDateTime               `json:"runtime_updated_at"`
-	Instances        []FunctionRuntimeInstance `json:"instances"`
+	RuntimeUpdatedAt  OptDateTime               `json:"runtime_updated_at"`
+	StartupDurationMs OptInt32                  `json:"startup_duration_ms"`
+	LastError         OptString                 `json:"last_error"`
+	LastErrorAt       OptDateTime               `json:"last_error_at"`
+	Instances         []FunctionRuntimeInstance `json:"instances"`
+	RecentEvents      []FunctionRuntimeEvent    `json:"recent_events"`
 }
 
 // GetFunctionID returns the value of FunctionID.
@@ -4192,9 +4511,19 @@ func (s *FunctionRuntimeStatus) GetState() FunctionRuntimeState {
 	return s.State
 }
 
+// GetPhase returns the value of Phase.
+func (s *FunctionRuntimeStatus) GetPhase() FunctionRuntimePhase {
+	return s.Phase
+}
+
 // GetAutoscaling returns the value of Autoscaling.
 func (s *FunctionRuntimeStatus) GetAutoscaling() FunctionAutoscaling {
 	return s.Autoscaling
+}
+
+// GetReadinessState returns the value of ReadinessState.
+func (s *FunctionRuntimeStatus) GetReadinessState() FunctionRuntimeReadinessState {
+	return s.ReadinessState
 }
 
 // GetRuntimeSandboxID returns the value of RuntimeSandboxID.
@@ -4212,9 +4541,29 @@ func (s *FunctionRuntimeStatus) GetRuntimeUpdatedAt() OptDateTime {
 	return s.RuntimeUpdatedAt
 }
 
+// GetStartupDurationMs returns the value of StartupDurationMs.
+func (s *FunctionRuntimeStatus) GetStartupDurationMs() OptInt32 {
+	return s.StartupDurationMs
+}
+
+// GetLastError returns the value of LastError.
+func (s *FunctionRuntimeStatus) GetLastError() OptString {
+	return s.LastError
+}
+
+// GetLastErrorAt returns the value of LastErrorAt.
+func (s *FunctionRuntimeStatus) GetLastErrorAt() OptDateTime {
+	return s.LastErrorAt
+}
+
 // GetInstances returns the value of Instances.
 func (s *FunctionRuntimeStatus) GetInstances() []FunctionRuntimeInstance {
 	return s.Instances
+}
+
+// GetRecentEvents returns the value of RecentEvents.
+func (s *FunctionRuntimeStatus) GetRecentEvents() []FunctionRuntimeEvent {
+	return s.RecentEvents
 }
 
 // SetFunctionID sets the value of FunctionID.
@@ -4237,9 +4586,19 @@ func (s *FunctionRuntimeStatus) SetState(val FunctionRuntimeState) {
 	s.State = val
 }
 
+// SetPhase sets the value of Phase.
+func (s *FunctionRuntimeStatus) SetPhase(val FunctionRuntimePhase) {
+	s.Phase = val
+}
+
 // SetAutoscaling sets the value of Autoscaling.
 func (s *FunctionRuntimeStatus) SetAutoscaling(val FunctionAutoscaling) {
 	s.Autoscaling = val
+}
+
+// SetReadinessState sets the value of ReadinessState.
+func (s *FunctionRuntimeStatus) SetReadinessState(val FunctionRuntimeReadinessState) {
+	s.ReadinessState = val
 }
 
 // SetRuntimeSandboxID sets the value of RuntimeSandboxID.
@@ -4257,9 +4616,29 @@ func (s *FunctionRuntimeStatus) SetRuntimeUpdatedAt(val OptDateTime) {
 	s.RuntimeUpdatedAt = val
 }
 
+// SetStartupDurationMs sets the value of StartupDurationMs.
+func (s *FunctionRuntimeStatus) SetStartupDurationMs(val OptInt32) {
+	s.StartupDurationMs = val
+}
+
+// SetLastError sets the value of LastError.
+func (s *FunctionRuntimeStatus) SetLastError(val OptString) {
+	s.LastError = val
+}
+
+// SetLastErrorAt sets the value of LastErrorAt.
+func (s *FunctionRuntimeStatus) SetLastErrorAt(val OptDateTime) {
+	s.LastErrorAt = val
+}
+
 // SetInstances sets the value of Instances.
 func (s *FunctionRuntimeStatus) SetInstances(val []FunctionRuntimeInstance) {
 	s.Instances = val
+}
+
+// SetRecentEvents sets the value of RecentEvents.
+func (s *FunctionRuntimeStatus) SetRecentEvents(val []FunctionRuntimeEvent) {
+	s.RecentEvents = val
 }
 
 // Ref: #/components/schemas/FunctionSourceRequest
@@ -4834,6 +5213,51 @@ func (s *LoginResponse) SetUser(val User) {
 	s.User = val
 }
 
+// Model Context Protocol operation policy.
+// Ref: #/components/schemas/MCPProtocolRule
+type MCPProtocolRule struct {
+	Tools OptMCPToolPolicy `json:"tools"`
+}
+
+// GetTools returns the value of Tools.
+func (s *MCPProtocolRule) GetTools() OptMCPToolPolicy {
+	return s.Tools
+}
+
+// SetTools sets the value of Tools.
+func (s *MCPProtocolRule) SetTools(val OptMCPToolPolicy) {
+	s.Tools = val
+}
+
+// Tool-name allow and deny lists for MCP tools/call requests.
+// Ref: #/components/schemas/MCPToolPolicy
+type MCPToolPolicy struct {
+	// When non-empty, only listed tool names are allowed.
+	Allowed []string `json:"allowed"`
+	// Tool names denied before the allowed list is evaluated.
+	Denied []string `json:"denied"`
+}
+
+// GetAllowed returns the value of Allowed.
+func (s *MCPToolPolicy) GetAllowed() []string {
+	return s.Allowed
+}
+
+// GetDenied returns the value of Denied.
+func (s *MCPToolPolicy) GetDenied() []string {
+	return s.Denied
+}
+
+// SetAllowed sets the value of Allowed.
+func (s *MCPToolPolicy) SetAllowed(val []string) {
+	s.Allowed = val
+}
+
+// SetDenied sets the value of Denied.
+func (s *MCPToolPolicy) SetDenied(val []string) {
+	s.Denied = val
+}
+
 type MetricsGetOK struct {
 	Data io.Reader
 }
@@ -5044,6 +5468,9 @@ type NetworkEgressPolicy struct {
 	// Ordered egress allow/deny rules. The first matching rule wins and
 	// unmatched traffic falls back to `mode`.
 	TrafficRules []TrafficRule `json:"trafficRules"`
+	// Protocol-aware controls applied after traffic is allowed by
+	// `trafficRules` or legacy allow/deny fields.
+	ProtocolRules []ProtocolRule `json:"protocolRules"`
 	// Structured egress auth injection rules resolved by the manager runtime egress auth path.
 	// These rules are orthogonal to allow/deny matching and are intended for
 	// destination-scoped outbound auth behavior.
@@ -5084,6 +5511,11 @@ func (s *NetworkEgressPolicy) GetDeniedPorts() []PortSpec {
 // GetTrafficRules returns the value of TrafficRules.
 func (s *NetworkEgressPolicy) GetTrafficRules() []TrafficRule {
 	return s.TrafficRules
+}
+
+// GetProtocolRules returns the value of ProtocolRules.
+func (s *NetworkEgressPolicy) GetProtocolRules() []ProtocolRule {
+	return s.ProtocolRules
 }
 
 // GetCredentialRules returns the value of CredentialRules.
@@ -5129,6 +5561,11 @@ func (s *NetworkEgressPolicy) SetDeniedPorts(val []PortSpec) {
 // SetTrafficRules sets the value of TrafficRules.
 func (s *NetworkEgressPolicy) SetTrafficRules(val []TrafficRule) {
 	s.TrafficRules = val
+}
+
+// SetProtocolRules sets the value of ProtocolRules.
+func (s *NetworkEgressPolicy) SetProtocolRules(val []ProtocolRule) {
+	s.ProtocolRules = val
 }
 
 // SetCredentialRules sets the value of CredentialRules.
@@ -7263,6 +7700,98 @@ func (o OptLoginResponse) Get() (v LoginResponse, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptLoginResponse) Or(d LoginResponse) LoginResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptMCPProtocolRule returns new OptMCPProtocolRule with value set to v.
+func NewOptMCPProtocolRule(v MCPProtocolRule) OptMCPProtocolRule {
+	return OptMCPProtocolRule{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptMCPProtocolRule is optional MCPProtocolRule.
+type OptMCPProtocolRule struct {
+	Value MCPProtocolRule
+	Set   bool
+}
+
+// IsSet returns true if OptMCPProtocolRule was set.
+func (o OptMCPProtocolRule) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptMCPProtocolRule) Reset() {
+	var v MCPProtocolRule
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptMCPProtocolRule) SetTo(v MCPProtocolRule) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptMCPProtocolRule) Get() (v MCPProtocolRule, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptMCPProtocolRule) Or(d MCPProtocolRule) MCPProtocolRule {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptMCPToolPolicy returns new OptMCPToolPolicy with value set to v.
+func NewOptMCPToolPolicy(v MCPToolPolicy) OptMCPToolPolicy {
+	return OptMCPToolPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptMCPToolPolicy is optional MCPToolPolicy.
+type OptMCPToolPolicy struct {
+	Value MCPToolPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptMCPToolPolicy was set.
+func (o OptMCPToolPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptMCPToolPolicy) Reset() {
+	var v MCPToolPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptMCPToolPolicy) SetTo(v MCPToolPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptMCPToolPolicy) Get() (v MCPToolPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptMCPToolPolicy) Or(d MCPToolPolicy) MCPToolPolicy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12063,6 +12592,126 @@ func (s *ProjectionSpec) SetUsernamePassword(val *UsernamePasswordProjection) {
 // SetSshProxy sets the value of SshProxy.
 func (s *ProjectionSpec) SetSshProxy(val OptSSHProxyProjection) {
 	s.SshProxy = val
+}
+
+// Protocol-aware egress controls applied after destination traffic is allowed.
+// Ref: #/components/schemas/ProtocolRule
+type ProtocolRule struct {
+	// Optional stable identifier used for merge and replacement.
+	Name     OptString            `json:"name"`
+	Protocol ProtocolRuleProtocol `json:"protocol"`
+	// Domain match list for the rule.
+	Domains []string `json:"domains"`
+	// Port/protocol constraints for the rule.
+	Ports     []PortSpec         `json:"ports"`
+	TlsMode   OptEgressTLSMode   `json:"tlsMode"`
+	HttpMatch OptHTTPMatch       `json:"httpMatch"`
+	Mcp       OptMCPProtocolRule `json:"mcp"`
+}
+
+// GetName returns the value of Name.
+func (s *ProtocolRule) GetName() OptString {
+	return s.Name
+}
+
+// GetProtocol returns the value of Protocol.
+func (s *ProtocolRule) GetProtocol() ProtocolRuleProtocol {
+	return s.Protocol
+}
+
+// GetDomains returns the value of Domains.
+func (s *ProtocolRule) GetDomains() []string {
+	return s.Domains
+}
+
+// GetPorts returns the value of Ports.
+func (s *ProtocolRule) GetPorts() []PortSpec {
+	return s.Ports
+}
+
+// GetTlsMode returns the value of TlsMode.
+func (s *ProtocolRule) GetTlsMode() OptEgressTLSMode {
+	return s.TlsMode
+}
+
+// GetHttpMatch returns the value of HttpMatch.
+func (s *ProtocolRule) GetHttpMatch() OptHTTPMatch {
+	return s.HttpMatch
+}
+
+// GetMcp returns the value of Mcp.
+func (s *ProtocolRule) GetMcp() OptMCPProtocolRule {
+	return s.Mcp
+}
+
+// SetName sets the value of Name.
+func (s *ProtocolRule) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetProtocol sets the value of Protocol.
+func (s *ProtocolRule) SetProtocol(val ProtocolRuleProtocol) {
+	s.Protocol = val
+}
+
+// SetDomains sets the value of Domains.
+func (s *ProtocolRule) SetDomains(val []string) {
+	s.Domains = val
+}
+
+// SetPorts sets the value of Ports.
+func (s *ProtocolRule) SetPorts(val []PortSpec) {
+	s.Ports = val
+}
+
+// SetTlsMode sets the value of TlsMode.
+func (s *ProtocolRule) SetTlsMode(val OptEgressTLSMode) {
+	s.TlsMode = val
+}
+
+// SetHttpMatch sets the value of HttpMatch.
+func (s *ProtocolRule) SetHttpMatch(val OptHTTPMatch) {
+	s.HttpMatch = val
+}
+
+// SetMcp sets the value of Mcp.
+func (s *ProtocolRule) SetMcp(val OptMCPProtocolRule) {
+	s.Mcp = val
+}
+
+// Ref: #/components/schemas/ProtocolRuleProtocol
+type ProtocolRuleProtocol string
+
+const (
+	ProtocolRuleProtocolMcp ProtocolRuleProtocol = "mcp"
+)
+
+// AllValues returns all ProtocolRuleProtocol values.
+func (ProtocolRuleProtocol) AllValues() []ProtocolRuleProtocol {
+	return []ProtocolRuleProtocol{
+		ProtocolRuleProtocolMcp,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProtocolRuleProtocol) MarshalText() ([]byte, error) {
+	switch s {
+	case ProtocolRuleProtocolMcp:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
+	switch ProtocolRuleProtocol(data) {
+	case ProtocolRuleProtocolMcp:
+		*s = ProtocolRuleProtocolMcp
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/REPLConfig
