@@ -3489,6 +3489,32 @@ func (s *FunctionCreateRequest) SetAutoscaling(val OptFunctionAutoscaling) {
 	s.Autoscaling = val
 }
 
+// Ref: #/components/schemas/FunctionEnvRef
+type FunctionEnvRef struct {
+	Name      string `json:"name"`
+	SourceRef string `json:"source_ref"`
+}
+
+// GetName returns the value of Name.
+func (s *FunctionEnvRef) GetName() string {
+	return s.Name
+}
+
+// GetSourceRef returns the value of SourceRef.
+func (s *FunctionEnvRef) GetSourceRef() string {
+	return s.SourceRef
+}
+
+// SetName sets the value of Name.
+func (s *FunctionEnvRef) SetName(val string) {
+	s.Name = val
+}
+
+// SetSourceRef sets the value of SourceRef.
+func (s *FunctionEnvRef) SetSourceRef(val string) {
+	s.SourceRef = val
+}
+
 // Merged schema.
 // Ref: #/components/schemas/FunctionRecord
 type FunctionRecord struct {
@@ -3703,17 +3729,23 @@ func (s *FunctionRestoreMount) SetMountPoint(val string) {
 
 // Ref: #/components/schemas/FunctionRevision
 type FunctionRevision struct {
-	ID               string `json:"id"`
-	FunctionID       string `json:"function_id"`
-	TeamID           string `json:"team_id"`
-	RevisionNumber   int32  `json:"revision_number"`
-	SourceSandboxID  string `json:"source_sandbox_id"`
-	SourceServiceID  string `json:"source_service_id"`
-	SourceTemplateID string `json:"source_template_id"`
-	// SandboxVolume mounts captured from the source sandbox and reused when the function runtime sandbox
-	// is restored.
+	ID             string                     `json:"id"`
+	FunctionID     string                     `json:"function_id"`
+	TeamID         string                     `json:"team_id"`
+	RevisionNumber int32                      `json:"revision_number"`
+	SourceType     FunctionRevisionSourceType `json:"source_type"`
+	RevisionSpec   FunctionRevisionSpec       `json:"revision_spec"`
+	// Non-execution metadata describing how the revision spec was produced.
+	Provenance OptFunctionRevisionProvenance `json:"provenance"`
+	// Compatibility mirror for sandbox-service revisions.
+	SourceSandboxID OptString `json:"source_sandbox_id"`
+	// Compatibility mirror for sandbox-service revisions.
+	SourceServiceID OptString `json:"source_service_id"`
+	// Compatibility mirror of revision_spec.template_id.
+	SourceTemplateID OptString `json:"source_template_id"`
+	// Compatibility mirror of revision_spec.mounts for prepared SandboxVolume mounts.
 	RestoreMounts   []FunctionRestoreMount `json:"restore_mounts"`
-	ServiceSnapshot SandboxAppService      `json:"service_snapshot"`
+	ServiceSnapshot OptSandboxAppService   `json:"service_snapshot"`
 	// Current restored runtime sandbox serving the revision, if one exists.
 	RuntimeSandboxID OptString `json:"runtime_sandbox_id"`
 	// Current runtime process context inside the restored runtime sandbox.
@@ -3744,18 +3776,33 @@ func (s *FunctionRevision) GetRevisionNumber() int32 {
 	return s.RevisionNumber
 }
 
+// GetSourceType returns the value of SourceType.
+func (s *FunctionRevision) GetSourceType() FunctionRevisionSourceType {
+	return s.SourceType
+}
+
+// GetRevisionSpec returns the value of RevisionSpec.
+func (s *FunctionRevision) GetRevisionSpec() FunctionRevisionSpec {
+	return s.RevisionSpec
+}
+
+// GetProvenance returns the value of Provenance.
+func (s *FunctionRevision) GetProvenance() OptFunctionRevisionProvenance {
+	return s.Provenance
+}
+
 // GetSourceSandboxID returns the value of SourceSandboxID.
-func (s *FunctionRevision) GetSourceSandboxID() string {
+func (s *FunctionRevision) GetSourceSandboxID() OptString {
 	return s.SourceSandboxID
 }
 
 // GetSourceServiceID returns the value of SourceServiceID.
-func (s *FunctionRevision) GetSourceServiceID() string {
+func (s *FunctionRevision) GetSourceServiceID() OptString {
 	return s.SourceServiceID
 }
 
 // GetSourceTemplateID returns the value of SourceTemplateID.
-func (s *FunctionRevision) GetSourceTemplateID() string {
+func (s *FunctionRevision) GetSourceTemplateID() OptString {
 	return s.SourceTemplateID
 }
 
@@ -3765,7 +3812,7 @@ func (s *FunctionRevision) GetRestoreMounts() []FunctionRestoreMount {
 }
 
 // GetServiceSnapshot returns the value of ServiceSnapshot.
-func (s *FunctionRevision) GetServiceSnapshot() SandboxAppService {
+func (s *FunctionRevision) GetServiceSnapshot() OptSandboxAppService {
 	return s.ServiceSnapshot
 }
 
@@ -3814,18 +3861,33 @@ func (s *FunctionRevision) SetRevisionNumber(val int32) {
 	s.RevisionNumber = val
 }
 
+// SetSourceType sets the value of SourceType.
+func (s *FunctionRevision) SetSourceType(val FunctionRevisionSourceType) {
+	s.SourceType = val
+}
+
+// SetRevisionSpec sets the value of RevisionSpec.
+func (s *FunctionRevision) SetRevisionSpec(val FunctionRevisionSpec) {
+	s.RevisionSpec = val
+}
+
+// SetProvenance sets the value of Provenance.
+func (s *FunctionRevision) SetProvenance(val OptFunctionRevisionProvenance) {
+	s.Provenance = val
+}
+
 // SetSourceSandboxID sets the value of SourceSandboxID.
-func (s *FunctionRevision) SetSourceSandboxID(val string) {
+func (s *FunctionRevision) SetSourceSandboxID(val OptString) {
 	s.SourceSandboxID = val
 }
 
 // SetSourceServiceID sets the value of SourceServiceID.
-func (s *FunctionRevision) SetSourceServiceID(val string) {
+func (s *FunctionRevision) SetSourceServiceID(val OptString) {
 	s.SourceServiceID = val
 }
 
 // SetSourceTemplateID sets the value of SourceTemplateID.
-func (s *FunctionRevision) SetSourceTemplateID(val string) {
+func (s *FunctionRevision) SetSourceTemplateID(val OptString) {
 	s.SourceTemplateID = val
 }
 
@@ -3835,7 +3897,7 @@ func (s *FunctionRevision) SetRestoreMounts(val []FunctionRestoreMount) {
 }
 
 // SetServiceSnapshot sets the value of ServiceSnapshot.
-func (s *FunctionRevision) SetServiceSnapshot(val SandboxAppService) {
+func (s *FunctionRevision) SetServiceSnapshot(val OptSandboxAppService) {
 	s.ServiceSnapshot = val
 }
 
@@ -3889,6 +3951,397 @@ func (s *FunctionRevisionCreateRequest) SetSource(val FunctionSourceRequest) {
 // SetPromote sets the value of Promote.
 func (s *FunctionRevisionCreateRequest) SetPromote(val OptBool) {
 	s.Promote = val
+}
+
+// Ref: #/components/schemas/FunctionRevisionInputSourceType
+type FunctionRevisionInputSourceType string
+
+const (
+	FunctionRevisionInputSourceTypeSandboxService FunctionRevisionInputSourceType = "sandbox_service"
+	FunctionRevisionInputSourceTypeRevisionSpec   FunctionRevisionInputSourceType = "revision_spec"
+)
+
+// AllValues returns all FunctionRevisionInputSourceType values.
+func (FunctionRevisionInputSourceType) AllValues() []FunctionRevisionInputSourceType {
+	return []FunctionRevisionInputSourceType{
+		FunctionRevisionInputSourceTypeSandboxService,
+		FunctionRevisionInputSourceTypeRevisionSpec,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRevisionInputSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRevisionInputSourceTypeSandboxService:
+		return []byte(s), nil
+	case FunctionRevisionInputSourceTypeRevisionSpec:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRevisionInputSourceType) UnmarshalText(data []byte) error {
+	switch FunctionRevisionInputSourceType(data) {
+	case FunctionRevisionInputSourceTypeSandboxService:
+		*s = FunctionRevisionInputSourceTypeSandboxService
+		return nil
+	case FunctionRevisionInputSourceTypeRevisionSpec:
+		*s = FunctionRevisionInputSourceTypeRevisionSpec
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/FunctionRevisionMount
+type FunctionRevisionMount struct {
+	Name       OptString                    `json:"name"`
+	MountPoint string                       `json:"mount_point"`
+	Mode       OptFunctionRevisionMountMode `json:"mode"`
+	// Optional materialization policy such as fork_per_runtime for future artifact/volume flows.
+	Materialization OptString                   `json:"materialization"`
+	Source          FunctionRevisionMountSource `json:"source"`
+}
+
+// GetName returns the value of Name.
+func (s *FunctionRevisionMount) GetName() OptString {
+	return s.Name
+}
+
+// GetMountPoint returns the value of MountPoint.
+func (s *FunctionRevisionMount) GetMountPoint() string {
+	return s.MountPoint
+}
+
+// GetMode returns the value of Mode.
+func (s *FunctionRevisionMount) GetMode() OptFunctionRevisionMountMode {
+	return s.Mode
+}
+
+// GetMaterialization returns the value of Materialization.
+func (s *FunctionRevisionMount) GetMaterialization() OptString {
+	return s.Materialization
+}
+
+// GetSource returns the value of Source.
+func (s *FunctionRevisionMount) GetSource() FunctionRevisionMountSource {
+	return s.Source
+}
+
+// SetName sets the value of Name.
+func (s *FunctionRevisionMount) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetMountPoint sets the value of MountPoint.
+func (s *FunctionRevisionMount) SetMountPoint(val string) {
+	s.MountPoint = val
+}
+
+// SetMode sets the value of Mode.
+func (s *FunctionRevisionMount) SetMode(val OptFunctionRevisionMountMode) {
+	s.Mode = val
+}
+
+// SetMaterialization sets the value of Materialization.
+func (s *FunctionRevisionMount) SetMaterialization(val OptString) {
+	s.Materialization = val
+}
+
+// SetSource sets the value of Source.
+func (s *FunctionRevisionMount) SetSource(val FunctionRevisionMountSource) {
+	s.Source = val
+}
+
+type FunctionRevisionMountMode string
+
+const (
+	FunctionRevisionMountModeReadOnly  FunctionRevisionMountMode = "read_only"
+	FunctionRevisionMountModeReadWrite FunctionRevisionMountMode = "read_write"
+)
+
+// AllValues returns all FunctionRevisionMountMode values.
+func (FunctionRevisionMountMode) AllValues() []FunctionRevisionMountMode {
+	return []FunctionRevisionMountMode{
+		FunctionRevisionMountModeReadOnly,
+		FunctionRevisionMountModeReadWrite,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRevisionMountMode) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRevisionMountModeReadOnly:
+		return []byte(s), nil
+	case FunctionRevisionMountModeReadWrite:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRevisionMountMode) UnmarshalText(data []byte) error {
+	switch FunctionRevisionMountMode(data) {
+	case FunctionRevisionMountModeReadOnly:
+		*s = FunctionRevisionMountModeReadOnly
+		return nil
+	case FunctionRevisionMountModeReadWrite:
+		*s = FunctionRevisionMountModeReadWrite
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/FunctionRevisionMountSource
+type FunctionRevisionMountSource struct {
+	Type FunctionRevisionMountSourceType `json:"type"`
+	// Prepared SandboxVolume ID available to the runtime claim path.
+	SandboxvolumeID OptString `json:"sandboxvolume_id"`
+	// Source SandboxVolume captured by a sandbox-service publish.
+	SourceSandboxvolumeID OptString `json:"source_sandboxvolume_id"`
+	// Immutable snapshot used to materialize this mount.
+	SnapshotID OptString `json:"snapshot_id"`
+	// Future first-class Function artifact ID.
+	ArtifactID OptString `json:"artifact_id"`
+	// Content digest for artifact-backed sources.
+	Digest OptString `json:"digest"`
+}
+
+// GetType returns the value of Type.
+func (s *FunctionRevisionMountSource) GetType() FunctionRevisionMountSourceType {
+	return s.Type
+}
+
+// GetSandboxvolumeID returns the value of SandboxvolumeID.
+func (s *FunctionRevisionMountSource) GetSandboxvolumeID() OptString {
+	return s.SandboxvolumeID
+}
+
+// GetSourceSandboxvolumeID returns the value of SourceSandboxvolumeID.
+func (s *FunctionRevisionMountSource) GetSourceSandboxvolumeID() OptString {
+	return s.SourceSandboxvolumeID
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *FunctionRevisionMountSource) GetSnapshotID() OptString {
+	return s.SnapshotID
+}
+
+// GetArtifactID returns the value of ArtifactID.
+func (s *FunctionRevisionMountSource) GetArtifactID() OptString {
+	return s.ArtifactID
+}
+
+// GetDigest returns the value of Digest.
+func (s *FunctionRevisionMountSource) GetDigest() OptString {
+	return s.Digest
+}
+
+// SetType sets the value of Type.
+func (s *FunctionRevisionMountSource) SetType(val FunctionRevisionMountSourceType) {
+	s.Type = val
+}
+
+// SetSandboxvolumeID sets the value of SandboxvolumeID.
+func (s *FunctionRevisionMountSource) SetSandboxvolumeID(val OptString) {
+	s.SandboxvolumeID = val
+}
+
+// SetSourceSandboxvolumeID sets the value of SourceSandboxvolumeID.
+func (s *FunctionRevisionMountSource) SetSourceSandboxvolumeID(val OptString) {
+	s.SourceSandboxvolumeID = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *FunctionRevisionMountSource) SetSnapshotID(val OptString) {
+	s.SnapshotID = val
+}
+
+// SetArtifactID sets the value of ArtifactID.
+func (s *FunctionRevisionMountSource) SetArtifactID(val OptString) {
+	s.ArtifactID = val
+}
+
+// SetDigest sets the value of Digest.
+func (s *FunctionRevisionMountSource) SetDigest(val OptString) {
+	s.Digest = val
+}
+
+type FunctionRevisionMountSourceType string
+
+const (
+	FunctionRevisionMountSourceTypeSandboxVolume  FunctionRevisionMountSourceType = "sandbox_volume"
+	FunctionRevisionMountSourceTypeArtifact       FunctionRevisionMountSourceType = "artifact"
+	FunctionRevisionMountSourceTypeVolumeSnapshot FunctionRevisionMountSourceType = "volume_snapshot"
+)
+
+// AllValues returns all FunctionRevisionMountSourceType values.
+func (FunctionRevisionMountSourceType) AllValues() []FunctionRevisionMountSourceType {
+	return []FunctionRevisionMountSourceType{
+		FunctionRevisionMountSourceTypeSandboxVolume,
+		FunctionRevisionMountSourceTypeArtifact,
+		FunctionRevisionMountSourceTypeVolumeSnapshot,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRevisionMountSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRevisionMountSourceTypeSandboxVolume:
+		return []byte(s), nil
+	case FunctionRevisionMountSourceTypeArtifact:
+		return []byte(s), nil
+	case FunctionRevisionMountSourceTypeVolumeSnapshot:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRevisionMountSourceType) UnmarshalText(data []byte) error {
+	switch FunctionRevisionMountSourceType(data) {
+	case FunctionRevisionMountSourceTypeSandboxVolume:
+		*s = FunctionRevisionMountSourceTypeSandboxVolume
+		return nil
+	case FunctionRevisionMountSourceTypeArtifact:
+		*s = FunctionRevisionMountSourceTypeArtifact
+		return nil
+	case FunctionRevisionMountSourceTypeVolumeSnapshot:
+		*s = FunctionRevisionMountSourceTypeVolumeSnapshot
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Non-execution metadata describing how the revision spec was produced.
+type FunctionRevisionProvenance map[string]jx.Raw
+
+func (s *FunctionRevisionProvenance) init() FunctionRevisionProvenance {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/FunctionRevisionSourceType
+type FunctionRevisionSourceType string
+
+const (
+	FunctionRevisionSourceTypeSandboxService FunctionRevisionSourceType = "sandbox_service"
+	FunctionRevisionSourceTypeRevisionSpec   FunctionRevisionSourceType = "revision_spec"
+	FunctionRevisionSourceTypeArtifact       FunctionRevisionSourceType = "artifact"
+)
+
+// AllValues returns all FunctionRevisionSourceType values.
+func (FunctionRevisionSourceType) AllValues() []FunctionRevisionSourceType {
+	return []FunctionRevisionSourceType{
+		FunctionRevisionSourceTypeSandboxService,
+		FunctionRevisionSourceTypeRevisionSpec,
+		FunctionRevisionSourceTypeArtifact,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRevisionSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRevisionSourceTypeSandboxService:
+		return []byte(s), nil
+	case FunctionRevisionSourceTypeRevisionSpec:
+		return []byte(s), nil
+	case FunctionRevisionSourceTypeArtifact:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRevisionSourceType) UnmarshalText(data []byte) error {
+	switch FunctionRevisionSourceType(data) {
+	case FunctionRevisionSourceTypeSandboxService:
+		*s = FunctionRevisionSourceTypeSandboxService
+		return nil
+	case FunctionRevisionSourceTypeRevisionSpec:
+		*s = FunctionRevisionSourceTypeRevisionSpec
+		return nil
+	case FunctionRevisionSourceTypeArtifact:
+		*s = FunctionRevisionSourceTypeArtifact
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Immutable execution contract used by Function Gateway to serve a revision.
+// Ref: #/components/schemas/FunctionRevisionSpec
+type FunctionRevisionSpec struct {
+	// SandboxTemplate ID used to claim runtime sandboxes for this revision.
+	TemplateID     string            `json:"template_id"`
+	RuntimeService SandboxAppService `json:"runtime_service"`
+	// Volume or artifact mounts attached when runtime sandboxes are claimed.
+	Mounts []FunctionRevisionMount `json:"mounts"`
+	// Static asset artifacts associated with the revision for future direct serving paths.
+	StaticAssets []FunctionStaticAsset `json:"static_assets"`
+	// Environment references resolved by future deployment flows.
+	EnvRefs []FunctionEnvRef `json:"env_refs"`
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *FunctionRevisionSpec) GetTemplateID() string {
+	return s.TemplateID
+}
+
+// GetRuntimeService returns the value of RuntimeService.
+func (s *FunctionRevisionSpec) GetRuntimeService() SandboxAppService {
+	return s.RuntimeService
+}
+
+// GetMounts returns the value of Mounts.
+func (s *FunctionRevisionSpec) GetMounts() []FunctionRevisionMount {
+	return s.Mounts
+}
+
+// GetStaticAssets returns the value of StaticAssets.
+func (s *FunctionRevisionSpec) GetStaticAssets() []FunctionStaticAsset {
+	return s.StaticAssets
+}
+
+// GetEnvRefs returns the value of EnvRefs.
+func (s *FunctionRevisionSpec) GetEnvRefs() []FunctionEnvRef {
+	return s.EnvRefs
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *FunctionRevisionSpec) SetTemplateID(val string) {
+	s.TemplateID = val
+}
+
+// SetRuntimeService sets the value of RuntimeService.
+func (s *FunctionRevisionSpec) SetRuntimeService(val SandboxAppService) {
+	s.RuntimeService = val
+}
+
+// SetMounts sets the value of Mounts.
+func (s *FunctionRevisionSpec) SetMounts(val []FunctionRevisionMount) {
+	s.Mounts = val
+}
+
+// SetStaticAssets sets the value of StaticAssets.
+func (s *FunctionRevisionSpec) SetStaticAssets(val []FunctionStaticAsset) {
+	s.StaticAssets = val
+}
+
+// SetEnvRefs sets the value of EnvRefs.
+func (s *FunctionRevisionSpec) SetEnvRefs(val []FunctionEnvRef) {
+	s.EnvRefs = val
 }
 
 // Ref: #/components/schemas/FunctionRuntimeEvent
@@ -4641,30 +5094,154 @@ func (s *FunctionRuntimeStatus) SetRecentEvents(val []FunctionRuntimeEvent) {
 	s.RecentEvents = val
 }
 
-// Ref: #/components/schemas/FunctionSourceRequest
-type FunctionSourceRequest struct {
+// Ref: #/components/schemas/FunctionSandboxServiceSource
+type FunctionSandboxServiceSource struct {
 	SandboxID string `json:"sandbox_id"`
 	ServiceID string `json:"service_id"`
 }
 
 // GetSandboxID returns the value of SandboxID.
-func (s *FunctionSourceRequest) GetSandboxID() string {
+func (s *FunctionSandboxServiceSource) GetSandboxID() string {
 	return s.SandboxID
 }
 
 // GetServiceID returns the value of ServiceID.
-func (s *FunctionSourceRequest) GetServiceID() string {
+func (s *FunctionSandboxServiceSource) GetServiceID() string {
 	return s.ServiceID
 }
 
 // SetSandboxID sets the value of SandboxID.
-func (s *FunctionSourceRequest) SetSandboxID(val string) {
+func (s *FunctionSandboxServiceSource) SetSandboxID(val string) {
 	s.SandboxID = val
 }
 
 // SetServiceID sets the value of ServiceID.
-func (s *FunctionSourceRequest) SetServiceID(val string) {
+func (s *FunctionSandboxServiceSource) SetServiceID(val string) {
 	s.ServiceID = val
+}
+
+// Source used to create a function revision. Omitting type with sandbox_id and service_id keeps the
+// sandbox-service shortcut shape; internally it is compiled into an immutable FunctionRevisionSpec.
+// Ref: #/components/schemas/FunctionSourceRequest
+type FunctionSourceRequest struct {
+	Type OptFunctionRevisionInputSourceType `json:"type"`
+	// Compatibility shortcut for type=sandbox_service.
+	SandboxID OptString `json:"sandbox_id"`
+	// Compatibility shortcut for type=sandbox_service.
+	ServiceID      OptString                       `json:"service_id"`
+	SandboxService OptFunctionSandboxServiceSource `json:"sandbox_service"`
+	RevisionSpec   OptFunctionRevisionSpec         `json:"revision_spec"`
+	// Optional non-execution metadata describing how the revision spec was produced.
+	Provenance OptFunctionSourceRequestProvenance `json:"provenance"`
+}
+
+// GetType returns the value of Type.
+func (s *FunctionSourceRequest) GetType() OptFunctionRevisionInputSourceType {
+	return s.Type
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *FunctionSourceRequest) GetSandboxID() OptString {
+	return s.SandboxID
+}
+
+// GetServiceID returns the value of ServiceID.
+func (s *FunctionSourceRequest) GetServiceID() OptString {
+	return s.ServiceID
+}
+
+// GetSandboxService returns the value of SandboxService.
+func (s *FunctionSourceRequest) GetSandboxService() OptFunctionSandboxServiceSource {
+	return s.SandboxService
+}
+
+// GetRevisionSpec returns the value of RevisionSpec.
+func (s *FunctionSourceRequest) GetRevisionSpec() OptFunctionRevisionSpec {
+	return s.RevisionSpec
+}
+
+// GetProvenance returns the value of Provenance.
+func (s *FunctionSourceRequest) GetProvenance() OptFunctionSourceRequestProvenance {
+	return s.Provenance
+}
+
+// SetType sets the value of Type.
+func (s *FunctionSourceRequest) SetType(val OptFunctionRevisionInputSourceType) {
+	s.Type = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *FunctionSourceRequest) SetSandboxID(val OptString) {
+	s.SandboxID = val
+}
+
+// SetServiceID sets the value of ServiceID.
+func (s *FunctionSourceRequest) SetServiceID(val OptString) {
+	s.ServiceID = val
+}
+
+// SetSandboxService sets the value of SandboxService.
+func (s *FunctionSourceRequest) SetSandboxService(val OptFunctionSandboxServiceSource) {
+	s.SandboxService = val
+}
+
+// SetRevisionSpec sets the value of RevisionSpec.
+func (s *FunctionSourceRequest) SetRevisionSpec(val OptFunctionRevisionSpec) {
+	s.RevisionSpec = val
+}
+
+// SetProvenance sets the value of Provenance.
+func (s *FunctionSourceRequest) SetProvenance(val OptFunctionSourceRequestProvenance) {
+	s.Provenance = val
+}
+
+// Optional non-execution metadata describing how the revision spec was produced.
+type FunctionSourceRequestProvenance map[string]jx.Raw
+
+func (s *FunctionSourceRequestProvenance) init() FunctionSourceRequestProvenance {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/FunctionStaticAsset
+type FunctionStaticAsset struct {
+	ArtifactID  string    `json:"artifact_id"`
+	RoutePrefix string    `json:"route_prefix"`
+	Digest      OptString `json:"digest"`
+}
+
+// GetArtifactID returns the value of ArtifactID.
+func (s *FunctionStaticAsset) GetArtifactID() string {
+	return s.ArtifactID
+}
+
+// GetRoutePrefix returns the value of RoutePrefix.
+func (s *FunctionStaticAsset) GetRoutePrefix() string {
+	return s.RoutePrefix
+}
+
+// GetDigest returns the value of Digest.
+func (s *FunctionStaticAsset) GetDigest() OptString {
+	return s.Digest
+}
+
+// SetArtifactID sets the value of ArtifactID.
+func (s *FunctionStaticAsset) SetArtifactID(val string) {
+	s.ArtifactID = val
+}
+
+// SetRoutePrefix sets the value of RoutePrefix.
+func (s *FunctionStaticAsset) SetRoutePrefix(val string) {
+	s.RoutePrefix = val
+}
+
+// SetDigest sets the value of Digest.
+func (s *FunctionStaticAsset) SetDigest(val OptString) {
+	s.Digest = val
 }
 
 // Ref: #/components/schemas/FunctionUpdateRequest
@@ -7200,6 +7777,282 @@ func (o OptFunctionAutoscaling) Or(d FunctionAutoscaling) FunctionAutoscaling {
 	return d
 }
 
+// NewOptFunctionRevisionInputSourceType returns new OptFunctionRevisionInputSourceType with value set to v.
+func NewOptFunctionRevisionInputSourceType(v FunctionRevisionInputSourceType) OptFunctionRevisionInputSourceType {
+	return OptFunctionRevisionInputSourceType{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionInputSourceType is optional FunctionRevisionInputSourceType.
+type OptFunctionRevisionInputSourceType struct {
+	Value FunctionRevisionInputSourceType
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionInputSourceType was set.
+func (o OptFunctionRevisionInputSourceType) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionInputSourceType) Reset() {
+	var v FunctionRevisionInputSourceType
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionInputSourceType) SetTo(v FunctionRevisionInputSourceType) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionInputSourceType) Get() (v FunctionRevisionInputSourceType, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionInputSourceType) Or(d FunctionRevisionInputSourceType) FunctionRevisionInputSourceType {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionRevisionMountMode returns new OptFunctionRevisionMountMode with value set to v.
+func NewOptFunctionRevisionMountMode(v FunctionRevisionMountMode) OptFunctionRevisionMountMode {
+	return OptFunctionRevisionMountMode{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionMountMode is optional FunctionRevisionMountMode.
+type OptFunctionRevisionMountMode struct {
+	Value FunctionRevisionMountMode
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionMountMode was set.
+func (o OptFunctionRevisionMountMode) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionMountMode) Reset() {
+	var v FunctionRevisionMountMode
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionMountMode) SetTo(v FunctionRevisionMountMode) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionMountMode) Get() (v FunctionRevisionMountMode, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionMountMode) Or(d FunctionRevisionMountMode) FunctionRevisionMountMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionRevisionProvenance returns new OptFunctionRevisionProvenance with value set to v.
+func NewOptFunctionRevisionProvenance(v FunctionRevisionProvenance) OptFunctionRevisionProvenance {
+	return OptFunctionRevisionProvenance{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionProvenance is optional FunctionRevisionProvenance.
+type OptFunctionRevisionProvenance struct {
+	Value FunctionRevisionProvenance
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionProvenance was set.
+func (o OptFunctionRevisionProvenance) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionProvenance) Reset() {
+	var v FunctionRevisionProvenance
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionProvenance) SetTo(v FunctionRevisionProvenance) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionProvenance) Get() (v FunctionRevisionProvenance, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionProvenance) Or(d FunctionRevisionProvenance) FunctionRevisionProvenance {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionRevisionSpec returns new OptFunctionRevisionSpec with value set to v.
+func NewOptFunctionRevisionSpec(v FunctionRevisionSpec) OptFunctionRevisionSpec {
+	return OptFunctionRevisionSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionSpec is optional FunctionRevisionSpec.
+type OptFunctionRevisionSpec struct {
+	Value FunctionRevisionSpec
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionSpec was set.
+func (o OptFunctionRevisionSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionSpec) Reset() {
+	var v FunctionRevisionSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionSpec) SetTo(v FunctionRevisionSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionSpec) Get() (v FunctionRevisionSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionSpec) Or(d FunctionRevisionSpec) FunctionRevisionSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionSandboxServiceSource returns new OptFunctionSandboxServiceSource with value set to v.
+func NewOptFunctionSandboxServiceSource(v FunctionSandboxServiceSource) OptFunctionSandboxServiceSource {
+	return OptFunctionSandboxServiceSource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionSandboxServiceSource is optional FunctionSandboxServiceSource.
+type OptFunctionSandboxServiceSource struct {
+	Value FunctionSandboxServiceSource
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionSandboxServiceSource was set.
+func (o OptFunctionSandboxServiceSource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionSandboxServiceSource) Reset() {
+	var v FunctionSandboxServiceSource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionSandboxServiceSource) SetTo(v FunctionSandboxServiceSource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionSandboxServiceSource) Get() (v FunctionSandboxServiceSource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionSandboxServiceSource) Or(d FunctionSandboxServiceSource) FunctionSandboxServiceSource {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionSourceRequestProvenance returns new OptFunctionSourceRequestProvenance with value set to v.
+func NewOptFunctionSourceRequestProvenance(v FunctionSourceRequestProvenance) OptFunctionSourceRequestProvenance {
+	return OptFunctionSourceRequestProvenance{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionSourceRequestProvenance is optional FunctionSourceRequestProvenance.
+type OptFunctionSourceRequestProvenance struct {
+	Value FunctionSourceRequestProvenance
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionSourceRequestProvenance was set.
+func (o OptFunctionSourceRequestProvenance) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionSourceRequestProvenance) Reset() {
+	var v FunctionSourceRequestProvenance
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionSourceRequestProvenance) SetTo(v FunctionSourceRequestProvenance) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionSourceRequestProvenance) Get() (v FunctionSourceRequestProvenance, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionSourceRequestProvenance) Or(d FunctionSourceRequestProvenance) FunctionSourceRequestProvenance {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
 func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
 	return OptGatewayMetadata{
@@ -9085,6 +9938,52 @@ func (o OptSandbox) Get() (v Sandbox, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandbox) Or(d Sandbox) Sandbox {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxAppService returns new OptSandboxAppService with value set to v.
+func NewOptSandboxAppService(v SandboxAppService) OptSandboxAppService {
+	return OptSandboxAppService{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxAppService is optional SandboxAppService.
+type OptSandboxAppService struct {
+	Value SandboxAppService
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxAppService was set.
+func (o OptSandboxAppService) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxAppService) Reset() {
+	var v SandboxAppService
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxAppService) SetTo(v SandboxAppService) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxAppService) Get() (v SandboxAppService, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxAppService) Or(d SandboxAppService) SandboxAppService {
 	if v, ok := o.Get(); ok {
 		return v
 	}

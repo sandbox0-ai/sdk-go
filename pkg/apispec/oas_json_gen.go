@@ -9418,6 +9418,119 @@ func (s *FunctionCreateRequest) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *FunctionEnvRef) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionEnvRef) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("source_ref")
+		e.Str(s.SourceRef)
+	}
+}
+
+var jsonFieldsNameOfFunctionEnvRef = [2]string{
+	0: "name",
+	1: "source_ref",
+}
+
+// Decode decodes FunctionEnvRef from json.
+func (s *FunctionEnvRef) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionEnvRef to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "source_ref":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.SourceRef = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_ref\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionEnvRef")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionEnvRef) {
+					name = jsonFieldsNameOfFunctionEnvRef[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionEnvRef) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionEnvRef) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *FunctionRecord) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -9906,16 +10019,36 @@ func (s *FunctionRevision) encodeFields(e *jx.Encoder) {
 		e.Int32(s.RevisionNumber)
 	}
 	{
-		e.FieldStart("source_sandbox_id")
-		e.Str(s.SourceSandboxID)
+		e.FieldStart("source_type")
+		s.SourceType.Encode(e)
 	}
 	{
-		e.FieldStart("source_service_id")
-		e.Str(s.SourceServiceID)
+		e.FieldStart("revision_spec")
+		s.RevisionSpec.Encode(e)
 	}
 	{
-		e.FieldStart("source_template_id")
-		e.Str(s.SourceTemplateID)
+		if s.Provenance.Set {
+			e.FieldStart("provenance")
+			s.Provenance.Encode(e)
+		}
+	}
+	{
+		if s.SourceSandboxID.Set {
+			e.FieldStart("source_sandbox_id")
+			s.SourceSandboxID.Encode(e)
+		}
+	}
+	{
+		if s.SourceServiceID.Set {
+			e.FieldStart("source_service_id")
+			s.SourceServiceID.Encode(e)
+		}
+	}
+	{
+		if s.SourceTemplateID.Set {
+			e.FieldStart("source_template_id")
+			s.SourceTemplateID.Encode(e)
+		}
 	}
 	{
 		if s.RestoreMounts != nil {
@@ -9928,8 +10061,10 @@ func (s *FunctionRevision) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("service_snapshot")
-		s.ServiceSnapshot.Encode(e)
+		if s.ServiceSnapshot.Set {
+			e.FieldStart("service_snapshot")
+			s.ServiceSnapshot.Encode(e)
+		}
 	}
 	{
 		if s.RuntimeSandboxID.Set {
@@ -9961,21 +10096,24 @@ func (s *FunctionRevision) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfFunctionRevision = [14]string{
+var jsonFieldsNameOfFunctionRevision = [17]string{
 	0:  "id",
 	1:  "function_id",
 	2:  "team_id",
 	3:  "revision_number",
-	4:  "source_sandbox_id",
-	5:  "source_service_id",
-	6:  "source_template_id",
-	7:  "restore_mounts",
-	8:  "service_snapshot",
-	9:  "runtime_sandbox_id",
-	10: "runtime_context_id",
-	11: "runtime_updated_at",
-	12: "created_by",
-	13: "created_at",
+	4:  "source_type",
+	5:  "revision_spec",
+	6:  "provenance",
+	7:  "source_sandbox_id",
+	8:  "source_service_id",
+	9:  "source_template_id",
+	10: "restore_mounts",
+	11: "service_snapshot",
+	12: "runtime_sandbox_id",
+	13: "runtime_context_id",
+	14: "runtime_updated_at",
+	15: "created_by",
+	16: "created_at",
 }
 
 // Decode decodes FunctionRevision from json.
@@ -9983,7 +10121,7 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode FunctionRevision to nil")
 	}
-	var requiredBitSet [2]uint8
+	var requiredBitSet [3]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -10035,12 +10173,40 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"revision_number\"")
 			}
-		case "source_sandbox_id":
+		case "source_type":
 			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				v, err := d.Str()
-				s.SourceSandboxID = string(v)
-				if err != nil {
+				if err := s.SourceType.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_type\"")
+			}
+		case "revision_spec":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				if err := s.RevisionSpec.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"revision_spec\"")
+			}
+		case "provenance":
+			if err := func() error {
+				s.Provenance.Reset()
+				if err := s.Provenance.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"provenance\"")
+			}
+		case "source_sandbox_id":
+			if err := func() error {
+				s.SourceSandboxID.Reset()
+				if err := s.SourceSandboxID.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -10048,11 +10214,9 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"source_sandbox_id\"")
 			}
 		case "source_service_id":
-			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				v, err := d.Str()
-				s.SourceServiceID = string(v)
-				if err != nil {
+				s.SourceServiceID.Reset()
+				if err := s.SourceServiceID.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -10060,11 +10224,9 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"source_service_id\"")
 			}
 		case "source_template_id":
-			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
-				v, err := d.Str()
-				s.SourceTemplateID = string(v)
-				if err != nil {
+				s.SourceTemplateID.Reset()
+				if err := s.SourceTemplateID.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -10089,8 +10251,8 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"restore_mounts\"")
 			}
 		case "service_snapshot":
-			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
+				s.ServiceSnapshot.Reset()
 				if err := s.ServiceSnapshot.Decode(d); err != nil {
 					return err
 				}
@@ -10139,7 +10301,7 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_by\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[2] |= 1 << 0
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -10159,9 +10321,10 @@ func (s *FunctionRevision) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
-		0b01111111,
-		0b00100001,
+	for i, mask := range [3]uint8{
+		0b00111111,
+		0b00000000,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -10315,6 +10478,764 @@ func (s *FunctionRevisionCreateRequest) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *FunctionRevisionCreateRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionInputSourceType as json.
+func (s FunctionRevisionInputSourceType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes FunctionRevisionInputSourceType from json.
+func (s *FunctionRevisionInputSourceType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionInputSourceType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch FunctionRevisionInputSourceType(v) {
+	case FunctionRevisionInputSourceTypeSandboxService:
+		*s = FunctionRevisionInputSourceTypeSandboxService
+	case FunctionRevisionInputSourceTypeRevisionSpec:
+		*s = FunctionRevisionInputSourceTypeRevisionSpec
+	default:
+		*s = FunctionRevisionInputSourceType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRevisionInputSourceType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionInputSourceType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *FunctionRevisionMount) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionRevisionMount) encodeFields(e *jx.Encoder) {
+	{
+		if s.Name.Set {
+			e.FieldStart("name")
+			s.Name.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("mount_point")
+		e.Str(s.MountPoint)
+	}
+	{
+		if s.Mode.Set {
+			e.FieldStart("mode")
+			s.Mode.Encode(e)
+		}
+	}
+	{
+		if s.Materialization.Set {
+			e.FieldStart("materialization")
+			s.Materialization.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("source")
+		s.Source.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfFunctionRevisionMount = [5]string{
+	0: "name",
+	1: "mount_point",
+	2: "mode",
+	3: "materialization",
+	4: "source",
+}
+
+// Decode decodes FunctionRevisionMount from json.
+func (s *FunctionRevisionMount) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionMount to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			if err := func() error {
+				s.Name.Reset()
+				if err := s.Name.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "mount_point":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.MountPoint = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_point\"")
+			}
+		case "mode":
+			if err := func() error {
+				s.Mode.Reset()
+				if err := s.Mode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mode\"")
+			}
+		case "materialization":
+			if err := func() error {
+				s.Materialization.Reset()
+				if err := s.Materialization.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"materialization\"")
+			}
+		case "source":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Source.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionRevisionMount")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00010010,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionRevisionMount) {
+					name = jsonFieldsNameOfFunctionRevisionMount[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionRevisionMount) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionMount) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionMountMode as json.
+func (s FunctionRevisionMountMode) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes FunctionRevisionMountMode from json.
+func (s *FunctionRevisionMountMode) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionMountMode to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch FunctionRevisionMountMode(v) {
+	case FunctionRevisionMountModeReadOnly:
+		*s = FunctionRevisionMountModeReadOnly
+	case FunctionRevisionMountModeReadWrite:
+		*s = FunctionRevisionMountModeReadWrite
+	default:
+		*s = FunctionRevisionMountMode(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRevisionMountMode) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionMountMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *FunctionRevisionMountSource) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionRevisionMountSource) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("type")
+		s.Type.Encode(e)
+	}
+	{
+		if s.SandboxvolumeID.Set {
+			e.FieldStart("sandboxvolume_id")
+			s.SandboxvolumeID.Encode(e)
+		}
+	}
+	{
+		if s.SourceSandboxvolumeID.Set {
+			e.FieldStart("source_sandboxvolume_id")
+			s.SourceSandboxvolumeID.Encode(e)
+		}
+	}
+	{
+		if s.SnapshotID.Set {
+			e.FieldStart("snapshot_id")
+			s.SnapshotID.Encode(e)
+		}
+	}
+	{
+		if s.ArtifactID.Set {
+			e.FieldStart("artifact_id")
+			s.ArtifactID.Encode(e)
+		}
+	}
+	{
+		if s.Digest.Set {
+			e.FieldStart("digest")
+			s.Digest.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfFunctionRevisionMountSource = [6]string{
+	0: "type",
+	1: "sandboxvolume_id",
+	2: "source_sandboxvolume_id",
+	3: "snapshot_id",
+	4: "artifact_id",
+	5: "digest",
+}
+
+// Decode decodes FunctionRevisionMountSource from json.
+func (s *FunctionRevisionMountSource) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionMountSource to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "type":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "sandboxvolume_id":
+			if err := func() error {
+				s.SandboxvolumeID.Reset()
+				if err := s.SandboxvolumeID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandboxvolume_id\"")
+			}
+		case "source_sandboxvolume_id":
+			if err := func() error {
+				s.SourceSandboxvolumeID.Reset()
+				if err := s.SourceSandboxvolumeID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_sandboxvolume_id\"")
+			}
+		case "snapshot_id":
+			if err := func() error {
+				s.SnapshotID.Reset()
+				if err := s.SnapshotID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"snapshot_id\"")
+			}
+		case "artifact_id":
+			if err := func() error {
+				s.ArtifactID.Reset()
+				if err := s.ArtifactID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"artifact_id\"")
+			}
+		case "digest":
+			if err := func() error {
+				s.Digest.Reset()
+				if err := s.Digest.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"digest\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionRevisionMountSource")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionRevisionMountSource) {
+					name = jsonFieldsNameOfFunctionRevisionMountSource[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionRevisionMountSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionMountSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionMountSourceType as json.
+func (s FunctionRevisionMountSourceType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes FunctionRevisionMountSourceType from json.
+func (s *FunctionRevisionMountSourceType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionMountSourceType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch FunctionRevisionMountSourceType(v) {
+	case FunctionRevisionMountSourceTypeSandboxVolume:
+		*s = FunctionRevisionMountSourceTypeSandboxVolume
+	case FunctionRevisionMountSourceTypeArtifact:
+		*s = FunctionRevisionMountSourceTypeArtifact
+	case FunctionRevisionMountSourceTypeVolumeSnapshot:
+		*s = FunctionRevisionMountSourceTypeVolumeSnapshot
+	default:
+		*s = FunctionRevisionMountSourceType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRevisionMountSourceType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionMountSourceType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s FunctionRevisionProvenance) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s FunctionRevisionProvenance) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		if len(elem) != 0 {
+			e.Raw(elem)
+		}
+	}
+}
+
+// Decode decodes FunctionRevisionProvenance from json.
+func (s *FunctionRevisionProvenance) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionProvenance to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem jx.Raw
+		if err := func() error {
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionRevisionProvenance")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRevisionProvenance) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionProvenance) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionSourceType as json.
+func (s FunctionRevisionSourceType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes FunctionRevisionSourceType from json.
+func (s *FunctionRevisionSourceType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionSourceType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch FunctionRevisionSourceType(v) {
+	case FunctionRevisionSourceTypeSandboxService:
+		*s = FunctionRevisionSourceTypeSandboxService
+	case FunctionRevisionSourceTypeRevisionSpec:
+		*s = FunctionRevisionSourceTypeRevisionSpec
+	case FunctionRevisionSourceTypeArtifact:
+		*s = FunctionRevisionSourceTypeArtifact
+	default:
+		*s = FunctionRevisionSourceType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionRevisionSourceType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionSourceType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *FunctionRevisionSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionRevisionSpec) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("template_id")
+		e.Str(s.TemplateID)
+	}
+	{
+		e.FieldStart("runtime_service")
+		s.RuntimeService.Encode(e)
+	}
+	{
+		if s.Mounts != nil {
+			e.FieldStart("mounts")
+			e.ArrStart()
+			for _, elem := range s.Mounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.StaticAssets != nil {
+			e.FieldStart("static_assets")
+			e.ArrStart()
+			for _, elem := range s.StaticAssets {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.EnvRefs != nil {
+			e.FieldStart("env_refs")
+			e.ArrStart()
+			for _, elem := range s.EnvRefs {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfFunctionRevisionSpec = [5]string{
+	0: "template_id",
+	1: "runtime_service",
+	2: "mounts",
+	3: "static_assets",
+	4: "env_refs",
+}
+
+// Decode decodes FunctionRevisionSpec from json.
+func (s *FunctionRevisionSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionRevisionSpec to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "template_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.TemplateID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"template_id\"")
+			}
+		case "runtime_service":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.RuntimeService.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"runtime_service\"")
+			}
+		case "mounts":
+			if err := func() error {
+				s.Mounts = make([]FunctionRevisionMount, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem FunctionRevisionMount
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Mounts = append(s.Mounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mounts\"")
+			}
+		case "static_assets":
+			if err := func() error {
+				s.StaticAssets = make([]FunctionStaticAsset, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem FunctionStaticAsset
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.StaticAssets = append(s.StaticAssets, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"static_assets\"")
+			}
+		case "env_refs":
+			if err := func() error {
+				s.EnvRefs = make([]FunctionEnvRef, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem FunctionEnvRef
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.EnvRefs = append(s.EnvRefs, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"env_refs\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionRevisionSpec")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionRevisionSpec) {
+					name = jsonFieldsNameOfFunctionRevisionSpec[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionRevisionSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionRevisionSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -11512,14 +12433,14 @@ func (s *FunctionRuntimeStatus) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *FunctionSourceRequest) Encode(e *jx.Encoder) {
+func (s *FunctionSandboxServiceSource) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *FunctionSourceRequest) encodeFields(e *jx.Encoder) {
+func (s *FunctionSandboxServiceSource) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("sandbox_id")
 		e.Str(s.SandboxID)
@@ -11530,15 +12451,15 @@ func (s *FunctionSourceRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfFunctionSourceRequest = [2]string{
+var jsonFieldsNameOfFunctionSandboxServiceSource = [2]string{
 	0: "sandbox_id",
 	1: "service_id",
 }
 
-// Decode decodes FunctionSourceRequest from json.
-func (s *FunctionSourceRequest) Decode(d *jx.Decoder) error {
+// Decode decodes FunctionSandboxServiceSource from json.
+func (s *FunctionSandboxServiceSource) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode FunctionSourceRequest to nil")
+		return errors.New("invalid: unable to decode FunctionSandboxServiceSource to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -11573,7 +12494,7 @@ func (s *FunctionSourceRequest) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode FunctionSourceRequest")
+		return errors.Wrap(err, "decode FunctionSandboxServiceSource")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -11590,8 +12511,8 @@ func (s *FunctionSourceRequest) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfFunctionSourceRequest) {
-					name = jsonFieldsNameOfFunctionSourceRequest[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfFunctionSandboxServiceSource) {
+					name = jsonFieldsNameOfFunctionSandboxServiceSource[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -11612,6 +12533,154 @@ func (s *FunctionSourceRequest) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionSandboxServiceSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionSandboxServiceSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *FunctionSourceRequest) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionSourceRequest) encodeFields(e *jx.Encoder) {
+	{
+		if s.Type.Set {
+			e.FieldStart("type")
+			s.Type.Encode(e)
+		}
+	}
+	{
+		if s.SandboxID.Set {
+			e.FieldStart("sandbox_id")
+			s.SandboxID.Encode(e)
+		}
+	}
+	{
+		if s.ServiceID.Set {
+			e.FieldStart("service_id")
+			s.ServiceID.Encode(e)
+		}
+	}
+	{
+		if s.SandboxService.Set {
+			e.FieldStart("sandbox_service")
+			s.SandboxService.Encode(e)
+		}
+	}
+	{
+		if s.RevisionSpec.Set {
+			e.FieldStart("revision_spec")
+			s.RevisionSpec.Encode(e)
+		}
+	}
+	{
+		if s.Provenance.Set {
+			e.FieldStart("provenance")
+			s.Provenance.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfFunctionSourceRequest = [6]string{
+	0: "type",
+	1: "sandbox_id",
+	2: "service_id",
+	3: "sandbox_service",
+	4: "revision_spec",
+	5: "provenance",
+}
+
+// Decode decodes FunctionSourceRequest from json.
+func (s *FunctionSourceRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionSourceRequest to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "type":
+			if err := func() error {
+				s.Type.Reset()
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "sandbox_id":
+			if err := func() error {
+				s.SandboxID.Reset()
+				if err := s.SandboxID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_id\"")
+			}
+		case "service_id":
+			if err := func() error {
+				s.ServiceID.Reset()
+				if err := s.ServiceID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"service_id\"")
+			}
+		case "sandbox_service":
+			if err := func() error {
+				s.SandboxService.Reset()
+				if err := s.SandboxService.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_service\"")
+			}
+		case "revision_spec":
+			if err := func() error {
+				s.RevisionSpec.Reset()
+				if err := s.RevisionSpec.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"revision_spec\"")
+			}
+		case "provenance":
+			if err := func() error {
+				s.Provenance.Reset()
+				if err := s.Provenance.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"provenance\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionSourceRequest")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
 func (s *FunctionSourceRequest) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
@@ -11620,6 +12689,194 @@ func (s *FunctionSourceRequest) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *FunctionSourceRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s FunctionSourceRequestProvenance) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s FunctionSourceRequestProvenance) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		if len(elem) != 0 {
+			e.Raw(elem)
+		}
+	}
+}
+
+// Decode decodes FunctionSourceRequestProvenance from json.
+func (s *FunctionSourceRequestProvenance) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionSourceRequestProvenance to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem jx.Raw
+		if err := func() error {
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionSourceRequestProvenance")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s FunctionSourceRequestProvenance) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionSourceRequestProvenance) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *FunctionStaticAsset) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *FunctionStaticAsset) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("artifact_id")
+		e.Str(s.ArtifactID)
+	}
+	{
+		e.FieldStart("route_prefix")
+		e.Str(s.RoutePrefix)
+	}
+	{
+		if s.Digest.Set {
+			e.FieldStart("digest")
+			s.Digest.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfFunctionStaticAsset = [3]string{
+	0: "artifact_id",
+	1: "route_prefix",
+	2: "digest",
+}
+
+// Decode decodes FunctionStaticAsset from json.
+func (s *FunctionStaticAsset) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode FunctionStaticAsset to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "artifact_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ArtifactID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"artifact_id\"")
+			}
+		case "route_prefix":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.RoutePrefix = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"route_prefix\"")
+			}
+		case "digest":
+			if err := func() error {
+				s.Digest.Reset()
+				if err := s.Digest.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"digest\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode FunctionStaticAsset")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfFunctionStaticAsset) {
+					name = jsonFieldsNameOfFunctionStaticAsset[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *FunctionStaticAsset) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *FunctionStaticAsset) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -15678,6 +16935,206 @@ func (s *OptFunctionAutoscaling) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes FunctionRevisionInputSourceType as json.
+func (o OptFunctionRevisionInputSourceType) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes FunctionRevisionInputSourceType from json.
+func (o *OptFunctionRevisionInputSourceType) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionRevisionInputSourceType to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionRevisionInputSourceType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionRevisionInputSourceType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionMountMode as json.
+func (o OptFunctionRevisionMountMode) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes FunctionRevisionMountMode from json.
+func (o *OptFunctionRevisionMountMode) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionRevisionMountMode to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionRevisionMountMode) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionRevisionMountMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionProvenance as json.
+func (o OptFunctionRevisionProvenance) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes FunctionRevisionProvenance from json.
+func (o *OptFunctionRevisionProvenance) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionRevisionProvenance to nil")
+	}
+	o.Set = true
+	o.Value = make(FunctionRevisionProvenance)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionRevisionProvenance) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionRevisionProvenance) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionRevisionSpec as json.
+func (o OptFunctionRevisionSpec) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes FunctionRevisionSpec from json.
+func (o *OptFunctionRevisionSpec) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionRevisionSpec to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionRevisionSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionRevisionSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionSandboxServiceSource as json.
+func (o OptFunctionSandboxServiceSource) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes FunctionSandboxServiceSource from json.
+func (o *OptFunctionSandboxServiceSource) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionSandboxServiceSource to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionSandboxServiceSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionSandboxServiceSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes FunctionSourceRequestProvenance as json.
+func (o OptFunctionSourceRequestProvenance) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes FunctionSourceRequestProvenance from json.
+func (o *OptFunctionSourceRequestProvenance) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptFunctionSourceRequestProvenance to nil")
+	}
+	o.Set = true
+	o.Value = make(FunctionSourceRequestProvenance)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptFunctionSourceRequestProvenance) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptFunctionSourceRequestProvenance) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes GatewayMetadata as json.
 func (o OptGatewayMetadata) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -17056,6 +18513,39 @@ func (s OptSandbox) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandbox) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAppService as json.
+func (o OptSandboxAppService) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxAppService from json.
+func (o *OptSandboxAppService) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAppService to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAppService) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAppService) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
