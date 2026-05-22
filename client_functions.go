@@ -19,11 +19,19 @@ type FunctionRevisionCreateResult struct {
 	Promoted bool
 }
 
-// FunctionSource builds a function source reference from a sandbox service.
+// FunctionSource builds the compatibility sandbox-service source shortcut.
 func FunctionSource(sandboxID, serviceID string) apispec.FunctionSourceRequest {
 	return apispec.FunctionSourceRequest{
-		SandboxID: sandboxID,
-		ServiceID: serviceID,
+		SandboxID: apispec.NewOptString(sandboxID),
+		ServiceID: apispec.NewOptString(serviceID),
+	}
+}
+
+// FunctionRevisionSpecSource builds a source from an immutable revision spec.
+func FunctionRevisionSpecSource(spec apispec.FunctionRevisionSpec) apispec.FunctionSourceRequest {
+	return apispec.FunctionSourceRequest{
+		Type:         apispec.NewOptFunctionRevisionInputSourceType(apispec.FunctionRevisionInputSourceTypeRevisionSpec),
+		RevisionSpec: apispec.NewOptFunctionRevisionSpec(spec),
 	}
 }
 
@@ -37,7 +45,7 @@ func FunctionAutoscaling(minWarm, maxActive, targetConcurrency, scaleDownAfterSe
 	}
 }
 
-// FunctionCreateOption configures CreateFunctionFromSandbox.
+// FunctionCreateOption configures CreateFunction helpers.
 type FunctionCreateOption func(*apispec.FunctionCreateRequest)
 
 // WithFunctionName sets the function display name.
@@ -78,7 +86,7 @@ func WithFunctionUpdateAutoscaling(autoscaling apispec.FunctionAutoscaling) Func
 	}
 }
 
-// FunctionRevisionCreateOption configures CreateFunctionRevisionFromSandbox.
+// FunctionRevisionCreateOption configures CreateFunctionRevision helpers.
 type FunctionRevisionCreateOption func(*apispec.FunctionRevisionCreateRequest)
 
 // WithFunctionRevisionPromote controls whether the production alias moves to the new revision.
@@ -167,7 +175,7 @@ func (c *Client) DeleteFunction(ctx context.Context, functionID string) (*apispe
 	}
 }
 
-// CreateFunction creates a function from a sandbox service.
+// CreateFunction creates a function from a source.
 func (c *Client) CreateFunction(ctx context.Context, request apispec.FunctionCreateRequest) (*FunctionCreateResult, error) {
 	resp, err := c.api.APIV1FunctionsPost(ctx, &request)
 	if err != nil {
@@ -193,6 +201,17 @@ func (c *Client) CreateFunction(ctx context.Context, request apispec.FunctionCre
 func (c *Client) CreateFunctionFromSandbox(ctx context.Context, sandboxID, serviceID string, opts ...FunctionCreateOption) (*FunctionCreateResult, error) {
 	req := apispec.FunctionCreateRequest{
 		Source: FunctionSource(sandboxID, serviceID),
+	}
+	for _, opt := range opts {
+		opt(&req)
+	}
+	return c.CreateFunction(ctx, req)
+}
+
+// CreateFunctionFromRevisionSpec creates a function from an immutable revision spec.
+func (c *Client) CreateFunctionFromRevisionSpec(ctx context.Context, spec apispec.FunctionRevisionSpec, opts ...FunctionCreateOption) (*FunctionCreateResult, error) {
+	req := apispec.FunctionCreateRequest{
+		Source: FunctionRevisionSpecSource(spec),
 	}
 	for _, opt := range opts {
 		opt(&req)
@@ -237,7 +256,7 @@ func (c *Client) GetFunctionRevision(ctx context.Context, functionID string, rev
 	}
 }
 
-// CreateFunctionRevision creates a new function revision from a sandbox service.
+// CreateFunctionRevision creates a new function revision from a source.
 func (c *Client) CreateFunctionRevision(ctx context.Context, functionID string, request apispec.FunctionRevisionCreateRequest) (*FunctionRevisionCreateResult, error) {
 	resp, err := c.api.APIV1FunctionsIDRevisionsPost(ctx, &request, apispec.APIV1FunctionsIDRevisionsPostParams{ID: functionID})
 	if err != nil {
@@ -260,6 +279,17 @@ func (c *Client) CreateFunctionRevision(ctx context.Context, functionID string, 
 func (c *Client) CreateFunctionRevisionFromSandbox(ctx context.Context, functionID, sandboxID, serviceID string, opts ...FunctionRevisionCreateOption) (*FunctionRevisionCreateResult, error) {
 	req := apispec.FunctionRevisionCreateRequest{
 		Source: FunctionSource(sandboxID, serviceID),
+	}
+	for _, opt := range opts {
+		opt(&req)
+	}
+	return c.CreateFunctionRevision(ctx, functionID, req)
+}
+
+// CreateFunctionRevisionFromSpec creates a revision from an immutable revision spec.
+func (c *Client) CreateFunctionRevisionFromSpec(ctx context.Context, functionID string, spec apispec.FunctionRevisionSpec, opts ...FunctionRevisionCreateOption) (*FunctionRevisionCreateResult, error) {
+	req := apispec.FunctionRevisionCreateRequest{
+		Source: FunctionRevisionSpecSource(spec),
 	}
 	for _, opt := range opts {
 		opt(&req)

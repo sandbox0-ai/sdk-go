@@ -20,7 +20,7 @@ func TestClientFunctions(t *testing.T) {
 				t.Fatalf("path = %s, want /api/v1/functions", r.URL.Path)
 			}
 			body := decodeFunctionCreateRequest(t, r.Body)
-			if body.Source.SandboxID != "sbx-1" || body.Source.ServiceID != "web" {
+			if body.Source.SandboxID.Or("") != "sbx-1" || body.Source.ServiceID.Or("") != "web" {
 				t.Fatalf("source = %#v, want sbx-1/web", body.Source)
 			}
 			if got := body.Name.Or(""); got != "web-fn" {
@@ -55,6 +55,38 @@ func TestClientFunctions(t *testing.T) {
 		}
 		if result.Alias.Alias != "production" {
 			t.Fatalf("alias = %q, want production", result.Alias.Alias)
+		}
+	})
+
+	t.Run("create from revision spec", func(t *testing.T) {
+		client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				t.Fatalf("method = %s, want POST", r.Method)
+			}
+			if r.URL.Path != "/api/v1/functions" {
+				t.Fatalf("path = %s, want /api/v1/functions", r.URL.Path)
+			}
+			body := decodeFunctionCreateRequest(t, r.Body)
+			if sourceType := body.Source.Type.Or(""); sourceType != apispec.FunctionRevisionInputSourceTypeRevisionSpec {
+				t.Fatalf("source type = %q, want revision_spec", sourceType)
+			}
+			spec, ok := body.Source.RevisionSpec.Get()
+			if !ok {
+				t.Fatal("revision spec missing")
+			}
+			if spec.TemplateID != "default" || spec.RuntimeService.ID != "web" {
+				t.Fatalf("revision spec = %#v, want default/web", spec)
+			}
+			writeJSON(t, w, http.StatusCreated, functionCreateResponse())
+		})
+		defer server.Close()
+
+		result, err := client.CreateFunctionFromRevisionSpec(context.Background(), functionRevisionSpec(), WithFunctionName("web-fn"))
+		if err != nil {
+			t.Fatalf("CreateFunctionFromRevisionSpec() error = %v", err)
+		}
+		if result.Function.ID != "fn-1" {
+			t.Fatalf("function id = %q, want fn-1", result.Function.ID)
 		}
 	})
 
@@ -185,8 +217,16 @@ func TestClientFunctions(t *testing.T) {
 				})
 			case r.Method == http.MethodPost && r.URL.Path == "/api/v1/functions/fn-1/revisions":
 				body := decodeFunctionRevisionCreateRequest(t, r.Body)
-				if body.Source.ServiceID != "web-v2" {
-					t.Fatalf("service id = %q, want web-v2", body.Source.ServiceID)
+				if sourceType := body.Source.Type.Or(""); sourceType == apispec.FunctionRevisionInputSourceTypeRevisionSpec {
+					spec, ok := body.Source.RevisionSpec.Get()
+					if !ok {
+						t.Fatal("revision spec missing")
+					}
+					if spec.TemplateID != "default" || spec.RuntimeService.ID != "web" {
+						t.Fatalf("revision spec = %#v, want default/web", spec)
+					}
+				} else if body.Source.ServiceID.Or("") != "web-v2" {
+					t.Fatalf("service id = %q, want web-v2", body.Source.ServiceID.Or(""))
 				}
 				if promote := body.Promote.Or(true); promote {
 					t.Fatalf("promote = true, want false")
@@ -251,6 +291,14 @@ func TestClientFunctions(t *testing.T) {
 		created, err := client.CreateFunctionRevisionFromSandbox(context.Background(), "fn-1", "sbx-1", "web-v2", WithFunctionRevisionPromote(false))
 		if err != nil {
 			t.Fatalf("CreateFunctionRevisionFromSandbox() error = %v", err)
+		}
+		if created.Promoted {
+			t.Fatal("Promoted = true, want false")
+		}
+
+		created, err = client.CreateFunctionRevisionFromSpec(context.Background(), "fn-1", functionRevisionSpec(), WithFunctionRevisionPromote(false))
+		if err != nil {
+			t.Fatalf("CreateFunctionRevisionFromSpec() error = %v", err)
 		}
 		if created.Promoted {
 			t.Fatal("Promoted = true, want false")
@@ -376,6 +424,8 @@ func functionRevision(number int) map[string]any {
 		"function_id":        "fn-1",
 		"team_id":            "team-1",
 		"revision_number":    number,
+		"source_type":        "sandbox_service",
+		"revision_spec":      functionRevisionSpecMap(),
 		"source_sandbox_id":  "sbx-1",
 		"source_service_id":  "web",
 		"source_template_id": "default",
@@ -388,6 +438,32 @@ func functionRevision(number int) map[string]any {
 			},
 		},
 		"created_at": "2026-05-14T00:00:00Z",
+	}
+}
+
+func functionRevisionSpec() apispec.FunctionRevisionSpec {
+	return apispec.FunctionRevisionSpec{
+		TemplateID: "default",
+		RuntimeService: apispec.SandboxAppService{
+			ID:   "web",
+			Port: 8080,
+		},
+	}
+}
+
+func functionRevisionSpecMap() map[string]any {
+	return map[string]any{
+		"template_id": "default",
+		"runtime_service": map[string]any{
+			"id":   "web",
+			"port": 8080,
+			"ingress": map[string]any{
+				"public": true,
+			},
+		},
+		"mounts":        []any{},
+		"static_assets": []any{},
+		"env_refs":      []any{},
 	}
 }
 
