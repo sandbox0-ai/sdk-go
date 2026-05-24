@@ -21,6 +21,10 @@ type APIKeysPostRes interface {
 	aPIKeysPostRes()
 }
 
+type APIV1ArtifactsIDGetRes interface {
+	aPIV1ArtifactsIDGetRes()
+}
+
 type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
@@ -115,6 +119,10 @@ type APIV1SandboxesPostRes interface {
 
 type APIV1SandboxvolumesIDDeleteRes interface {
 	aPIV1SandboxvolumesIDDeleteRes()
+}
+
+type APIV1SandboxvolumesIDFilesArchivePostReq interface {
+	aPIV1SandboxvolumesIDFilesArchivePostReq()
 }
 
 type APIV1SandboxvolumesIDFilesGetRes interface {

@@ -110,6 +110,36 @@ type Invoker interface {
 	//
 	// POST /api-keys
 	APIKeysPost(ctx context.Context, request *CreateAPIKeyRequest, options ...RequestOption) (APIKeysPostRes, error)
+	// APIV1ArtifactsGet invokes GET /api/v1/artifacts operation.
+	//
+	// List artifacts.
+	//
+	// GET /api/v1/artifacts
+	APIV1ArtifactsGet(ctx context.Context, options ...RequestOption) (*SuccessArtifactListResponse, error)
+	// APIV1ArtifactsIDDelete invokes DELETE /api/v1/artifacts/{id} operation.
+	//
+	// Delete artifact.
+	//
+	// DELETE /api/v1/artifacts/{id}
+	APIV1ArtifactsIDDelete(ctx context.Context, params APIV1ArtifactsIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	// APIV1ArtifactsIDGet invokes GET /api/v1/artifacts/{id} operation.
+	//
+	// Get artifact.
+	//
+	// GET /api/v1/artifacts/{id}
+	APIV1ArtifactsIDGet(ctx context.Context, params APIV1ArtifactsIDGetParams, options ...RequestOption) (APIV1ArtifactsIDGetRes, error)
+	// APIV1ArtifactsIDVolumePost invokes POST /api/v1/artifacts/{id}/volume operation.
+	//
+	// Create a sandbox volume from artifact contents.
+	//
+	// POST /api/v1/artifacts/{id}/volume
+	APIV1ArtifactsIDVolumePost(ctx context.Context, request OptCreateArtifactVolumeRequest, params APIV1ArtifactsIDVolumePostParams, options ...RequestOption) (*SuccessSandboxVolumeResponse, error)
+	// APIV1ArtifactsPost invokes POST /api/v1/artifacts operation.
+	//
+	// Create artifact from a sandbox volume.
+	//
+	// POST /api/v1/artifacts
+	APIV1ArtifactsPost(ctx context.Context, request *CreateArtifactRequest, options ...RequestOption) (*SuccessArtifactResponse, error)
 	// APIV1CredentialSourcesGet invokes GET /api/v1/credential-sources operation.
 	//
 	// List credential sources.
@@ -191,7 +221,7 @@ type Invoker interface {
 	APIV1FunctionsIDRevisionsGet(ctx context.Context, params APIV1FunctionsIDRevisionsGetParams, options ...RequestOption) (*SuccessFunctionRevisionListResponse, error)
 	// APIV1FunctionsIDRevisionsPost invokes POST /api/v1/functions/{id}/revisions operation.
 	//
-	// Create function revision from a sandbox service.
+	// Creates a function revision from a sandbox-service shortcut or an explicit FunctionRevisionSpec.
 	//
 	// POST /api/v1/functions/{id}/revisions
 	APIV1FunctionsIDRevisionsPost(ctx context.Context, request *FunctionRevisionCreateRequest, params APIV1FunctionsIDRevisionsPostParams, options ...RequestOption) (*SuccessFunctionRevisionCreateResponse, error)
@@ -223,7 +253,8 @@ type Invoker interface {
 	APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
 	// APIV1FunctionsPost invokes POST /api/v1/functions operation.
 	//
-	// Creates a function, revision 1, and the production alias from an existing sandbox service.
+	// Creates a function, revision 1, and the production alias from a sandbox-service shortcut or an
+	// explicit FunctionRevisionSpec.
 	//
 	// POST /api/v1/functions
 	APIV1FunctionsPost(ctx context.Context, request *FunctionCreateRequest, options ...RequestOption) (APIV1FunctionsPostRes, error)
@@ -467,6 +498,12 @@ type Invoker interface {
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}
 	APIV1SandboxvolumesIDDelete(ctx context.Context, params APIV1SandboxvolumesIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDDeleteRes, error)
+	// APIV1SandboxvolumesIDFilesArchivePost invokes POST /api/v1/sandboxvolumes/{id}/files/archive operation.
+	//
+	// Upload a tar archive into a sandbox volume.
+	//
+	// POST /api/v1/sandboxvolumes/{id}/files/archive
+	APIV1SandboxvolumesIDFilesArchivePost(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePostReq, params APIV1SandboxvolumesIDFilesArchivePostParams, options ...RequestOption) (*SuccessVolumeArchiveUploadResponse, error)
 	// APIV1SandboxvolumesIDFilesDelete invokes DELETE /api/v1/sandboxvolumes/{id}/files operation.
 	//
 	// Delete volume file or directory.
@@ -1368,6 +1405,542 @@ func (c *Client) sendAPIKeysPost(ctx context.Context, request *CreateAPIKeyReque
 	}
 
 	result, err := decodeAPIKeysPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ArtifactsGet invokes GET /api/v1/artifacts operation.
+//
+// List artifacts.
+//
+// GET /api/v1/artifacts
+func (c *Client) APIV1ArtifactsGet(ctx context.Context, options ...RequestOption) (*SuccessArtifactListResponse, error) {
+	res, err := c.sendAPIV1ArtifactsGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ArtifactsGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessArtifactListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/artifacts"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ArtifactsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ArtifactsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ArtifactsIDDelete invokes DELETE /api/v1/artifacts/{id} operation.
+//
+// Delete artifact.
+//
+// DELETE /api/v1/artifacts/{id}
+func (c *Client) APIV1ArtifactsIDDelete(ctx context.Context, params APIV1ArtifactsIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+	res, err := c.sendAPIV1ArtifactsIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ArtifactsIDDelete(ctx context.Context, params APIV1ArtifactsIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/artifacts/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ArtifactsIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ArtifactsIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ArtifactsIDGet invokes GET /api/v1/artifacts/{id} operation.
+//
+// Get artifact.
+//
+// GET /api/v1/artifacts/{id}
+func (c *Client) APIV1ArtifactsIDGet(ctx context.Context, params APIV1ArtifactsIDGetParams, options ...RequestOption) (APIV1ArtifactsIDGetRes, error) {
+	res, err := c.sendAPIV1ArtifactsIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ArtifactsIDGet(ctx context.Context, params APIV1ArtifactsIDGetParams, requestOptions ...RequestOption) (res APIV1ArtifactsIDGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/artifacts/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ArtifactsIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ArtifactsIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ArtifactsIDVolumePost invokes POST /api/v1/artifacts/{id}/volume operation.
+//
+// Create a sandbox volume from artifact contents.
+//
+// POST /api/v1/artifacts/{id}/volume
+func (c *Client) APIV1ArtifactsIDVolumePost(ctx context.Context, request OptCreateArtifactVolumeRequest, params APIV1ArtifactsIDVolumePostParams, options ...RequestOption) (*SuccessSandboxVolumeResponse, error) {
+	res, err := c.sendAPIV1ArtifactsIDVolumePost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ArtifactsIDVolumePost(ctx context.Context, request OptCreateArtifactVolumeRequest, params APIV1ArtifactsIDVolumePostParams, requestOptions ...RequestOption) (res *SuccessSandboxVolumeResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/artifacts/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/volume"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1ArtifactsIDVolumePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ArtifactsIDVolumePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ArtifactsIDVolumePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1ArtifactsPost invokes POST /api/v1/artifacts operation.
+//
+// Create artifact from a sandbox volume.
+//
+// POST /api/v1/artifacts
+func (c *Client) APIV1ArtifactsPost(ctx context.Context, request *CreateArtifactRequest, options ...RequestOption) (*SuccessArtifactResponse, error) {
+	res, err := c.sendAPIV1ArtifactsPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1ArtifactsPost(ctx context.Context, request *CreateArtifactRequest, requestOptions ...RequestOption) (res *SuccessArtifactResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/artifacts"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1ArtifactsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1ArtifactsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1ArtifactsPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2845,7 +3418,7 @@ func (c *Client) sendAPIV1FunctionsIDRevisionsGet(ctx context.Context, params AP
 
 // APIV1FunctionsIDRevisionsPost invokes POST /api/v1/functions/{id}/revisions operation.
 //
-// Create function revision from a sandbox service.
+// Creates a function revision from a sandbox-service shortcut or an explicit FunctionRevisionSpec.
 //
 // POST /api/v1/functions/{id}/revisions
 func (c *Client) APIV1FunctionsIDRevisionsPost(ctx context.Context, request *FunctionRevisionCreateRequest, params APIV1FunctionsIDRevisionsPostParams, options ...RequestOption) (*SuccessFunctionRevisionCreateResponse, error) {
@@ -3438,7 +4011,8 @@ func (c *Client) sendAPIV1FunctionsIDRuntimeRestartPost(ctx context.Context, par
 
 // APIV1FunctionsPost invokes POST /api/v1/functions operation.
 //
-// Creates a function, revision 1, and the production alias from an existing sandbox service.
+// Creates a function, revision 1, and the production alias from a sandbox-service shortcut or an
+// explicit FunctionRevisionSpec.
 //
 // POST /api/v1/functions
 func (c *Client) APIV1FunctionsPost(ctx context.Context, request *FunctionCreateRequest, options ...RequestOption) (APIV1FunctionsPostRes, error) {
@@ -8024,6 +8598,177 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 	}
 
 	result, err := decodeAPIV1SandboxvolumesIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesArchivePost invokes POST /api/v1/sandboxvolumes/{id}/files/archive operation.
+//
+// Upload a tar archive into a sandbox volume.
+//
+// POST /api/v1/sandboxvolumes/{id}/files/archive
+func (c *Client) APIV1SandboxvolumesIDFilesArchivePost(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePostReq, params APIV1SandboxvolumesIDFilesArchivePostParams, options ...RequestOption) (*SuccessVolumeArchiveUploadResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesArchivePost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesArchivePost(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePostReq, params APIV1SandboxvolumesIDFilesArchivePostParams, requestOptions ...RequestOption) (res *SuccessVolumeArchiveUploadResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/archive"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Path.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "format" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "format",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Format.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "overwrite" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "overwrite",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Overwrite.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDFilesArchivePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesArchivePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesArchivePostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

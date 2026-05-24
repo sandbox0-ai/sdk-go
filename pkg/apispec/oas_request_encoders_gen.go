@@ -6,12 +6,47 @@ import (
 	"bytes"
 	"net/http"
 
+	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 	ht "github.com/ogen-go/ogen/http"
 )
 
 func encodeAPIKeysPostRequest(
 	req *CreateAPIKeyRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1ArtifactsIDVolumePostRequest(
+	req OptCreateArtifactVolumeRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	if !req.Set {
+		// Keep request with empty body if value is not set.
+		return nil
+	}
+	e := new(jx.Encoder)
+	{
+		if req.Set {
+			req.Encode(e)
+		}
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1ArtifactsPostRequest(
+	req *CreateArtifactRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -296,6 +331,31 @@ func encodeAPIV1SandboxesPostRequest(
 	encoded := e.Bytes()
 	ht.SetBody(r, bytes.NewReader(encoded), contentType)
 	return nil
+}
+
+func encodeAPIV1SandboxvolumesIDFilesArchivePostRequest(
+	req APIV1SandboxvolumesIDFilesArchivePostReq,
+	r *http.Request,
+) error {
+	switch req := req.(type) {
+	case *APIV1SandboxvolumesIDFilesArchivePostReqApplicationGzip:
+		const contentType = "application/gzip"
+		body := req
+		ht.SetBody(r, body, contentType)
+		return nil
+	case *APIV1SandboxvolumesIDFilesArchivePostReqApplicationOctetStream:
+		const contentType = "application/octet-stream"
+		body := req
+		ht.SetBody(r, body, contentType)
+		return nil
+	case *APIV1SandboxvolumesIDFilesArchivePostReqApplicationXTar:
+		const contentType = "application/x-tar"
+		body := req
+		ht.SetBody(r, body, contentType)
+		return nil
+	default:
+		return errors.Errorf("unexpected request type: %T", req)
+	}
 }
 
 func encodeAPIV1SandboxvolumesIDFilesMovePostRequest(

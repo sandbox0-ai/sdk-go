@@ -12,6 +12,21 @@ type APIKeysIDDeleteParams struct {
 	ID string
 }
 
+// APIV1ArtifactsIDDeleteParams is parameters of DELETE /api/v1/artifacts/{id} operation.
+type APIV1ArtifactsIDDeleteParams struct {
+	ID string
+}
+
+// APIV1ArtifactsIDGetParams is parameters of GET /api/v1/artifacts/{id} operation.
+type APIV1ArtifactsIDGetParams struct {
+	ID string
+}
+
+// APIV1ArtifactsIDVolumePostParams is parameters of POST /api/v1/artifacts/{id}/volume operation.
+type APIV1ArtifactsIDVolumePostParams struct {
+	ID string
+}
+
 // APIV1CredentialSourcesNameDeleteParams is parameters of DELETE /api/v1/credential-sources/{name} operation.
 type APIV1CredentialSourcesNameDeleteParams struct {
 	Name string
@@ -290,6 +305,14 @@ type APIV1SandboxvolumesIDDeleteParams struct {
 	ID string
 	// Force delete even if volume has active mounts.
 	Force OptBool `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxvolumesIDFilesArchivePostParams is parameters of POST /api/v1/sandboxvolumes/{id}/files/archive operation.
+type APIV1SandboxvolumesIDFilesArchivePostParams struct {
+	ID        string
+	Path      OptString             `json:",omitempty,omitzero"`
+	Format    OptQueryArchiveFormat `json:",omitempty,omitzero"`
+	Overwrite OptBool               `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxvolumesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id}/files operation.

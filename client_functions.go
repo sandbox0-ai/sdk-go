@@ -45,6 +45,56 @@ func FunctionAutoscaling(minWarm, maxActive, targetConcurrency, scaleDownAfterSe
 	}
 }
 
+// FunctionArtifactMount builds a revision mount backed by an artifact.
+func FunctionArtifactMount(name, mountPoint, artifactID string, mode apispec.FunctionRevisionMountMode) apispec.FunctionRevisionMount {
+	mount := apispec.FunctionRevisionMount{
+		Name:       apispec.NewOptString(name),
+		MountPoint: mountPoint,
+		Source: apispec.FunctionRevisionMountSource{
+			Type:       apispec.FunctionRevisionMountSourceTypeArtifact,
+			ArtifactID: apispec.NewOptString(artifactID),
+		},
+	}
+	if mode != "" {
+		mount.Mode = apispec.NewOptFunctionRevisionMountMode(mode)
+	}
+	return mount
+}
+
+// FunctionVolumeMount builds a revision mount backed by a SandboxVolume.
+func FunctionVolumeMount(name, mountPoint, volumeID string, mode apispec.FunctionRevisionMountMode) apispec.FunctionRevisionMount {
+	mount := apispec.FunctionRevisionMount{
+		Name:       apispec.NewOptString(name),
+		MountPoint: mountPoint,
+		Source: apispec.FunctionRevisionMountSource{
+			Type:            apispec.FunctionRevisionMountSourceTypeSandboxVolume,
+			SandboxvolumeID: apispec.NewOptString(volumeID),
+		},
+	}
+	if mode != "" {
+		mount.Mode = apispec.NewOptFunctionRevisionMountMode(mode)
+	}
+	return mount
+}
+
+// FunctionPostClaimHTTPHook builds a post-claim HTTP runtime hook.
+func FunctionPostClaimHTTPHook(name, method, path string, timeoutSeconds int) apispec.SandboxAppServiceRuntimeHook {
+	hook := apispec.SandboxAppServiceRuntimeHook{
+		Name:  apispec.NewOptString(name),
+		Phase: apispec.SandboxAppServiceRuntimeHookPhasePostClaim,
+		HTTP: apispec.SandboxAppServiceRuntimeHTTPHook{
+			Path: path,
+		},
+	}
+	if method != "" {
+		hook.HTTP.Method = apispec.NewOptString(method)
+	}
+	if timeoutSeconds > 0 {
+		hook.HTTP.TimeoutSeconds = apispec.NewOptInt32(int32(timeoutSeconds))
+	}
+	return hook
+}
+
 // FunctionCreateOption configures CreateFunction helpers.
 type FunctionCreateOption func(*apispec.FunctionCreateRequest)
 

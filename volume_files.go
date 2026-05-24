@@ -12,6 +12,13 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
+// VolumeArchiveUploadOptions controls archive import behavior.
+type VolumeArchiveUploadOptions struct {
+	Path      string
+	Format    apispec.QueryArchiveFormat
+	Overwrite bool
+}
+
 // ReadVolumeFile reads a file from a volume and returns raw bytes.
 func (c *Client) ReadVolumeFile(ctx context.Context, volumeID, path string) ([]byte, error) {
 	params := apispec.APIV1SandboxvolumesIDFilesGetParams{
@@ -125,6 +132,43 @@ func (c *Client) MoveVolumeFile(ctx context.Context, volumeID, source, destinati
 		return nil, err
 	}
 	return resp, nil
+}
+
+// UploadVolumeArchive imports a tar or tar.gz archive into a volume.
+func (c *Client) UploadVolumeArchive(ctx context.Context, volumeID string, archive io.Reader, options *VolumeArchiveUploadOptions) (*apispec.VolumeArchiveUploadResult, error) {
+	params := apispec.APIV1SandboxvolumesIDFilesArchivePostParams{ID: volumeID}
+	format := apispec.QueryArchiveFormatTarGz
+	params.Format = apispec.NewOptQueryArchiveFormat(format)
+	if options != nil {
+		if options.Path != "" {
+			params.Path = apispec.NewOptString(options.Path)
+		}
+		if options.Format != "" {
+			params.Format = apispec.NewOptQueryArchiveFormat(options.Format)
+			format = options.Format
+		}
+		params.Overwrite = apispec.NewOptBool(options.Overwrite)
+	}
+
+	var req apispec.APIV1SandboxvolumesIDFilesArchivePostReq
+	switch format {
+	case apispec.QueryArchiveFormatTarGz:
+		req = &apispec.APIV1SandboxvolumesIDFilesArchivePostReqApplicationGzip{Data: archive}
+	case apispec.QueryArchiveFormatTar:
+		req = &apispec.APIV1SandboxvolumesIDFilesArchivePostReqApplicationXTar{Data: archive}
+	default:
+		req = &apispec.APIV1SandboxvolumesIDFilesArchivePostReqApplicationOctetStream{Data: archive}
+	}
+
+	resp, err := c.api.APIV1SandboxvolumesIDFilesArchivePost(ctx, req, params)
+	if err != nil {
+		return nil, err
+	}
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
+	}
+	return &data, nil
 }
 
 // ConnectWatchVolumeFile opens a WebSocket stream for volume file watch events.

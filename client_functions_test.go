@@ -11,6 +11,27 @@ import (
 )
 
 func TestClientFunctions(t *testing.T) {
+	t.Run("revision spec helpers", func(t *testing.T) {
+		mount := FunctionArtifactMount("app", "/workspace/app", "art-1", apispec.FunctionRevisionMountModeReadOnly)
+		if mount.Name.Or("") != "app" || mount.MountPoint != "/workspace/app" {
+			t.Fatalf("mount = %#v, want app at /workspace/app", mount)
+		}
+		if mount.Source.Type != apispec.FunctionRevisionMountSourceTypeArtifact || mount.Source.ArtifactID.Or("") != "art-1" {
+			t.Fatalf("mount source = %#v, want artifact art-1", mount.Source)
+		}
+		if mount.Mode.Or("") != apispec.FunctionRevisionMountModeReadOnly {
+			t.Fatalf("mount mode = %q, want read_only", mount.Mode.Or(""))
+		}
+
+		hook := FunctionPostClaimHTTPHook("init", http.MethodPost, "/__s0/init", 30)
+		if hook.Phase != apispec.SandboxAppServiceRuntimeHookPhasePostClaim {
+			t.Fatalf("hook phase = %q, want post_claim", hook.Phase)
+		}
+		if hook.HTTP.Path != "/__s0/init" || hook.HTTP.Method.Or("") != http.MethodPost || hook.HTTP.TimeoutSeconds.Or(0) != 30 {
+			t.Fatalf("hook http = %#v, want POST /__s0/init timeout 30", hook.HTTP)
+		}
+	})
+
 	t.Run("create from sandbox", func(t *testing.T) {
 		client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {

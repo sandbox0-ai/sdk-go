@@ -3,6 +3,38 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *CreateArtifactRequest) setDefaults() {
+	{
+		val := string("generic")
+		s.Kind.SetTo(val)
+	}
+	{
+		val := string("application/octet-stream")
+		s.MediaType.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *CreateArtifactSource) setDefaults() {
+	{
+		val := CreateArtifactSourceType("sandbox_volume")
+		s.Type = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *CreateArtifactVolumeRequest) setDefaults() {
+	{
+		val := int64(0)
+		s.DefaultPosixUID.SetTo(val)
+	}
+	{
+		val := int64(0)
+		s.DefaultPosixGid.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *CreateSandboxVolumeRequest) setDefaults() {
 	{
 		val := int64(0)
@@ -47,6 +79,26 @@ func (s *SandboxAppServiceRouteAuth) setDefaults() {
 	{
 		val := SandboxAppServiceRouteAuthMode("none")
 		s.Mode = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *SandboxAppServiceRuntime) setDefaults() {
+	{
+		val := bool(false)
+		s.SkipReadinessCheck.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *SandboxAppServiceRuntimeHTTPHook) setDefaults() {
+	{
+		val := string("POST")
+		s.Method.SetTo(val)
+	}
+	{
+		val := int32(30)
+		s.TimeoutSeconds.SetTo(val)
 	}
 }
 

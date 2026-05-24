@@ -493,6 +493,57 @@ type APIV1SandboxesIDResumePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostNotFound) aPIV1SandboxesIDResumePostRes() {}
 
+type APIV1SandboxvolumesIDFilesArchivePostReqApplicationGzip struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesArchivePostReqApplicationGzip) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDFilesArchivePostReqApplicationGzip) aPIV1SandboxvolumesIDFilesArchivePostReq() {
+}
+
+type APIV1SandboxvolumesIDFilesArchivePostReqApplicationOctetStream struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesArchivePostReqApplicationOctetStream) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDFilesArchivePostReqApplicationOctetStream) aPIV1SandboxvolumesIDFilesArchivePostReq() {
+}
+
+type APIV1SandboxvolumesIDFilesArchivePostReqApplicationXTar struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesArchivePostReqApplicationXTar) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*APIV1SandboxvolumesIDFilesArchivePostReqApplicationXTar) aPIV1SandboxvolumesIDFilesArchivePostReq() {
+}
+
 // Merged schema.
 type APIV1SandboxvolumesIDFilesGetOKApplicationJSON struct {
 	Success APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess `json:"success"`
@@ -673,6 +724,164 @@ func (s *Affinity) SetNodeAffinity(val OptNodeAffinity) {
 // SetPodAffinity sets the value of PodAffinity.
 func (s *Affinity) SetPodAffinity(val OptPodAffinity) {
 	s.PodAffinity = val
+}
+
+// Ref: #/components/schemas/Artifact
+type Artifact struct {
+	ID             string              `json:"id"`
+	TeamID         string              `json:"team_id"`
+	UserID         string              `json:"user_id"`
+	Name           string              `json:"name"`
+	Kind           string              `json:"kind"`
+	MediaType      string              `json:"media_type"`
+	Digest         OptString           `json:"digest"`
+	SourceVolumeID string              `json:"source_volume_id"`
+	SnapshotID     string              `json:"snapshot_id"`
+	SizeBytes      int64               `json:"size_bytes"`
+	Metadata       OptArtifactMetadata `json:"metadata"`
+	CreatedAt      time.Time           `json:"created_at"`
+	UpdatedAt      time.Time           `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *Artifact) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *Artifact) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetUserID returns the value of UserID.
+func (s *Artifact) GetUserID() string {
+	return s.UserID
+}
+
+// GetName returns the value of Name.
+func (s *Artifact) GetName() string {
+	return s.Name
+}
+
+// GetKind returns the value of Kind.
+func (s *Artifact) GetKind() string {
+	return s.Kind
+}
+
+// GetMediaType returns the value of MediaType.
+func (s *Artifact) GetMediaType() string {
+	return s.MediaType
+}
+
+// GetDigest returns the value of Digest.
+func (s *Artifact) GetDigest() OptString {
+	return s.Digest
+}
+
+// GetSourceVolumeID returns the value of SourceVolumeID.
+func (s *Artifact) GetSourceVolumeID() string {
+	return s.SourceVolumeID
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *Artifact) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *Artifact) GetSizeBytes() int64 {
+	return s.SizeBytes
+}
+
+// GetMetadata returns the value of Metadata.
+func (s *Artifact) GetMetadata() OptArtifactMetadata {
+	return s.Metadata
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *Artifact) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *Artifact) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *Artifact) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *Artifact) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetUserID sets the value of UserID.
+func (s *Artifact) SetUserID(val string) {
+	s.UserID = val
+}
+
+// SetName sets the value of Name.
+func (s *Artifact) SetName(val string) {
+	s.Name = val
+}
+
+// SetKind sets the value of Kind.
+func (s *Artifact) SetKind(val string) {
+	s.Kind = val
+}
+
+// SetMediaType sets the value of MediaType.
+func (s *Artifact) SetMediaType(val string) {
+	s.MediaType = val
+}
+
+// SetDigest sets the value of Digest.
+func (s *Artifact) SetDigest(val OptString) {
+	s.Digest = val
+}
+
+// SetSourceVolumeID sets the value of SourceVolumeID.
+func (s *Artifact) SetSourceVolumeID(val string) {
+	s.SourceVolumeID = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *Artifact) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *Artifact) SetSizeBytes(val int64) {
+	s.SizeBytes = val
+}
+
+// SetMetadata sets the value of Metadata.
+func (s *Artifact) SetMetadata(val OptArtifactMetadata) {
+	s.Metadata = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *Artifact) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *Artifact) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+type ArtifactMetadata map[string]jx.Raw
+
+func (s *ArtifactMetadata) init() ArtifactMetadata {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
 }
 
 type AuthChangePasswordPostBadRequest ErrorEnvelope
@@ -1541,6 +1750,188 @@ func (s *CreateAPIKeyResponse) SetExpiresAt(val time.Time) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *CreateAPIKeyResponse) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/CreateArtifactRequest
+type CreateArtifactRequest struct {
+	// Human-readable artifact name. Defaults to the generated artifact ID when omitted.
+	Name OptString `json:"name"`
+	// Application-defined artifact kind.
+	Kind      OptString `json:"kind"`
+	MediaType OptString `json:"media_type"`
+	// Optional content digest supplied by the caller.
+	Digest   OptString                        `json:"digest"`
+	Source   CreateArtifactSource             `json:"source"`
+	Metadata OptCreateArtifactRequestMetadata `json:"metadata"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateArtifactRequest) GetName() OptString {
+	return s.Name
+}
+
+// GetKind returns the value of Kind.
+func (s *CreateArtifactRequest) GetKind() OptString {
+	return s.Kind
+}
+
+// GetMediaType returns the value of MediaType.
+func (s *CreateArtifactRequest) GetMediaType() OptString {
+	return s.MediaType
+}
+
+// GetDigest returns the value of Digest.
+func (s *CreateArtifactRequest) GetDigest() OptString {
+	return s.Digest
+}
+
+// GetSource returns the value of Source.
+func (s *CreateArtifactRequest) GetSource() CreateArtifactSource {
+	return s.Source
+}
+
+// GetMetadata returns the value of Metadata.
+func (s *CreateArtifactRequest) GetMetadata() OptCreateArtifactRequestMetadata {
+	return s.Metadata
+}
+
+// SetName sets the value of Name.
+func (s *CreateArtifactRequest) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetKind sets the value of Kind.
+func (s *CreateArtifactRequest) SetKind(val OptString) {
+	s.Kind = val
+}
+
+// SetMediaType sets the value of MediaType.
+func (s *CreateArtifactRequest) SetMediaType(val OptString) {
+	s.MediaType = val
+}
+
+// SetDigest sets the value of Digest.
+func (s *CreateArtifactRequest) SetDigest(val OptString) {
+	s.Digest = val
+}
+
+// SetSource sets the value of Source.
+func (s *CreateArtifactRequest) SetSource(val CreateArtifactSource) {
+	s.Source = val
+}
+
+// SetMetadata sets the value of Metadata.
+func (s *CreateArtifactRequest) SetMetadata(val OptCreateArtifactRequestMetadata) {
+	s.Metadata = val
+}
+
+type CreateArtifactRequestMetadata map[string]jx.Raw
+
+func (s *CreateArtifactRequestMetadata) init() CreateArtifactRequestMetadata {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/CreateArtifactSource
+type CreateArtifactSource struct {
+	Type            CreateArtifactSourceType `json:"type"`
+	SandboxvolumeID string                   `json:"sandboxvolume_id"`
+}
+
+// GetType returns the value of Type.
+func (s *CreateArtifactSource) GetType() CreateArtifactSourceType {
+	return s.Type
+}
+
+// GetSandboxvolumeID returns the value of SandboxvolumeID.
+func (s *CreateArtifactSource) GetSandboxvolumeID() string {
+	return s.SandboxvolumeID
+}
+
+// SetType sets the value of Type.
+func (s *CreateArtifactSource) SetType(val CreateArtifactSourceType) {
+	s.Type = val
+}
+
+// SetSandboxvolumeID sets the value of SandboxvolumeID.
+func (s *CreateArtifactSource) SetSandboxvolumeID(val string) {
+	s.SandboxvolumeID = val
+}
+
+type CreateArtifactSourceType string
+
+const (
+	CreateArtifactSourceTypeSandboxVolume CreateArtifactSourceType = "sandbox_volume"
+)
+
+// AllValues returns all CreateArtifactSourceType values.
+func (CreateArtifactSourceType) AllValues() []CreateArtifactSourceType {
+	return []CreateArtifactSourceType{
+		CreateArtifactSourceTypeSandboxVolume,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CreateArtifactSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case CreateArtifactSourceTypeSandboxVolume:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CreateArtifactSourceType) UnmarshalText(data []byte) error {
+	switch CreateArtifactSourceType(data) {
+	case CreateArtifactSourceTypeSandboxVolume:
+		*s = CreateArtifactSourceTypeSandboxVolume
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/CreateArtifactVolumeRequest
+type CreateArtifactVolumeRequest struct {
+	// Access mode for the materialized volume. Defaults to ROX when omitted.
+	AccessMode      OptVolumeAccessMode `json:"access_mode"`
+	DefaultPosixUID OptInt64            `json:"default_posix_uid"`
+	DefaultPosixGid OptInt64            `json:"default_posix_gid"`
+}
+
+// GetAccessMode returns the value of AccessMode.
+func (s *CreateArtifactVolumeRequest) GetAccessMode() OptVolumeAccessMode {
+	return s.AccessMode
+}
+
+// GetDefaultPosixUID returns the value of DefaultPosixUID.
+func (s *CreateArtifactVolumeRequest) GetDefaultPosixUID() OptInt64 {
+	return s.DefaultPosixUID
+}
+
+// GetDefaultPosixGid returns the value of DefaultPosixGid.
+func (s *CreateArtifactVolumeRequest) GetDefaultPosixGid() OptInt64 {
+	return s.DefaultPosixGid
+}
+
+// SetAccessMode sets the value of AccessMode.
+func (s *CreateArtifactVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
+	s.AccessMode = val
+}
+
+// SetDefaultPosixUID sets the value of DefaultPosixUID.
+func (s *CreateArtifactVolumeRequest) SetDefaultPosixUID(val OptInt64) {
+	s.DefaultPosixUID = val
+}
+
+// SetDefaultPosixGid sets the value of DefaultPosixGid.
+func (s *CreateArtifactVolumeRequest) SetDefaultPosixGid(val OptInt64) {
+	s.DefaultPosixGid = val
 }
 
 // Ref: #/components/schemas/CreateCMDContextRequest
@@ -2986,6 +3377,7 @@ func (s *ErrorEnvelope) SetError(val Error) {
 
 func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
+func (*ErrorEnvelope) aPIV1ArtifactsIDGetRes()                         {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
 func (*ErrorEnvelope) aPIV1FunctionsIDAliasesAliasGetRes()             {}
 func (*ErrorEnvelope) aPIV1FunctionsIDDeleteRes()                      {}
@@ -4105,7 +4497,7 @@ type FunctionRevisionMountSource struct {
 	SourceSandboxvolumeID OptString `json:"source_sandboxvolume_id"`
 	// Immutable snapshot used to materialize this mount.
 	SnapshotID OptString `json:"snapshot_id"`
-	// Future first-class Function artifact ID.
+	// Artifact ID used to materialize this mount during revision publish.
 	ArtifactID OptString `json:"artifact_id"`
 	// Content digest for artifact-backed sources.
 	Digest OptString `json:"digest"`
@@ -6351,6 +6743,98 @@ func (o OptAffinity) Or(d Affinity) Affinity {
 	return d
 }
 
+// NewOptArtifact returns new OptArtifact with value set to v.
+func NewOptArtifact(v Artifact) OptArtifact {
+	return OptArtifact{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptArtifact is optional Artifact.
+type OptArtifact struct {
+	Value Artifact
+	Set   bool
+}
+
+// IsSet returns true if OptArtifact was set.
+func (o OptArtifact) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptArtifact) Reset() {
+	var v Artifact
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptArtifact) SetTo(v Artifact) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptArtifact) Get() (v Artifact, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptArtifact) Or(d Artifact) Artifact {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptArtifactMetadata returns new OptArtifactMetadata with value set to v.
+func NewOptArtifactMetadata(v ArtifactMetadata) OptArtifactMetadata {
+	return OptArtifactMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptArtifactMetadata is optional ArtifactMetadata.
+type OptArtifactMetadata struct {
+	Value ArtifactMetadata
+	Set   bool
+}
+
+// IsSet returns true if OptArtifactMetadata was set.
+func (o OptArtifactMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptArtifactMetadata) Reset() {
+	var v ArtifactMetadata
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptArtifactMetadata) SetTo(v ArtifactMetadata) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptArtifactMetadata) Get() (v ArtifactMetadata, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptArtifactMetadata) Or(d ArtifactMetadata) ArtifactMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptBool returns new OptBool with value set to v.
 func NewOptBool(v bool) OptBool {
 	return OptBool{
@@ -6805,6 +7289,98 @@ func (o OptCreateAPIKeyResponse) Get() (v CreateAPIKeyResponse, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptCreateAPIKeyResponse) Or(d CreateAPIKeyResponse) CreateAPIKeyResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCreateArtifactRequestMetadata returns new OptCreateArtifactRequestMetadata with value set to v.
+func NewOptCreateArtifactRequestMetadata(v CreateArtifactRequestMetadata) OptCreateArtifactRequestMetadata {
+	return OptCreateArtifactRequestMetadata{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateArtifactRequestMetadata is optional CreateArtifactRequestMetadata.
+type OptCreateArtifactRequestMetadata struct {
+	Value CreateArtifactRequestMetadata
+	Set   bool
+}
+
+// IsSet returns true if OptCreateArtifactRequestMetadata was set.
+func (o OptCreateArtifactRequestMetadata) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateArtifactRequestMetadata) Reset() {
+	var v CreateArtifactRequestMetadata
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateArtifactRequestMetadata) SetTo(v CreateArtifactRequestMetadata) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateArtifactRequestMetadata) Get() (v CreateArtifactRequestMetadata, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateArtifactRequestMetadata) Or(d CreateArtifactRequestMetadata) CreateArtifactRequestMetadata {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCreateArtifactVolumeRequest returns new OptCreateArtifactVolumeRequest with value set to v.
+func NewOptCreateArtifactVolumeRequest(v CreateArtifactVolumeRequest) OptCreateArtifactVolumeRequest {
+	return OptCreateArtifactVolumeRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateArtifactVolumeRequest is optional CreateArtifactVolumeRequest.
+type OptCreateArtifactVolumeRequest struct {
+	Value CreateArtifactVolumeRequest
+	Set   bool
+}
+
+// IsSet returns true if OptCreateArtifactVolumeRequest was set.
+func (o OptCreateArtifactVolumeRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateArtifactVolumeRequest) Reset() {
+	var v CreateArtifactVolumeRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateArtifactVolumeRequest) SetTo(v CreateArtifactVolumeRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateArtifactVolumeRequest) Get() (v CreateArtifactVolumeRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateArtifactVolumeRequest) Or(d CreateArtifactVolumeRequest) CreateArtifactVolumeRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9346,6 +9922,52 @@ func (o OptProcessType) Or(d ProcessType) ProcessType {
 	return d
 }
 
+// NewOptQueryArchiveFormat returns new OptQueryArchiveFormat with value set to v.
+func NewOptQueryArchiveFormat(v QueryArchiveFormat) OptQueryArchiveFormat {
+	return OptQueryArchiveFormat{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptQueryArchiveFormat is optional QueryArchiveFormat.
+type OptQueryArchiveFormat struct {
+	Value QueryArchiveFormat
+	Set   bool
+}
+
+// IsSet returns true if OptQueryArchiveFormat was set.
+func (o OptQueryArchiveFormat) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptQueryArchiveFormat) Reset() {
+	var v QueryArchiveFormat
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptQueryArchiveFormat) SetTo(v QueryArchiveFormat) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptQueryArchiveFormat) Get() (v QueryArchiveFormat, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptQueryArchiveFormat) Or(d QueryArchiveFormat) QueryArchiveFormat {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptREPLConfig returns new OptREPLConfig with value set to v.
 func NewOptREPLConfig(v REPLConfig) OptREPLConfig {
 	return OptREPLConfig{
@@ -10260,6 +10882,52 @@ func (o OptSandboxAppServiceRuntimeEnvVars) Get() (v SandboxAppServiceRuntimeEnv
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxAppServiceRuntimeEnvVars) Or(d SandboxAppServiceRuntimeEnvVars) SandboxAppServiceRuntimeEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxAppServiceRuntimeHTTPHookHeaders returns new OptSandboxAppServiceRuntimeHTTPHookHeaders with value set to v.
+func NewOptSandboxAppServiceRuntimeHTTPHookHeaders(v SandboxAppServiceRuntimeHTTPHookHeaders) OptSandboxAppServiceRuntimeHTTPHookHeaders {
+	return OptSandboxAppServiceRuntimeHTTPHookHeaders{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxAppServiceRuntimeHTTPHookHeaders is optional SandboxAppServiceRuntimeHTTPHookHeaders.
+type OptSandboxAppServiceRuntimeHTTPHookHeaders struct {
+	Value SandboxAppServiceRuntimeHTTPHookHeaders
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxAppServiceRuntimeHTTPHookHeaders was set.
+func (o OptSandboxAppServiceRuntimeHTTPHookHeaders) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxAppServiceRuntimeHTTPHookHeaders) Reset() {
+	var v SandboxAppServiceRuntimeHTTPHookHeaders
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxAppServiceRuntimeHTTPHookHeaders) SetTo(v SandboxAppServiceRuntimeHTTPHookHeaders) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxAppServiceRuntimeHTTPHookHeaders) Get() (v SandboxAppServiceRuntimeHTTPHookHeaders, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxAppServiceRuntimeHTTPHookHeaders) Or(d SandboxAppServiceRuntimeHTTPHookHeaders) SandboxAppServiceRuntimeHTTPHookHeaders {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11272,6 +11940,52 @@ func (o OptSuccessAPIKeyListResponseData) Get() (v SuccessAPIKeyListResponseData
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessAPIKeyListResponseData) Or(d SuccessAPIKeyListResponseData) SuccessAPIKeyListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessArtifactListResponseData returns new OptSuccessArtifactListResponseData with value set to v.
+func NewOptSuccessArtifactListResponseData(v SuccessArtifactListResponseData) OptSuccessArtifactListResponseData {
+	return OptSuccessArtifactListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessArtifactListResponseData is optional SuccessArtifactListResponseData.
+type OptSuccessArtifactListResponseData struct {
+	Value SuccessArtifactListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessArtifactListResponseData was set.
+func (o OptSuccessArtifactListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessArtifactListResponseData) Reset() {
+	var v SuccessArtifactListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessArtifactListResponseData) SetTo(v SuccessArtifactListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessArtifactListResponseData) Get() (v SuccessArtifactListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessArtifactListResponseData) Or(d SuccessArtifactListResponseData) SuccessArtifactListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12934,6 +13648,52 @@ func (o OptVolumeAccessMode) Or(d VolumeAccessMode) VolumeAccessMode {
 	return d
 }
 
+// NewOptVolumeArchiveUploadResult returns new OptVolumeArchiveUploadResult with value set to v.
+func NewOptVolumeArchiveUploadResult(v VolumeArchiveUploadResult) OptVolumeArchiveUploadResult {
+	return OptVolumeArchiveUploadResult{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeArchiveUploadResult is optional VolumeArchiveUploadResult.
+type OptVolumeArchiveUploadResult struct {
+	Value VolumeArchiveUploadResult
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeArchiveUploadResult was set.
+func (o OptVolumeArchiveUploadResult) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeArchiveUploadResult) Reset() {
+	var v VolumeArchiveUploadResult
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeArchiveUploadResult) SetTo(v VolumeArchiveUploadResult) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeArchiveUploadResult) Get() (v VolumeArchiveUploadResult, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeArchiveUploadResult) Or(d VolumeArchiveUploadResult) VolumeArchiveUploadResult {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptWarmProcessSpecEnvVars returns new OptWarmProcessSpecEnvVars with value set to v.
 func NewOptWarmProcessSpecEnvVars(v WarmProcessSpecEnvVars) OptWarmProcessSpecEnvVars {
 	return OptWarmProcessSpecEnvVars{
@@ -13607,6 +14367,47 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	switch ProtocolRuleProtocol(data) {
 	case ProtocolRuleProtocolMcp:
 		*s = ProtocolRuleProtocolMcp
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type QueryArchiveFormat string
+
+const (
+	QueryArchiveFormatTarGz QueryArchiveFormat = "tar.gz"
+	QueryArchiveFormatTar   QueryArchiveFormat = "tar"
+)
+
+// AllValues returns all QueryArchiveFormat values.
+func (QueryArchiveFormat) AllValues() []QueryArchiveFormat {
+	return []QueryArchiveFormat{
+		QueryArchiveFormatTarGz,
+		QueryArchiveFormatTar,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s QueryArchiveFormat) MarshalText() ([]byte, error) {
+	switch s {
+	case QueryArchiveFormatTarGz:
+		return []byte(s), nil
+	case QueryArchiveFormatTar:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *QueryArchiveFormat) UnmarshalText(data []byte) error {
+	switch QueryArchiveFormat(data) {
+	case QueryArchiveFormatTarGz:
+		*s = QueryArchiveFormatTarGz
+		return nil
+	case QueryArchiveFormatTar:
+		*s = QueryArchiveFormatTar
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -15105,6 +15906,10 @@ type SandboxAppServiceRuntime struct {
 	// Warm process alias or context ID used when type is warm_process. Function runtimes require this to
 	// reference an existing cmd warm process.
 	WarmProcessName OptString `json:"warm_process_name"`
+	// Blocking runtime lifecycle hooks executed by Function Gateway.
+	Hooks []SandboxAppServiceRuntimeHook `json:"hooks"`
+	// Skip Function Gateway runtime readiness probing after runtime hooks complete.
+	SkipReadinessCheck OptBool `json:"skip_readiness_check"`
 }
 
 // GetType returns the value of Type.
@@ -15132,6 +15937,16 @@ func (s *SandboxAppServiceRuntime) GetWarmProcessName() OptString {
 	return s.WarmProcessName
 }
 
+// GetHooks returns the value of Hooks.
+func (s *SandboxAppServiceRuntime) GetHooks() []SandboxAppServiceRuntimeHook {
+	return s.Hooks
+}
+
+// GetSkipReadinessCheck returns the value of SkipReadinessCheck.
+func (s *SandboxAppServiceRuntime) GetSkipReadinessCheck() OptBool {
+	return s.SkipReadinessCheck
+}
+
 // SetType sets the value of Type.
 func (s *SandboxAppServiceRuntime) SetType(val SandboxAppServiceRuntimeType) {
 	s.Type = val
@@ -15157,6 +15972,16 @@ func (s *SandboxAppServiceRuntime) SetWarmProcessName(val OptString) {
 	s.WarmProcessName = val
 }
 
+// SetHooks sets the value of Hooks.
+func (s *SandboxAppServiceRuntime) SetHooks(val []SandboxAppServiceRuntimeHook) {
+	s.Hooks = val
+}
+
+// SetSkipReadinessCheck sets the value of SkipReadinessCheck.
+func (s *SandboxAppServiceRuntime) SetSkipReadinessCheck(val OptBool) {
+	s.SkipReadinessCheck = val
+}
+
 type SandboxAppServiceRuntimeEnvVars map[string]string
 
 func (s *SandboxAppServiceRuntimeEnvVars) init() SandboxAppServiceRuntimeEnvVars {
@@ -15166,6 +15991,136 @@ func (s *SandboxAppServiceRuntimeEnvVars) init() SandboxAppServiceRuntimeEnvVars
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxAppServiceRuntimeHTTPHook
+type SandboxAppServiceRuntimeHTTPHook struct {
+	Method         OptString                                  `json:"method"`
+	Path           string                                     `json:"path"`
+	Headers        OptSandboxAppServiceRuntimeHTTPHookHeaders `json:"headers"`
+	TimeoutSeconds OptInt32                                   `json:"timeout_seconds"`
+}
+
+// GetMethod returns the value of Method.
+func (s *SandboxAppServiceRuntimeHTTPHook) GetMethod() OptString {
+	return s.Method
+}
+
+// GetPath returns the value of Path.
+func (s *SandboxAppServiceRuntimeHTTPHook) GetPath() string {
+	return s.Path
+}
+
+// GetHeaders returns the value of Headers.
+func (s *SandboxAppServiceRuntimeHTTPHook) GetHeaders() OptSandboxAppServiceRuntimeHTTPHookHeaders {
+	return s.Headers
+}
+
+// GetTimeoutSeconds returns the value of TimeoutSeconds.
+func (s *SandboxAppServiceRuntimeHTTPHook) GetTimeoutSeconds() OptInt32 {
+	return s.TimeoutSeconds
+}
+
+// SetMethod sets the value of Method.
+func (s *SandboxAppServiceRuntimeHTTPHook) SetMethod(val OptString) {
+	s.Method = val
+}
+
+// SetPath sets the value of Path.
+func (s *SandboxAppServiceRuntimeHTTPHook) SetPath(val string) {
+	s.Path = val
+}
+
+// SetHeaders sets the value of Headers.
+func (s *SandboxAppServiceRuntimeHTTPHook) SetHeaders(val OptSandboxAppServiceRuntimeHTTPHookHeaders) {
+	s.Headers = val
+}
+
+// SetTimeoutSeconds sets the value of TimeoutSeconds.
+func (s *SandboxAppServiceRuntimeHTTPHook) SetTimeoutSeconds(val OptInt32) {
+	s.TimeoutSeconds = val
+}
+
+type SandboxAppServiceRuntimeHTTPHookHeaders map[string]string
+
+func (s *SandboxAppServiceRuntimeHTTPHookHeaders) init() SandboxAppServiceRuntimeHTTPHookHeaders {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxAppServiceRuntimeHook
+type SandboxAppServiceRuntimeHook struct {
+	Name  OptString                         `json:"name"`
+	Phase SandboxAppServiceRuntimeHookPhase `json:"phase"`
+	HTTP  SandboxAppServiceRuntimeHTTPHook  `json:"http"`
+}
+
+// GetName returns the value of Name.
+func (s *SandboxAppServiceRuntimeHook) GetName() OptString {
+	return s.Name
+}
+
+// GetPhase returns the value of Phase.
+func (s *SandboxAppServiceRuntimeHook) GetPhase() SandboxAppServiceRuntimeHookPhase {
+	return s.Phase
+}
+
+// GetHTTP returns the value of HTTP.
+func (s *SandboxAppServiceRuntimeHook) GetHTTP() SandboxAppServiceRuntimeHTTPHook {
+	return s.HTTP
+}
+
+// SetName sets the value of Name.
+func (s *SandboxAppServiceRuntimeHook) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetPhase sets the value of Phase.
+func (s *SandboxAppServiceRuntimeHook) SetPhase(val SandboxAppServiceRuntimeHookPhase) {
+	s.Phase = val
+}
+
+// SetHTTP sets the value of HTTP.
+func (s *SandboxAppServiceRuntimeHook) SetHTTP(val SandboxAppServiceRuntimeHTTPHook) {
+	s.HTTP = val
+}
+
+type SandboxAppServiceRuntimeHookPhase string
+
+const (
+	SandboxAppServiceRuntimeHookPhasePostClaim SandboxAppServiceRuntimeHookPhase = "post_claim"
+)
+
+// AllValues returns all SandboxAppServiceRuntimeHookPhase values.
+func (SandboxAppServiceRuntimeHookPhase) AllValues() []SandboxAppServiceRuntimeHookPhase {
+	return []SandboxAppServiceRuntimeHookPhase{
+		SandboxAppServiceRuntimeHookPhasePostClaim,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxAppServiceRuntimeHookPhase) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxAppServiceRuntimeHookPhasePostClaim:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxAppServiceRuntimeHookPhase) UnmarshalText(data []byte) error {
+	switch SandboxAppServiceRuntimeHookPhase(data) {
+	case SandboxAppServiceRuntimeHookPhasePostClaim:
+		*s = SandboxAppServiceRuntimeHookPhasePostClaim
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Runtime strategy for restarting a service when it is restored as a function runtime.
@@ -17035,6 +17990,104 @@ const (
 func (SuccessAPIKeyListResponseSuccess) AllValues() []SuccessAPIKeyListResponseSuccess {
 	return []SuccessAPIKeyListResponseSuccess{
 		SuccessAPIKeyListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessArtifactListResponse
+type SuccessArtifactListResponse struct {
+	Success SuccessArtifactListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessArtifactListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessArtifactListResponse) GetSuccess() SuccessArtifactListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessArtifactListResponse) GetData() OptSuccessArtifactListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessArtifactListResponse) SetSuccess(val SuccessArtifactListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessArtifactListResponse) SetData(val OptSuccessArtifactListResponseData) {
+	s.Data = val
+}
+
+type SuccessArtifactListResponseData struct {
+	Artifacts []Artifact `json:"artifacts"`
+}
+
+// GetArtifacts returns the value of Artifacts.
+func (s *SuccessArtifactListResponseData) GetArtifacts() []Artifact {
+	return s.Artifacts
+}
+
+// SetArtifacts sets the value of Artifacts.
+func (s *SuccessArtifactListResponseData) SetArtifacts(val []Artifact) {
+	s.Artifacts = val
+}
+
+type SuccessArtifactListResponseSuccess bool
+
+const (
+	SuccessArtifactListResponseSuccessTrue SuccessArtifactListResponseSuccess = true
+)
+
+// AllValues returns all SuccessArtifactListResponseSuccess values.
+func (SuccessArtifactListResponseSuccess) AllValues() []SuccessArtifactListResponseSuccess {
+	return []SuccessArtifactListResponseSuccess{
+		SuccessArtifactListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessArtifactResponse
+type SuccessArtifactResponse struct {
+	Success SuccessArtifactResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptArtifact `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessArtifactResponse) GetSuccess() SuccessArtifactResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessArtifactResponse) GetData() OptArtifact {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessArtifactResponse) SetSuccess(val SuccessArtifactResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessArtifactResponse) SetData(val OptArtifact) {
+	s.Data = val
+}
+
+func (*SuccessArtifactResponse) aPIV1ArtifactsIDGetRes() {}
+
+type SuccessArtifactResponseSuccess bool
+
+const (
+	SuccessArtifactResponseSuccessTrue SuccessArtifactResponseSuccess = true
+)
+
+// AllValues returns all SuccessArtifactResponseSuccess values.
+func (SuccessArtifactResponseSuccess) AllValues() []SuccessArtifactResponseSuccess {
+	return []SuccessArtifactResponseSuccess{
+		SuccessArtifactResponseSuccessTrue,
 	}
 }
 
@@ -20025,6 +21078,47 @@ func (SuccessUserResponseSuccess) AllValues() []SuccessUserResponseSuccess {
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessVolumeArchiveUploadResponse
+type SuccessVolumeArchiveUploadResponse struct {
+	Success SuccessVolumeArchiveUploadResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptVolumeArchiveUploadResult `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeArchiveUploadResponse) GetSuccess() SuccessVolumeArchiveUploadResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeArchiveUploadResponse) GetData() OptVolumeArchiveUploadResult {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeArchiveUploadResponse) SetSuccess(val SuccessVolumeArchiveUploadResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeArchiveUploadResponse) SetData(val OptVolumeArchiveUploadResult) {
+	s.Data = val
+}
+
+type SuccessVolumeArchiveUploadResponseSuccess bool
+
+const (
+	SuccessVolumeArchiveUploadResponseSuccessTrue SuccessVolumeArchiveUploadResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeArchiveUploadResponseSuccess values.
+func (SuccessVolumeArchiveUploadResponseSuccess) AllValues() []SuccessVolumeArchiveUploadResponseSuccess {
+	return []SuccessVolumeArchiveUploadResponseSuccess{
+		SuccessVolumeArchiveUploadResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessWrittenResponse
 type SuccessWrittenResponse struct {
 	Success SuccessWrittenResponseSuccess `json:"success"`
@@ -21068,6 +22162,65 @@ func (s *VolumeAccessMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/VolumeArchiveUploadResult
+type VolumeArchiveUploadResult struct {
+	Files     int32 `json:"files"`
+	Dirs      int32 `json:"dirs"`
+	Symlinks  int32 `json:"symlinks"`
+	Bytes     int64 `json:"bytes"`
+	Overwrote int32 `json:"overwrote"`
+}
+
+// GetFiles returns the value of Files.
+func (s *VolumeArchiveUploadResult) GetFiles() int32 {
+	return s.Files
+}
+
+// GetDirs returns the value of Dirs.
+func (s *VolumeArchiveUploadResult) GetDirs() int32 {
+	return s.Dirs
+}
+
+// GetSymlinks returns the value of Symlinks.
+func (s *VolumeArchiveUploadResult) GetSymlinks() int32 {
+	return s.Symlinks
+}
+
+// GetBytes returns the value of Bytes.
+func (s *VolumeArchiveUploadResult) GetBytes() int64 {
+	return s.Bytes
+}
+
+// GetOverwrote returns the value of Overwrote.
+func (s *VolumeArchiveUploadResult) GetOverwrote() int32 {
+	return s.Overwrote
+}
+
+// SetFiles sets the value of Files.
+func (s *VolumeArchiveUploadResult) SetFiles(val int32) {
+	s.Files = val
+}
+
+// SetDirs sets the value of Dirs.
+func (s *VolumeArchiveUploadResult) SetDirs(val int32) {
+	s.Dirs = val
+}
+
+// SetSymlinks sets the value of Symlinks.
+func (s *VolumeArchiveUploadResult) SetSymlinks(val int32) {
+	s.Symlinks = val
+}
+
+// SetBytes sets the value of Bytes.
+func (s *VolumeArchiveUploadResult) SetBytes(val int64) {
+	s.Bytes = val
+}
+
+// SetOverwrote sets the value of Overwrote.
+func (s *VolumeArchiveUploadResult) SetOverwrote(val int32) {
+	s.Overwrote = val
 }
 
 // Ref: #/components/schemas/VolumeMountSpec
