@@ -1,12 +1,16 @@
 package sandbox0
 
 import (
+	"archive/tar"
 	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -76,6 +80,38 @@ func (c *Client) WriteVolumeFile(ctx context.Context, volumeID, path string, dat
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
+}
+
+// ImportVolumeArchive streams a tar archive into a volume path.
+func (c *Client) ImportVolumeArchive(ctx context.Context, volumeID, path string, archive io.Reader) (*apispec.VolumeFileArchiveImportResponse, error) {
+	resp, err := c.api.APIV1SandboxvolumesIDFilesArchivePut(ctx, apispec.APIV1SandboxvolumesIDFilesArchivePutReq{
+		Data: archive,
+	}, apispec.APIV1SandboxvolumesIDFilesArchivePutParams{
+		ID:   volumeID,
+		Path: path,
+	})
+	if err != nil {
+		return nil, err
+	}
+	data, ok := resp.Data.Get()
+	if !ok {
+		return nil, unexpectedResponseError(resp)
+	}
+	return &data, nil
+}
+
+// UploadVolumeDirectory packs a local directory as tar and imports it into a volume path.
+func (c *Client) UploadVolumeDirectory(ctx context.Context, volumeID, localPath, remotePath string) (*apispec.VolumeFileArchiveImportResponse, error) {
+	pr, pw := io.Pipe()
+	go func() {
+		if err := writeVolumeDirectoryTar(pw, localPath); err != nil {
+			_ = pw.CloseWithError(err)
+			return
+		}
+		_ = pw.Close()
+	}()
+
+	return c.ImportVolumeArchive(ctx, volumeID, remotePath, pr)
 }
 
 // MkdirVolumeFile creates a directory inside a volume.
@@ -208,6 +244,81 @@ func (c *Client) WatchVolumeFiles(ctx context.Context, volumeID, path string, re
 	}()
 
 	return events, errs, unsubscribe, nil
+}
+
+func writeVolumeDirectoryTar(w io.Writer, localPath string) error {
+	root, err := filepath.Abs(localPath)
+	if err != nil {
+		return err
+	}
+	info, err := os.Stat(root)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("local path is not a directory: %s", localPath)
+	}
+
+	tw := tar.NewWriter(w)
+	if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if path == root {
+			return nil
+		}
+
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		name := filepath.ToSlash(rel)
+		if name == "." || name == "" || strings.HasPrefix(name, "../") {
+			return nil
+		}
+
+		link := ""
+		if info.Mode()&os.ModeSymlink != 0 {
+			link, err = os.Readlink(path)
+			if err != nil {
+				return err
+			}
+		}
+
+		header, err := tar.FileInfoHeader(info, link)
+		if err != nil {
+			return err
+		}
+		header.Name = name
+		if entry.IsDir() && !strings.HasSuffix(header.Name, "/") {
+			header.Name += "/"
+		}
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if !info.Mode().IsRegular() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		_, copyErr := io.Copy(tw, file)
+		closeErr := file.Close()
+		if copyErr != nil {
+			return copyErr
+		}
+		return closeErr
+	}); err != nil {
+		_ = tw.Close()
+		return err
+	}
+	return tw.Close()
 }
 
 func decodeVolumeFileGetResponse(resp apispec.APIV1SandboxvolumesIDFilesGetRes) ([]byte, error) {

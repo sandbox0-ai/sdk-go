@@ -292,6 +292,12 @@ type APIV1SandboxvolumesIDDeleteParams struct {
 	Force OptBool `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxvolumesIDFilesArchivePutParams is parameters of PUT /api/v1/sandboxvolumes/{id}/files/archive operation.
+type APIV1SandboxvolumesIDFilesArchivePutParams struct {
+	ID   string
+	Path string
+}
+
 // APIV1SandboxvolumesIDFilesDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id}/files operation.
 type APIV1SandboxvolumesIDFilesDeleteParams struct {
 	ID   string
