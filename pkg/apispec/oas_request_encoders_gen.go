@@ -298,6 +298,16 @@ func encodeAPIV1SandboxesPostRequest(
 	return nil
 }
 
+func encodeAPIV1SandboxvolumesIDFilesArchivePutRequest(
+	req APIV1SandboxvolumesIDFilesArchivePutReq,
+	r *http.Request,
+) error {
+	const contentType = "application/x-tar"
+	body := req
+	ht.SetBody(r, body, contentType)
+	return nil
+}
+
 func encodeAPIV1SandboxvolumesIDFilesMovePostRequest(
 	req *MoveFileRequest,
 	r *http.Request,

@@ -493,6 +493,20 @@ type APIV1SandboxesIDResumePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostNotFound) aPIV1SandboxesIDResumePostRes() {}
 
+type APIV1SandboxvolumesIDFilesArchivePutReq struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxvolumesIDFilesArchivePutReq) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
 // Merged schema.
 type APIV1SandboxvolumesIDFilesGetOKApplicationJSON struct {
 	Success APIV1SandboxvolumesIDFilesGetOKApplicationJSONSuccess `json:"success"`
@@ -12934,6 +12948,52 @@ func (o OptVolumeAccessMode) Or(d VolumeAccessMode) VolumeAccessMode {
 	return d
 }
 
+// NewOptVolumeFileArchiveImportResponse returns new OptVolumeFileArchiveImportResponse with value set to v.
+func NewOptVolumeFileArchiveImportResponse(v VolumeFileArchiveImportResponse) OptVolumeFileArchiveImportResponse {
+	return OptVolumeFileArchiveImportResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeFileArchiveImportResponse is optional VolumeFileArchiveImportResponse.
+type OptVolumeFileArchiveImportResponse struct {
+	Value VolumeFileArchiveImportResponse
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeFileArchiveImportResponse was set.
+func (o OptVolumeFileArchiveImportResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeFileArchiveImportResponse) Reset() {
+	var v VolumeFileArchiveImportResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeFileArchiveImportResponse) SetTo(v VolumeFileArchiveImportResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeFileArchiveImportResponse) Get() (v VolumeFileArchiveImportResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeFileArchiveImportResponse) Or(d VolumeFileArchiveImportResponse) VolumeFileArchiveImportResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptWarmProcessSpecEnvVars returns new OptWarmProcessSpecEnvVars with value set to v.
 func NewOptWarmProcessSpecEnvVars(v WarmProcessSpecEnvVars) OptWarmProcessSpecEnvVars {
 	return OptWarmProcessSpecEnvVars{
@@ -20025,6 +20085,47 @@ func (SuccessUserResponseSuccess) AllValues() []SuccessUserResponseSuccess {
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessVolumeFileArchiveImportResponse
+type SuccessVolumeFileArchiveImportResponse struct {
+	Success SuccessVolumeFileArchiveImportResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptVolumeFileArchiveImportResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessVolumeFileArchiveImportResponse) GetSuccess() SuccessVolumeFileArchiveImportResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessVolumeFileArchiveImportResponse) GetData() OptVolumeFileArchiveImportResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessVolumeFileArchiveImportResponse) SetSuccess(val SuccessVolumeFileArchiveImportResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessVolumeFileArchiveImportResponse) SetData(val OptVolumeFileArchiveImportResponse) {
+	s.Data = val
+}
+
+type SuccessVolumeFileArchiveImportResponseSuccess bool
+
+const (
+	SuccessVolumeFileArchiveImportResponseSuccessTrue SuccessVolumeFileArchiveImportResponseSuccess = true
+)
+
+// AllValues returns all SuccessVolumeFileArchiveImportResponseSuccess values.
+func (SuccessVolumeFileArchiveImportResponseSuccess) AllValues() []SuccessVolumeFileArchiveImportResponseSuccess {
+	return []SuccessVolumeFileArchiveImportResponseSuccess{
+		SuccessVolumeFileArchiveImportResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessWrittenResponse
 type SuccessWrittenResponse struct {
 	Success SuccessWrittenResponseSuccess `json:"success"`
@@ -21068,6 +21169,54 @@ func (s *VolumeAccessMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/VolumeFileArchiveImportResponse
+type VolumeFileArchiveImportResponse struct {
+	Files       int64 `json:"files"`
+	Directories int64 `json:"directories"`
+	Symlinks    int64 `json:"symlinks"`
+	Bytes       int64 `json:"bytes"`
+}
+
+// GetFiles returns the value of Files.
+func (s *VolumeFileArchiveImportResponse) GetFiles() int64 {
+	return s.Files
+}
+
+// GetDirectories returns the value of Directories.
+func (s *VolumeFileArchiveImportResponse) GetDirectories() int64 {
+	return s.Directories
+}
+
+// GetSymlinks returns the value of Symlinks.
+func (s *VolumeFileArchiveImportResponse) GetSymlinks() int64 {
+	return s.Symlinks
+}
+
+// GetBytes returns the value of Bytes.
+func (s *VolumeFileArchiveImportResponse) GetBytes() int64 {
+	return s.Bytes
+}
+
+// SetFiles sets the value of Files.
+func (s *VolumeFileArchiveImportResponse) SetFiles(val int64) {
+	s.Files = val
+}
+
+// SetDirectories sets the value of Directories.
+func (s *VolumeFileArchiveImportResponse) SetDirectories(val int64) {
+	s.Directories = val
+}
+
+// SetSymlinks sets the value of Symlinks.
+func (s *VolumeFileArchiveImportResponse) SetSymlinks(val int64) {
+	s.Symlinks = val
+}
+
+// SetBytes sets the value of Bytes.
+func (s *VolumeFileArchiveImportResponse) SetBytes(val int64) {
+	s.Bytes = val
 }
 
 // Ref: #/components/schemas/VolumeMountSpec

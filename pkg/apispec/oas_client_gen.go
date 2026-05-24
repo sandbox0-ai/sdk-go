@@ -191,7 +191,7 @@ type Invoker interface {
 	APIV1FunctionsIDRevisionsGet(ctx context.Context, params APIV1FunctionsIDRevisionsGetParams, options ...RequestOption) (*SuccessFunctionRevisionListResponse, error)
 	// APIV1FunctionsIDRevisionsPost invokes POST /api/v1/functions/{id}/revisions operation.
 	//
-	// Create function revision from a sandbox service.
+	// Creates a function revision from a sandbox-service shortcut or an explicit FunctionRevisionSpec.
 	//
 	// POST /api/v1/functions/{id}/revisions
 	APIV1FunctionsIDRevisionsPost(ctx context.Context, request *FunctionRevisionCreateRequest, params APIV1FunctionsIDRevisionsPostParams, options ...RequestOption) (*SuccessFunctionRevisionCreateResponse, error)
@@ -223,7 +223,8 @@ type Invoker interface {
 	APIV1FunctionsIDRuntimeRestartPost(ctx context.Context, params APIV1FunctionsIDRuntimeRestartPostParams, options ...RequestOption) (*SuccessFunctionRuntimeResponse, error)
 	// APIV1FunctionsPost invokes POST /api/v1/functions operation.
 	//
-	// Creates a function, revision 1, and the production alias from an existing sandbox service.
+	// Creates a function, revision 1, and the production alias from a sandbox-service shortcut or an
+	// explicit FunctionRevisionSpec.
 	//
 	// POST /api/v1/functions
 	APIV1FunctionsPost(ctx context.Context, request *FunctionCreateRequest, options ...RequestOption) (APIV1FunctionsPostRes, error)
@@ -467,6 +468,16 @@ type Invoker interface {
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}
 	APIV1SandboxvolumesIDDelete(ctx context.Context, params APIV1SandboxvolumesIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDDeleteRes, error)
+	// APIV1SandboxvolumesIDFilesArchivePut invokes PUT /api/v1/sandboxvolumes/{id}/files/archive operation.
+	//
+	// Streams a tar archive into a volume path. The archive is extracted under the `path` query
+	// parameter.
+	// Regular files overwrite existing files. Directories are created as needed. The import is not
+	// atomic;
+	// deployment flows should import into a fresh volume when rollback is required.
+	//
+	// PUT /api/v1/sandboxvolumes/{id}/files/archive
+	APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (*SuccessVolumeFileArchiveImportResponse, error)
 	// APIV1SandboxvolumesIDFilesDelete invokes DELETE /api/v1/sandboxvolumes/{id}/files operation.
 	//
 	// Delete volume file or directory.
@@ -2845,7 +2856,7 @@ func (c *Client) sendAPIV1FunctionsIDRevisionsGet(ctx context.Context, params AP
 
 // APIV1FunctionsIDRevisionsPost invokes POST /api/v1/functions/{id}/revisions operation.
 //
-// Create function revision from a sandbox service.
+// Creates a function revision from a sandbox-service shortcut or an explicit FunctionRevisionSpec.
 //
 // POST /api/v1/functions/{id}/revisions
 func (c *Client) APIV1FunctionsIDRevisionsPost(ctx context.Context, request *FunctionRevisionCreateRequest, params APIV1FunctionsIDRevisionsPostParams, options ...RequestOption) (*SuccessFunctionRevisionCreateResponse, error) {
@@ -3438,7 +3449,8 @@ func (c *Client) sendAPIV1FunctionsIDRuntimeRestartPost(ctx context.Context, par
 
 // APIV1FunctionsPost invokes POST /api/v1/functions operation.
 //
-// Creates a function, revision 1, and the production alias from an existing sandbox service.
+// Creates a function, revision 1, and the production alias from a sandbox-service shortcut or an
+// explicit FunctionRevisionSpec.
 //
 // POST /api/v1/functions
 func (c *Client) APIV1FunctionsPost(ctx context.Context, request *FunctionCreateRequest, options ...RequestOption) (APIV1FunctionsPostRes, error) {
@@ -8024,6 +8036,144 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 	}
 
 	result, err := decodeAPIV1SandboxvolumesIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxvolumesIDFilesArchivePut invokes PUT /api/v1/sandboxvolumes/{id}/files/archive operation.
+//
+// Streams a tar archive into a volume path. The archive is extracted under the `path` query
+// parameter.
+// Regular files overwrite existing files. Directories are created as needed. The import is not
+// atomic;
+// deployment flows should import into a fresh volume when rollback is required.
+//
+// PUT /api/v1/sandboxvolumes/{id}/files/archive
+func (c *Client) APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (*SuccessVolumeFileArchiveImportResponse, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesArchivePut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, requestOptions ...RequestOption) (res *SuccessVolumeFileArchiveImportResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxvolumes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/files/archive"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "path" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "path",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Path))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxvolumesIDFilesArchivePutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxvolumesIDFilesArchivePutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxvolumesIDFilesArchivePutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
