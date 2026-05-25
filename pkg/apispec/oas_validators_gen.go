@@ -112,23 +112,6 @@ func (s *APIV1RegistryCredentialsPostUnauthorized) Validate() error {
 	return nil
 }
 
-func (s APIV1SandboxesGetStatus) Validate() error {
-	switch s {
-	case "starting":
-		return nil
-	case "running":
-		return nil
-	case "failed":
-		return nil
-	case "completed":
-		return nil
-	case "terminating":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
 func (s *APIV1SandboxesIDDeleteForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -649,6 +632,17 @@ func (s *ClaimResponse) Validate() error {
 	}
 
 	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Status.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "status",
+			Error: err,
+		})
+	}
 	if err := func() error {
 		var failures []validate.FieldError
 		for i, elem := range s.BootstrapMounts {
@@ -2284,6 +2278,17 @@ func (s *Sandbox) Validate() error {
 
 	var failures []validate.FieldError
 	if err := func() error {
+		if err := s.Status.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "status",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if err := s.PowerState.Validate(); err != nil {
 			return err
 		}
@@ -2601,6 +2606,25 @@ func (s *SandboxConfig) Validate() error {
 	return nil
 }
 
+func (s SandboxLifecycleStatus) Validate() error {
+	switch s {
+	case "starting":
+		return nil
+	case "running":
+		return nil
+	case "failed":
+		return nil
+	case "completed":
+		return nil
+	case "terminating":
+		return nil
+	case "cleaned":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *SandboxNetworkPolicy) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2835,6 +2859,36 @@ func (s *SandboxServicesUpdateRequest) Validate() error {
 	return nil
 }
 
+func (s *SandboxStatus) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Status.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "status",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *SandboxSummary) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -2867,23 +2921,6 @@ func (s *SandboxSummary) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s SandboxSummaryStatus) Validate() error {
-	switch s {
-	case "starting":
-		return nil
-	case "running":
-		return nil
-	case "failed":
-		return nil
-	case "completed":
-		return nil
-	case "terminating":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
 }
 
 func (s *SandboxTemplateSpec) Validate() error {
@@ -4898,6 +4935,24 @@ func (s *SuccessSandboxStatusResponse) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "success",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Data.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
 			Error: err,
 		})
 	}
