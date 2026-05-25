@@ -210,68 +210,6 @@ type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
 
-type APIV1SandboxesGetStatus string
-
-const (
-	APIV1SandboxesGetStatusStarting    APIV1SandboxesGetStatus = "starting"
-	APIV1SandboxesGetStatusRunning     APIV1SandboxesGetStatus = "running"
-	APIV1SandboxesGetStatusFailed      APIV1SandboxesGetStatus = "failed"
-	APIV1SandboxesGetStatusCompleted   APIV1SandboxesGetStatus = "completed"
-	APIV1SandboxesGetStatusTerminating APIV1SandboxesGetStatus = "terminating"
-)
-
-// AllValues returns all APIV1SandboxesGetStatus values.
-func (APIV1SandboxesGetStatus) AllValues() []APIV1SandboxesGetStatus {
-	return []APIV1SandboxesGetStatus{
-		APIV1SandboxesGetStatusStarting,
-		APIV1SandboxesGetStatusRunning,
-		APIV1SandboxesGetStatusFailed,
-		APIV1SandboxesGetStatusCompleted,
-		APIV1SandboxesGetStatusTerminating,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s APIV1SandboxesGetStatus) MarshalText() ([]byte, error) {
-	switch s {
-	case APIV1SandboxesGetStatusStarting:
-		return []byte(s), nil
-	case APIV1SandboxesGetStatusRunning:
-		return []byte(s), nil
-	case APIV1SandboxesGetStatusFailed:
-		return []byte(s), nil
-	case APIV1SandboxesGetStatusCompleted:
-		return []byte(s), nil
-	case APIV1SandboxesGetStatusTerminating:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *APIV1SandboxesGetStatus) UnmarshalText(data []byte) error {
-	switch APIV1SandboxesGetStatus(data) {
-	case APIV1SandboxesGetStatusStarting:
-		*s = APIV1SandboxesGetStatusStarting
-		return nil
-	case APIV1SandboxesGetStatusRunning:
-		*s = APIV1SandboxesGetStatusRunning
-		return nil
-	case APIV1SandboxesGetStatusFailed:
-		*s = APIV1SandboxesGetStatusFailed
-		return nil
-	case APIV1SandboxesGetStatusCompleted:
-		*s = APIV1SandboxesGetStatusCompleted
-		return nil
-	case APIV1SandboxesGetStatusTerminating:
-		*s = APIV1SandboxesGetStatusTerminating
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
 
@@ -994,12 +932,12 @@ func (s *ClaimRequest) SetMounts(val []ClaimMountRequest) {
 
 // Ref: #/components/schemas/ClaimResponse
 type ClaimResponse struct {
-	SandboxID       string        `json:"sandbox_id"`
-	Status          string        `json:"status"`
-	PodName         string        `json:"pod_name"`
-	Template        string        `json:"template"`
-	ClusterID       OptNilString  `json:"cluster_id"`
-	BootstrapMounts []MountStatus `json:"bootstrap_mounts"`
+	SandboxID       string                 `json:"sandbox_id"`
+	Status          SandboxLifecycleStatus `json:"status"`
+	PodName         string                 `json:"pod_name"`
+	Template        string                 `json:"template"`
+	ClusterID       OptNilString           `json:"cluster_id"`
+	BootstrapMounts []MountStatus          `json:"bootstrap_mounts"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -1008,7 +946,7 @@ func (s *ClaimResponse) GetSandboxID() string {
 }
 
 // GetStatus returns the value of Status.
-func (s *ClaimResponse) GetStatus() string {
+func (s *ClaimResponse) GetStatus() SandboxLifecycleStatus {
 	return s.Status
 }
 
@@ -1038,7 +976,7 @@ func (s *ClaimResponse) SetSandboxID(val string) {
 }
 
 // SetStatus sets the value of Status.
-func (s *ClaimResponse) SetStatus(val string) {
+func (s *ClaimResponse) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
 }
 
@@ -4296,52 +4234,6 @@ func (s *NodeSelectorTerm) SetMatchExpressions(val []NodeSelectorRequirement) {
 // SetMatchFields sets the value of MatchFields.
 func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 	s.MatchFields = val
-}
-
-// NewOptAPIV1SandboxesGetStatus returns new OptAPIV1SandboxesGetStatus with value set to v.
-func NewOptAPIV1SandboxesGetStatus(v APIV1SandboxesGetStatus) OptAPIV1SandboxesGetStatus {
-	return OptAPIV1SandboxesGetStatus{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptAPIV1SandboxesGetStatus is optional APIV1SandboxesGetStatus.
-type OptAPIV1SandboxesGetStatus struct {
-	Value APIV1SandboxesGetStatus
-	Set   bool
-}
-
-// IsSet returns true if OptAPIV1SandboxesGetStatus was set.
-func (o OptAPIV1SandboxesGetStatus) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptAPIV1SandboxesGetStatus) Reset() {
-	var v APIV1SandboxesGetStatus
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptAPIV1SandboxesGetStatus) SetTo(v APIV1SandboxesGetStatus) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptAPIV1SandboxesGetStatus) Get() (v APIV1SandboxesGetStatus, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptAPIV1SandboxesGetStatus) Or(d APIV1SandboxesGetStatus) APIV1SandboxesGetStatus {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
 }
 
 // NewOptAffinity returns new OptAffinity with value set to v.
@@ -8023,6 +7915,52 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxLifecycleStatus returns new OptSandboxLifecycleStatus with value set to v.
+func NewOptSandboxLifecycleStatus(v SandboxLifecycleStatus) OptSandboxLifecycleStatus {
+	return OptSandboxLifecycleStatus{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxLifecycleStatus is optional SandboxLifecycleStatus.
+type OptSandboxLifecycleStatus struct {
+	Value SandboxLifecycleStatus
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxLifecycleStatus was set.
+func (o OptSandboxLifecycleStatus) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxLifecycleStatus) Reset() {
+	var v SandboxLifecycleStatus
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxLifecycleStatus) SetTo(v SandboxLifecycleStatus) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxLifecycleStatus) Get() (v SandboxLifecycleStatus, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxLifecycleStatus) Or(d SandboxLifecycleStatus) SandboxLifecycleStatus {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11948,7 +11886,7 @@ type Sandbox struct {
 	TemplateID string                  `json:"template_id"`
 	TeamID     string                  `json:"team_id"`
 	UserID     OptString               `json:"user_id"`
-	Status     string                  `json:"status"`
+	Status     SandboxLifecycleStatus  `json:"status"`
 	Paused     bool                    `json:"paused"`
 	PowerState SandboxPowerState       `json:"power_state"`
 	AutoResume bool                    `json:"auto_resume"`
@@ -11985,7 +11923,7 @@ func (s *Sandbox) GetUserID() OptString {
 }
 
 // GetStatus returns the value of Status.
-func (s *Sandbox) GetStatus() string {
+func (s *Sandbox) GetStatus() SandboxLifecycleStatus {
 	return s.Status
 }
 
@@ -12065,7 +12003,7 @@ func (s *Sandbox) SetUserID(val OptString) {
 }
 
 // SetStatus sets the value of Status.
-func (s *Sandbox) SetStatus(val string) {
+func (s *Sandbox) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
 }
 
@@ -12755,6 +12693,8 @@ func (s *SandboxAppServiceView) SetPublishBlockers(val []string) {
 type SandboxConfig struct {
 	EnvVars OptSandboxConfigEnvVars `json:"env_vars"`
 	TTL     OptInt32                `json:"ttl"`
+	// Hard time-to-live in seconds. When it expires, Sandbox0 cleans the runtime pod and preserves the
+	// sandbox identity, services, and public URLs until the sandbox is explicitly deleted.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	Webhook OptWebhookConfig        `json:"webhook"`
@@ -12843,6 +12783,76 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxLifecycleStatus
+type SandboxLifecycleStatus string
+
+const (
+	SandboxLifecycleStatusStarting    SandboxLifecycleStatus = "starting"
+	SandboxLifecycleStatusRunning     SandboxLifecycleStatus = "running"
+	SandboxLifecycleStatusFailed      SandboxLifecycleStatus = "failed"
+	SandboxLifecycleStatusCompleted   SandboxLifecycleStatus = "completed"
+	SandboxLifecycleStatusTerminating SandboxLifecycleStatus = "terminating"
+	SandboxLifecycleStatusCleaned     SandboxLifecycleStatus = "cleaned"
+)
+
+// AllValues returns all SandboxLifecycleStatus values.
+func (SandboxLifecycleStatus) AllValues() []SandboxLifecycleStatus {
+	return []SandboxLifecycleStatus{
+		SandboxLifecycleStatusStarting,
+		SandboxLifecycleStatusRunning,
+		SandboxLifecycleStatusFailed,
+		SandboxLifecycleStatusCompleted,
+		SandboxLifecycleStatusTerminating,
+		SandboxLifecycleStatusCleaned,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxLifecycleStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxLifecycleStatusStarting:
+		return []byte(s), nil
+	case SandboxLifecycleStatusRunning:
+		return []byte(s), nil
+	case SandboxLifecycleStatusFailed:
+		return []byte(s), nil
+	case SandboxLifecycleStatusCompleted:
+		return []byte(s), nil
+	case SandboxLifecycleStatusTerminating:
+		return []byte(s), nil
+	case SandboxLifecycleStatusCleaned:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxLifecycleStatus) UnmarshalText(data []byte) error {
+	switch SandboxLifecycleStatus(data) {
+	case SandboxLifecycleStatusStarting:
+		*s = SandboxLifecycleStatusStarting
+		return nil
+	case SandboxLifecycleStatusRunning:
+		*s = SandboxLifecycleStatusRunning
+		return nil
+	case SandboxLifecycleStatusFailed:
+		*s = SandboxLifecycleStatusFailed
+		return nil
+	case SandboxLifecycleStatusCompleted:
+		*s = SandboxLifecycleStatusCompleted
+		return nil
+	case SandboxLifecycleStatusTerminating:
+		*s = SandboxLifecycleStatusTerminating
+		return nil
+	case SandboxLifecycleStatusCleaned:
+		*s = SandboxLifecycleStatusCleaned
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/SandboxNetworkPolicy
@@ -13436,16 +13446,16 @@ func (s *SandboxServicesUpdateRequest) SetServices(val []SandboxAppService) {
 
 // Ref: #/components/schemas/SandboxStatus
 type SandboxStatus struct {
-	SandboxID     OptString `json:"sandbox_id"`
-	TemplateID    OptString `json:"template_id"`
-	TeamID        OptString `json:"team_id"`
-	UserID        OptString `json:"user_id"`
-	PodName       OptString `json:"pod_name"`
-	Status        OptString `json:"status"`
-	ClaimedAt     OptString `json:"claimed_at"`
-	ExpiresAt     OptString `json:"expires_at"`
-	HardExpiresAt OptString `json:"hard_expires_at"`
-	CreatedAt     OptString `json:"created_at"`
+	SandboxID     OptString                 `json:"sandbox_id"`
+	TemplateID    OptString                 `json:"template_id"`
+	TeamID        OptString                 `json:"team_id"`
+	UserID        OptString                 `json:"user_id"`
+	PodName       OptString                 `json:"pod_name"`
+	Status        OptSandboxLifecycleStatus `json:"status"`
+	ClaimedAt     OptString                 `json:"claimed_at"`
+	ExpiresAt     OptString                 `json:"expires_at"`
+	HardExpiresAt OptString                 `json:"hard_expires_at"`
+	CreatedAt     OptString                 `json:"created_at"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -13474,7 +13484,7 @@ func (s *SandboxStatus) GetPodName() OptString {
 }
 
 // GetStatus returns the value of Status.
-func (s *SandboxStatus) GetStatus() OptString {
+func (s *SandboxStatus) GetStatus() OptSandboxLifecycleStatus {
 	return s.Status
 }
 
@@ -13524,7 +13534,7 @@ func (s *SandboxStatus) SetPodName(val OptString) {
 }
 
 // SetStatus sets the value of Status.
-func (s *SandboxStatus) SetStatus(val OptString) {
+func (s *SandboxStatus) SetStatus(val OptSandboxLifecycleStatus) {
 	s.Status = val
 }
 
@@ -13550,11 +13560,11 @@ func (s *SandboxStatus) SetCreatedAt(val OptString) {
 
 // Ref: #/components/schemas/SandboxSummary
 type SandboxSummary struct {
-	ID         string               `json:"id"`
-	TemplateID string               `json:"template_id"`
-	Status     SandboxSummaryStatus `json:"status"`
-	Paused     bool                 `json:"paused"`
-	PowerState SandboxPowerState    `json:"power_state"`
+	ID         string                 `json:"id"`
+	TemplateID string                 `json:"template_id"`
+	Status     SandboxLifecycleStatus `json:"status"`
+	Paused     bool                   `json:"paused"`
+	PowerState SandboxPowerState      `json:"power_state"`
 	// Cluster where sandbox runs (multi-cluster only).
 	ClusterID OptNilString `json:"cluster_id"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -13574,7 +13584,7 @@ func (s *SandboxSummary) GetTemplateID() string {
 }
 
 // GetStatus returns the value of Status.
-func (s *SandboxSummary) GetStatus() SandboxSummaryStatus {
+func (s *SandboxSummary) GetStatus() SandboxLifecycleStatus {
 	return s.Status
 }
 
@@ -13619,7 +13629,7 @@ func (s *SandboxSummary) SetTemplateID(val string) {
 }
 
 // SetStatus sets the value of Status.
-func (s *SandboxSummary) SetStatus(val SandboxSummaryStatus) {
+func (s *SandboxSummary) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
 }
 
@@ -13651,68 +13661,6 @@ func (s *SandboxSummary) SetExpiresAt(val time.Time) {
 // SetHardExpiresAt sets the value of HardExpiresAt.
 func (s *SandboxSummary) SetHardExpiresAt(val time.Time) {
 	s.HardExpiresAt = val
-}
-
-type SandboxSummaryStatus string
-
-const (
-	SandboxSummaryStatusStarting    SandboxSummaryStatus = "starting"
-	SandboxSummaryStatusRunning     SandboxSummaryStatus = "running"
-	SandboxSummaryStatusFailed      SandboxSummaryStatus = "failed"
-	SandboxSummaryStatusCompleted   SandboxSummaryStatus = "completed"
-	SandboxSummaryStatusTerminating SandboxSummaryStatus = "terminating"
-)
-
-// AllValues returns all SandboxSummaryStatus values.
-func (SandboxSummaryStatus) AllValues() []SandboxSummaryStatus {
-	return []SandboxSummaryStatus{
-		SandboxSummaryStatusStarting,
-		SandboxSummaryStatusRunning,
-		SandboxSummaryStatusFailed,
-		SandboxSummaryStatusCompleted,
-		SandboxSummaryStatusTerminating,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SandboxSummaryStatus) MarshalText() ([]byte, error) {
-	switch s {
-	case SandboxSummaryStatusStarting:
-		return []byte(s), nil
-	case SandboxSummaryStatusRunning:
-		return []byte(s), nil
-	case SandboxSummaryStatusFailed:
-		return []byte(s), nil
-	case SandboxSummaryStatusCompleted:
-		return []byte(s), nil
-	case SandboxSummaryStatusTerminating:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SandboxSummaryStatus) UnmarshalText(data []byte) error {
-	switch SandboxSummaryStatus(data) {
-	case SandboxSummaryStatusStarting:
-		*s = SandboxSummaryStatusStarting
-		return nil
-	case SandboxSummaryStatusRunning:
-		*s = SandboxSummaryStatusRunning
-		return nil
-	case SandboxSummaryStatusFailed:
-		*s = SandboxSummaryStatusFailed
-		return nil
-	case SandboxSummaryStatusCompleted:
-		*s = SandboxSummaryStatusCompleted
-		return nil
-	case SandboxSummaryStatusTerminating:
-		*s = SandboxSummaryStatusTerminating
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
 }
 
 // Ref: #/components/schemas/SandboxTemplateCondition
@@ -13995,7 +13943,9 @@ func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
 // Note: env_vars and webhook are not included as they only affect new processes or require restart.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
-	TTL     OptInt32                `json:"ttl"`
+	TTL OptInt32 `json:"ttl"`
+	// Hard time-to-live in seconds. When it expires, Sandbox0 cleans the runtime pod and preserves the
+	// sandbox identity, services, and public URLs until the sandbox is explicitly deleted.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request

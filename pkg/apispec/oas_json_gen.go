@@ -3281,7 +3281,7 @@ func (s *ClaimResponse) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("status")
-		e.Str(s.Status)
+		s.Status.Encode(e)
 	}
 	{
 		e.FieldStart("pod_name")
@@ -3342,9 +3342,7 @@ func (s *ClaimResponse) Decode(d *jx.Decoder) error {
 		case "status":
 			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				v, err := d.Str()
-				s.Status = string(v)
-				if err != nil {
+				if err := s.Status.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -14436,6 +14434,39 @@ func (s *OptSandboxConfigEnvVars) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxLifecycleStatus as json.
+func (o OptSandboxLifecycleStatus) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SandboxLifecycleStatus from json.
+func (o *OptSandboxLifecycleStatus) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxLifecycleStatus to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxLifecycleStatus) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxLifecycleStatus) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SandboxNetworkPolicy as json.
 func (o OptSandboxNetworkPolicy) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -20918,7 +20949,7 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("status")
-		e.Str(s.Status)
+		s.Status.Encode(e)
 	}
 	{
 		e.FieldStart("paused")
@@ -21057,9 +21088,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 		case "status":
 			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				v, err := d.Str()
-				s.Status = string(v)
-				if err != nil {
+				if err := s.Status.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -23106,6 +23135,54 @@ func (s *SandboxConfigEnvVars) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxLifecycleStatus as json.
+func (s SandboxLifecycleStatus) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxLifecycleStatus from json.
+func (s *SandboxLifecycleStatus) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxLifecycleStatus to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxLifecycleStatus(v) {
+	case SandboxLifecycleStatusStarting:
+		*s = SandboxLifecycleStatusStarting
+	case SandboxLifecycleStatusRunning:
+		*s = SandboxLifecycleStatusRunning
+	case SandboxLifecycleStatusFailed:
+		*s = SandboxLifecycleStatusFailed
+	case SandboxLifecycleStatusCompleted:
+		*s = SandboxLifecycleStatusCompleted
+	case SandboxLifecycleStatusTerminating:
+		*s = SandboxLifecycleStatusTerminating
+	case SandboxLifecycleStatusCleaned:
+		*s = SandboxLifecycleStatusCleaned
+	default:
+		*s = SandboxLifecycleStatus(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxLifecycleStatus) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxLifecycleStatus) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
 func (s *SandboxNetworkPolicy) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -24830,52 +24907,6 @@ func (s *SandboxSummary) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxSummary) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes SandboxSummaryStatus as json.
-func (s SandboxSummaryStatus) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes SandboxSummaryStatus from json.
-func (s *SandboxSummaryStatus) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SandboxSummaryStatus to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch SandboxSummaryStatus(v) {
-	case SandboxSummaryStatusStarting:
-		*s = SandboxSummaryStatusStarting
-	case SandboxSummaryStatusRunning:
-		*s = SandboxSummaryStatusRunning
-	case SandboxSummaryStatusFailed:
-		*s = SandboxSummaryStatusFailed
-	case SandboxSummaryStatusCompleted:
-		*s = SandboxSummaryStatusCompleted
-	case SandboxSummaryStatusTerminating:
-		*s = SandboxSummaryStatusTerminating
-	default:
-		*s = SandboxSummaryStatus(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s SandboxSummaryStatus) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SandboxSummaryStatus) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

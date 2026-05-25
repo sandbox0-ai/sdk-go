@@ -45,7 +45,7 @@ type APIV1QuotasDimensionPutParams struct {
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
 type APIV1SandboxesGetParams struct {
 	// Filter by sandbox status.
-	Status OptAPIV1SandboxesGetStatus `json:",omitempty,omitzero"`
+	Status OptSandboxLifecycleStatus `json:",omitempty,omitzero"`
 	// Filter by template ID.
 	TemplateID OptString `json:",omitempty,omitzero"`
 	// Filter by paused state.

@@ -175,7 +175,7 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 			Template:          data.Template,
 			ClusterID:         clusterID,
 			PodName:           data.PodName,
-			Status:            data.Status,
+			Status:            string(data.Status),
 			BootstrapMounts:   append([]apispec.MountStatus(nil), data.BootstrapMounts...),
 			client:            c,
 			replContextByLang: map[string]string{},
@@ -342,7 +342,7 @@ func (c *Client) ListSandboxes(ctx context.Context, opts *ListSandboxesOptions) 
 	params := apispec.APIV1SandboxesGetParams{}
 	if opts != nil {
 		if opts.Status != "" {
-			params.Status = apispec.NewOptAPIV1SandboxesGetStatus(apispec.APIV1SandboxesGetStatus(opts.Status))
+			params.Status = apispec.NewOptSandboxLifecycleStatus(apispec.SandboxLifecycleStatus(opts.Status))
 		}
 		if opts.TemplateID != "" {
 			params.TemplateID = apispec.NewOptString(opts.TemplateID)
