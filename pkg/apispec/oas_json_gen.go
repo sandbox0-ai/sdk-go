@@ -22729,9 +22729,15 @@ func (s *SandboxAppServiceView) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
+	{
+		if s.PublicURL.Set {
+			e.FieldStart("public_url")
+			s.PublicURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfSandboxAppServiceView = [8]string{
+var jsonFieldsNameOfSandboxAppServiceView = [9]string{
 	0: "id",
 	1: "display_name",
 	2: "port",
@@ -22740,6 +22746,7 @@ var jsonFieldsNameOfSandboxAppServiceView = [8]string{
 	5: "health_check",
 	6: "publishable",
 	7: "publish_blockers",
+	8: "public_url",
 }
 
 // Decode decodes SandboxAppServiceView from json.
@@ -22747,7 +22754,7 @@ func (s *SandboxAppServiceView) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode SandboxAppServiceView to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -22846,6 +22853,16 @@ func (s *SandboxAppServiceView) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"publish_blockers\"")
 			}
+		case "public_url":
+			if err := func() error {
+				s.PublicURL.Reset()
+				if err := s.PublicURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"public_url\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -22855,8 +22872,9 @@ func (s *SandboxAppServiceView) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b01010101,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
