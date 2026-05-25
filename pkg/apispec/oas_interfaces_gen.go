@@ -25,28 +25,16 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
-type APIV1FunctionsIDAliasesAliasGetRes interface {
-	aPIV1FunctionsIDAliasesAliasGetRes()
+type APIV1QuotasDimensionDeleteRes interface {
+	aPIV1QuotasDimensionDeleteRes()
 }
 
-type APIV1FunctionsIDDeleteRes interface {
-	aPIV1FunctionsIDDeleteRes()
+type APIV1QuotasDimensionGetRes interface {
+	aPIV1QuotasDimensionGetRes()
 }
 
-type APIV1FunctionsIDGetRes interface {
-	aPIV1FunctionsIDGetRes()
-}
-
-type APIV1FunctionsIDPutRes interface {
-	aPIV1FunctionsIDPutRes()
-}
-
-type APIV1FunctionsIDRevisionsRevisionNumberGetRes interface {
-	aPIV1FunctionsIDRevisionsRevisionNumberGetRes()
-}
-
-type APIV1FunctionsPostRes interface {
-	aPIV1FunctionsPostRes()
+type APIV1QuotasDimensionPutRes interface {
+	aPIV1QuotasDimensionPutRes()
 }
 
 type APIV1RegistryCredentialsPostRes interface {

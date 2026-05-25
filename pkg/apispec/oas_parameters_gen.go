@@ -27,67 +27,19 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
-// APIV1FunctionsIDAliasesAliasGetParams is parameters of GET /api/v1/functions/{id}/aliases/{alias} operation.
-type APIV1FunctionsIDAliasesAliasGetParams struct {
-	ID    string
-	Alias string
+// APIV1QuotasDimensionDeleteParams is parameters of DELETE /api/v1/quotas/{dimension} operation.
+type APIV1QuotasDimensionDeleteParams struct {
+	Dimension QuotaDimension
 }
 
-// APIV1FunctionsIDAliasesAliasPutParams is parameters of PUT /api/v1/functions/{id}/aliases/{alias} operation.
-type APIV1FunctionsIDAliasesAliasPutParams struct {
-	ID    string
-	Alias string
+// APIV1QuotasDimensionGetParams is parameters of GET /api/v1/quotas/{dimension} operation.
+type APIV1QuotasDimensionGetParams struct {
+	Dimension QuotaDimension
 }
 
-// APIV1FunctionsIDAliasesGetParams is parameters of GET /api/v1/functions/{id}/aliases operation.
-type APIV1FunctionsIDAliasesGetParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDDeleteParams is parameters of DELETE /api/v1/functions/{id} operation.
-type APIV1FunctionsIDDeleteParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDGetParams is parameters of GET /api/v1/functions/{id} operation.
-type APIV1FunctionsIDGetParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDPutParams is parameters of PUT /api/v1/functions/{id} operation.
-type APIV1FunctionsIDPutParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDRevisionsGetParams is parameters of GET /api/v1/functions/{id}/revisions operation.
-type APIV1FunctionsIDRevisionsGetParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDRevisionsPostParams is parameters of POST /api/v1/functions/{id}/revisions operation.
-type APIV1FunctionsIDRevisionsPostParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDRevisionsRevisionNumberGetParams is parameters of GET /api/v1/functions/{id}/revisions/{revision_number} operation.
-type APIV1FunctionsIDRevisionsRevisionNumberGetParams struct {
-	ID             string
-	RevisionNumber int32
-}
-
-// APIV1FunctionsIDRuntimeGetParams is parameters of GET /api/v1/functions/{id}/runtime operation.
-type APIV1FunctionsIDRuntimeGetParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDRuntimeRecyclePostParams is parameters of POST /api/v1/functions/{id}/runtime/recycle operation.
-type APIV1FunctionsIDRuntimeRecyclePostParams struct {
-	ID string
-}
-
-// APIV1FunctionsIDRuntimeRestartPostParams is parameters of POST /api/v1/functions/{id}/runtime/restart operation.
-type APIV1FunctionsIDRuntimeRestartPostParams struct {
-	ID string
+// APIV1QuotasDimensionPutParams is parameters of PUT /api/v1/quotas/{dimension} operation.
+type APIV1QuotasDimensionPutParams struct {
+	Dimension QuotaDimension
 }
 
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
