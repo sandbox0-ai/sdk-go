@@ -12607,6 +12607,8 @@ type SandboxAppServiceView struct {
 	HealthCheck     OptSandboxAppServiceHealth  `json:"health_check"`
 	Publishable     bool                        `json:"publishable"`
 	PublishBlockers []string                    `json:"publish_blockers"`
+	// Public HTTPS URL for this service when public exposure is enabled.
+	PublicURL OptString `json:"public_url"`
 }
 
 // GetID returns the value of ID.
@@ -12649,6 +12651,11 @@ func (s *SandboxAppServiceView) GetPublishBlockers() []string {
 	return s.PublishBlockers
 }
 
+// GetPublicURL returns the value of PublicURL.
+func (s *SandboxAppServiceView) GetPublicURL() OptString {
+	return s.PublicURL
+}
+
 // SetID sets the value of ID.
 func (s *SandboxAppServiceView) SetID(val string) {
 	s.ID = val
@@ -12687,6 +12694,11 @@ func (s *SandboxAppServiceView) SetPublishable(val bool) {
 // SetPublishBlockers sets the value of PublishBlockers.
 func (s *SandboxAppServiceView) SetPublishBlockers(val []string) {
 	s.PublishBlockers = val
+}
+
+// SetPublicURL sets the value of PublicURL.
+func (s *SandboxAppServiceView) SetPublicURL(val OptString) {
+	s.PublicURL = val
 }
 
 // Ref: #/components/schemas/SandboxConfig

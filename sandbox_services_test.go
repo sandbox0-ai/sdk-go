@@ -26,6 +26,7 @@ func TestSandboxServicesLifecycle(t *testing.T) {
 						"routes": []map[string]any{{"id": "api", "resume": true}},
 					},
 					"publishable": false,
+					"public_url":  "https://rs-default-api-abcde--p8080.us.sandbox0.app",
 				},
 			})
 		case http.MethodPut:
@@ -47,6 +48,9 @@ func TestSandboxServicesLifecycle(t *testing.T) {
 	}
 	if resp.SandboxID != "sb_123" || len(resp.Services) != 1 {
 		t.Fatalf("response = %+v, want one service", resp)
+	}
+	if got, want := resp.Services[0].PublicURL.Value, "https://rs-default-api-abcde--p8080.us.sandbox0.app"; !resp.Services[0].PublicURL.Set || got != want {
+		t.Fatalf("public url = %q set=%v, want %q", got, resp.Services[0].PublicURL.Set, want)
 	}
 
 	resp, err = sandbox.ClearServices(context.Background())
