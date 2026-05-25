@@ -52,50 +52,8 @@ func encodeAPIV1CredentialSourcesPostRequest(
 	return nil
 }
 
-func encodeAPIV1FunctionsIDAliasesAliasPutRequest(
-	req *FunctionAliasUpdateRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeAPIV1FunctionsIDPutRequest(
-	req *FunctionUpdateRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeAPIV1FunctionsIDRevisionsPostRequest(
-	req *FunctionRevisionCreateRequest,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeAPIV1FunctionsPostRequest(
-	req *FunctionCreateRequest,
+func encodeAPIV1QuotasDimensionPutRequest(
+	req *PutTeamQuotaRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
