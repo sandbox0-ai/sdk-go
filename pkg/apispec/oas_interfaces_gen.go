@@ -57,6 +57,10 @@ type APIV1SandboxesIDFilesPostRes interface {
 	aPIV1SandboxesIDFilesPostRes()
 }
 
+type APIV1SandboxesIDFunctionsNameInvokePostRes interface {
+	aPIV1SandboxesIDFunctionsNameInvokePostRes()
+}
+
 type APIV1SandboxesIDGetRes interface {
 	aPIV1SandboxesIDGetRes()
 }
