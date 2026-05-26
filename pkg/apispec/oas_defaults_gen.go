@@ -15,6 +15,42 @@ func (s *CreateSandboxVolumeRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *FunctionDeployRequest) setDefaults() {
+	{
+		val := bool(true)
+		s.Activate.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *FunctionRevisionMount) setDefaults() {
+	{
+		val := bool(true)
+		s.ReadOnly.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *FunctionScalePolicy) setDefaults() {
+	{
+		val := int32(1)
+		s.MaxInstances.SetTo(val)
+	}
+	{
+		val := int32(1)
+		s.TargetConcurrency.SetTo(val)
+	}
+	{
+		val := int32(300)
+		s.IdleTimeoutSeconds.SetTo(val)
+	}
+	{
+		val := int32(90)
+		s.StartupTimeoutSeconds.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxAppServiceRouteAuth) setDefaults() {
 	{
 		val := SandboxAppServiceRouteAuthMode("none")

@@ -25,6 +25,38 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
+type APIV1FunctionsDeployPostRes interface {
+	aPIV1FunctionsDeployPostRes()
+}
+
+type APIV1FunctionsGetRes interface {
+	aPIV1FunctionsGetRes()
+}
+
+type APIV1FunctionsIDActiveRevisionPutRes interface {
+	aPIV1FunctionsIDActiveRevisionPutRes()
+}
+
+type APIV1FunctionsIDDeleteRes interface {
+	aPIV1FunctionsIDDeleteRes()
+}
+
+type APIV1FunctionsIDDeployPostRes interface {
+	aPIV1FunctionsIDDeployPostRes()
+}
+
+type APIV1FunctionsIDGetRes interface {
+	aPIV1FunctionsIDGetRes()
+}
+
+type APIV1FunctionsIDPutRes interface {
+	aPIV1FunctionsIDPutRes()
+}
+
+type APIV1FunctionsIDRevisionsGetRes interface {
+	aPIV1FunctionsIDRevisionsGetRes()
+}
+
 type APIV1QuotasDimensionDeleteRes interface {
 	aPIV1QuotasDimensionDeleteRes()
 }

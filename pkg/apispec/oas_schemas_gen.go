@@ -194,6 +194,114 @@ type APIKeysPostForbidden ErrorEnvelope
 
 func (*APIKeysPostForbidden) aPIKeysPostRes() {}
 
+type APIV1FunctionsDeployPostBadRequest ErrorEnvelope
+
+func (*APIV1FunctionsDeployPostBadRequest) aPIV1FunctionsDeployPostRes() {}
+
+type APIV1FunctionsDeployPostForbidden ErrorEnvelope
+
+func (*APIV1FunctionsDeployPostForbidden) aPIV1FunctionsDeployPostRes() {}
+
+type APIV1FunctionsDeployPostNotFound ErrorEnvelope
+
+func (*APIV1FunctionsDeployPostNotFound) aPIV1FunctionsDeployPostRes() {}
+
+type APIV1FunctionsDeployPostUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsDeployPostUnauthorized) aPIV1FunctionsDeployPostRes() {}
+
+type APIV1FunctionsGetForbidden ErrorEnvelope
+
+func (*APIV1FunctionsGetForbidden) aPIV1FunctionsGetRes() {}
+
+type APIV1FunctionsGetUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsGetUnauthorized) aPIV1FunctionsGetRes() {}
+
+type APIV1FunctionsIDActiveRevisionPutBadRequest ErrorEnvelope
+
+func (*APIV1FunctionsIDActiveRevisionPutBadRequest) aPIV1FunctionsIDActiveRevisionPutRes() {}
+
+type APIV1FunctionsIDActiveRevisionPutForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDActiveRevisionPutForbidden) aPIV1FunctionsIDActiveRevisionPutRes() {}
+
+type APIV1FunctionsIDActiveRevisionPutNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDActiveRevisionPutNotFound) aPIV1FunctionsIDActiveRevisionPutRes() {}
+
+type APIV1FunctionsIDActiveRevisionPutUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDActiveRevisionPutUnauthorized) aPIV1FunctionsIDActiveRevisionPutRes() {}
+
+type APIV1FunctionsIDDeleteForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDDeleteForbidden) aPIV1FunctionsIDDeleteRes() {}
+
+type APIV1FunctionsIDDeleteNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDDeleteNotFound) aPIV1FunctionsIDDeleteRes() {}
+
+type APIV1FunctionsIDDeleteUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDDeleteUnauthorized) aPIV1FunctionsIDDeleteRes() {}
+
+type APIV1FunctionsIDDeployPostBadRequest ErrorEnvelope
+
+func (*APIV1FunctionsIDDeployPostBadRequest) aPIV1FunctionsIDDeployPostRes() {}
+
+type APIV1FunctionsIDDeployPostForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDDeployPostForbidden) aPIV1FunctionsIDDeployPostRes() {}
+
+type APIV1FunctionsIDDeployPostNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDDeployPostNotFound) aPIV1FunctionsIDDeployPostRes() {}
+
+type APIV1FunctionsIDDeployPostUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDDeployPostUnauthorized) aPIV1FunctionsIDDeployPostRes() {}
+
+type APIV1FunctionsIDGetForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDGetForbidden) aPIV1FunctionsIDGetRes() {}
+
+type APIV1FunctionsIDGetNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDGetNotFound) aPIV1FunctionsIDGetRes() {}
+
+type APIV1FunctionsIDGetUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDGetUnauthorized) aPIV1FunctionsIDGetRes() {}
+
+type APIV1FunctionsIDPutBadRequest ErrorEnvelope
+
+func (*APIV1FunctionsIDPutBadRequest) aPIV1FunctionsIDPutRes() {}
+
+type APIV1FunctionsIDPutForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDPutForbidden) aPIV1FunctionsIDPutRes() {}
+
+type APIV1FunctionsIDPutNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDPutNotFound) aPIV1FunctionsIDPutRes() {}
+
+type APIV1FunctionsIDPutUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDPutUnauthorized) aPIV1FunctionsIDPutRes() {}
+
+type APIV1FunctionsIDRevisionsGetForbidden ErrorEnvelope
+
+func (*APIV1FunctionsIDRevisionsGetForbidden) aPIV1FunctionsIDRevisionsGetRes() {}
+
+type APIV1FunctionsIDRevisionsGetNotFound ErrorEnvelope
+
+func (*APIV1FunctionsIDRevisionsGetNotFound) aPIV1FunctionsIDRevisionsGetRes() {}
+
+type APIV1FunctionsIDRevisionsGetUnauthorized ErrorEnvelope
+
+func (*APIV1FunctionsIDRevisionsGetUnauthorized) aPIV1FunctionsIDRevisionsGetRes() {}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -519,6 +627,21 @@ func (s APIV1SandboxvolumesIDFilesPostReq) Read(p []byte) (n int, err error) {
 
 // APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxvolumesIDFilesWatchGet operation.
 type APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols struct{}
+
+// Ref: #/components/schemas/ActivateFunctionRevisionRequest
+type ActivateFunctionRevisionRequest struct {
+	RevisionID string `json:"revision_id"`
+}
+
+// GetRevisionID returns the value of RevisionID.
+func (s *ActivateFunctionRevisionRequest) GetRevisionID() string {
+	return s.RevisionID
+}
+
+// SetRevisionID sets the value of RevisionID.
+func (s *ActivateFunctionRevisionRequest) SetRevisionID(val string) {
+	s.RevisionID = val
+}
 
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
@@ -3261,6 +3384,688 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
+// Ref: #/components/schemas/Function
+type Function struct {
+	ID               string              `json:"id"`
+	TeamID           string              `json:"team_id"`
+	CreatedBy        OptString           `json:"created_by"`
+	Name             string              `json:"name"`
+	Slug             string              `json:"slug"`
+	DomainLabel      string              `json:"domain_label"`
+	URL              OptString           `json:"url"`
+	ActiveRevisionID OptString           `json:"active_revision_id"`
+	Enabled          bool                `json:"enabled"`
+	Scale            FunctionScalePolicy `json:"scale"`
+	CreatedAt        time.Time           `json:"created_at"`
+	UpdatedAt        time.Time           `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *Function) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *Function) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *Function) GetCreatedBy() OptString {
+	return s.CreatedBy
+}
+
+// GetName returns the value of Name.
+func (s *Function) GetName() string {
+	return s.Name
+}
+
+// GetSlug returns the value of Slug.
+func (s *Function) GetSlug() string {
+	return s.Slug
+}
+
+// GetDomainLabel returns the value of DomainLabel.
+func (s *Function) GetDomainLabel() string {
+	return s.DomainLabel
+}
+
+// GetURL returns the value of URL.
+func (s *Function) GetURL() OptString {
+	return s.URL
+}
+
+// GetActiveRevisionID returns the value of ActiveRevisionID.
+func (s *Function) GetActiveRevisionID() OptString {
+	return s.ActiveRevisionID
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *Function) GetEnabled() bool {
+	return s.Enabled
+}
+
+// GetScale returns the value of Scale.
+func (s *Function) GetScale() FunctionScalePolicy {
+	return s.Scale
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *Function) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *Function) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *Function) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *Function) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *Function) SetCreatedBy(val OptString) {
+	s.CreatedBy = val
+}
+
+// SetName sets the value of Name.
+func (s *Function) SetName(val string) {
+	s.Name = val
+}
+
+// SetSlug sets the value of Slug.
+func (s *Function) SetSlug(val string) {
+	s.Slug = val
+}
+
+// SetDomainLabel sets the value of DomainLabel.
+func (s *Function) SetDomainLabel(val string) {
+	s.DomainLabel = val
+}
+
+// SetURL sets the value of URL.
+func (s *Function) SetURL(val OptString) {
+	s.URL = val
+}
+
+// SetActiveRevisionID sets the value of ActiveRevisionID.
+func (s *Function) SetActiveRevisionID(val OptString) {
+	s.ActiveRevisionID = val
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *Function) SetEnabled(val bool) {
+	s.Enabled = val
+}
+
+// SetScale sets the value of Scale.
+func (s *Function) SetScale(val FunctionScalePolicy) {
+	s.Scale = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *Function) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *Function) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/FunctionDeployRequest
+type FunctionDeployRequest struct {
+	Name     OptString               `json:"name"`
+	Slug     OptString               `json:"slug"`
+	Scale    OptFunctionScalePolicy  `json:"scale"`
+	Source   OptFunctionSource       `json:"source"`
+	Spec     OptFunctionRevisionSpec `json:"spec"`
+	Activate OptBool                 `json:"activate"`
+}
+
+// GetName returns the value of Name.
+func (s *FunctionDeployRequest) GetName() OptString {
+	return s.Name
+}
+
+// GetSlug returns the value of Slug.
+func (s *FunctionDeployRequest) GetSlug() OptString {
+	return s.Slug
+}
+
+// GetScale returns the value of Scale.
+func (s *FunctionDeployRequest) GetScale() OptFunctionScalePolicy {
+	return s.Scale
+}
+
+// GetSource returns the value of Source.
+func (s *FunctionDeployRequest) GetSource() OptFunctionSource {
+	return s.Source
+}
+
+// GetSpec returns the value of Spec.
+func (s *FunctionDeployRequest) GetSpec() OptFunctionRevisionSpec {
+	return s.Spec
+}
+
+// GetActivate returns the value of Activate.
+func (s *FunctionDeployRequest) GetActivate() OptBool {
+	return s.Activate
+}
+
+// SetName sets the value of Name.
+func (s *FunctionDeployRequest) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetSlug sets the value of Slug.
+func (s *FunctionDeployRequest) SetSlug(val OptString) {
+	s.Slug = val
+}
+
+// SetScale sets the value of Scale.
+func (s *FunctionDeployRequest) SetScale(val OptFunctionScalePolicy) {
+	s.Scale = val
+}
+
+// SetSource sets the value of Source.
+func (s *FunctionDeployRequest) SetSource(val OptFunctionSource) {
+	s.Source = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *FunctionDeployRequest) SetSpec(val OptFunctionRevisionSpec) {
+	s.Spec = val
+}
+
+// SetActivate sets the value of Activate.
+func (s *FunctionDeployRequest) SetActivate(val OptBool) {
+	s.Activate = val
+}
+
+// Ref: #/components/schemas/FunctionDeployResult
+type FunctionDeployResult struct {
+	Function Function         `json:"function"`
+	Revision FunctionRevision `json:"revision"`
+}
+
+// GetFunction returns the value of Function.
+func (s *FunctionDeployResult) GetFunction() Function {
+	return s.Function
+}
+
+// GetRevision returns the value of Revision.
+func (s *FunctionDeployResult) GetRevision() FunctionRevision {
+	return s.Revision
+}
+
+// SetFunction sets the value of Function.
+func (s *FunctionDeployResult) SetFunction(val Function) {
+	s.Function = val
+}
+
+// SetRevision sets the value of Revision.
+func (s *FunctionDeployResult) SetRevision(val FunctionRevision) {
+	s.Revision = val
+}
+
+// Ref: #/components/schemas/FunctionRevision
+type FunctionRevision struct {
+	ID               string                 `json:"id"`
+	FunctionID       string                 `json:"function_id"`
+	TeamID           string                 `json:"team_id"`
+	Number           int32                  `json:"number"`
+	Source           FunctionSource         `json:"source"`
+	Spec             FunctionRevisionSpec   `json:"spec"`
+	Status           FunctionRevisionStatus `json:"status"`
+	RuntimeSandboxID OptString              `json:"runtime_sandbox_id"`
+	RuntimeClusterID OptString              `json:"runtime_cluster_id"`
+	RuntimeContextID OptString              `json:"runtime_context_id"`
+	CreatedAt        time.Time              `json:"created_at"`
+	ActivatedAt      OptDateTime            `json:"activated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *FunctionRevision) GetID() string {
+	return s.ID
+}
+
+// GetFunctionID returns the value of FunctionID.
+func (s *FunctionRevision) GetFunctionID() string {
+	return s.FunctionID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *FunctionRevision) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetNumber returns the value of Number.
+func (s *FunctionRevision) GetNumber() int32 {
+	return s.Number
+}
+
+// GetSource returns the value of Source.
+func (s *FunctionRevision) GetSource() FunctionSource {
+	return s.Source
+}
+
+// GetSpec returns the value of Spec.
+func (s *FunctionRevision) GetSpec() FunctionRevisionSpec {
+	return s.Spec
+}
+
+// GetStatus returns the value of Status.
+func (s *FunctionRevision) GetStatus() FunctionRevisionStatus {
+	return s.Status
+}
+
+// GetRuntimeSandboxID returns the value of RuntimeSandboxID.
+func (s *FunctionRevision) GetRuntimeSandboxID() OptString {
+	return s.RuntimeSandboxID
+}
+
+// GetRuntimeClusterID returns the value of RuntimeClusterID.
+func (s *FunctionRevision) GetRuntimeClusterID() OptString {
+	return s.RuntimeClusterID
+}
+
+// GetRuntimeContextID returns the value of RuntimeContextID.
+func (s *FunctionRevision) GetRuntimeContextID() OptString {
+	return s.RuntimeContextID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *FunctionRevision) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetActivatedAt returns the value of ActivatedAt.
+func (s *FunctionRevision) GetActivatedAt() OptDateTime {
+	return s.ActivatedAt
+}
+
+// SetID sets the value of ID.
+func (s *FunctionRevision) SetID(val string) {
+	s.ID = val
+}
+
+// SetFunctionID sets the value of FunctionID.
+func (s *FunctionRevision) SetFunctionID(val string) {
+	s.FunctionID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *FunctionRevision) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetNumber sets the value of Number.
+func (s *FunctionRevision) SetNumber(val int32) {
+	s.Number = val
+}
+
+// SetSource sets the value of Source.
+func (s *FunctionRevision) SetSource(val FunctionSource) {
+	s.Source = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *FunctionRevision) SetSpec(val FunctionRevisionSpec) {
+	s.Spec = val
+}
+
+// SetStatus sets the value of Status.
+func (s *FunctionRevision) SetStatus(val FunctionRevisionStatus) {
+	s.Status = val
+}
+
+// SetRuntimeSandboxID sets the value of RuntimeSandboxID.
+func (s *FunctionRevision) SetRuntimeSandboxID(val OptString) {
+	s.RuntimeSandboxID = val
+}
+
+// SetRuntimeClusterID sets the value of RuntimeClusterID.
+func (s *FunctionRevision) SetRuntimeClusterID(val OptString) {
+	s.RuntimeClusterID = val
+}
+
+// SetRuntimeContextID sets the value of RuntimeContextID.
+func (s *FunctionRevision) SetRuntimeContextID(val OptString) {
+	s.RuntimeContextID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *FunctionRevision) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetActivatedAt sets the value of ActivatedAt.
+func (s *FunctionRevision) SetActivatedAt(val OptDateTime) {
+	s.ActivatedAt = val
+}
+
+// Ref: #/components/schemas/FunctionRevisionMount
+type FunctionRevisionMount struct {
+	SnapshotID string `json:"snapshot_id"`
+	MountPath  string `json:"mount_path"`
+	// Function snapshot mounts are immutable and are materialized as read-only volumes at runtime.
+	ReadOnly OptBool `json:"read_only"`
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *FunctionRevisionMount) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *FunctionRevisionMount) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetReadOnly returns the value of ReadOnly.
+func (s *FunctionRevisionMount) GetReadOnly() OptBool {
+	return s.ReadOnly
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *FunctionRevisionMount) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *FunctionRevisionMount) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetReadOnly sets the value of ReadOnly.
+func (s *FunctionRevisionMount) SetReadOnly(val OptBool) {
+	s.ReadOnly = val
+}
+
+// Canonical runtime contract compiled from every function deploy mode.
+// Ref: #/components/schemas/FunctionRevisionSpec
+type FunctionRevisionSpec struct {
+	Template string                         `json:"template"`
+	Service  SandboxAppService              `json:"service"`
+	Mounts   []FunctionRevisionMount        `json:"mounts"`
+	EnvVars  OptFunctionRevisionSpecEnvVars `json:"env_vars"`
+}
+
+// GetTemplate returns the value of Template.
+func (s *FunctionRevisionSpec) GetTemplate() string {
+	return s.Template
+}
+
+// GetService returns the value of Service.
+func (s *FunctionRevisionSpec) GetService() SandboxAppService {
+	return s.Service
+}
+
+// GetMounts returns the value of Mounts.
+func (s *FunctionRevisionSpec) GetMounts() []FunctionRevisionMount {
+	return s.Mounts
+}
+
+// GetEnvVars returns the value of EnvVars.
+func (s *FunctionRevisionSpec) GetEnvVars() OptFunctionRevisionSpecEnvVars {
+	return s.EnvVars
+}
+
+// SetTemplate sets the value of Template.
+func (s *FunctionRevisionSpec) SetTemplate(val string) {
+	s.Template = val
+}
+
+// SetService sets the value of Service.
+func (s *FunctionRevisionSpec) SetService(val SandboxAppService) {
+	s.Service = val
+}
+
+// SetMounts sets the value of Mounts.
+func (s *FunctionRevisionSpec) SetMounts(val []FunctionRevisionMount) {
+	s.Mounts = val
+}
+
+// SetEnvVars sets the value of EnvVars.
+func (s *FunctionRevisionSpec) SetEnvVars(val OptFunctionRevisionSpecEnvVars) {
+	s.EnvVars = val
+}
+
+type FunctionRevisionSpecEnvVars map[string]string
+
+func (s *FunctionRevisionSpecEnvVars) init() FunctionRevisionSpecEnvVars {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/FunctionRevisionStatus
+type FunctionRevisionStatus string
+
+const (
+	FunctionRevisionStatusCreated FunctionRevisionStatus = "created"
+	FunctionRevisionStatusActive  FunctionRevisionStatus = "active"
+	FunctionRevisionStatusFailed  FunctionRevisionStatus = "failed"
+)
+
+// AllValues returns all FunctionRevisionStatus values.
+func (FunctionRevisionStatus) AllValues() []FunctionRevisionStatus {
+	return []FunctionRevisionStatus{
+		FunctionRevisionStatusCreated,
+		FunctionRevisionStatusActive,
+		FunctionRevisionStatusFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionRevisionStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionRevisionStatusCreated:
+		return []byte(s), nil
+	case FunctionRevisionStatusActive:
+		return []byte(s), nil
+	case FunctionRevisionStatusFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionRevisionStatus) UnmarshalText(data []byte) error {
+	switch FunctionRevisionStatus(data) {
+	case FunctionRevisionStatusCreated:
+		*s = FunctionRevisionStatusCreated
+		return nil
+	case FunctionRevisionStatusActive:
+		*s = FunctionRevisionStatusActive
+		return nil
+	case FunctionRevisionStatusFailed:
+		*s = FunctionRevisionStatusFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Scale-to-zero policy. Functions do not have a minimum idle instance count.
+// Ref: #/components/schemas/FunctionScalePolicy
+type FunctionScalePolicy struct {
+	MaxInstances      OptInt32 `json:"max_instances"`
+	TargetConcurrency OptInt32 `json:"target_concurrency"`
+	// Seconds of inactivity before the runtime sandbox can scale back to zero.
+	IdleTimeoutSeconds OptInt32 `json:"idle_timeout_seconds"`
+	// Maximum seconds to wait for a cold-started service health check.
+	StartupTimeoutSeconds OptInt32 `json:"startup_timeout_seconds"`
+}
+
+// GetMaxInstances returns the value of MaxInstances.
+func (s *FunctionScalePolicy) GetMaxInstances() OptInt32 {
+	return s.MaxInstances
+}
+
+// GetTargetConcurrency returns the value of TargetConcurrency.
+func (s *FunctionScalePolicy) GetTargetConcurrency() OptInt32 {
+	return s.TargetConcurrency
+}
+
+// GetIdleTimeoutSeconds returns the value of IdleTimeoutSeconds.
+func (s *FunctionScalePolicy) GetIdleTimeoutSeconds() OptInt32 {
+	return s.IdleTimeoutSeconds
+}
+
+// GetStartupTimeoutSeconds returns the value of StartupTimeoutSeconds.
+func (s *FunctionScalePolicy) GetStartupTimeoutSeconds() OptInt32 {
+	return s.StartupTimeoutSeconds
+}
+
+// SetMaxInstances sets the value of MaxInstances.
+func (s *FunctionScalePolicy) SetMaxInstances(val OptInt32) {
+	s.MaxInstances = val
+}
+
+// SetTargetConcurrency sets the value of TargetConcurrency.
+func (s *FunctionScalePolicy) SetTargetConcurrency(val OptInt32) {
+	s.TargetConcurrency = val
+}
+
+// SetIdleTimeoutSeconds sets the value of IdleTimeoutSeconds.
+func (s *FunctionScalePolicy) SetIdleTimeoutSeconds(val OptInt32) {
+	s.IdleTimeoutSeconds = val
+}
+
+// SetStartupTimeoutSeconds sets the value of StartupTimeoutSeconds.
+func (s *FunctionScalePolicy) SetStartupTimeoutSeconds(val OptInt32) {
+	s.StartupTimeoutSeconds = val
+}
+
+// Ref: #/components/schemas/FunctionSource
+type FunctionSource struct {
+	Type           FunctionSourceType              `json:"type"`
+	SandboxService OptSandboxServiceFunctionSource `json:"sandbox_service"`
+	Snapshot       OptSnapshotFunctionSource       `json:"snapshot"`
+}
+
+// GetType returns the value of Type.
+func (s *FunctionSource) GetType() FunctionSourceType {
+	return s.Type
+}
+
+// GetSandboxService returns the value of SandboxService.
+func (s *FunctionSource) GetSandboxService() OptSandboxServiceFunctionSource {
+	return s.SandboxService
+}
+
+// GetSnapshot returns the value of Snapshot.
+func (s *FunctionSource) GetSnapshot() OptSnapshotFunctionSource {
+	return s.Snapshot
+}
+
+// SetType sets the value of Type.
+func (s *FunctionSource) SetType(val FunctionSourceType) {
+	s.Type = val
+}
+
+// SetSandboxService sets the value of SandboxService.
+func (s *FunctionSource) SetSandboxService(val OptSandboxServiceFunctionSource) {
+	s.SandboxService = val
+}
+
+// SetSnapshot sets the value of Snapshot.
+func (s *FunctionSource) SetSnapshot(val OptSnapshotFunctionSource) {
+	s.Snapshot = val
+}
+
+// Ref: #/components/schemas/FunctionSourceType
+type FunctionSourceType string
+
+const (
+	FunctionSourceTypeSandboxService FunctionSourceType = "sandbox_service"
+	FunctionSourceTypeSnapshot       FunctionSourceType = "snapshot"
+)
+
+// AllValues returns all FunctionSourceType values.
+func (FunctionSourceType) AllValues() []FunctionSourceType {
+	return []FunctionSourceType{
+		FunctionSourceTypeSandboxService,
+		FunctionSourceTypeSnapshot,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s FunctionSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case FunctionSourceTypeSandboxService:
+		return []byte(s), nil
+	case FunctionSourceTypeSnapshot:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *FunctionSourceType) UnmarshalText(data []byte) error {
+	switch FunctionSourceType(data) {
+	case FunctionSourceTypeSandboxService:
+		*s = FunctionSourceTypeSandboxService
+		return nil
+	case FunctionSourceTypeSnapshot:
+		*s = FunctionSourceTypeSnapshot
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/FunctionUpdateRequest
+type FunctionUpdateRequest struct {
+	Name    OptString              `json:"name"`
+	Enabled OptBool                `json:"enabled"`
+	Scale   OptFunctionScalePolicy `json:"scale"`
+}
+
+// GetName returns the value of Name.
+func (s *FunctionUpdateRequest) GetName() OptString {
+	return s.Name
+}
+
+// GetEnabled returns the value of Enabled.
+func (s *FunctionUpdateRequest) GetEnabled() OptBool {
+	return s.Enabled
+}
+
+// GetScale returns the value of Scale.
+func (s *FunctionUpdateRequest) GetScale() OptFunctionScalePolicy {
+	return s.Scale
+}
+
+// SetName sets the value of Name.
+func (s *FunctionUpdateRequest) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetEnabled sets the value of Enabled.
+func (s *FunctionUpdateRequest) SetEnabled(val OptBool) {
+	s.Enabled = val
+}
+
+// SetScale sets the value of Scale.
+func (s *FunctionUpdateRequest) SetScale(val OptFunctionScalePolicy) {
+	s.Scale = val
+}
+
 // Ref: #/components/schemas/GatewayMetadata
 type GatewayMetadata struct {
 	GatewayMode GatewayMetadataGatewayMode `json:"gateway_mode"`
@@ -5656,6 +6461,282 @@ func (o OptForkVolumeRequest) Get() (v ForkVolumeRequest, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunction returns new OptFunction with value set to v.
+func NewOptFunction(v Function) OptFunction {
+	return OptFunction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunction is optional Function.
+type OptFunction struct {
+	Value Function
+	Set   bool
+}
+
+// IsSet returns true if OptFunction was set.
+func (o OptFunction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunction) Reset() {
+	var v Function
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunction) SetTo(v Function) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunction) Get() (v Function, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunction) Or(d Function) Function {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionDeployResult returns new OptFunctionDeployResult with value set to v.
+func NewOptFunctionDeployResult(v FunctionDeployResult) OptFunctionDeployResult {
+	return OptFunctionDeployResult{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionDeployResult is optional FunctionDeployResult.
+type OptFunctionDeployResult struct {
+	Value FunctionDeployResult
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionDeployResult was set.
+func (o OptFunctionDeployResult) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionDeployResult) Reset() {
+	var v FunctionDeployResult
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionDeployResult) SetTo(v FunctionDeployResult) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionDeployResult) Get() (v FunctionDeployResult, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionDeployResult) Or(d FunctionDeployResult) FunctionDeployResult {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionRevisionSpec returns new OptFunctionRevisionSpec with value set to v.
+func NewOptFunctionRevisionSpec(v FunctionRevisionSpec) OptFunctionRevisionSpec {
+	return OptFunctionRevisionSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionSpec is optional FunctionRevisionSpec.
+type OptFunctionRevisionSpec struct {
+	Value FunctionRevisionSpec
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionSpec was set.
+func (o OptFunctionRevisionSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionSpec) Reset() {
+	var v FunctionRevisionSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionSpec) SetTo(v FunctionRevisionSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionSpec) Get() (v FunctionRevisionSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionSpec) Or(d FunctionRevisionSpec) FunctionRevisionSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionRevisionSpecEnvVars returns new OptFunctionRevisionSpecEnvVars with value set to v.
+func NewOptFunctionRevisionSpecEnvVars(v FunctionRevisionSpecEnvVars) OptFunctionRevisionSpecEnvVars {
+	return OptFunctionRevisionSpecEnvVars{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionRevisionSpecEnvVars is optional FunctionRevisionSpecEnvVars.
+type OptFunctionRevisionSpecEnvVars struct {
+	Value FunctionRevisionSpecEnvVars
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionRevisionSpecEnvVars was set.
+func (o OptFunctionRevisionSpecEnvVars) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionRevisionSpecEnvVars) Reset() {
+	var v FunctionRevisionSpecEnvVars
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionRevisionSpecEnvVars) SetTo(v FunctionRevisionSpecEnvVars) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionRevisionSpecEnvVars) Get() (v FunctionRevisionSpecEnvVars, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionRevisionSpecEnvVars) Or(d FunctionRevisionSpecEnvVars) FunctionRevisionSpecEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionScalePolicy returns new OptFunctionScalePolicy with value set to v.
+func NewOptFunctionScalePolicy(v FunctionScalePolicy) OptFunctionScalePolicy {
+	return OptFunctionScalePolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionScalePolicy is optional FunctionScalePolicy.
+type OptFunctionScalePolicy struct {
+	Value FunctionScalePolicy
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionScalePolicy was set.
+func (o OptFunctionScalePolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionScalePolicy) Reset() {
+	var v FunctionScalePolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionScalePolicy) SetTo(v FunctionScalePolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionScalePolicy) Get() (v FunctionScalePolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionScalePolicy) Or(d FunctionScalePolicy) FunctionScalePolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptFunctionSource returns new OptFunctionSource with value set to v.
+func NewOptFunctionSource(v FunctionSource) OptFunctionSource {
+	return OptFunctionSource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptFunctionSource is optional FunctionSource.
+type OptFunctionSource struct {
+	Value FunctionSource
+	Set   bool
+}
+
+// IsSet returns true if OptFunctionSource was set.
+func (o OptFunctionSource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptFunctionSource) Reset() {
+	var v FunctionSource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptFunctionSource) SetTo(v FunctionSource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptFunctionSource) Get() (v FunctionSource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptFunctionSource) Or(d FunctionSource) FunctionSource {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8243,6 +9324,52 @@ func (o OptSandboxSSHConnection) Or(d SandboxSSHConnection) SandboxSSHConnection
 	return d
 }
 
+// NewOptSandboxServiceFunctionSource returns new OptSandboxServiceFunctionSource with value set to v.
+func NewOptSandboxServiceFunctionSource(v SandboxServiceFunctionSource) OptSandboxServiceFunctionSource {
+	return OptSandboxServiceFunctionSource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxServiceFunctionSource is optional SandboxServiceFunctionSource.
+type OptSandboxServiceFunctionSource struct {
+	Value SandboxServiceFunctionSource
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxServiceFunctionSource was set.
+func (o OptSandboxServiceFunctionSource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxServiceFunctionSource) Reset() {
+	var v SandboxServiceFunctionSource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxServiceFunctionSource) SetTo(v SandboxServiceFunctionSource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxServiceFunctionSource) Get() (v SandboxServiceFunctionSource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxServiceFunctionSource) Or(d SandboxServiceFunctionSource) SandboxServiceFunctionSource {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxStatus returns new OptSandboxStatus with value set to v.
 func NewOptSandboxStatus(v SandboxStatus) OptSandboxStatus {
 	return OptSandboxStatus{
@@ -8559,6 +9686,52 @@ func (o OptSnapshot) Get() (v Snapshot, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSnapshot) Or(d Snapshot) Snapshot {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSnapshotFunctionSource returns new OptSnapshotFunctionSource with value set to v.
+func NewOptSnapshotFunctionSource(v SnapshotFunctionSource) OptSnapshotFunctionSource {
+	return OptSnapshotFunctionSource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSnapshotFunctionSource is optional SnapshotFunctionSource.
+type OptSnapshotFunctionSource struct {
+	Value SnapshotFunctionSource
+	Set   bool
+}
+
+// IsSet returns true if OptSnapshotFunctionSource was set.
+func (o OptSnapshotFunctionSource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSnapshotFunctionSource) Reset() {
+	var v SnapshotFunctionSource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSnapshotFunctionSource) SetTo(v SnapshotFunctionSource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSnapshotFunctionSource) Get() (v SnapshotFunctionSource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSnapshotFunctionSource) Or(d SnapshotFunctionSource) SnapshotFunctionSource {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9157,6 +10330,98 @@ func (o OptSuccessFileListResponseData) Get() (v SuccessFileListResponseData, ok
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessFileListResponseData) Or(d SuccessFileListResponseData) SuccessFileListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessFunctionListResponseData returns new OptSuccessFunctionListResponseData with value set to v.
+func NewOptSuccessFunctionListResponseData(v SuccessFunctionListResponseData) OptSuccessFunctionListResponseData {
+	return OptSuccessFunctionListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessFunctionListResponseData is optional SuccessFunctionListResponseData.
+type OptSuccessFunctionListResponseData struct {
+	Value SuccessFunctionListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessFunctionListResponseData was set.
+func (o OptSuccessFunctionListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessFunctionListResponseData) Reset() {
+	var v SuccessFunctionListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessFunctionListResponseData) SetTo(v SuccessFunctionListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessFunctionListResponseData) Get() (v SuccessFunctionListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessFunctionListResponseData) Or(d SuccessFunctionListResponseData) SuccessFunctionListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessFunctionRevisionListResponseData returns new OptSuccessFunctionRevisionListResponseData with value set to v.
+func NewOptSuccessFunctionRevisionListResponseData(v SuccessFunctionRevisionListResponseData) OptSuccessFunctionRevisionListResponseData {
+	return OptSuccessFunctionRevisionListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessFunctionRevisionListResponseData is optional SuccessFunctionRevisionListResponseData.
+type OptSuccessFunctionRevisionListResponseData struct {
+	Value SuccessFunctionRevisionListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessFunctionRevisionListResponseData was set.
+func (o OptSuccessFunctionRevisionListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessFunctionRevisionListResponseData) Reset() {
+	var v SuccessFunctionRevisionListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessFunctionRevisionListResponseData) SetTo(v SuccessFunctionRevisionListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessFunctionRevisionListResponseData) Get() (v SuccessFunctionRevisionListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessFunctionRevisionListResponseData) Or(d SuccessFunctionRevisionListResponseData) SuccessFunctionRevisionListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -13441,6 +14706,32 @@ func (s *SandboxSSHConnection) SetUsername(val string) {
 	s.Username = val
 }
 
+// Ref: #/components/schemas/SandboxServiceFunctionSource
+type SandboxServiceFunctionSource struct {
+	SandboxID string `json:"sandbox_id"`
+	ServiceID string `json:"service_id"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxServiceFunctionSource) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetServiceID returns the value of ServiceID.
+func (s *SandboxServiceFunctionSource) GetServiceID() string {
+	return s.ServiceID
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxServiceFunctionSource) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetServiceID sets the value of ServiceID.
+func (s *SandboxServiceFunctionSource) SetServiceID(val string) {
+	s.ServiceID = val
+}
+
 // Ref: #/components/schemas/SandboxServicesUpdateRequest
 type SandboxServicesUpdateRequest struct {
 	Services []SandboxAppService `json:"services"`
@@ -14268,6 +15559,21 @@ func (s *Snapshot) SetExpiresAt(val OptNilString) {
 	s.ExpiresAt = val
 }
 
+// Ref: #/components/schemas/SnapshotFunctionSource
+type SnapshotFunctionSource struct {
+	SnapshotIds []string `json:"snapshot_ids"`
+}
+
+// GetSnapshotIds returns the value of SnapshotIds.
+func (s *SnapshotFunctionSource) GetSnapshotIds() []string {
+	return s.SnapshotIds
+}
+
+// SetSnapshotIds sets the value of SnapshotIds.
+func (s *SnapshotFunctionSource) SetSnapshotIds(val []string) {
+	s.SnapshotIds = val
+}
+
 // Ref: #/components/schemas/StaticHeadersSourceSpec
 type StaticHeadersSourceSpec struct {
 	Values OptStaticHeadersSourceSpecValues `json:"values"`
@@ -14988,6 +16294,7 @@ func (s *SuccessDeletedResponse) SetData(val OptSuccessDeletedResponseData) {
 	s.Data = val
 }
 
+func (*SuccessDeletedResponse) aPIV1FunctionsIDDeleteRes()      {}
 func (*SuccessDeletedResponse) aPIV1QuotasDimensionDeleteRes()  {}
 func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes() {}
 
@@ -15197,6 +16504,209 @@ const (
 func (SuccessFileStatResponseSuccess) AllValues() []SuccessFileStatResponseSuccess {
 	return []SuccessFileStatResponseSuccess{
 		SuccessFileStatResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessFunctionDeployResultResponse
+type SuccessFunctionDeployResultResponse struct {
+	Success SuccessFunctionDeployResultResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptFunctionDeployResult `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessFunctionDeployResultResponse) GetSuccess() SuccessFunctionDeployResultResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessFunctionDeployResultResponse) GetData() OptFunctionDeployResult {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessFunctionDeployResultResponse) SetSuccess(val SuccessFunctionDeployResultResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessFunctionDeployResultResponse) SetData(val OptFunctionDeployResult) {
+	s.Data = val
+}
+
+func (*SuccessFunctionDeployResultResponse) aPIV1FunctionsDeployPostRes()          {}
+func (*SuccessFunctionDeployResultResponse) aPIV1FunctionsIDActiveRevisionPutRes() {}
+func (*SuccessFunctionDeployResultResponse) aPIV1FunctionsIDDeployPostRes()        {}
+
+type SuccessFunctionDeployResultResponseSuccess bool
+
+const (
+	SuccessFunctionDeployResultResponseSuccessTrue SuccessFunctionDeployResultResponseSuccess = true
+)
+
+// AllValues returns all SuccessFunctionDeployResultResponseSuccess values.
+func (SuccessFunctionDeployResultResponseSuccess) AllValues() []SuccessFunctionDeployResultResponseSuccess {
+	return []SuccessFunctionDeployResultResponseSuccess{
+		SuccessFunctionDeployResultResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessFunctionListResponse
+type SuccessFunctionListResponse struct {
+	Success SuccessFunctionListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessFunctionListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessFunctionListResponse) GetSuccess() SuccessFunctionListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessFunctionListResponse) GetData() OptSuccessFunctionListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessFunctionListResponse) SetSuccess(val SuccessFunctionListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessFunctionListResponse) SetData(val OptSuccessFunctionListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessFunctionListResponse) aPIV1FunctionsGetRes() {}
+
+type SuccessFunctionListResponseData struct {
+	Functions []Function `json:"functions"`
+}
+
+// GetFunctions returns the value of Functions.
+func (s *SuccessFunctionListResponseData) GetFunctions() []Function {
+	return s.Functions
+}
+
+// SetFunctions sets the value of Functions.
+func (s *SuccessFunctionListResponseData) SetFunctions(val []Function) {
+	s.Functions = val
+}
+
+type SuccessFunctionListResponseSuccess bool
+
+const (
+	SuccessFunctionListResponseSuccessTrue SuccessFunctionListResponseSuccess = true
+)
+
+// AllValues returns all SuccessFunctionListResponseSuccess values.
+func (SuccessFunctionListResponseSuccess) AllValues() []SuccessFunctionListResponseSuccess {
+	return []SuccessFunctionListResponseSuccess{
+		SuccessFunctionListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessFunctionResponse
+type SuccessFunctionResponse struct {
+	Success SuccessFunctionResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptFunction `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessFunctionResponse) GetSuccess() SuccessFunctionResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessFunctionResponse) GetData() OptFunction {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessFunctionResponse) SetSuccess(val SuccessFunctionResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessFunctionResponse) SetData(val OptFunction) {
+	s.Data = val
+}
+
+func (*SuccessFunctionResponse) aPIV1FunctionsIDGetRes() {}
+func (*SuccessFunctionResponse) aPIV1FunctionsIDPutRes() {}
+
+type SuccessFunctionResponseSuccess bool
+
+const (
+	SuccessFunctionResponseSuccessTrue SuccessFunctionResponseSuccess = true
+)
+
+// AllValues returns all SuccessFunctionResponseSuccess values.
+func (SuccessFunctionResponseSuccess) AllValues() []SuccessFunctionResponseSuccess {
+	return []SuccessFunctionResponseSuccess{
+		SuccessFunctionResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessFunctionRevisionListResponse
+type SuccessFunctionRevisionListResponse struct {
+	Success SuccessFunctionRevisionListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessFunctionRevisionListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessFunctionRevisionListResponse) GetSuccess() SuccessFunctionRevisionListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessFunctionRevisionListResponse) GetData() OptSuccessFunctionRevisionListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessFunctionRevisionListResponse) SetSuccess(val SuccessFunctionRevisionListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessFunctionRevisionListResponse) SetData(val OptSuccessFunctionRevisionListResponseData) {
+	s.Data = val
+}
+
+func (*SuccessFunctionRevisionListResponse) aPIV1FunctionsIDRevisionsGetRes() {}
+
+type SuccessFunctionRevisionListResponseData struct {
+	Revisions []FunctionRevision `json:"revisions"`
+}
+
+// GetRevisions returns the value of Revisions.
+func (s *SuccessFunctionRevisionListResponseData) GetRevisions() []FunctionRevision {
+	return s.Revisions
+}
+
+// SetRevisions sets the value of Revisions.
+func (s *SuccessFunctionRevisionListResponseData) SetRevisions(val []FunctionRevision) {
+	s.Revisions = val
+}
+
+type SuccessFunctionRevisionListResponseSuccess bool
+
+const (
+	SuccessFunctionRevisionListResponseSuccessTrue SuccessFunctionRevisionListResponseSuccess = true
+)
+
+// AllValues returns all SuccessFunctionRevisionListResponseSuccess values.
+func (SuccessFunctionRevisionListResponseSuccess) AllValues() []SuccessFunctionRevisionListResponseSuccess {
+	return []SuccessFunctionRevisionListResponseSuccess{
+		SuccessFunctionRevisionListResponseSuccessTrue,
 	}
 }
 

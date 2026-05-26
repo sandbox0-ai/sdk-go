@@ -27,6 +27,42 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
+// APIV1FunctionsIDActiveRevisionPutParams is parameters of PUT /api/v1/functions/{id}/active-revision operation.
+type APIV1FunctionsIDActiveRevisionPutParams struct {
+	// Function ID or slug.
+	ID string
+}
+
+// APIV1FunctionsIDDeleteParams is parameters of DELETE /api/v1/functions/{id} operation.
+type APIV1FunctionsIDDeleteParams struct {
+	// Function ID or slug.
+	ID string
+}
+
+// APIV1FunctionsIDDeployPostParams is parameters of POST /api/v1/functions/{id}/deploy operation.
+type APIV1FunctionsIDDeployPostParams struct {
+	// Function ID or slug.
+	ID string
+}
+
+// APIV1FunctionsIDGetParams is parameters of GET /api/v1/functions/{id} operation.
+type APIV1FunctionsIDGetParams struct {
+	// Function ID or slug.
+	ID string
+}
+
+// APIV1FunctionsIDPutParams is parameters of PUT /api/v1/functions/{id} operation.
+type APIV1FunctionsIDPutParams struct {
+	// Function ID or slug.
+	ID string
+}
+
+// APIV1FunctionsIDRevisionsGetParams is parameters of GET /api/v1/functions/{id}/revisions operation.
+type APIV1FunctionsIDRevisionsGetParams struct {
+	// Function ID or slug.
+	ID string
+}
+
 // APIV1QuotasDimensionDeleteParams is parameters of DELETE /api/v1/quotas/{dimension} operation.
 type APIV1QuotasDimensionDeleteParams struct {
 	Dimension QuotaDimension
