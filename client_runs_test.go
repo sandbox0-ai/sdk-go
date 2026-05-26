@@ -9,15 +9,15 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-func TestDeployFunctionBuildsSnapshotRequest(t *testing.T) {
+func TestDeployRunBuildsSnapshotRequest(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			t.Fatalf("method = %s, want POST", r.Method)
 		}
-		if r.URL.Path != "/api/v1/functions/deploy" {
-			t.Fatalf("path = %s, want /api/v1/functions/deploy", r.URL.Path)
+		if r.URL.Path != "/api/v1/runs/deploy" {
+			t.Fatalf("path = %s, want /api/v1/runs/deploy", r.URL.Path)
 		}
-		req := decodeFunctionDeployRequest(t, r)
+		req := decodeRunDeployRequest(t, r)
 		if name, ok := req.Name.Get(); !ok || name != "API" {
 			t.Fatalf("name = %q set=%v, want API", name, ok)
 		}
@@ -35,7 +35,7 @@ func TestDeployFunctionBuildsSnapshotRequest(t *testing.T) {
 			t.Fatalf("idle timeout = %d set=%v, want 120", idle, ok)
 		}
 		source, ok := req.Source.Get()
-		if !ok || source.Type != apispec.FunctionSourceTypeSnapshot {
+		if !ok || source.Type != apispec.RunSourceTypeSnapshot {
 			t.Fatalf("source = %+v set=%v, want snapshot", source, ok)
 		}
 		spec, ok := req.Spec.Get()
@@ -61,16 +61,16 @@ func TestDeployFunctionBuildsSnapshotRequest(t *testing.T) {
 		if len(spec.Mounts) != 1 || spec.Mounts[0].SnapshotID != "snap_123" || spec.Mounts[0].MountPath != "/app" {
 			t.Fatalf("mounts = %+v, want snap_123:/app", spec.Mounts)
 		}
-		writeFunctionDeployResponse(t, w, http.StatusCreated)
+		writeRunDeployResponse(t, w, http.StatusCreated)
 	})
 	defer server.Close()
 
 	activate := false
-	result, err := client.DeployFunction(context.Background(), FunctionDeploySpec{
+	result, err := client.DeployRun(context.Background(), RunDeploySpec{
 		Name:     "API",
 		Slug:     "api",
 		Template: "node",
-		Service: FunctionServiceSpec{
+		Service: RunServiceSpec{
 			ID:         "api",
 			Port:       8080,
 			Command:    []string{"node", "server.js"},
@@ -78,28 +78,28 @@ func TestDeployFunctionBuildsSnapshotRequest(t *testing.T) {
 			EnvVars:    map[string]string{"NODE_ENV": "production"},
 			HealthPath: "/healthz",
 		},
-		Mounts: []FunctionSnapshotMount{{SnapshotID: "snap_123", MountPath: "/app"}},
-		Scale: &apispec.FunctionScalePolicy{
+		Mounts: []RunSnapshotMount{{SnapshotID: "snap_123", MountPath: "/app"}},
+		Scale: &apispec.RunScalePolicy{
 			IdleTimeoutSeconds: apispec.NewOptInt32(120),
 		},
 		Activate: &activate,
 	})
 	if err != nil {
-		t.Fatalf("DeployFunction() error = %v", err)
+		t.Fatalf("DeployRun() error = %v", err)
 	}
-	if result.Function.ID != "fn_123" || result.Revision.ID != "fr_123" {
-		t.Fatalf("result = %+v, want function/revision IDs", result)
+	if result.Run.ID != "run_123" || result.Revision.ID != "rev_123" {
+		t.Fatalf("result = %+v, want run/revision IDs", result)
 	}
 }
 
-func TestDeployFunctionFromSandboxService(t *testing.T) {
+func TestDeployRunFromSandboxService(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost || r.URL.Path != "/api/v1/functions/deploy" {
-			t.Fatalf("%s %s, want POST /api/v1/functions/deploy", r.Method, r.URL.Path)
+		if r.Method != http.MethodPost || r.URL.Path != "/api/v1/runs/deploy" {
+			t.Fatalf("%s %s, want POST /api/v1/runs/deploy", r.Method, r.URL.Path)
 		}
-		req := decodeFunctionDeployRequest(t, r)
+		req := decodeRunDeployRequest(t, r)
 		source, ok := req.Source.Get()
-		if !ok || source.Type != apispec.FunctionSourceTypeSandboxService {
+		if !ok || source.Type != apispec.RunSourceTypeSandboxService {
 			t.Fatalf("source = %+v set=%v, want sandbox_service", source, ok)
 		}
 		sandboxSource, ok := source.SandboxService.Get()
@@ -112,57 +112,57 @@ func TestDeployFunctionFromSandboxService(t *testing.T) {
 		if req.Spec.IsSet() {
 			t.Fatal("sandbox-service deploy should not send spec")
 		}
-		writeFunctionDeployResponse(t, w, http.StatusCreated)
+		writeRunDeployResponse(t, w, http.StatusCreated)
 	})
 	defer server.Close()
 
-	result, err := client.DeployFunctionFromSandboxService(
+	result, err := client.DeployRunFromSandboxService(
 		context.Background(),
 		"sb_123",
 		"api",
-		WithFunctionName("API"),
-		WithFunctionSlug("api"),
+		WithRunName("API"),
+		WithRunSlug("api"),
 	)
 	if err != nil {
-		t.Fatalf("DeployFunctionFromSandboxService() error = %v", err)
+		t.Fatalf("DeployRunFromSandboxService() error = %v", err)
 	}
-	if result.Function.Slug != "api" {
-		t.Fatalf("function slug = %q, want api", result.Function.Slug)
+	if result.Run.Slug != "api" {
+		t.Fatalf("run slug = %q, want api", result.Run.Slug)
 	}
 }
 
-func TestFunctionLifecycleMethods(t *testing.T) {
+func TestRunLifecycleMethods(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		switch {
-		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions":
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/runs":
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
 				"data": map[string]any{
-					"functions": []map[string]any{functionResponsePayload()},
+					"runs": []map[string]any{runResponsePayload()},
 				},
 			})
-		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/api":
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/runs/api":
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
-				"data":    functionResponsePayload(),
+				"data":    runResponsePayload(),
 			})
-		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/functions/api/revisions":
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/runs/api/revisions":
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
 				"data": map[string]any{
 					"revisions": []map[string]any{revisionResponsePayload()},
 				},
 			})
-		case r.Method == http.MethodPut && r.URL.Path == "/api/v1/functions/api/active-revision":
-			var req apispec.ActivateFunctionRevisionRequest
+		case r.Method == http.MethodPut && r.URL.Path == "/api/v1/runs/api/active-revision":
+			var req apispec.ActivateRunRevisionRequest
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				t.Fatalf("decode activate request: %v", err)
 			}
-			if req.RevisionID != "fr_123" {
-				t.Fatalf("revision_id = %q, want fr_123", req.RevisionID)
+			if req.RevisionID != "rev_123" {
+				t.Fatalf("revision_id = %q, want rev_123", req.RevisionID)
 			}
-			writeFunctionDeployResponse(t, w, http.StatusOK)
-		case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/functions/api":
+			writeRunDeployResponse(t, w, http.StatusOK)
+		case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/runs/api":
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
 				"data": map[string]any{
@@ -175,66 +175,66 @@ func TestFunctionLifecycleMethods(t *testing.T) {
 	})
 	defer server.Close()
 
-	functions, err := client.ListFunctions(context.Background())
+	runs, err := client.ListRuns(context.Background())
 	if err != nil {
-		t.Fatalf("ListFunctions() error = %v", err)
+		t.Fatalf("ListRuns() error = %v", err)
 	}
-	if len(functions) != 1 || functions[0].ID != "fn_123" {
-		t.Fatalf("functions = %+v, want fn_123", functions)
+	if len(runs) != 1 || runs[0].ID != "run_123" {
+		t.Fatalf("runs = %+v, want run_123", runs)
 	}
-	fn, err := client.GetFunction(context.Background(), "api")
+	run, err := client.GetRun(context.Background(), "api")
 	if err != nil {
-		t.Fatalf("GetFunction() error = %v", err)
+		t.Fatalf("GetRun() error = %v", err)
 	}
-	if fn.Slug != "api" {
-		t.Fatalf("function slug = %q, want api", fn.Slug)
+	if run.Slug != "api" {
+		t.Fatalf("run slug = %q, want api", run.Slug)
 	}
-	revisions, err := client.ListFunctionRevisions(context.Background(), "api")
+	revisions, err := client.ListRunRevisions(context.Background(), "api")
 	if err != nil {
-		t.Fatalf("ListFunctionRevisions() error = %v", err)
+		t.Fatalf("ListRunRevisions() error = %v", err)
 	}
-	if len(revisions) != 1 || revisions[0].ID != "fr_123" {
-		t.Fatalf("revisions = %+v, want fr_123", revisions)
+	if len(revisions) != 1 || revisions[0].ID != "rev_123" {
+		t.Fatalf("revisions = %+v, want rev_123", revisions)
 	}
-	if _, err := client.ActivateFunctionRevision(context.Background(), "api", "fr_123"); err != nil {
-		t.Fatalf("ActivateFunctionRevision() error = %v", err)
+	if _, err := client.ActivateRunRevision(context.Background(), "api", "rev_123"); err != nil {
+		t.Fatalf("ActivateRunRevision() error = %v", err)
 	}
-	if _, err := client.DeleteFunction(context.Background(), "api"); err != nil {
-		t.Fatalf("DeleteFunction() error = %v", err)
+	if _, err := client.DeleteRun(context.Background(), "api"); err != nil {
+		t.Fatalf("DeleteRun() error = %v", err)
 	}
 }
 
-func decodeFunctionDeployRequest(t *testing.T, r *http.Request) apispec.FunctionDeployRequest {
+func decodeRunDeployRequest(t *testing.T, r *http.Request) apispec.RunDeployRequest {
 	t.Helper()
 	defer r.Body.Close()
 
-	var req apispec.FunctionDeployRequest
+	var req apispec.RunDeployRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		t.Fatalf("decode function deploy request: %v", err)
+		t.Fatalf("decode run deploy request: %v", err)
 	}
 	return req
 }
 
-func writeFunctionDeployResponse(t *testing.T, w http.ResponseWriter, status int) {
+func writeRunDeployResponse(t *testing.T, w http.ResponseWriter, status int) {
 	t.Helper()
 	writeJSON(t, w, status, map[string]any{
 		"success": true,
 		"data": map[string]any{
-			"function": functionResponsePayload(),
+			"run":      runResponsePayload(),
 			"revision": revisionResponsePayload(),
 		},
 	})
 }
 
-func functionResponsePayload() map[string]any {
+func runResponsePayload() map[string]any {
 	return map[string]any{
-		"id":                 "fn_123",
+		"id":                 "run_123",
 		"team_id":            "team_123",
 		"name":               "API",
 		"slug":               "api",
 		"domain_label":       "api-abcd1234",
-		"url":                "https://api-abcd1234.fn.us.sandbox0.app",
-		"active_revision_id": "fr_123",
+		"url":                "https://api-abcd1234.us.sandbox0.run",
+		"active_revision_id": "rev_123",
 		"enabled":            true,
 		"scale": map[string]any{
 			"max_instances":           1,
@@ -249,8 +249,8 @@ func functionResponsePayload() map[string]any {
 
 func revisionResponsePayload() map[string]any {
 	return map[string]any{
-		"id":              "fr_123",
-		"function_id":     "fn_123",
+		"id":              "rev_123",
+		"run_id":          "run_123",
 		"team_id":         "team_123",
 		"number":          1,
 		"source":          map[string]any{"type": "snapshot"},

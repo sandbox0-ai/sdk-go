@@ -37,7 +37,7 @@ var nullArrayKeys = map[string]struct{}{
 	"drop":              {},
 	"entries":           {},
 	"env":               {},
-	"functions":         {},
+	"runs":              {},
 	"identities":        {},
 	"matchExpressions":  {},
 	"matchFields":       {},

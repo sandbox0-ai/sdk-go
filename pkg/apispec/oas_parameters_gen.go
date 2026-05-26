@@ -27,42 +27,6 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
-// APIV1FunctionsIDActiveRevisionPutParams is parameters of PUT /api/v1/functions/{id}/active-revision operation.
-type APIV1FunctionsIDActiveRevisionPutParams struct {
-	// Function ID or slug.
-	ID string
-}
-
-// APIV1FunctionsIDDeleteParams is parameters of DELETE /api/v1/functions/{id} operation.
-type APIV1FunctionsIDDeleteParams struct {
-	// Function ID or slug.
-	ID string
-}
-
-// APIV1FunctionsIDDeployPostParams is parameters of POST /api/v1/functions/{id}/deploy operation.
-type APIV1FunctionsIDDeployPostParams struct {
-	// Function ID or slug.
-	ID string
-}
-
-// APIV1FunctionsIDGetParams is parameters of GET /api/v1/functions/{id} operation.
-type APIV1FunctionsIDGetParams struct {
-	// Function ID or slug.
-	ID string
-}
-
-// APIV1FunctionsIDPutParams is parameters of PUT /api/v1/functions/{id} operation.
-type APIV1FunctionsIDPutParams struct {
-	// Function ID or slug.
-	ID string
-}
-
-// APIV1FunctionsIDRevisionsGetParams is parameters of GET /api/v1/functions/{id}/revisions operation.
-type APIV1FunctionsIDRevisionsGetParams struct {
-	// Function ID or slug.
-	ID string
-}
-
 // APIV1QuotasDimensionDeleteParams is parameters of DELETE /api/v1/quotas/{dimension} operation.
 type APIV1QuotasDimensionDeleteParams struct {
 	Dimension QuotaDimension
@@ -76,6 +40,42 @@ type APIV1QuotasDimensionGetParams struct {
 // APIV1QuotasDimensionPutParams is parameters of PUT /api/v1/quotas/{dimension} operation.
 type APIV1QuotasDimensionPutParams struct {
 	Dimension QuotaDimension
+}
+
+// APIV1RunsIDActiveRevisionPutParams is parameters of PUT /api/v1/runs/{id}/active-revision operation.
+type APIV1RunsIDActiveRevisionPutParams struct {
+	// Run ID or slug.
+	ID string
+}
+
+// APIV1RunsIDDeleteParams is parameters of DELETE /api/v1/runs/{id} operation.
+type APIV1RunsIDDeleteParams struct {
+	// Run ID or slug.
+	ID string
+}
+
+// APIV1RunsIDDeployPostParams is parameters of POST /api/v1/runs/{id}/deploy operation.
+type APIV1RunsIDDeployPostParams struct {
+	// Run ID or slug.
+	ID string
+}
+
+// APIV1RunsIDGetParams is parameters of GET /api/v1/runs/{id} operation.
+type APIV1RunsIDGetParams struct {
+	// Run ID or slug.
+	ID string
+}
+
+// APIV1RunsIDPutParams is parameters of PUT /api/v1/runs/{id} operation.
+type APIV1RunsIDPutParams struct {
+	// Run ID or slug.
+	ID string
+}
+
+// APIV1RunsIDRevisionsGetParams is parameters of GET /api/v1/runs/{id}/revisions operation.
+type APIV1RunsIDRevisionsGetParams struct {
+	// Run ID or slug.
+	ID string
 }
 
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.

@@ -15,7 +15,7 @@ func (s *CreateSandboxVolumeRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *FunctionDeployRequest) setDefaults() {
+func (s *RunDeployRequest) setDefaults() {
 	{
 		val := bool(true)
 		s.Activate.SetTo(val)
@@ -23,7 +23,7 @@ func (s *FunctionDeployRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *FunctionRevisionMount) setDefaults() {
+func (s *RunRevisionMount) setDefaults() {
 	{
 		val := bool(true)
 		s.ReadOnly.SetTo(val)
@@ -31,7 +31,7 @@ func (s *FunctionRevisionMount) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *FunctionScalePolicy) setDefaults() {
+func (s *RunScalePolicy) setDefaults() {
 	{
 		val := int32(1)
 		s.MaxInstances.SetTo(val)

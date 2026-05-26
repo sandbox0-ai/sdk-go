@@ -25,38 +25,6 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
-type APIV1FunctionsDeployPostRes interface {
-	aPIV1FunctionsDeployPostRes()
-}
-
-type APIV1FunctionsGetRes interface {
-	aPIV1FunctionsGetRes()
-}
-
-type APIV1FunctionsIDActiveRevisionPutRes interface {
-	aPIV1FunctionsIDActiveRevisionPutRes()
-}
-
-type APIV1FunctionsIDDeleteRes interface {
-	aPIV1FunctionsIDDeleteRes()
-}
-
-type APIV1FunctionsIDDeployPostRes interface {
-	aPIV1FunctionsIDDeployPostRes()
-}
-
-type APIV1FunctionsIDGetRes interface {
-	aPIV1FunctionsIDGetRes()
-}
-
-type APIV1FunctionsIDPutRes interface {
-	aPIV1FunctionsIDPutRes()
-}
-
-type APIV1FunctionsIDRevisionsGetRes interface {
-	aPIV1FunctionsIDRevisionsGetRes()
-}
-
 type APIV1QuotasDimensionDeleteRes interface {
 	aPIV1QuotasDimensionDeleteRes()
 }
@@ -71,6 +39,38 @@ type APIV1QuotasDimensionPutRes interface {
 
 type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
+}
+
+type APIV1RunsDeployPostRes interface {
+	aPIV1RunsDeployPostRes()
+}
+
+type APIV1RunsGetRes interface {
+	aPIV1RunsGetRes()
+}
+
+type APIV1RunsIDActiveRevisionPutRes interface {
+	aPIV1RunsIDActiveRevisionPutRes()
+}
+
+type APIV1RunsIDDeleteRes interface {
+	aPIV1RunsIDDeleteRes()
+}
+
+type APIV1RunsIDDeployPostRes interface {
+	aPIV1RunsIDDeployPostRes()
+}
+
+type APIV1RunsIDGetRes interface {
+	aPIV1RunsIDGetRes()
+}
+
+type APIV1RunsIDPutRes interface {
+	aPIV1RunsIDPutRes()
+}
+
+type APIV1RunsIDRevisionsGetRes interface {
+	aPIV1RunsIDRevisionsGetRes()
 }
 
 type APIV1SandboxesGetRes interface {
