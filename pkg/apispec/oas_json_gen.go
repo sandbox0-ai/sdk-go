@@ -23265,19 +23265,12 @@ func (s *RunScalePolicy) encodeFields(e *jx.Encoder) {
 			s.IdleTimeoutSeconds.Encode(e)
 		}
 	}
-	{
-		if s.StartupTimeoutSeconds.Set {
-			e.FieldStart("startup_timeout_seconds")
-			s.StartupTimeoutSeconds.Encode(e)
-		}
-	}
 }
 
-var jsonFieldsNameOfRunScalePolicy = [4]string{
+var jsonFieldsNameOfRunScalePolicy = [3]string{
 	0: "max_instances",
 	1: "target_concurrency",
 	2: "idle_timeout_seconds",
-	3: "startup_timeout_seconds",
 }
 
 // Decode decodes RunScalePolicy from json.
@@ -23318,16 +23311,6 @@ func (s *RunScalePolicy) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"idle_timeout_seconds\"")
-			}
-		case "startup_timeout_seconds":
-			if err := func() error {
-				s.StartupTimeoutSeconds.Reset()
-				if err := s.StartupTimeoutSeconds.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"startup_timeout_seconds\"")
 			}
 		default:
 			return d.Skip()

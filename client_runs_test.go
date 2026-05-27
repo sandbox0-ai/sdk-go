@@ -237,10 +237,9 @@ func runResponsePayload() map[string]any {
 		"active_revision_id": "rev_123",
 		"enabled":            true,
 		"scale": map[string]any{
-			"max_instances":           1,
-			"target_concurrency":      1,
-			"idle_timeout_seconds":    300,
-			"startup_timeout_seconds": 90,
+			"max_instances":        1,
+			"target_concurrency":   1,
+			"idle_timeout_seconds": 300,
 		},
 		"created_at": "2026-01-01T00:00:00Z",
 		"updated_at": "2026-01-01T00:00:00Z",

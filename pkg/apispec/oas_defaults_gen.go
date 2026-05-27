@@ -44,10 +44,6 @@ func (s *RunScalePolicy) setDefaults() {
 		val := int32(300)
 		s.IdleTimeoutSeconds.SetTo(val)
 	}
-	{
-		val := int32(90)
-		s.StartupTimeoutSeconds.SetTo(val)
-	}
 }
 
 // setDefaults set default value of fields.

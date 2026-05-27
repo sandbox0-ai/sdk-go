@@ -12852,8 +12852,6 @@ type RunScalePolicy struct {
 	TargetConcurrency OptInt32 `json:"target_concurrency"`
 	// Seconds of inactivity before the runtime sandbox can scale back to zero.
 	IdleTimeoutSeconds OptInt32 `json:"idle_timeout_seconds"`
-	// Maximum seconds to wait for a cold-started service health check.
-	StartupTimeoutSeconds OptInt32 `json:"startup_timeout_seconds"`
 }
 
 // GetMaxInstances returns the value of MaxInstances.
@@ -12871,11 +12869,6 @@ func (s *RunScalePolicy) GetIdleTimeoutSeconds() OptInt32 {
 	return s.IdleTimeoutSeconds
 }
 
-// GetStartupTimeoutSeconds returns the value of StartupTimeoutSeconds.
-func (s *RunScalePolicy) GetStartupTimeoutSeconds() OptInt32 {
-	return s.StartupTimeoutSeconds
-}
-
 // SetMaxInstances sets the value of MaxInstances.
 func (s *RunScalePolicy) SetMaxInstances(val OptInt32) {
 	s.MaxInstances = val
@@ -12889,11 +12882,6 @@ func (s *RunScalePolicy) SetTargetConcurrency(val OptInt32) {
 // SetIdleTimeoutSeconds sets the value of IdleTimeoutSeconds.
 func (s *RunScalePolicy) SetIdleTimeoutSeconds(val OptInt32) {
 	s.IdleTimeoutSeconds = val
-}
-
-// SetStartupTimeoutSeconds sets the value of StartupTimeoutSeconds.
-func (s *RunScalePolicy) SetStartupTimeoutSeconds(val OptInt32) {
-	s.StartupTimeoutSeconds = val
 }
 
 // Ref: #/components/schemas/RunSource
