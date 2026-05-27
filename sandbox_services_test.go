@@ -63,6 +63,50 @@ func TestSandboxServicesLifecycle(t *testing.T) {
 	if len(resp.Services) != 0 {
 		t.Fatalf("clear response services count = %d, want 0", len(resp.Services))
 	}
+
+	_, err = sandbox.UpdateServices(context.Background(), []apispec.SandboxAppService{
+		{
+			ID:   "handler",
+			Port: 49983,
+			Runtime: apispec.NewOptSandboxAppServiceRuntime(apispec.SandboxAppServiceRuntime{
+				Type: apispec.SandboxAppServiceRuntimeTypeFunction,
+				Function: apispec.NewOptSandboxFunction(apispec.SandboxFunction{
+					Runtime: apispec.SandboxFunctionRuntimePython,
+					Handler: apispec.NewOptString("handler"),
+					Source: apispec.SandboxFunctionSource{
+						Type: apispec.SandboxFunctionSourceTypeInline,
+						Code: "def handler(request):\n    return {'status': 200, 'body': 'ok'}\n",
+					},
+				}),
+			}),
+			Ingress: apispec.SandboxAppServiceIngress{
+				Public: true,
+				Routes: []apispec.SandboxAppServiceRoute{
+					{ID: "handler", PathPrefix: apispec.NewOptString("/"), Resume: true},
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("UpdateServices(function) error = %v", err)
+	}
+	if len(gotPut.Services) != 1 {
+		t.Fatalf("function update service count = %d, want 1", len(gotPut.Services))
+	}
+	runtime, ok := gotPut.Services[0].Runtime.Get()
+	if !ok || runtime.Type != apispec.SandboxAppServiceRuntimeTypeFunction {
+		t.Fatalf("runtime = %+v set=%v, want function", runtime, ok)
+	}
+	fn, ok := runtime.Function.Get()
+	if !ok {
+		t.Fatal("runtime function not set")
+	}
+	if fn.Runtime != apispec.SandboxFunctionRuntimePython || fn.Source.Type != apispec.SandboxFunctionSourceTypeInline {
+		t.Fatalf("function = %+v, want python inline", fn)
+	}
+	if fn.Source.Code == "" {
+		t.Fatal("function source code is empty")
+	}
 }
 
 func writeServicesResponse(t *testing.T, w http.ResponseWriter, services []map[string]any) {

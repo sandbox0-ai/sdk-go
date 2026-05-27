@@ -7921,6 +7921,52 @@ func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars
 	return d
 }
 
+// NewOptSandboxFunction returns new OptSandboxFunction with value set to v.
+func NewOptSandboxFunction(v SandboxFunction) OptSandboxFunction {
+	return OptSandboxFunction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxFunction is optional SandboxFunction.
+type OptSandboxFunction struct {
+	Value SandboxFunction
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxFunction was set.
+func (o OptSandboxFunction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxFunction) Reset() {
+	var v SandboxFunction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxFunction) SetTo(v SandboxFunction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxFunction) Get() (v SandboxFunction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxFunction) Or(d SandboxFunction) SandboxFunction {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxLifecycleStatus returns new OptSandboxLifecycleStatus with value set to v.
 func NewOptSandboxLifecycleStatus(v SandboxLifecycleStatus) OptSandboxLifecycleStatus {
 	return OptSandboxLifecycleStatus{
@@ -12066,8 +12112,9 @@ func (s *Sandbox) SetCreatedAt(val time.Time) {
 // Ref: #/components/schemas/SandboxAppService
 type SandboxAppService struct {
 	// Stable service ID. Must be a DNS label.
-	ID          string                      `json:"id"`
-	DisplayName OptString                   `json:"display_name"`
+	ID          string    `json:"id"`
+	DisplayName OptString `json:"display_name"`
+	// Public exposure routing port. Function services normally use the sandbox procd port.
 	Port        int32                       `json:"port"`
 	Runtime     OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress     SandboxAppServiceIngress    `json:"ingress"`
@@ -12482,7 +12529,8 @@ type SandboxAppServiceRuntime struct {
 	Cwd     OptString                          `json:"cwd"`
 	EnvVars OptSandboxAppServiceRuntimeEnvVars `json:"env_vars"`
 	// Warm process alias or context ID used when type is warm_process.
-	WarmProcessName OptString `json:"warm_process_name"`
+	WarmProcessName OptString          `json:"warm_process_name"`
+	Function        OptSandboxFunction `json:"function"`
 }
 
 // GetType returns the value of Type.
@@ -12510,6 +12558,11 @@ func (s *SandboxAppServiceRuntime) GetWarmProcessName() OptString {
 	return s.WarmProcessName
 }
 
+// GetFunction returns the value of Function.
+func (s *SandboxAppServiceRuntime) GetFunction() OptSandboxFunction {
+	return s.Function
+}
+
 // SetType sets the value of Type.
 func (s *SandboxAppServiceRuntime) SetType(val SandboxAppServiceRuntimeType) {
 	s.Type = val
@@ -12535,6 +12588,11 @@ func (s *SandboxAppServiceRuntime) SetWarmProcessName(val OptString) {
 	s.WarmProcessName = val
 }
 
+// SetFunction sets the value of Function.
+func (s *SandboxAppServiceRuntime) SetFunction(val OptSandboxFunction) {
+	s.Function = val
+}
+
 type SandboxAppServiceRuntimeEnvVars map[string]string
 
 func (s *SandboxAppServiceRuntimeEnvVars) init() SandboxAppServiceRuntimeEnvVars {
@@ -12553,6 +12611,7 @@ const (
 	SandboxAppServiceRuntimeTypeWarmProcess SandboxAppServiceRuntimeType = "warm_process"
 	SandboxAppServiceRuntimeTypeCmd         SandboxAppServiceRuntimeType = "cmd"
 	SandboxAppServiceRuntimeTypeManual      SandboxAppServiceRuntimeType = "manual"
+	SandboxAppServiceRuntimeTypeFunction    SandboxAppServiceRuntimeType = "function"
 )
 
 // AllValues returns all SandboxAppServiceRuntimeType values.
@@ -12561,6 +12620,7 @@ func (SandboxAppServiceRuntimeType) AllValues() []SandboxAppServiceRuntimeType {
 		SandboxAppServiceRuntimeTypeWarmProcess,
 		SandboxAppServiceRuntimeTypeCmd,
 		SandboxAppServiceRuntimeTypeManual,
+		SandboxAppServiceRuntimeTypeFunction,
 	}
 }
 
@@ -12572,6 +12632,8 @@ func (s SandboxAppServiceRuntimeType) MarshalText() ([]byte, error) {
 	case SandboxAppServiceRuntimeTypeCmd:
 		return []byte(s), nil
 	case SandboxAppServiceRuntimeTypeManual:
+		return []byte(s), nil
+	case SandboxAppServiceRuntimeTypeFunction:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -12590,6 +12652,9 @@ func (s *SandboxAppServiceRuntimeType) UnmarshalText(data []byte) error {
 	case SandboxAppServiceRuntimeTypeManual:
 		*s = SandboxAppServiceRuntimeTypeManual
 		return nil
+	case SandboxAppServiceRuntimeTypeFunction:
+		*s = SandboxAppServiceRuntimeTypeFunction
+		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
@@ -12599,8 +12664,9 @@ func (s *SandboxAppServiceRuntimeType) UnmarshalText(data []byte) error {
 // Ref: #/components/schemas/SandboxAppServiceView
 type SandboxAppServiceView struct {
 	// Stable service ID. Must be a DNS label.
-	ID              string                      `json:"id"`
-	DisplayName     OptString                   `json:"display_name"`
+	ID          string    `json:"id"`
+	DisplayName OptString `json:"display_name"`
+	// Public exposure routing port. Function services normally use the sandbox procd port.
 	Port            int32                       `json:"port"`
 	Runtime         OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress         SandboxAppServiceIngress    `json:"ingress"`
@@ -12795,6 +12861,158 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Function code executed by procd for a sandbox service request. cluster-gateway owns public ingress
+// and carries this source to procd.
+// Ref: #/components/schemas/SandboxFunction
+type SandboxFunction struct {
+	// Function runtime. Only python is supported in this version.
+	Runtime SandboxFunctionRuntime `json:"runtime"`
+	// Python callable name. Defaults to handler.
+	Handler OptString             `json:"handler"`
+	Source  SandboxFunctionSource `json:"source"`
+}
+
+// GetRuntime returns the value of Runtime.
+func (s *SandboxFunction) GetRuntime() SandboxFunctionRuntime {
+	return s.Runtime
+}
+
+// GetHandler returns the value of Handler.
+func (s *SandboxFunction) GetHandler() OptString {
+	return s.Handler
+}
+
+// GetSource returns the value of Source.
+func (s *SandboxFunction) GetSource() SandboxFunctionSource {
+	return s.Source
+}
+
+// SetRuntime sets the value of Runtime.
+func (s *SandboxFunction) SetRuntime(val SandboxFunctionRuntime) {
+	s.Runtime = val
+}
+
+// SetHandler sets the value of Handler.
+func (s *SandboxFunction) SetHandler(val OptString) {
+	s.Handler = val
+}
+
+// SetSource sets the value of Source.
+func (s *SandboxFunction) SetSource(val SandboxFunctionSource) {
+	s.Source = val
+}
+
+// Function runtime. Only python is supported in this version.
+type SandboxFunctionRuntime string
+
+const (
+	SandboxFunctionRuntimePython SandboxFunctionRuntime = "python"
+)
+
+// AllValues returns all SandboxFunctionRuntime values.
+func (SandboxFunctionRuntime) AllValues() []SandboxFunctionRuntime {
+	return []SandboxFunctionRuntime{
+		SandboxFunctionRuntimePython,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxFunctionRuntime) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxFunctionRuntimePython:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxFunctionRuntime) UnmarshalText(data []byte) error {
+	switch SandboxFunctionRuntime(data) {
+	case SandboxFunctionRuntimePython:
+		*s = SandboxFunctionRuntimePython
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Function source code stored in sandbox service config.
+// Ref: #/components/schemas/SandboxFunctionSource
+type SandboxFunctionSource struct {
+	// Source transport. Only inline source is supported in this version.
+	Type SandboxFunctionSourceType `json:"type"`
+	// Relative Python filename used when materializing the source. Defaults to main.py.
+	Filename OptString `json:"filename"`
+	// Inline source code. Limited to 256 KiB.
+	Code string `json:"code"`
+}
+
+// GetType returns the value of Type.
+func (s *SandboxFunctionSource) GetType() SandboxFunctionSourceType {
+	return s.Type
+}
+
+// GetFilename returns the value of Filename.
+func (s *SandboxFunctionSource) GetFilename() OptString {
+	return s.Filename
+}
+
+// GetCode returns the value of Code.
+func (s *SandboxFunctionSource) GetCode() string {
+	return s.Code
+}
+
+// SetType sets the value of Type.
+func (s *SandboxFunctionSource) SetType(val SandboxFunctionSourceType) {
+	s.Type = val
+}
+
+// SetFilename sets the value of Filename.
+func (s *SandboxFunctionSource) SetFilename(val OptString) {
+	s.Filename = val
+}
+
+// SetCode sets the value of Code.
+func (s *SandboxFunctionSource) SetCode(val string) {
+	s.Code = val
+}
+
+// Source transport. Only inline source is supported in this version.
+type SandboxFunctionSourceType string
+
+const (
+	SandboxFunctionSourceTypeInline SandboxFunctionSourceType = "inline"
+)
+
+// AllValues returns all SandboxFunctionSourceType values.
+func (SandboxFunctionSourceType) AllValues() []SandboxFunctionSourceType {
+	return []SandboxFunctionSourceType{
+		SandboxFunctionSourceTypeInline,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxFunctionSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxFunctionSourceTypeInline:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxFunctionSourceType) UnmarshalText(data []byte) error {
+	switch SandboxFunctionSourceType(data) {
+	case SandboxFunctionSourceTypeInline:
+		*s = SandboxFunctionSourceTypeInline
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/SandboxLifecycleStatus
