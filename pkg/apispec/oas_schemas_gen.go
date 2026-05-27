@@ -296,21 +296,6 @@ func (s APIV1SandboxesIDFilesPostReq) Read(p []byte) (n int, err error) {
 // APIV1SandboxesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxesIDFilesWatchGet operation.
 type APIV1SandboxesIDFilesWatchGetSwitchingProtocols struct{}
 
-type APIV1SandboxesIDFunctionsNameInvokePostBadRequest ErrorEnvelope
-
-func (*APIV1SandboxesIDFunctionsNameInvokePostBadRequest) aPIV1SandboxesIDFunctionsNameInvokePostRes() {
-}
-
-type APIV1SandboxesIDFunctionsNameInvokePostInternalServerError ErrorEnvelope
-
-func (*APIV1SandboxesIDFunctionsNameInvokePostInternalServerError) aPIV1SandboxesIDFunctionsNameInvokePostRes() {
-}
-
-type APIV1SandboxesIDFunctionsNameInvokePostNotFound ErrorEnvelope
-
-func (*APIV1SandboxesIDFunctionsNameInvokePostNotFound) aPIV1SandboxesIDFunctionsNameInvokePostRes() {
-}
-
 type APIV1SandboxesIDGetForbidden ErrorEnvelope
 
 func (*APIV1SandboxesIDGetForbidden) aPIV1SandboxesIDGetRes() {}
@@ -3276,164 +3261,6 @@ func (s *ForkVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
-// Ref: #/components/schemas/FunctionInvokeRequest
-type FunctionInvokeRequest struct {
-	// Logical request method passed to the function. Defaults to POST.
-	Method OptString `json:"method"`
-	// Logical request path passed to the function. Defaults to /.
-	Path    OptString                       `json:"path"`
-	Query   OptFunctionInvokeRequestQuery   `json:"query"`
-	Headers OptFunctionInvokeRequestHeaders `json:"headers"`
-	// Base64-encoded request body passed to the function.
-	BodyBase64 OptString `json:"body_base64"`
-	// Python handler name inside the function module. Defaults to handler.
-	Handler OptString `json:"handler"`
-	// Per-invocation timeout in milliseconds. Defaults to 30000 and must not exceed 120000.
-	TimeoutMs OptInt32 `json:"timeout_ms"`
-}
-
-// GetMethod returns the value of Method.
-func (s *FunctionInvokeRequest) GetMethod() OptString {
-	return s.Method
-}
-
-// GetPath returns the value of Path.
-func (s *FunctionInvokeRequest) GetPath() OptString {
-	return s.Path
-}
-
-// GetQuery returns the value of Query.
-func (s *FunctionInvokeRequest) GetQuery() OptFunctionInvokeRequestQuery {
-	return s.Query
-}
-
-// GetHeaders returns the value of Headers.
-func (s *FunctionInvokeRequest) GetHeaders() OptFunctionInvokeRequestHeaders {
-	return s.Headers
-}
-
-// GetBodyBase64 returns the value of BodyBase64.
-func (s *FunctionInvokeRequest) GetBodyBase64() OptString {
-	return s.BodyBase64
-}
-
-// GetHandler returns the value of Handler.
-func (s *FunctionInvokeRequest) GetHandler() OptString {
-	return s.Handler
-}
-
-// GetTimeoutMs returns the value of TimeoutMs.
-func (s *FunctionInvokeRequest) GetTimeoutMs() OptInt32 {
-	return s.TimeoutMs
-}
-
-// SetMethod sets the value of Method.
-func (s *FunctionInvokeRequest) SetMethod(val OptString) {
-	s.Method = val
-}
-
-// SetPath sets the value of Path.
-func (s *FunctionInvokeRequest) SetPath(val OptString) {
-	s.Path = val
-}
-
-// SetQuery sets the value of Query.
-func (s *FunctionInvokeRequest) SetQuery(val OptFunctionInvokeRequestQuery) {
-	s.Query = val
-}
-
-// SetHeaders sets the value of Headers.
-func (s *FunctionInvokeRequest) SetHeaders(val OptFunctionInvokeRequestHeaders) {
-	s.Headers = val
-}
-
-// SetBodyBase64 sets the value of BodyBase64.
-func (s *FunctionInvokeRequest) SetBodyBase64(val OptString) {
-	s.BodyBase64 = val
-}
-
-// SetHandler sets the value of Handler.
-func (s *FunctionInvokeRequest) SetHandler(val OptString) {
-	s.Handler = val
-}
-
-// SetTimeoutMs sets the value of TimeoutMs.
-func (s *FunctionInvokeRequest) SetTimeoutMs(val OptInt32) {
-	s.TimeoutMs = val
-}
-
-type FunctionInvokeRequestHeaders map[string][]string
-
-func (s *FunctionInvokeRequestHeaders) init() FunctionInvokeRequestHeaders {
-	m := *s
-	if m == nil {
-		m = map[string][]string{}
-		*s = m
-	}
-	return m
-}
-
-type FunctionInvokeRequestQuery map[string][]string
-
-func (s *FunctionInvokeRequestQuery) init() FunctionInvokeRequestQuery {
-	m := *s
-	if m == nil {
-		m = map[string][]string{}
-		*s = m
-	}
-	return m
-}
-
-// Ref: #/components/schemas/FunctionInvokeResponse
-type FunctionInvokeResponse struct {
-	// Function-level HTTP-style status code.
-	Status  int32                            `json:"status"`
-	Headers OptFunctionInvokeResponseHeaders `json:"headers"`
-	// Base64-encoded function response body.
-	BodyBase64 OptString `json:"body_base64"`
-}
-
-// GetStatus returns the value of Status.
-func (s *FunctionInvokeResponse) GetStatus() int32 {
-	return s.Status
-}
-
-// GetHeaders returns the value of Headers.
-func (s *FunctionInvokeResponse) GetHeaders() OptFunctionInvokeResponseHeaders {
-	return s.Headers
-}
-
-// GetBodyBase64 returns the value of BodyBase64.
-func (s *FunctionInvokeResponse) GetBodyBase64() OptString {
-	return s.BodyBase64
-}
-
-// SetStatus sets the value of Status.
-func (s *FunctionInvokeResponse) SetStatus(val int32) {
-	s.Status = val
-}
-
-// SetHeaders sets the value of Headers.
-func (s *FunctionInvokeResponse) SetHeaders(val OptFunctionInvokeResponseHeaders) {
-	s.Headers = val
-}
-
-// SetBodyBase64 sets the value of BodyBase64.
-func (s *FunctionInvokeResponse) SetBodyBase64(val OptString) {
-	s.BodyBase64 = val
-}
-
-type FunctionInvokeResponseHeaders map[string][]string
-
-func (s *FunctionInvokeResponseHeaders) init() FunctionInvokeResponseHeaders {
-	m := *s
-	if m == nil {
-		m = map[string][]string{}
-		*s = m
-	}
-	return m
-}
-
 // Ref: #/components/schemas/GatewayMetadata
 type GatewayMetadata struct {
 	GatewayMode GatewayMetadataGatewayMode `json:"gateway_mode"`
@@ -5835,190 +5662,6 @@ func (o OptForkVolumeRequest) Or(d ForkVolumeRequest) ForkVolumeRequest {
 	return d
 }
 
-// NewOptFunctionInvokeRequestHeaders returns new OptFunctionInvokeRequestHeaders with value set to v.
-func NewOptFunctionInvokeRequestHeaders(v FunctionInvokeRequestHeaders) OptFunctionInvokeRequestHeaders {
-	return OptFunctionInvokeRequestHeaders{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptFunctionInvokeRequestHeaders is optional FunctionInvokeRequestHeaders.
-type OptFunctionInvokeRequestHeaders struct {
-	Value FunctionInvokeRequestHeaders
-	Set   bool
-}
-
-// IsSet returns true if OptFunctionInvokeRequestHeaders was set.
-func (o OptFunctionInvokeRequestHeaders) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptFunctionInvokeRequestHeaders) Reset() {
-	var v FunctionInvokeRequestHeaders
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptFunctionInvokeRequestHeaders) SetTo(v FunctionInvokeRequestHeaders) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptFunctionInvokeRequestHeaders) Get() (v FunctionInvokeRequestHeaders, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptFunctionInvokeRequestHeaders) Or(d FunctionInvokeRequestHeaders) FunctionInvokeRequestHeaders {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptFunctionInvokeRequestQuery returns new OptFunctionInvokeRequestQuery with value set to v.
-func NewOptFunctionInvokeRequestQuery(v FunctionInvokeRequestQuery) OptFunctionInvokeRequestQuery {
-	return OptFunctionInvokeRequestQuery{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptFunctionInvokeRequestQuery is optional FunctionInvokeRequestQuery.
-type OptFunctionInvokeRequestQuery struct {
-	Value FunctionInvokeRequestQuery
-	Set   bool
-}
-
-// IsSet returns true if OptFunctionInvokeRequestQuery was set.
-func (o OptFunctionInvokeRequestQuery) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptFunctionInvokeRequestQuery) Reset() {
-	var v FunctionInvokeRequestQuery
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptFunctionInvokeRequestQuery) SetTo(v FunctionInvokeRequestQuery) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptFunctionInvokeRequestQuery) Get() (v FunctionInvokeRequestQuery, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptFunctionInvokeRequestQuery) Or(d FunctionInvokeRequestQuery) FunctionInvokeRequestQuery {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptFunctionInvokeResponse returns new OptFunctionInvokeResponse with value set to v.
-func NewOptFunctionInvokeResponse(v FunctionInvokeResponse) OptFunctionInvokeResponse {
-	return OptFunctionInvokeResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptFunctionInvokeResponse is optional FunctionInvokeResponse.
-type OptFunctionInvokeResponse struct {
-	Value FunctionInvokeResponse
-	Set   bool
-}
-
-// IsSet returns true if OptFunctionInvokeResponse was set.
-func (o OptFunctionInvokeResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptFunctionInvokeResponse) Reset() {
-	var v FunctionInvokeResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptFunctionInvokeResponse) SetTo(v FunctionInvokeResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptFunctionInvokeResponse) Get() (v FunctionInvokeResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptFunctionInvokeResponse) Or(d FunctionInvokeResponse) FunctionInvokeResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptFunctionInvokeResponseHeaders returns new OptFunctionInvokeResponseHeaders with value set to v.
-func NewOptFunctionInvokeResponseHeaders(v FunctionInvokeResponseHeaders) OptFunctionInvokeResponseHeaders {
-	return OptFunctionInvokeResponseHeaders{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptFunctionInvokeResponseHeaders is optional FunctionInvokeResponseHeaders.
-type OptFunctionInvokeResponseHeaders struct {
-	Value FunctionInvokeResponseHeaders
-	Set   bool
-}
-
-// IsSet returns true if OptFunctionInvokeResponseHeaders was set.
-func (o OptFunctionInvokeResponseHeaders) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptFunctionInvokeResponseHeaders) Reset() {
-	var v FunctionInvokeResponseHeaders
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptFunctionInvokeResponseHeaders) SetTo(v FunctionInvokeResponseHeaders) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptFunctionInvokeResponseHeaders) Get() (v FunctionInvokeResponseHeaders, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptFunctionInvokeResponseHeaders) Or(d FunctionInvokeResponseHeaders) FunctionInvokeResponseHeaders {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
 func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
 	return OptGatewayMetadata{
@@ -8272,6 +7915,52 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxFunction returns new OptSandboxFunction with value set to v.
+func NewOptSandboxFunction(v SandboxFunction) OptSandboxFunction {
+	return OptSandboxFunction{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxFunction is optional SandboxFunction.
+type OptSandboxFunction struct {
+	Value SandboxFunction
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxFunction was set.
+func (o OptSandboxFunction) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxFunction) Reset() {
+	var v SandboxFunction
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxFunction) SetTo(v SandboxFunction) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxFunction) Get() (v SandboxFunction, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxFunction) Or(d SandboxFunction) SandboxFunction {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12423,8 +12112,9 @@ func (s *Sandbox) SetCreatedAt(val time.Time) {
 // Ref: #/components/schemas/SandboxAppService
 type SandboxAppService struct {
 	// Stable service ID. Must be a DNS label.
-	ID          string                      `json:"id"`
-	DisplayName OptString                   `json:"display_name"`
+	ID          string    `json:"id"`
+	DisplayName OptString `json:"display_name"`
+	// Public exposure routing port. Function services normally use the sandbox procd port.
 	Port        int32                       `json:"port"`
 	Runtime     OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress     SandboxAppServiceIngress    `json:"ingress"`
@@ -12839,7 +12529,8 @@ type SandboxAppServiceRuntime struct {
 	Cwd     OptString                          `json:"cwd"`
 	EnvVars OptSandboxAppServiceRuntimeEnvVars `json:"env_vars"`
 	// Warm process alias or context ID used when type is warm_process.
-	WarmProcessName OptString `json:"warm_process_name"`
+	WarmProcessName OptString          `json:"warm_process_name"`
+	Function        OptSandboxFunction `json:"function"`
 }
 
 // GetType returns the value of Type.
@@ -12867,6 +12558,11 @@ func (s *SandboxAppServiceRuntime) GetWarmProcessName() OptString {
 	return s.WarmProcessName
 }
 
+// GetFunction returns the value of Function.
+func (s *SandboxAppServiceRuntime) GetFunction() OptSandboxFunction {
+	return s.Function
+}
+
 // SetType sets the value of Type.
 func (s *SandboxAppServiceRuntime) SetType(val SandboxAppServiceRuntimeType) {
 	s.Type = val
@@ -12892,6 +12588,11 @@ func (s *SandboxAppServiceRuntime) SetWarmProcessName(val OptString) {
 	s.WarmProcessName = val
 }
 
+// SetFunction sets the value of Function.
+func (s *SandboxAppServiceRuntime) SetFunction(val OptSandboxFunction) {
+	s.Function = val
+}
+
 type SandboxAppServiceRuntimeEnvVars map[string]string
 
 func (s *SandboxAppServiceRuntimeEnvVars) init() SandboxAppServiceRuntimeEnvVars {
@@ -12910,6 +12611,7 @@ const (
 	SandboxAppServiceRuntimeTypeWarmProcess SandboxAppServiceRuntimeType = "warm_process"
 	SandboxAppServiceRuntimeTypeCmd         SandboxAppServiceRuntimeType = "cmd"
 	SandboxAppServiceRuntimeTypeManual      SandboxAppServiceRuntimeType = "manual"
+	SandboxAppServiceRuntimeTypeFunction    SandboxAppServiceRuntimeType = "function"
 )
 
 // AllValues returns all SandboxAppServiceRuntimeType values.
@@ -12918,6 +12620,7 @@ func (SandboxAppServiceRuntimeType) AllValues() []SandboxAppServiceRuntimeType {
 		SandboxAppServiceRuntimeTypeWarmProcess,
 		SandboxAppServiceRuntimeTypeCmd,
 		SandboxAppServiceRuntimeTypeManual,
+		SandboxAppServiceRuntimeTypeFunction,
 	}
 }
 
@@ -12929,6 +12632,8 @@ func (s SandboxAppServiceRuntimeType) MarshalText() ([]byte, error) {
 	case SandboxAppServiceRuntimeTypeCmd:
 		return []byte(s), nil
 	case SandboxAppServiceRuntimeTypeManual:
+		return []byte(s), nil
+	case SandboxAppServiceRuntimeTypeFunction:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -12947,6 +12652,9 @@ func (s *SandboxAppServiceRuntimeType) UnmarshalText(data []byte) error {
 	case SandboxAppServiceRuntimeTypeManual:
 		*s = SandboxAppServiceRuntimeTypeManual
 		return nil
+	case SandboxAppServiceRuntimeTypeFunction:
+		*s = SandboxAppServiceRuntimeTypeFunction
+		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
@@ -12956,8 +12664,9 @@ func (s *SandboxAppServiceRuntimeType) UnmarshalText(data []byte) error {
 // Ref: #/components/schemas/SandboxAppServiceView
 type SandboxAppServiceView struct {
 	// Stable service ID. Must be a DNS label.
-	ID              string                      `json:"id"`
-	DisplayName     OptString                   `json:"display_name"`
+	ID          string    `json:"id"`
+	DisplayName OptString `json:"display_name"`
+	// Public exposure routing port. Function services normally use the sandbox procd port.
 	Port            int32                       `json:"port"`
 	Runtime         OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress         SandboxAppServiceIngress    `json:"ingress"`
@@ -13152,6 +12861,158 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Function code executed by procd for a sandbox service request. cluster-gateway owns public ingress
+// and carries this source to procd.
+// Ref: #/components/schemas/SandboxFunction
+type SandboxFunction struct {
+	// Function runtime. Only python is supported in this version.
+	Runtime SandboxFunctionRuntime `json:"runtime"`
+	// Python callable name. Defaults to handler.
+	Handler OptString             `json:"handler"`
+	Source  SandboxFunctionSource `json:"source"`
+}
+
+// GetRuntime returns the value of Runtime.
+func (s *SandboxFunction) GetRuntime() SandboxFunctionRuntime {
+	return s.Runtime
+}
+
+// GetHandler returns the value of Handler.
+func (s *SandboxFunction) GetHandler() OptString {
+	return s.Handler
+}
+
+// GetSource returns the value of Source.
+func (s *SandboxFunction) GetSource() SandboxFunctionSource {
+	return s.Source
+}
+
+// SetRuntime sets the value of Runtime.
+func (s *SandboxFunction) SetRuntime(val SandboxFunctionRuntime) {
+	s.Runtime = val
+}
+
+// SetHandler sets the value of Handler.
+func (s *SandboxFunction) SetHandler(val OptString) {
+	s.Handler = val
+}
+
+// SetSource sets the value of Source.
+func (s *SandboxFunction) SetSource(val SandboxFunctionSource) {
+	s.Source = val
+}
+
+// Function runtime. Only python is supported in this version.
+type SandboxFunctionRuntime string
+
+const (
+	SandboxFunctionRuntimePython SandboxFunctionRuntime = "python"
+)
+
+// AllValues returns all SandboxFunctionRuntime values.
+func (SandboxFunctionRuntime) AllValues() []SandboxFunctionRuntime {
+	return []SandboxFunctionRuntime{
+		SandboxFunctionRuntimePython,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxFunctionRuntime) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxFunctionRuntimePython:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxFunctionRuntime) UnmarshalText(data []byte) error {
+	switch SandboxFunctionRuntime(data) {
+	case SandboxFunctionRuntimePython:
+		*s = SandboxFunctionRuntimePython
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Function source code stored in sandbox service config.
+// Ref: #/components/schemas/SandboxFunctionSource
+type SandboxFunctionSource struct {
+	// Source transport. Only inline source is supported in this version.
+	Type SandboxFunctionSourceType `json:"type"`
+	// Relative Python filename used when materializing the source. Defaults to main.py.
+	Filename OptString `json:"filename"`
+	// Inline source code. Limited to 256 KiB.
+	Code string `json:"code"`
+}
+
+// GetType returns the value of Type.
+func (s *SandboxFunctionSource) GetType() SandboxFunctionSourceType {
+	return s.Type
+}
+
+// GetFilename returns the value of Filename.
+func (s *SandboxFunctionSource) GetFilename() OptString {
+	return s.Filename
+}
+
+// GetCode returns the value of Code.
+func (s *SandboxFunctionSource) GetCode() string {
+	return s.Code
+}
+
+// SetType sets the value of Type.
+func (s *SandboxFunctionSource) SetType(val SandboxFunctionSourceType) {
+	s.Type = val
+}
+
+// SetFilename sets the value of Filename.
+func (s *SandboxFunctionSource) SetFilename(val OptString) {
+	s.Filename = val
+}
+
+// SetCode sets the value of Code.
+func (s *SandboxFunctionSource) SetCode(val string) {
+	s.Code = val
+}
+
+// Source transport. Only inline source is supported in this version.
+type SandboxFunctionSourceType string
+
+const (
+	SandboxFunctionSourceTypeInline SandboxFunctionSourceType = "inline"
+)
+
+// AllValues returns all SandboxFunctionSourceType values.
+func (SandboxFunctionSourceType) AllValues() []SandboxFunctionSourceType {
+	return []SandboxFunctionSourceType{
+		SandboxFunctionSourceTypeInline,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxFunctionSourceType) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxFunctionSourceTypeInline:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxFunctionSourceType) UnmarshalText(data []byte) error {
+	switch SandboxFunctionSourceType(data) {
+	case SandboxFunctionSourceTypeInline:
+		*s = SandboxFunctionSourceTypeInline
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/SandboxLifecycleStatus
@@ -15556,34 +15417,6 @@ func (SuccessFileStatResponseSuccess) AllValues() []SuccessFileStatResponseSucce
 		SuccessFileStatResponseSuccessTrue,
 	}
 }
-
-// Ref: #/components/schemas/SuccessFunctionInvokeResponse
-type SuccessFunctionInvokeResponse struct {
-	Success bool                      `json:"success"`
-	Data    OptFunctionInvokeResponse `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessFunctionInvokeResponse) GetSuccess() bool {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessFunctionInvokeResponse) GetData() OptFunctionInvokeResponse {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessFunctionInvokeResponse) SetSuccess(val bool) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessFunctionInvokeResponse) SetData(val OptFunctionInvokeResponse) {
-	s.Data = val
-}
-
-func (*SuccessFunctionInvokeResponse) aPIV1SandboxesIDFunctionsNameInvokePostRes() {}
 
 // Merged schema.
 // Ref: #/components/schemas/SuccessGatewayMetadataResponse

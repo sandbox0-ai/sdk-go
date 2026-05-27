@@ -167,12 +167,6 @@ type APIV1SandboxesIDFilesWatchGetParams struct {
 	ID string
 }
 
-// APIV1SandboxesIDFunctionsNameInvokePostParams is parameters of POST /api/v1/sandboxes/{id}/functions/{name}/invoke operation.
-type APIV1SandboxesIDFunctionsNameInvokePostParams struct {
-	ID   string
-	Name string
-}
-
 // APIV1SandboxesIDGetParams is parameters of GET /api/v1/sandboxes/{id} operation.
 type APIV1SandboxesIDGetParams struct {
 	ID string
