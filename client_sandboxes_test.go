@@ -104,7 +104,7 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 			t.Fatalf("services count = %d, want 1", len(config.Services))
 		}
 		service := config.Services[0]
-		if service.ID != "api" || service.Port != 8080 {
+		if service.ID != "api" || service.Port.Or(0) != 8080 {
 			t.Fatalf("service = %+v, want api service on port 8080", service)
 		}
 		if !service.Ingress.Public || len(service.Ingress.Routes) != 1 {
@@ -129,7 +129,7 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 		WithSandboxServices([]apispec.SandboxAppService{
 			{
 				ID:   "api",
-				Port: 8080,
+				Port: apispec.NewOptInt32(8080),
 				Ingress: apispec.SandboxAppServiceIngress{
 					Public: true,
 					Routes: []apispec.SandboxAppServiceRoute{
