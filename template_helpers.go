@@ -11,6 +11,15 @@ type TemplateContainerOption func(*apispec.ContainerSpec)
 // TemplateWarmProcessOption configures a warm process spec.
 type TemplateWarmProcessOption func(*apispec.WarmProcessSpec)
 
+// TemplateEmptyDirMount builds an emptyDir mount spec.
+func TemplateEmptyDirMount(mountPath, sizeLimit string) apispec.EmptyDirMountSpec {
+	mount := apispec.EmptyDirMountSpec{MountPath: mountPath}
+	if sizeLimit != "" {
+		mount.SizeLimit = apispec.NewOptString(sizeLimit)
+	}
+	return mount
+}
+
 // NewTemplateSpec builds a template spec around a main container.
 func NewTemplateSpec(main apispec.ContainerSpec, opts ...TemplateOption) apispec.SandboxTemplateSpec {
 	spec := apispec.SandboxTemplateSpec{
@@ -143,6 +152,37 @@ func WithTemplateAllowedTeams(teamIDs ...string) TemplateOption {
 func WithTemplateClusterID(clusterID string) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
 		spec.ClusterId = apispec.NewOptString(clusterID)
+	}
+}
+
+// WithTemplatePod sets pod-level template overrides.
+func WithTemplatePod(pod apispec.PodSpecOverride) TemplateOption {
+	return func(spec *apispec.SandboxTemplateSpec) {
+		spec.Pod = apispec.NewOptPodSpecOverride(pod)
+	}
+}
+
+// WithTemplateEmptyDirMount appends one pod emptyDir mount.
+func WithTemplateEmptyDirMount(mount apispec.EmptyDirMountSpec) TemplateOption {
+	return func(spec *apispec.SandboxTemplateSpec) {
+		pod, ok := spec.Pod.Get()
+		if !ok {
+			pod = apispec.PodSpecOverride{}
+		}
+		pod.EmptyDirMounts = append(pod.EmptyDirMounts, mount)
+		spec.Pod = apispec.NewOptPodSpecOverride(pod)
+	}
+}
+
+// WithTemplateEmptyDirMounts appends multiple pod emptyDir mounts.
+func WithTemplateEmptyDirMounts(mounts ...apispec.EmptyDirMountSpec) TemplateOption {
+	return func(spec *apispec.SandboxTemplateSpec) {
+		pod, ok := spec.Pod.Get()
+		if !ok {
+			pod = apispec.PodSpecOverride{}
+		}
+		pod.EmptyDirMounts = append(pod.EmptyDirMounts, mounts...)
+		spec.Pod = apispec.NewOptPodSpecOverride(pod)
 	}
 }
 

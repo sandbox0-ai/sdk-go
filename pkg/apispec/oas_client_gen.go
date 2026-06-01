@@ -485,7 +485,7 @@ type Invoker interface {
 	// Create snapshot.
 	//
 	// POST /api/v1/sandboxvolumes/{id}/snapshots
-	APIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, options ...RequestOption) (*SuccessSnapshotResponse, error)
+	APIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsPostRes, error)
 	// APIV1SandboxvolumesIDSnapshotsSnapshotIDDelete invokes DELETE /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id} operation.
 	//
 	// Delete snapshot.
@@ -8112,12 +8112,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, para
 // Create snapshot.
 //
 // POST /api/v1/sandboxvolumes/{id}/snapshots
-func (c *Client) APIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, options ...RequestOption) (*SuccessSnapshotResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsPostRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDSnapshotsPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, requestOptions ...RequestOption) (res *SuccessSnapshotResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, request *CreateSnapshotRequest, params APIV1SandboxvolumesIDSnapshotsPostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSnapshotsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)

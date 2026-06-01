@@ -17,6 +17,7 @@ func (c *Client) CreateVolume(ctx context.Context, request apispec.CreateSandbox
 	if err != nil {
 		return nil, err
 	}
+
 	data, ok := resp.Data.Get()
 	if !ok {
 		return nil, unexpectedResponseError(resp)
@@ -108,11 +109,17 @@ func (c *Client) CreateVolumeSnapshot(ctx context.Context, volumeID string, requ
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+
+	switch response := resp.(type) {
+	case *apispec.SuccessSnapshotResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ListVolumeSnapshots lists snapshots for a volume.

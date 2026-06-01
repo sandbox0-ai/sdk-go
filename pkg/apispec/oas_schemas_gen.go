@@ -627,6 +627,80 @@ func (s *Affinity) SetPodAffinity(val OptPodAffinity) {
 	s.PodAffinity = val
 }
 
+// Ref: #/components/schemas/AppArmorProfile
+type AppArmorProfile struct {
+	Type             AppArmorProfileType `json:"type"`
+	LocalhostProfile OptString           `json:"localhostProfile"`
+}
+
+// GetType returns the value of Type.
+func (s *AppArmorProfile) GetType() AppArmorProfileType {
+	return s.Type
+}
+
+// GetLocalhostProfile returns the value of LocalhostProfile.
+func (s *AppArmorProfile) GetLocalhostProfile() OptString {
+	return s.LocalhostProfile
+}
+
+// SetType sets the value of Type.
+func (s *AppArmorProfile) SetType(val AppArmorProfileType) {
+	s.Type = val
+}
+
+// SetLocalhostProfile sets the value of LocalhostProfile.
+func (s *AppArmorProfile) SetLocalhostProfile(val OptString) {
+	s.LocalhostProfile = val
+}
+
+type AppArmorProfileType string
+
+const (
+	AppArmorProfileTypeUnconfined     AppArmorProfileType = "Unconfined"
+	AppArmorProfileTypeRuntimeDefault AppArmorProfileType = "RuntimeDefault"
+	AppArmorProfileTypeLocalhost      AppArmorProfileType = "Localhost"
+)
+
+// AllValues returns all AppArmorProfileType values.
+func (AppArmorProfileType) AllValues() []AppArmorProfileType {
+	return []AppArmorProfileType{
+		AppArmorProfileTypeUnconfined,
+		AppArmorProfileTypeRuntimeDefault,
+		AppArmorProfileTypeLocalhost,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s AppArmorProfileType) MarshalText() ([]byte, error) {
+	switch s {
+	case AppArmorProfileTypeUnconfined:
+		return []byte(s), nil
+	case AppArmorProfileTypeRuntimeDefault:
+		return []byte(s), nil
+	case AppArmorProfileTypeLocalhost:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *AppArmorProfileType) UnmarshalText(data []byte) error {
+	switch AppArmorProfileType(data) {
+	case AppArmorProfileTypeUnconfined:
+		*s = AppArmorProfileTypeUnconfined
+		return nil
+	case AppArmorProfileTypeRuntimeDefault:
+		*s = AppArmorProfileTypeRuntimeDefault
+		return nil
+	case AppArmorProfileTypeLocalhost:
+		*s = AppArmorProfileTypeLocalhost
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 type AuthChangePasswordPostBadRequest ErrorEnvelope
 
 func (*AuthChangePasswordPostBadRequest) authChangePasswordPostRes() {}
@@ -828,12 +902,23 @@ func (s *CachePolicySpec) SetTTL(val OptString) {
 
 // Ref: #/components/schemas/Capabilities
 type Capabilities struct {
+	Add  []string `json:"add"`
 	Drop []string `json:"drop"`
+}
+
+// GetAdd returns the value of Add.
+func (s *Capabilities) GetAdd() []string {
+	return s.Add
 }
 
 // GetDrop returns the value of Drop.
 func (s *Capabilities) GetDrop() []string {
 	return s.Drop
+}
+
+// SetAdd sets the value of Add.
+func (s *Capabilities) SetAdd(val []string) {
+	s.Add = val
 }
 
 // SetDrop sets the value of Drop.
@@ -2847,6 +2932,33 @@ func (s *EgressTLSMode) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/EmptyDirMountSpec
+type EmptyDirMountSpec struct {
+	MountPath string `json:"mountPath"`
+	// Optional size limit for the Kubernetes emptyDir volume.
+	SizeLimit OptString `json:"sizeLimit"`
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *EmptyDirMountSpec) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetSizeLimit returns the value of SizeLimit.
+func (s *EmptyDirMountSpec) GetSizeLimit() OptString {
+	return s.SizeLimit
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *EmptyDirMountSpec) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetSizeLimit sets the value of SizeLimit.
+func (s *EmptyDirMountSpec) SetSizeLimit(val OptString) {
+	s.SizeLimit = val
+}
+
 // Ref: #/components/schemas/EnvVar
 type EnvVar struct {
 	Name  string `json:"name"`
@@ -2951,6 +3063,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsPostRes()          {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
 func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
 func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()             {}
@@ -4276,6 +4389,52 @@ func (o OptAffinity) Get() (v Affinity, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptAffinity) Or(d Affinity) Affinity {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptAppArmorProfile returns new OptAppArmorProfile with value set to v.
+func NewOptAppArmorProfile(v AppArmorProfile) OptAppArmorProfile {
+	return OptAppArmorProfile{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptAppArmorProfile is optional AppArmorProfile.
+type OptAppArmorProfile struct {
+	Value AppArmorProfile
+	Set   bool
+}
+
+// IsSet returns true if OptAppArmorProfile was set.
+func (o OptAppArmorProfile) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptAppArmorProfile) Reset() {
+	var v AppArmorProfile
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptAppArmorProfile) SetTo(v AppArmorProfile) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptAppArmorProfile) Get() (v AppArmorProfile, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptAppArmorProfile) Or(d AppArmorProfile) AppArmorProfile {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8519,6 +8678,52 @@ func (o OptSandboxVolume) Or(d SandboxVolume) SandboxVolume {
 	return d
 }
 
+// NewOptSeccompProfile returns new OptSeccompProfile with value set to v.
+func NewOptSeccompProfile(v SeccompProfile) OptSeccompProfile {
+	return OptSeccompProfile{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSeccompProfile is optional SeccompProfile.
+type OptSeccompProfile struct {
+	Value SeccompProfile
+	Set   bool
+}
+
+// IsSet returns true if OptSeccompProfile was set.
+func (o OptSeccompProfile) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSeccompProfile) Reset() {
+	var v SeccompProfile
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSeccompProfile) SetTo(v SeccompProfile) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSeccompProfile) Get() (v SeccompProfile, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSeccompProfile) Or(d SeccompProfile) SeccompProfile {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSecurityContext returns new OptSecurityContext with value set to v.
 func NewOptSecurityContext(v SecurityContext) OptSecurityContext {
 	return OptSecurityContext{
@@ -10524,6 +10729,7 @@ type PodSpecOverride struct {
 	Affinity           OptAffinity                    `json:"affinity"`
 	Tolerations        []Toleration                   `json:"tolerations"`
 	ServiceAccountName OptString                      `json:"serviceAccountName"`
+	EmptyDirMounts     []EmptyDirMountSpec            `json:"emptyDirMounts"`
 }
 
 // GetNodeSelector returns the value of NodeSelector.
@@ -10546,6 +10752,11 @@ func (s *PodSpecOverride) GetServiceAccountName() OptString {
 	return s.ServiceAccountName
 }
 
+// GetEmptyDirMounts returns the value of EmptyDirMounts.
+func (s *PodSpecOverride) GetEmptyDirMounts() []EmptyDirMountSpec {
+	return s.EmptyDirMounts
+}
+
 // SetNodeSelector sets the value of NodeSelector.
 func (s *PodSpecOverride) SetNodeSelector(val OptPodSpecOverrideNodeSelector) {
 	s.NodeSelector = val
@@ -10564,6 +10775,11 @@ func (s *PodSpecOverride) SetTolerations(val []Toleration) {
 // SetServiceAccountName sets the value of ServiceAccountName.
 func (s *PodSpecOverride) SetServiceAccountName(val OptString) {
 	s.ServiceAccountName = val
+}
+
+// SetEmptyDirMounts sets the value of EmptyDirMounts.
+func (s *PodSpecOverride) SetEmptyDirMounts(val []EmptyDirMountSpec) {
+	s.EmptyDirMounts = val
 }
 
 type PodSpecOverrideNodeSelector map[string]string
@@ -11598,6 +11814,9 @@ func (s *ResizeContextRequest) SetCols(val int32) {
 type ResourceQuota struct {
 	CPU    OptString `json:"cpu"`
 	Memory OptString `json:"memory"`
+	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 512Mi when
+	// omitted.
+	EphemeralStorage OptString `json:"ephemeralStorage"`
 }
 
 // GetCPU returns the value of CPU.
@@ -11610,6 +11829,11 @@ func (s *ResourceQuota) GetMemory() OptString {
 	return s.Memory
 }
 
+// GetEphemeralStorage returns the value of EphemeralStorage.
+func (s *ResourceQuota) GetEphemeralStorage() OptString {
+	return s.EphemeralStorage
+}
+
 // SetCPU sets the value of CPU.
 func (s *ResourceQuota) SetCPU(val OptString) {
 	s.CPU = val
@@ -11618,6 +11842,11 @@ func (s *ResourceQuota) SetCPU(val OptString) {
 // SetMemory sets the value of Memory.
 func (s *ResourceQuota) SetMemory(val OptString) {
 	s.Memory = val
+}
+
+// SetEphemeralStorage sets the value of EphemeralStorage.
+func (s *ResourceQuota) SetEphemeralStorage(val OptString) {
+	s.EphemeralStorage = val
 }
 
 // Ref: #/components/schemas/ResourceUsage
@@ -14343,16 +14572,101 @@ func (s *SandboxVolume) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
+// Ref: #/components/schemas/SeccompProfile
+type SeccompProfile struct {
+	Type             SeccompProfileType `json:"type"`
+	LocalhostProfile OptString          `json:"localhostProfile"`
+}
+
+// GetType returns the value of Type.
+func (s *SeccompProfile) GetType() SeccompProfileType {
+	return s.Type
+}
+
+// GetLocalhostProfile returns the value of LocalhostProfile.
+func (s *SeccompProfile) GetLocalhostProfile() OptString {
+	return s.LocalhostProfile
+}
+
+// SetType sets the value of Type.
+func (s *SeccompProfile) SetType(val SeccompProfileType) {
+	s.Type = val
+}
+
+// SetLocalhostProfile sets the value of LocalhostProfile.
+func (s *SeccompProfile) SetLocalhostProfile(val OptString) {
+	s.LocalhostProfile = val
+}
+
+type SeccompProfileType string
+
+const (
+	SeccompProfileTypeUnconfined     SeccompProfileType = "Unconfined"
+	SeccompProfileTypeRuntimeDefault SeccompProfileType = "RuntimeDefault"
+	SeccompProfileTypeLocalhost      SeccompProfileType = "Localhost"
+)
+
+// AllValues returns all SeccompProfileType values.
+func (SeccompProfileType) AllValues() []SeccompProfileType {
+	return []SeccompProfileType{
+		SeccompProfileTypeUnconfined,
+		SeccompProfileTypeRuntimeDefault,
+		SeccompProfileTypeLocalhost,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SeccompProfileType) MarshalText() ([]byte, error) {
+	switch s {
+	case SeccompProfileTypeUnconfined:
+		return []byte(s), nil
+	case SeccompProfileTypeRuntimeDefault:
+		return []byte(s), nil
+	case SeccompProfileTypeLocalhost:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SeccompProfileType) UnmarshalText(data []byte) error {
+	switch SeccompProfileType(data) {
+	case SeccompProfileTypeUnconfined:
+		*s = SeccompProfileTypeUnconfined
+		return nil
+	case SeccompProfileTypeRuntimeDefault:
+		*s = SeccompProfileTypeRuntimeDefault
+		return nil
+	case SeccompProfileTypeLocalhost:
+		*s = SeccompProfileTypeLocalhost
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/SecurityContext
 type SecurityContext struct {
-	Capabilities OptCapabilities `json:"capabilities"`
-	RunAsUser    OptInt64        `json:"runAsUser"`
-	RunAsGroup   OptInt64        `json:"runAsGroup"`
+	Capabilities             OptCapabilities    `json:"capabilities"`
+	Privileged               OptBool            `json:"privileged"`
+	RunAsUser                OptInt64           `json:"runAsUser"`
+	RunAsGroup               OptInt64           `json:"runAsGroup"`
+	RunAsNonRoot             OptBool            `json:"runAsNonRoot"`
+	ReadOnlyRootFilesystem   OptBool            `json:"readOnlyRootFilesystem"`
+	AllowPrivilegeEscalation OptBool            `json:"allowPrivilegeEscalation"`
+	SeccompProfile           OptSeccompProfile  `json:"seccompProfile"`
+	AppArmorProfile          OptAppArmorProfile `json:"appArmorProfile"`
 }
 
 // GetCapabilities returns the value of Capabilities.
 func (s *SecurityContext) GetCapabilities() OptCapabilities {
 	return s.Capabilities
+}
+
+// GetPrivileged returns the value of Privileged.
+func (s *SecurityContext) GetPrivileged() OptBool {
+	return s.Privileged
 }
 
 // GetRunAsUser returns the value of RunAsUser.
@@ -14365,9 +14679,39 @@ func (s *SecurityContext) GetRunAsGroup() OptInt64 {
 	return s.RunAsGroup
 }
 
+// GetRunAsNonRoot returns the value of RunAsNonRoot.
+func (s *SecurityContext) GetRunAsNonRoot() OptBool {
+	return s.RunAsNonRoot
+}
+
+// GetReadOnlyRootFilesystem returns the value of ReadOnlyRootFilesystem.
+func (s *SecurityContext) GetReadOnlyRootFilesystem() OptBool {
+	return s.ReadOnlyRootFilesystem
+}
+
+// GetAllowPrivilegeEscalation returns the value of AllowPrivilegeEscalation.
+func (s *SecurityContext) GetAllowPrivilegeEscalation() OptBool {
+	return s.AllowPrivilegeEscalation
+}
+
+// GetSeccompProfile returns the value of SeccompProfile.
+func (s *SecurityContext) GetSeccompProfile() OptSeccompProfile {
+	return s.SeccompProfile
+}
+
+// GetAppArmorProfile returns the value of AppArmorProfile.
+func (s *SecurityContext) GetAppArmorProfile() OptAppArmorProfile {
+	return s.AppArmorProfile
+}
+
 // SetCapabilities sets the value of Capabilities.
 func (s *SecurityContext) SetCapabilities(val OptCapabilities) {
 	s.Capabilities = val
+}
+
+// SetPrivileged sets the value of Privileged.
+func (s *SecurityContext) SetPrivileged(val OptBool) {
+	s.Privileged = val
 }
 
 // SetRunAsUser sets the value of RunAsUser.
@@ -14378,6 +14722,31 @@ func (s *SecurityContext) SetRunAsUser(val OptInt64) {
 // SetRunAsGroup sets the value of RunAsGroup.
 func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
 	s.RunAsGroup = val
+}
+
+// SetRunAsNonRoot sets the value of RunAsNonRoot.
+func (s *SecurityContext) SetRunAsNonRoot(val OptBool) {
+	s.RunAsNonRoot = val
+}
+
+// SetReadOnlyRootFilesystem sets the value of ReadOnlyRootFilesystem.
+func (s *SecurityContext) SetReadOnlyRootFilesystem(val OptBool) {
+	s.ReadOnlyRootFilesystem = val
+}
+
+// SetAllowPrivilegeEscalation sets the value of AllowPrivilegeEscalation.
+func (s *SecurityContext) SetAllowPrivilegeEscalation(val OptBool) {
+	s.AllowPrivilegeEscalation = val
+}
+
+// SetSeccompProfile sets the value of SeccompProfile.
+func (s *SecurityContext) SetSeccompProfile(val OptSeccompProfile) {
+	s.SeccompProfile = val
+}
+
+// SetAppArmorProfile sets the value of AppArmorProfile.
+func (s *SecurityContext) SetAppArmorProfile(val OptAppArmorProfile) {
+	s.AppArmorProfile = val
 }
 
 // Ref: #/components/schemas/SignalContextRequest
@@ -16727,6 +17096,7 @@ func (s *SuccessSnapshotResponse) SetData(val OptSnapshot) {
 	s.Data = val
 }
 
+func (*SuccessSnapshotResponse) aPIV1SandboxvolumesIDSnapshotsPostRes()          {}
 func (*SuccessSnapshotResponse) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
 
 type SuccessSnapshotResponseSuccess bool

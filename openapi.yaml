@@ -2726,6 +2726,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessSnapshotResponse"
+        "409":
+          description: Volume is busy or active RWX snapshot is unsupported
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
     get:
       tags: [snapshots]
       summary: List snapshots
@@ -5232,24 +5238,61 @@ components:
           type: string
         memory:
           type: string
+        ephemeralStorage:
+          type: string
+          description: Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 512Mi when omitted.
     SecurityContext:
       type: object
       properties:
         capabilities:
           $ref: "#/components/schemas/Capabilities"
+        privileged:
+          type: boolean
         runAsUser:
           type: integer
           format: int64
         runAsGroup:
           type: integer
           format: int64
+        runAsNonRoot:
+          type: boolean
+        readOnlyRootFilesystem:
+          type: boolean
+        allowPrivilegeEscalation:
+          type: boolean
+        seccompProfile:
+          $ref: "#/components/schemas/SeccompProfile"
+        appArmorProfile:
+          $ref: "#/components/schemas/AppArmorProfile"
     Capabilities:
       type: object
       properties:
+        add:
+          type: array
+          items:
+            type: string
         drop:
           type: array
           items:
             type: string
+    SeccompProfile:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Unconfined, RuntimeDefault, Localhost]
+        localhostProfile:
+          type: string
+      required: [type]
+    AppArmorProfile:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Unconfined, RuntimeDefault, Localhost]
+        localhostProfile:
+          type: string
+      required: [type]
     Probe:
       type: object
       properties:
@@ -5345,6 +5388,19 @@ components:
             $ref: "#/components/schemas/Toleration"
         serviceAccountName:
           type: string
+        emptyDirMounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/EmptyDirMountSpec"
+    EmptyDirMountSpec:
+      type: object
+      properties:
+        mountPath:
+          type: string
+        sizeLimit:
+          type: string
+          description: Optional size limit for the Kubernetes emptyDir volume.
+      required: [mountPath]
     Affinity:
       type: object
       properties:
