@@ -12114,8 +12114,9 @@ type SandboxAppService struct {
 	// Stable service ID. Must be a DNS label.
 	ID          string    `json:"id"`
 	DisplayName OptString `json:"display_name"`
-	// Public exposure routing port. Function services normally use the sandbox procd port.
-	Port        int32                       `json:"port"`
+	// Public exposure routing port. Required for manual, cmd, and warm_process services. Omit for
+	// function services; Sandbox0 assigns the internal function service port.
+	Port        OptInt32                    `json:"port"`
 	Runtime     OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress     SandboxAppServiceIngress    `json:"ingress"`
 	HealthCheck OptSandboxAppServiceHealth  `json:"health_check"`
@@ -12132,7 +12133,7 @@ func (s *SandboxAppService) GetDisplayName() OptString {
 }
 
 // GetPort returns the value of Port.
-func (s *SandboxAppService) GetPort() int32 {
+func (s *SandboxAppService) GetPort() OptInt32 {
 	return s.Port
 }
 
@@ -12162,7 +12163,7 @@ func (s *SandboxAppService) SetDisplayName(val OptString) {
 }
 
 // SetPort sets the value of Port.
-func (s *SandboxAppService) SetPort(val int32) {
+func (s *SandboxAppService) SetPort(val OptInt32) {
 	s.Port = val
 }
 
@@ -12666,8 +12667,9 @@ type SandboxAppServiceView struct {
 	// Stable service ID. Must be a DNS label.
 	ID          string    `json:"id"`
 	DisplayName OptString `json:"display_name"`
-	// Public exposure routing port. Function services normally use the sandbox procd port.
-	Port            int32                       `json:"port"`
+	// Public exposure routing port. Required for manual, cmd, and warm_process services. Omit for
+	// function services; Sandbox0 assigns the internal function service port.
+	Port            OptInt32                    `json:"port"`
 	Runtime         OptSandboxAppServiceRuntime `json:"runtime"`
 	Ingress         SandboxAppServiceIngress    `json:"ingress"`
 	HealthCheck     OptSandboxAppServiceHealth  `json:"health_check"`
@@ -12688,7 +12690,7 @@ func (s *SandboxAppServiceView) GetDisplayName() OptString {
 }
 
 // GetPort returns the value of Port.
-func (s *SandboxAppServiceView) GetPort() int32 {
+func (s *SandboxAppServiceView) GetPort() OptInt32 {
 	return s.Port
 }
 
@@ -12733,7 +12735,7 @@ func (s *SandboxAppServiceView) SetDisplayName(val OptString) {
 }
 
 // SetPort sets the value of Port.
-func (s *SandboxAppServiceView) SetPort(val int32) {
+func (s *SandboxAppServiceView) SetPort(val OptInt32) {
 	s.Port = val
 }
 
@@ -12944,8 +12946,6 @@ func (s *SandboxFunctionRuntime) UnmarshalText(data []byte) error {
 type SandboxFunctionSource struct {
 	// Source transport. Only inline source is supported in this version.
 	Type SandboxFunctionSourceType `json:"type"`
-	// Relative Python filename used when materializing the source. Defaults to main.py.
-	Filename OptString `json:"filename"`
 	// Inline source code. Limited to 256 KiB.
 	Code string `json:"code"`
 }
@@ -12953,11 +12953,6 @@ type SandboxFunctionSource struct {
 // GetType returns the value of Type.
 func (s *SandboxFunctionSource) GetType() SandboxFunctionSourceType {
 	return s.Type
-}
-
-// GetFilename returns the value of Filename.
-func (s *SandboxFunctionSource) GetFilename() OptString {
-	return s.Filename
 }
 
 // GetCode returns the value of Code.
@@ -12968,11 +12963,6 @@ func (s *SandboxFunctionSource) GetCode() string {
 // SetType sets the value of Type.
 func (s *SandboxFunctionSource) SetType(val SandboxFunctionSourceType) {
 	s.Type = val
-}
-
-// SetFilename sets the value of Filename.
-func (s *SandboxFunctionSource) SetFilename(val OptString) {
-	s.Filename = val
 }
 
 // SetCode sets the value of Code.

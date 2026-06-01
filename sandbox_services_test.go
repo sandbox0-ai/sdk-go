@@ -66,8 +66,7 @@ func TestSandboxServicesLifecycle(t *testing.T) {
 
 	_, err = sandbox.UpdateServices(context.Background(), []apispec.SandboxAppService{
 		{
-			ID:   "handler",
-			Port: 49983,
+			ID: "handler",
 			Runtime: apispec.NewOptSandboxAppServiceRuntime(apispec.SandboxAppServiceRuntime{
 				Type: apispec.SandboxAppServiceRuntimeTypeFunction,
 				Function: apispec.NewOptSandboxFunction(apispec.SandboxFunction{

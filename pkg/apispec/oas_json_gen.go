@@ -21343,8 +21343,10 @@ func (s *SandboxAppService) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("port")
-		e.Int32(s.Port)
+		if s.Port.Set {
+			e.FieldStart("port")
+			s.Port.Encode(e)
+		}
 	}
 	{
 		if s.Runtime.Set {
@@ -21405,11 +21407,9 @@ func (s *SandboxAppService) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "port":
-			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				v, err := d.Int32()
-				s.Port = int32(v)
-				if err != nil {
+				s.Port.Reset()
+				if err := s.Port.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -21456,7 +21456,7 @@ func (s *SandboxAppService) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00010101,
+		0b00010001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -22748,8 +22748,10 @@ func (s *SandboxAppServiceView) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("port")
-		e.Int32(s.Port)
+		if s.Port.Set {
+			e.FieldStart("port")
+			s.Port.Encode(e)
+		}
 	}
 	{
 		if s.Runtime.Set {
@@ -22833,11 +22835,9 @@ func (s *SandboxAppServiceView) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "port":
-			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				v, err := d.Int32()
-				s.Port = int32(v)
-				if err != nil {
+				s.Port.Reset()
+				if err := s.Port.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -22925,7 +22925,7 @@ func (s *SandboxAppServiceView) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b01010101,
+		0b01010001,
 		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
@@ -23383,21 +23383,14 @@ func (s *SandboxFunctionSource) encodeFields(e *jx.Encoder) {
 		s.Type.Encode(e)
 	}
 	{
-		if s.Filename.Set {
-			e.FieldStart("filename")
-			s.Filename.Encode(e)
-		}
-	}
-	{
 		e.FieldStart("code")
 		e.Str(s.Code)
 	}
 }
 
-var jsonFieldsNameOfSandboxFunctionSource = [3]string{
+var jsonFieldsNameOfSandboxFunctionSource = [2]string{
 	0: "type",
-	1: "filename",
-	2: "code",
+	1: "code",
 }
 
 // Decode decodes SandboxFunctionSource from json.
@@ -23419,18 +23412,8 @@ func (s *SandboxFunctionSource) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
 			}
-		case "filename":
-			if err := func() error {
-				s.Filename.Reset()
-				if err := s.Filename.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"filename\"")
-			}
 		case "code":
-			requiredBitSet[0] |= 1 << 2
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.Code = string(v)
@@ -23451,7 +23434,7 @@ func (s *SandboxFunctionSource) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000101,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
