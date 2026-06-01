@@ -121,6 +121,10 @@ type APIV1SandboxvolumesIDGetRes interface {
 	aPIV1SandboxvolumesIDGetRes()
 }
 
+type APIV1SandboxvolumesIDSnapshotsPostRes interface {
+	aPIV1SandboxvolumesIDSnapshotsPostRes()
+}
+
 type APIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes interface {
 	aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()
 }

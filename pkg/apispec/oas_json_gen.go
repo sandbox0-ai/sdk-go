@@ -1890,6 +1890,159 @@ func (s *Affinity) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *AppArmorProfile) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *AppArmorProfile) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("type")
+		s.Type.Encode(e)
+	}
+	{
+		if s.LocalhostProfile.Set {
+			e.FieldStart("localhostProfile")
+			s.LocalhostProfile.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfAppArmorProfile = [2]string{
+	0: "type",
+	1: "localhostProfile",
+}
+
+// Decode decodes AppArmorProfile from json.
+func (s *AppArmorProfile) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode AppArmorProfile to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "type":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "localhostProfile":
+			if err := func() error {
+				s.LocalhostProfile.Reset()
+				if err := s.LocalhostProfile.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"localhostProfile\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode AppArmorProfile")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfAppArmorProfile) {
+					name = jsonFieldsNameOfAppArmorProfile[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *AppArmorProfile) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *AppArmorProfile) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes AppArmorProfileType as json.
+func (s AppArmorProfileType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes AppArmorProfileType from json.
+func (s *AppArmorProfileType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode AppArmorProfileType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch AppArmorProfileType(v) {
+	case AppArmorProfileTypeUnconfined:
+		*s = AppArmorProfileTypeUnconfined
+	case AppArmorProfileTypeRuntimeDefault:
+		*s = AppArmorProfileTypeRuntimeDefault
+	case AppArmorProfileTypeLocalhost:
+		*s = AppArmorProfileTypeLocalhost
+	default:
+		*s = AppArmorProfileType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s AppArmorProfileType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *AppArmorProfileType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes AuthChangePasswordPostBadRequest as json.
 func (s *AuthChangePasswordPostBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -2866,6 +3019,16 @@ func (s *Capabilities) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *Capabilities) encodeFields(e *jx.Encoder) {
 	{
+		if s.Add != nil {
+			e.FieldStart("add")
+			e.ArrStart()
+			for _, elem := range s.Add {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		if s.Drop != nil {
 			e.FieldStart("drop")
 			e.ArrStart()
@@ -2877,8 +3040,9 @@ func (s *Capabilities) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCapabilities = [1]string{
-	0: "drop",
+var jsonFieldsNameOfCapabilities = [2]string{
+	0: "add",
+	1: "drop",
 }
 
 // Decode decodes Capabilities from json.
@@ -2889,6 +3053,25 @@ func (s *Capabilities) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "add":
+			if err := func() error {
+				s.Add = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Add = append(s.Add, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"add\"")
+			}
 		case "drop":
 			if err := func() error {
 				s.Drop = make([]string, 0)
@@ -7837,6 +8020,119 @@ func (s *EgressTLSMode) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *EmptyDirMountSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *EmptyDirMountSpec) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("mountPath")
+		e.Str(s.MountPath)
+	}
+	{
+		if s.SizeLimit.Set {
+			e.FieldStart("sizeLimit")
+			s.SizeLimit.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfEmptyDirMountSpec = [2]string{
+	0: "mountPath",
+	1: "sizeLimit",
+}
+
+// Decode decodes EmptyDirMountSpec from json.
+func (s *EmptyDirMountSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode EmptyDirMountSpec to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "mountPath":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.MountPath = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mountPath\"")
+			}
+		case "sizeLimit":
+			if err := func() error {
+				s.SizeLimit.Reset()
+				if err := s.SizeLimit.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sizeLimit\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode EmptyDirMountSpec")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfEmptyDirMountSpec) {
+					name = jsonFieldsNameOfEmptyDirMountSpec[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *EmptyDirMountSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *EmptyDirMountSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *EnvVar) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -11788,6 +12084,39 @@ func (s *OptAffinity) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes AppArmorProfile as json.
+func (o OptAppArmorProfile) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes AppArmorProfile from json.
+func (o *OptAppArmorProfile) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptAppArmorProfile to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptAppArmorProfile) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptAppArmorProfile) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes bool as json.
 func (o OptBool) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -14864,6 +15193,39 @@ func (s *OptSandboxVolume) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SeccompProfile as json.
+func (o OptSeccompProfile) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SeccompProfile from json.
+func (o *OptSeccompProfile) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSeccompProfile to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSeccompProfile) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSeccompProfile) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SecurityContext as json.
 func (o OptSecurityContext) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -16729,13 +17091,24 @@ func (s *PodSpecOverride) encodeFields(e *jx.Encoder) {
 			s.ServiceAccountName.Encode(e)
 		}
 	}
+	{
+		if s.EmptyDirMounts != nil {
+			e.FieldStart("emptyDirMounts")
+			e.ArrStart()
+			for _, elem := range s.EmptyDirMounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
 }
 
-var jsonFieldsNameOfPodSpecOverride = [4]string{
+var jsonFieldsNameOfPodSpecOverride = [5]string{
 	0: "nodeSelector",
 	1: "affinity",
 	2: "tolerations",
 	3: "serviceAccountName",
+	4: "emptyDirMounts",
 }
 
 // Decode decodes PodSpecOverride from json.
@@ -16792,6 +17165,23 @@ func (s *PodSpecOverride) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"serviceAccountName\"")
+			}
+		case "emptyDirMounts":
+			if err := func() error {
+				s.EmptyDirMounts = make([]EmptyDirMountSpec, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem EmptyDirMountSpec
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.EmptyDirMounts = append(s.EmptyDirMounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"emptyDirMounts\"")
 			}
 		default:
 			return d.Skip()
@@ -20178,11 +20568,18 @@ func (s *ResourceQuota) encodeFields(e *jx.Encoder) {
 			s.Memory.Encode(e)
 		}
 	}
+	{
+		if s.EphemeralStorage.Set {
+			e.FieldStart("ephemeralStorage")
+			s.EphemeralStorage.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfResourceQuota = [2]string{
+var jsonFieldsNameOfResourceQuota = [3]string{
 	0: "cpu",
 	1: "memory",
+	2: "ephemeralStorage",
 }
 
 // Decode decodes ResourceQuota from json.
@@ -20212,6 +20609,16 @@ func (s *ResourceQuota) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"memory\"")
+			}
+		case "ephemeralStorage":
+			if err := func() error {
+				s.EphemeralStorage.Reset()
+				if err := s.EphemeralStorage.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ephemeralStorage\"")
 			}
 		default:
 			return d.Skip()
@@ -26378,6 +26785,159 @@ func (s *SandboxVolume) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SeccompProfile) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SeccompProfile) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("type")
+		s.Type.Encode(e)
+	}
+	{
+		if s.LocalhostProfile.Set {
+			e.FieldStart("localhostProfile")
+			s.LocalhostProfile.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSeccompProfile = [2]string{
+	0: "type",
+	1: "localhostProfile",
+}
+
+// Decode decodes SeccompProfile from json.
+func (s *SeccompProfile) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SeccompProfile to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "type":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "localhostProfile":
+			if err := func() error {
+				s.LocalhostProfile.Reset()
+				if err := s.LocalhostProfile.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"localhostProfile\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SeccompProfile")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSeccompProfile) {
+					name = jsonFieldsNameOfSeccompProfile[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SeccompProfile) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SeccompProfile) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SeccompProfileType as json.
+func (s SeccompProfileType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SeccompProfileType from json.
+func (s *SeccompProfileType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SeccompProfileType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SeccompProfileType(v) {
+	case SeccompProfileTypeUnconfined:
+		*s = SeccompProfileTypeUnconfined
+	case SeccompProfileTypeRuntimeDefault:
+		*s = SeccompProfileTypeRuntimeDefault
+	case SeccompProfileTypeLocalhost:
+		*s = SeccompProfileTypeLocalhost
+	default:
+		*s = SeccompProfileType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SeccompProfileType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SeccompProfileType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SecurityContext) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -26393,6 +26953,12 @@ func (s *SecurityContext) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Privileged.Set {
+			e.FieldStart("privileged")
+			s.Privileged.Encode(e)
+		}
+	}
+	{
 		if s.RunAsUser.Set {
 			e.FieldStart("runAsUser")
 			s.RunAsUser.Encode(e)
@@ -26404,12 +26970,48 @@ func (s *SecurityContext) encodeFields(e *jx.Encoder) {
 			s.RunAsGroup.Encode(e)
 		}
 	}
+	{
+		if s.RunAsNonRoot.Set {
+			e.FieldStart("runAsNonRoot")
+			s.RunAsNonRoot.Encode(e)
+		}
+	}
+	{
+		if s.ReadOnlyRootFilesystem.Set {
+			e.FieldStart("readOnlyRootFilesystem")
+			s.ReadOnlyRootFilesystem.Encode(e)
+		}
+	}
+	{
+		if s.AllowPrivilegeEscalation.Set {
+			e.FieldStart("allowPrivilegeEscalation")
+			s.AllowPrivilegeEscalation.Encode(e)
+		}
+	}
+	{
+		if s.SeccompProfile.Set {
+			e.FieldStart("seccompProfile")
+			s.SeccompProfile.Encode(e)
+		}
+	}
+	{
+		if s.AppArmorProfile.Set {
+			e.FieldStart("appArmorProfile")
+			s.AppArmorProfile.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfSecurityContext = [3]string{
+var jsonFieldsNameOfSecurityContext = [9]string{
 	0: "capabilities",
-	1: "runAsUser",
-	2: "runAsGroup",
+	1: "privileged",
+	2: "runAsUser",
+	3: "runAsGroup",
+	4: "runAsNonRoot",
+	5: "readOnlyRootFilesystem",
+	6: "allowPrivilegeEscalation",
+	7: "seccompProfile",
+	8: "appArmorProfile",
 }
 
 // Decode decodes SecurityContext from json.
@@ -26430,6 +27032,16 @@ func (s *SecurityContext) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"capabilities\"")
 			}
+		case "privileged":
+			if err := func() error {
+				s.Privileged.Reset()
+				if err := s.Privileged.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"privileged\"")
+			}
 		case "runAsUser":
 			if err := func() error {
 				s.RunAsUser.Reset()
@@ -26449,6 +27061,56 @@ func (s *SecurityContext) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"runAsGroup\"")
+			}
+		case "runAsNonRoot":
+			if err := func() error {
+				s.RunAsNonRoot.Reset()
+				if err := s.RunAsNonRoot.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"runAsNonRoot\"")
+			}
+		case "readOnlyRootFilesystem":
+			if err := func() error {
+				s.ReadOnlyRootFilesystem.Reset()
+				if err := s.ReadOnlyRootFilesystem.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"readOnlyRootFilesystem\"")
+			}
+		case "allowPrivilegeEscalation":
+			if err := func() error {
+				s.AllowPrivilegeEscalation.Reset()
+				if err := s.AllowPrivilegeEscalation.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowPrivilegeEscalation\"")
+			}
+		case "seccompProfile":
+			if err := func() error {
+				s.SeccompProfile.Reset()
+				if err := s.SeccompProfile.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"seccompProfile\"")
+			}
+		case "appArmorProfile":
+			if err := func() error {
+				s.AppArmorProfile.Reset()
+				if err := s.AppArmorProfile.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"appArmorProfile\"")
 			}
 		default:
 			return d.Skip()
