@@ -15,6 +15,7 @@ type Sandbox struct {
 	ID              string
 	Template        string
 	ClusterID       *string
+	FilesystemID    *string
 	PodName         string
 	Status          string
 	BootstrapMounts []apispec.MountStatus

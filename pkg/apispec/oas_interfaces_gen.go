@@ -45,6 +45,10 @@ type APIV1SandboxesGetRes interface {
 	aPIV1SandboxesGetRes()
 }
 
+type APIV1SandboxesIDCleanPostRes interface {
+	aPIV1SandboxesIDCleanPostRes()
+}
+
 type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
 }
@@ -81,6 +85,10 @@ type APIV1SandboxesIDRefreshPostRes interface {
 	aPIV1SandboxesIDRefreshPostRes()
 }
 
+type APIV1SandboxesIDRestorePostRes interface {
+	aPIV1SandboxesIDRestorePostRes()
+}
+
 type APIV1SandboxesIDResumePostRes interface {
 	aPIV1SandboxesIDResumePostRes()
 }
@@ -99,6 +107,26 @@ type APIV1SandboxesIDStatusGetRes interface {
 
 type APIV1SandboxesPostRes interface {
 	aPIV1SandboxesPostRes()
+}
+
+type APIV1SandboxfilesystemsIDForkPostRes interface {
+	aPIV1SandboxfilesystemsIDForkPostRes()
+}
+
+type APIV1SandboxfilesystemsIDGetRes interface {
+	aPIV1SandboxfilesystemsIDGetRes()
+}
+
+type APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes interface {
+	aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes()
+}
+
+type APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes interface {
+	aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes()
+}
+
+type APIV1SandboxfilesystemsPostRes interface {
+	aPIV1SandboxfilesystemsPostRes()
 }
 
 type APIV1SandboxvolumesIDDeleteRes interface {

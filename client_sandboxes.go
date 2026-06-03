@@ -7,8 +7,9 @@ import (
 )
 
 type sandboxOptions struct {
-	config *apispec.SandboxConfig
-	mounts []apispec.ClaimMountRequest
+	config       *apispec.SandboxConfig
+	filesystemID *string
+	mounts       []apispec.ClaimMountRequest
 }
 
 // SandboxBootstrapMount configures a volume mount during sandbox claim.
@@ -55,6 +56,13 @@ func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
 			}
 			opts.mounts = append(opts.mounts, claimMount)
 		}
+	}
+}
+
+// WithSandboxFilesystemID requests a persistent sandbox filesystem during claim.
+func WithSandboxFilesystemID(filesystemID string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		opts.filesystemID = &filesystemID
 	}
 }
 
@@ -147,6 +155,9 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	if options.config != nil {
 		req.Config = apispec.NewOptSandboxConfig(*options.config)
 	}
+	if options.filesystemID != nil {
+		req.FilesystemID = apispec.NewOptNilString(*options.filesystemID)
+	}
 	if len(options.mounts) > 0 {
 		req.Mounts = append(req.Mounts, options.mounts...)
 	}
@@ -170,10 +181,15 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 		if value, ok := data.ClusterID.Get(); ok {
 			clusterID = &value
 		}
+		var filesystemID *string
+		if value, ok := data.FilesystemID.Get(); ok {
+			filesystemID = &value
+		}
 		sandbox := &Sandbox{
 			ID:                data.SandboxID,
 			Template:          data.Template,
 			ClusterID:         clusterID,
+			FilesystemID:      filesystemID,
 			PodName:           data.PodName,
 			Status:            string(data.Status),
 			BootstrapMounts:   append([]apispec.MountStatus(nil), data.BootstrapMounts...),
@@ -280,6 +296,42 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessResumeSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// CleanSandbox deletes the runtime pod while preserving durable sandbox state.
+func (c *Client) CleanSandbox(ctx context.Context, sandboxID string) (*apispec.Sandbox, error) {
+	resp, err := c.api.APIV1SandboxesIDCleanPost(ctx, apispec.APIV1SandboxesIDCleanPostParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// RestoreSandbox restores a cleaned sandbox onto a matching pooled pod.
+func (c *Client) RestoreSandbox(ctx context.Context, sandboxID string) (*apispec.Sandbox, error) {
+	resp, err := c.api.APIV1SandboxesIDRestorePost(ctx, apispec.APIV1SandboxesIDRestorePostParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxResponse:
 		data, ok := response.Data.Get()
 		if !ok {
 			return nil, unexpectedResponseError(response)

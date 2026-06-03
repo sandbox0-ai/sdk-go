@@ -56,6 +56,11 @@ type APIV1SandboxesGetParams struct {
 	Offset OptInt `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxesIDCleanPostParams is parameters of POST /api/v1/sandboxes/{id}/clean operation.
+type APIV1SandboxesIDCleanPostParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDContextsCtxIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 type APIV1SandboxesIDContextsCtxIDDeleteParams struct {
 	ID    string
@@ -217,6 +222,11 @@ type APIV1SandboxesIDRefreshPostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDRestorePostParams is parameters of POST /api/v1/sandboxes/{id}/restore operation.
+type APIV1SandboxesIDRestorePostParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDResumePostParams is parameters of POST /api/v1/sandboxes/{id}/resume operation.
 type APIV1SandboxesIDResumePostParams struct {
 	ID string
@@ -235,6 +245,49 @@ type APIV1SandboxesIDServicesPutParams struct {
 // APIV1SandboxesIDStatusGetParams is parameters of GET /api/v1/sandboxes/{id}/status operation.
 type APIV1SandboxesIDStatusGetParams struct {
 	ID string
+}
+
+// APIV1SandboxfilesystemsIDDeleteParams is parameters of DELETE /api/v1/sandboxfilesystems/{id} operation.
+type APIV1SandboxfilesystemsIDDeleteParams struct {
+	ID string
+}
+
+// APIV1SandboxfilesystemsIDForkPostParams is parameters of POST /api/v1/sandboxfilesystems/{id}/fork operation.
+type APIV1SandboxfilesystemsIDForkPostParams struct {
+	ID string
+}
+
+// APIV1SandboxfilesystemsIDGetParams is parameters of GET /api/v1/sandboxfilesystems/{id} operation.
+type APIV1SandboxfilesystemsIDGetParams struct {
+	ID string
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsGetParams is parameters of GET /api/v1/sandboxfilesystems/{id}/snapshots operation.
+type APIV1SandboxfilesystemsIDSnapshotsGetParams struct {
+	ID string
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsPostParams is parameters of POST /api/v1/sandboxfilesystems/{id}/snapshots operation.
+type APIV1SandboxfilesystemsIDSnapshotsPostParams struct {
+	ID string
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteParams is parameters of DELETE /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+type APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteParams struct {
+	ID         string
+	SnapshotID string
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetParams is parameters of GET /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+type APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetParams struct {
+	ID         string
+	SnapshotID string
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostParams is parameters of POST /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}/restore operation.
+type APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostParams struct {
+	ID         string
+	SnapshotID string
 }
 
 // APIV1SandboxvolumesIDDeleteParams is parameters of DELETE /api/v1/sandboxvolumes/{id} operation.

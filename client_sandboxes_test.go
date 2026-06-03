@@ -144,6 +144,99 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 	}
 }
 
+func TestClaimSandboxWithFilesystemOption(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		body := decodeClaimRequest(t, r)
+		filesystemID, ok := body.FilesystemID.Get()
+		if !ok || filesystemID != "fs_123" {
+			t.Fatalf("filesystem_id = %q, want fs_123", filesystemID)
+		}
+
+		writeJSON(t, w, http.StatusCreated, map[string]any{
+			"success": true,
+			"data": map[string]any{
+				"sandbox_id":    "sb_123",
+				"template":      "default",
+				"pod_name":      "pod-a",
+				"filesystem_id": "fs_123",
+				"status":        "running",
+			},
+		})
+	})
+	defer server.Close()
+
+	sandbox, err := client.ClaimSandbox(context.Background(), "default", WithSandboxFilesystemID("fs_123"))
+	if err != nil {
+		t.Fatalf("ClaimSandbox() error = %v", err)
+	}
+	if sandbox.FilesystemID == nil || *sandbox.FilesystemID != "fs_123" {
+		t.Fatalf("sandbox.FilesystemID = %v, want fs_123", sandbox.FilesystemID)
+	}
+}
+
+func TestCleanAndRestoreSandbox(t *testing.T) {
+	seen := map[string]bool{}
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		seen[r.URL.Path] = true
+		switch r.URL.Path {
+		case "/api/v1/sandboxes/sb_123/clean":
+			writeJSON(t, w, http.StatusOK, sandboxResponseBody("cleaned"))
+		case "/api/v1/sandboxes/sb_123/restore":
+			writeJSON(t, w, http.StatusOK, sandboxResponseBody("running"))
+		default:
+			http.NotFound(w, r)
+		}
+	})
+	defer server.Close()
+
+	cleaned, err := client.CleanSandbox(context.Background(), "sb_123")
+	if err != nil {
+		t.Fatalf("CleanSandbox() error = %v", err)
+	}
+	if cleaned.Status != apispec.SandboxLifecycleStatusCleaned {
+		t.Fatalf("cleaned status = %q, want cleaned", cleaned.Status)
+	}
+	restored, err := client.RestoreSandbox(context.Background(), "sb_123")
+	if err != nil {
+		t.Fatalf("RestoreSandbox() error = %v", err)
+	}
+	if restored.Status != apispec.SandboxLifecycleStatusRunning {
+		t.Fatalf("restored status = %q, want running", restored.Status)
+	}
+	if !seen["/api/v1/sandboxes/sb_123/clean"] || !seen["/api/v1/sandboxes/sb_123/restore"] {
+		t.Fatalf("seen paths = %#v", seen)
+	}
+}
+
+func sandboxResponseBody(status string) map[string]any {
+	return map[string]any{
+		"success": true,
+		"data": map[string]any{
+			"id":          "sb_123",
+			"template_id": "default",
+			"team_id":     "team_1",
+			"user_id":     "user_1",
+			"pod_name":    "pod-a",
+			"status":      status,
+			"paused":      false,
+			"power_state": map[string]any{
+				"desired":             "active",
+				"desired_generation":  1,
+				"observed":            "active",
+				"observed_generation": 1,
+				"phase":               "stable",
+			},
+			"auto_resume":     false,
+			"services":        []any{},
+			"mounts":          []any{},
+			"expires_at":      "2026-01-01T00:00:00Z",
+			"hard_expires_at": "2026-01-01T00:00:00Z",
+			"claimed_at":      "2026-01-01T00:00:00Z",
+			"created_at":      "2026-01-01T00:00:00Z",
+		},
+	}
+}
+
 func decodeClaimRequest(t *testing.T, r *http.Request) apispec.ClaimRequest {
 	t.Helper()
 

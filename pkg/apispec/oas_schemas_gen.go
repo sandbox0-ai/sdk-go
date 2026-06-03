@@ -411,6 +411,14 @@ type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
 
+type APIV1SandboxesIDRestorePostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDRestorePostConflict) aPIV1SandboxesIDRestorePostRes() {}
+
+type APIV1SandboxesIDRestorePostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDRestorePostNotFound) aPIV1SandboxesIDRestorePostRes() {}
+
 type APIV1SandboxesIDResumePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostConflict) aPIV1SandboxesIDResumePostRes() {}
@@ -980,14 +988,21 @@ func (s *ClaimMountRequest) SetMountPoint(val string) {
 
 // Ref: #/components/schemas/ClaimRequest
 type ClaimRequest struct {
-	Template OptString           `json:"template"`
-	Config   OptSandboxConfig    `json:"config"`
-	Mounts   []ClaimMountRequest `json:"mounts"`
+	Template OptString `json:"template"`
+	// Optional source SandboxFilesystem ID used to initialize the new sandbox root filesystem.
+	FilesystemID OptNilString        `json:"filesystem_id"`
+	Config       OptSandboxConfig    `json:"config"`
+	Mounts       []ClaimMountRequest `json:"mounts"`
 }
 
 // GetTemplate returns the value of Template.
 func (s *ClaimRequest) GetTemplate() OptString {
 	return s.Template
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *ClaimRequest) GetFilesystemID() OptNilString {
+	return s.FilesystemID
 }
 
 // GetConfig returns the value of Config.
@@ -1005,6 +1020,11 @@ func (s *ClaimRequest) SetTemplate(val OptString) {
 	s.Template = val
 }
 
+// SetFilesystemID sets the value of FilesystemID.
+func (s *ClaimRequest) SetFilesystemID(val OptNilString) {
+	s.FilesystemID = val
+}
+
 // SetConfig sets the value of Config.
 func (s *ClaimRequest) SetConfig(val OptSandboxConfig) {
 	s.Config = val
@@ -1020,6 +1040,7 @@ type ClaimResponse struct {
 	SandboxID       string                 `json:"sandbox_id"`
 	Status          SandboxLifecycleStatus `json:"status"`
 	PodName         string                 `json:"pod_name"`
+	FilesystemID    OptNilString           `json:"filesystem_id"`
 	Template        string                 `json:"template"`
 	ClusterID       OptNilString           `json:"cluster_id"`
 	BootstrapMounts []MountStatus          `json:"bootstrap_mounts"`
@@ -1038,6 +1059,11 @@ func (s *ClaimResponse) GetStatus() SandboxLifecycleStatus {
 // GetPodName returns the value of PodName.
 func (s *ClaimResponse) GetPodName() string {
 	return s.PodName
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *ClaimResponse) GetFilesystemID() OptNilString {
+	return s.FilesystemID
 }
 
 // GetTemplate returns the value of Template.
@@ -1070,6 +1096,11 @@ func (s *ClaimResponse) SetPodName(val string) {
 	s.PodName = val
 }
 
+// SetFilesystemID sets the value of FilesystemID.
+func (s *ClaimResponse) SetFilesystemID(val OptNilString) {
+	s.FilesystemID = val
+}
+
 // SetTemplate sets the value of Template.
 func (s *ClaimResponse) SetTemplate(val string) {
 	s.Template = val
@@ -1087,6 +1118,8 @@ func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
 
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
+	// Base OCI image used for the sandbox root filesystem. SandboxFilesystem branches are tied to the
+	// resolved immutable image digest.
 	Image           string             `json:"image"`
 	ImagePullPolicy OptString          `json:"imagePullPolicy"`
 	Env             []EnvVar           `json:"env"`
@@ -1830,6 +1863,85 @@ func (s *CreateSSHPublicKeyRequest) SetName(val string) {
 // SetPublicKey sets the value of PublicKey.
 func (s *CreateSSHPublicKeyRequest) SetPublicKey(val string) {
 	s.PublicKey = val
+}
+
+// Ref: #/components/schemas/CreateSandboxFilesystemRequest
+type CreateSandboxFilesystemRequest struct {
+	// Template whose mainContainer.image provides the base image digest.
+	Template OptString `json:"template"`
+	// Optional filesystem snapshot ID used to initialize the filesystem.
+	SnapshotID OptString `json:"snapshot_id"`
+	// Resolved immutable base image digest. Required when snapshot_id is omitted by storage-proxy direct
+	// callers.
+	BaseImageDigest OptString `json:"base_image_digest"`
+	// Initial s0fs head for low-level restore/import paths.
+	S0fsHead OptString `json:"s0fs_head"`
+}
+
+// GetTemplate returns the value of Template.
+func (s *CreateSandboxFilesystemRequest) GetTemplate() OptString {
+	return s.Template
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *CreateSandboxFilesystemRequest) GetSnapshotID() OptString {
+	return s.SnapshotID
+}
+
+// GetBaseImageDigest returns the value of BaseImageDigest.
+func (s *CreateSandboxFilesystemRequest) GetBaseImageDigest() OptString {
+	return s.BaseImageDigest
+}
+
+// GetS0fsHead returns the value of S0fsHead.
+func (s *CreateSandboxFilesystemRequest) GetS0fsHead() OptString {
+	return s.S0fsHead
+}
+
+// SetTemplate sets the value of Template.
+func (s *CreateSandboxFilesystemRequest) SetTemplate(val OptString) {
+	s.Template = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *CreateSandboxFilesystemRequest) SetSnapshotID(val OptString) {
+	s.SnapshotID = val
+}
+
+// SetBaseImageDigest sets the value of BaseImageDigest.
+func (s *CreateSandboxFilesystemRequest) SetBaseImageDigest(val OptString) {
+	s.BaseImageDigest = val
+}
+
+// SetS0fsHead sets the value of S0fsHead.
+func (s *CreateSandboxFilesystemRequest) SetS0fsHead(val OptString) {
+	s.S0fsHead = val
+}
+
+// Ref: #/components/schemas/CreateSandboxFilesystemSnapshotRequest
+type CreateSandboxFilesystemSnapshotRequest struct {
+	Name        string    `json:"name"`
+	Description OptString `json:"description"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateSandboxFilesystemSnapshotRequest) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *CreateSandboxFilesystemSnapshotRequest) GetDescription() OptString {
+	return s.Description
+}
+
+// SetName sets the value of Name.
+func (s *CreateSandboxFilesystemSnapshotRequest) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *CreateSandboxFilesystemSnapshotRequest) SetDescription(val OptString) {
+	s.Description = val
 }
 
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
@@ -3048,35 +3160,41 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
-func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
-func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionDeleteRes()                  {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionPutRes()                     {}
-func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
-func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsPostRes()          {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
-func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
-func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()             {}
-func (*ErrorEnvelope) authProvidersGetRes()                            {}
-func (*ErrorEnvelope) healthzGetRes()                                  {}
-func (*ErrorEnvelope) readyzGetRes()                                   {}
-func (*ErrorEnvelope) regionsGetRes()                                  {}
-func (*ErrorEnvelope) teamsGetRes()                                    {}
-func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
-func (*ErrorEnvelope) teamsPostRes()                                   {}
-func (*ErrorEnvelope) usersMeGetRes()                                  {}
-func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
-func (*ErrorEnvelope) usersMeSSHKeysGetRes()                           {}
+func (*ErrorEnvelope) aPIKeysCurrentGetRes()                                       {}
+func (*ErrorEnvelope) aPIKeysGetRes()                                              {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                           {}
+func (*ErrorEnvelope) aPIV1QuotasDimensionDeleteRes()                              {}
+func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                                 {}
+func (*ErrorEnvelope) aPIV1QuotasDimensionPutRes()                                 {}
+func (*ErrorEnvelope) aPIV1SandboxesGetRes()                                       {}
+func (*ErrorEnvelope) aPIV1SandboxesIDCleanPostRes()                               {}
+func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                              {}
+func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                             {}
+func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                             {}
+func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                             {}
+func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                               {}
+func (*ErrorEnvelope) aPIV1SandboxfilesystemsIDForkPostRes()                       {}
+func (*ErrorEnvelope) aPIV1SandboxfilesystemsIDGetRes()                            {}
+func (*ErrorEnvelope) aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes()         {}
+func (*ErrorEnvelope) aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes() {}
+func (*ErrorEnvelope) aPIV1SandboxfilesystemsPostRes()                             {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                             {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()                           {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                                {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsPostRes()                      {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()             {}
+func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                                     {}
+func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()                         {}
+func (*ErrorEnvelope) authProvidersGetRes()                                        {}
+func (*ErrorEnvelope) healthzGetRes()                                              {}
+func (*ErrorEnvelope) readyzGetRes()                                               {}
+func (*ErrorEnvelope) regionsGetRes()                                              {}
+func (*ErrorEnvelope) teamsGetRes()                                                {}
+func (*ErrorEnvelope) teamsIDMembersGetRes()                                       {}
+func (*ErrorEnvelope) teamsPostRes()                                               {}
+func (*ErrorEnvelope) usersMeGetRes()                                              {}
+func (*ErrorEnvelope) usersMeIdentitiesGetRes()                                    {}
+func (*ErrorEnvelope) usersMeSSHKeysGetRes()                                       {}
 
 type ErrorEnvelopeSuccess bool
 
@@ -3330,6 +3448,23 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/ForkSandboxFilesystemRequest
+type ForkSandboxFilesystemRequest struct {
+	// Optional template ID to associate with the forked filesystem. Defaults to the source filesystem
+	// template.
+	Template OptString `json:"template"`
+}
+
+// GetTemplate returns the value of Template.
+func (s *ForkSandboxFilesystemRequest) GetTemplate() OptString {
+	return s.Template
+}
+
+// SetTemplate sets the value of Template.
+func (s *ForkSandboxFilesystemRequest) SetTemplate(val OptString) {
+	s.Template = val
 }
 
 // Ref: #/components/schemas/ForkVolumeRequest
@@ -4243,6 +4378,51 @@ func (s *NetworkEgressPolicy) SetCredentialRules(val []EgressCredentialRule) {
 // SetProxy sets the value of Proxy.
 func (s *NetworkEgressPolicy) SetProxy(val OptEgressProxyPolicy) {
 	s.Proxy = val
+}
+
+// NewNilString returns new NilString with value set to v.
+func NewNilString(v string) NilString {
+	return NilString{
+		Value: v,
+	}
+}
+
+// NilString is nullable string.
+type NilString struct {
+	Value string
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilString) SetTo(v string) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o NilString) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *NilString) SetToNull() {
+	o.Null = true
+	var v string
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilString) Get() (v string, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // Ref: #/components/schemas/NodeAffinity
@@ -5769,6 +5949,52 @@ func (o OptFloat64) Get() (v float64, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptFloat64) Or(d float64) float64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptForkSandboxFilesystemRequest returns new OptForkSandboxFilesystemRequest with value set to v.
+func NewOptForkSandboxFilesystemRequest(v ForkSandboxFilesystemRequest) OptForkSandboxFilesystemRequest {
+	return OptForkSandboxFilesystemRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptForkSandboxFilesystemRequest is optional ForkSandboxFilesystemRequest.
+type OptForkSandboxFilesystemRequest struct {
+	Value ForkSandboxFilesystemRequest
+	Set   bool
+}
+
+// IsSet returns true if OptForkSandboxFilesystemRequest was set.
+func (o OptForkSandboxFilesystemRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptForkSandboxFilesystemRequest) Reset() {
+	var v ForkSandboxFilesystemRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptForkSandboxFilesystemRequest) SetTo(v ForkSandboxFilesystemRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptForkSandboxFilesystemRequest) Get() (v ForkSandboxFilesystemRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptForkSandboxFilesystemRequest) Or(d ForkSandboxFilesystemRequest) ForkSandboxFilesystemRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8074,6 +8300,98 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxFilesystem returns new OptSandboxFilesystem with value set to v.
+func NewOptSandboxFilesystem(v SandboxFilesystem) OptSandboxFilesystem {
+	return OptSandboxFilesystem{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxFilesystem is optional SandboxFilesystem.
+type OptSandboxFilesystem struct {
+	Value SandboxFilesystem
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxFilesystem was set.
+func (o OptSandboxFilesystem) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxFilesystem) Reset() {
+	var v SandboxFilesystem
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxFilesystem) SetTo(v SandboxFilesystem) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxFilesystem) Get() (v SandboxFilesystem, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxFilesystem) Or(d SandboxFilesystem) SandboxFilesystem {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxFilesystemSnapshot returns new OptSandboxFilesystemSnapshot with value set to v.
+func NewOptSandboxFilesystemSnapshot(v SandboxFilesystemSnapshot) OptSandboxFilesystemSnapshot {
+	return OptSandboxFilesystemSnapshot{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxFilesystemSnapshot is optional SandboxFilesystemSnapshot.
+type OptSandboxFilesystemSnapshot struct {
+	Value SandboxFilesystemSnapshot
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxFilesystemSnapshot was set.
+func (o OptSandboxFilesystemSnapshot) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxFilesystemSnapshot) Reset() {
+	var v SandboxFilesystemSnapshot
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxFilesystemSnapshot) SetTo(v SandboxFilesystemSnapshot) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxFilesystemSnapshot) Get() (v SandboxFilesystemSnapshot, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxFilesystemSnapshot) Or(d SandboxFilesystemSnapshot) SandboxFilesystemSnapshot {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11181,13 +11499,15 @@ func (s *PutTeamQuotaRequest) SetLimitValue(val int64) {
 type QuotaDimension string
 
 const (
-	QuotaDimensionActiveSandboxes   QuotaDimension = "active_sandboxes"
-	QuotaDimensionCPUMillicpu       QuotaDimension = "cpu_millicpu"
-	QuotaDimensionMemoryMib         QuotaDimension = "memory_mib"
-	QuotaDimensionVolumeStorageGB   QuotaDimension = "volume_storage_gb"
-	QuotaDimensionSnapshotStorageGB QuotaDimension = "snapshot_storage_gb"
-	QuotaDimensionEgress            QuotaDimension = "egress"
-	QuotaDimensionIngress           QuotaDimension = "ingress"
+	QuotaDimensionActiveSandboxes             QuotaDimension = "active_sandboxes"
+	QuotaDimensionCPUMillicpu                 QuotaDimension = "cpu_millicpu"
+	QuotaDimensionMemoryMib                   QuotaDimension = "memory_mib"
+	QuotaDimensionVolumeStorageGB             QuotaDimension = "volume_storage_gb"
+	QuotaDimensionSnapshotStorageGB           QuotaDimension = "snapshot_storage_gb"
+	QuotaDimensionFilesystemStorageGB         QuotaDimension = "filesystem_storage_gb"
+	QuotaDimensionFilesystemSnapshotStorageGB QuotaDimension = "filesystem_snapshot_storage_gb"
+	QuotaDimensionEgress                      QuotaDimension = "egress"
+	QuotaDimensionIngress                     QuotaDimension = "ingress"
 )
 
 // AllValues returns all QuotaDimension values.
@@ -11198,6 +11518,8 @@ func (QuotaDimension) AllValues() []QuotaDimension {
 		QuotaDimensionMemoryMib,
 		QuotaDimensionVolumeStorageGB,
 		QuotaDimensionSnapshotStorageGB,
+		QuotaDimensionFilesystemStorageGB,
+		QuotaDimensionFilesystemSnapshotStorageGB,
 		QuotaDimensionEgress,
 		QuotaDimensionIngress,
 	}
@@ -11215,6 +11537,10 @@ func (s QuotaDimension) MarshalText() ([]byte, error) {
 	case QuotaDimensionVolumeStorageGB:
 		return []byte(s), nil
 	case QuotaDimensionSnapshotStorageGB:
+		return []byte(s), nil
+	case QuotaDimensionFilesystemStorageGB:
+		return []byte(s), nil
+	case QuotaDimensionFilesystemSnapshotStorageGB:
 		return []byte(s), nil
 	case QuotaDimensionEgress:
 		return []byte(s), nil
@@ -11242,6 +11568,12 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 		return nil
 	case QuotaDimensionSnapshotStorageGB:
 		*s = QuotaDimensionSnapshotStorageGB
+		return nil
+	case QuotaDimensionFilesystemStorageGB:
+		*s = QuotaDimensionFilesystemStorageGB
+		return nil
+	case QuotaDimensionFilesystemSnapshotStorageGB:
+		*s = QuotaDimensionFilesystemSnapshotStorageGB
 		return nil
 	case QuotaDimensionEgress:
 		*s = QuotaDimensionEgress
@@ -12157,18 +12489,19 @@ func (s *SSHPublicKey) SetUpdatedAt(val time.Time) {
 
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID         string                  `json:"id"`
-	TemplateID string                  `json:"template_id"`
-	TeamID     string                  `json:"team_id"`
-	UserID     OptString               `json:"user_id"`
-	Status     SandboxLifecycleStatus  `json:"status"`
-	Paused     bool                    `json:"paused"`
-	PowerState SandboxPowerState       `json:"power_state"`
-	AutoResume bool                    `json:"auto_resume"`
-	Services   []SandboxAppService     `json:"services"`
-	Mounts     []ClaimMountRequest     `json:"mounts"`
-	PodName    string                  `json:"pod_name"`
-	SSH        OptSandboxSSHConnection `json:"ssh"`
+	ID           string                  `json:"id"`
+	TemplateID   string                  `json:"template_id"`
+	TeamID       string                  `json:"team_id"`
+	UserID       OptString               `json:"user_id"`
+	FilesystemID OptNilString            `json:"filesystem_id"`
+	Status       SandboxLifecycleStatus  `json:"status"`
+	Paused       bool                    `json:"paused"`
+	PowerState   SandboxPowerState       `json:"power_state"`
+	AutoResume   bool                    `json:"auto_resume"`
+	Services     []SandboxAppService     `json:"services"`
+	Mounts       []ClaimMountRequest     `json:"mounts"`
+	PodName      NilString               `json:"pod_name"`
+	SSH          OptSandboxSSHConnection `json:"ssh"`
 	// Soft expiration timestamp. Zero value means not set.
 	ExpiresAt time.Time `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
@@ -12195,6 +12528,11 @@ func (s *Sandbox) GetTeamID() string {
 // GetUserID returns the value of UserID.
 func (s *Sandbox) GetUserID() OptString {
 	return s.UserID
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *Sandbox) GetFilesystemID() OptNilString {
+	return s.FilesystemID
 }
 
 // GetStatus returns the value of Status.
@@ -12228,7 +12566,7 @@ func (s *Sandbox) GetMounts() []ClaimMountRequest {
 }
 
 // GetPodName returns the value of PodName.
-func (s *Sandbox) GetPodName() string {
+func (s *Sandbox) GetPodName() NilString {
 	return s.PodName
 }
 
@@ -12277,6 +12615,11 @@ func (s *Sandbox) SetUserID(val OptString) {
 	s.UserID = val
 }
 
+// SetFilesystemID sets the value of FilesystemID.
+func (s *Sandbox) SetFilesystemID(val OptNilString) {
+	s.FilesystemID = val
+}
+
 // SetStatus sets the value of Status.
 func (s *Sandbox) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
@@ -12308,7 +12651,7 @@ func (s *Sandbox) SetMounts(val []ClaimMountRequest) {
 }
 
 // SetPodName sets the value of PodName.
-func (s *Sandbox) SetPodName(val string) {
+func (s *Sandbox) SetPodName(val NilString) {
 	s.PodName = val
 }
 
@@ -13092,6 +13435,304 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxFilesystem
+type SandboxFilesystem struct {
+	ID                 string                 `json:"id"`
+	TeamID             string                 `json:"team_id"`
+	UserID             string                 `json:"user_id"`
+	SourceFilesystemID OptNilString           `json:"source_filesystem_id"`
+	TemplateID         OptNilString           `json:"template_id"`
+	BaseImageDigest    string                 `json:"base_image_digest"`
+	S0fsHead           string                 `json:"s0fs_head"`
+	State              SandboxFilesystemState `json:"state"`
+	DeletedAt          OptNilDateTime         `json:"deleted_at"`
+	CreatedAt          time.Time              `json:"created_at"`
+	UpdatedAt          time.Time              `json:"updated_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxFilesystem) GetID() string {
+	return s.ID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SandboxFilesystem) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetUserID returns the value of UserID.
+func (s *SandboxFilesystem) GetUserID() string {
+	return s.UserID
+}
+
+// GetSourceFilesystemID returns the value of SourceFilesystemID.
+func (s *SandboxFilesystem) GetSourceFilesystemID() OptNilString {
+	return s.SourceFilesystemID
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *SandboxFilesystem) GetTemplateID() OptNilString {
+	return s.TemplateID
+}
+
+// GetBaseImageDigest returns the value of BaseImageDigest.
+func (s *SandboxFilesystem) GetBaseImageDigest() string {
+	return s.BaseImageDigest
+}
+
+// GetS0fsHead returns the value of S0fsHead.
+func (s *SandboxFilesystem) GetS0fsHead() string {
+	return s.S0fsHead
+}
+
+// GetState returns the value of State.
+func (s *SandboxFilesystem) GetState() SandboxFilesystemState {
+	return s.State
+}
+
+// GetDeletedAt returns the value of DeletedAt.
+func (s *SandboxFilesystem) GetDeletedAt() OptNilDateTime {
+	return s.DeletedAt
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxFilesystem) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SandboxFilesystem) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// SetID sets the value of ID.
+func (s *SandboxFilesystem) SetID(val string) {
+	s.ID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SandboxFilesystem) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetUserID sets the value of UserID.
+func (s *SandboxFilesystem) SetUserID(val string) {
+	s.UserID = val
+}
+
+// SetSourceFilesystemID sets the value of SourceFilesystemID.
+func (s *SandboxFilesystem) SetSourceFilesystemID(val OptNilString) {
+	s.SourceFilesystemID = val
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *SandboxFilesystem) SetTemplateID(val OptNilString) {
+	s.TemplateID = val
+}
+
+// SetBaseImageDigest sets the value of BaseImageDigest.
+func (s *SandboxFilesystem) SetBaseImageDigest(val string) {
+	s.BaseImageDigest = val
+}
+
+// SetS0fsHead sets the value of S0fsHead.
+func (s *SandboxFilesystem) SetS0fsHead(val string) {
+	s.S0fsHead = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxFilesystem) SetState(val SandboxFilesystemState) {
+	s.State = val
+}
+
+// SetDeletedAt sets the value of DeletedAt.
+func (s *SandboxFilesystem) SetDeletedAt(val OptNilDateTime) {
+	s.DeletedAt = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxFilesystem) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SandboxFilesystem) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/SandboxFilesystemSnapshot
+type SandboxFilesystemSnapshot struct {
+	ID              string         `json:"id"`
+	FilesystemID    string         `json:"filesystem_id"`
+	TeamID          string         `json:"team_id"`
+	UserID          string         `json:"user_id"`
+	BaseImageDigest string         `json:"base_image_digest"`
+	S0fsHead        string         `json:"s0fs_head"`
+	Name            string         `json:"name"`
+	Description     OptString      `json:"description"`
+	SizeBytes       int64          `json:"size_bytes"`
+	CreatedAt       time.Time      `json:"created_at"`
+	ExpiresAt       OptNilDateTime `json:"expires_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxFilesystemSnapshot) GetID() string {
+	return s.ID
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxFilesystemSnapshot) GetFilesystemID() string {
+	return s.FilesystemID
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SandboxFilesystemSnapshot) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetUserID returns the value of UserID.
+func (s *SandboxFilesystemSnapshot) GetUserID() string {
+	return s.UserID
+}
+
+// GetBaseImageDigest returns the value of BaseImageDigest.
+func (s *SandboxFilesystemSnapshot) GetBaseImageDigest() string {
+	return s.BaseImageDigest
+}
+
+// GetS0fsHead returns the value of S0fsHead.
+func (s *SandboxFilesystemSnapshot) GetS0fsHead() string {
+	return s.S0fsHead
+}
+
+// GetName returns the value of Name.
+func (s *SandboxFilesystemSnapshot) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *SandboxFilesystemSnapshot) GetDescription() OptString {
+	return s.Description
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *SandboxFilesystemSnapshot) GetSizeBytes() int64 {
+	return s.SizeBytes
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxFilesystemSnapshot) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *SandboxFilesystemSnapshot) GetExpiresAt() OptNilDateTime {
+	return s.ExpiresAt
+}
+
+// SetID sets the value of ID.
+func (s *SandboxFilesystemSnapshot) SetID(val string) {
+	s.ID = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxFilesystemSnapshot) SetFilesystemID(val string) {
+	s.FilesystemID = val
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SandboxFilesystemSnapshot) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetUserID sets the value of UserID.
+func (s *SandboxFilesystemSnapshot) SetUserID(val string) {
+	s.UserID = val
+}
+
+// SetBaseImageDigest sets the value of BaseImageDigest.
+func (s *SandboxFilesystemSnapshot) SetBaseImageDigest(val string) {
+	s.BaseImageDigest = val
+}
+
+// SetS0fsHead sets the value of S0fsHead.
+func (s *SandboxFilesystemSnapshot) SetS0fsHead(val string) {
+	s.S0fsHead = val
+}
+
+// SetName sets the value of Name.
+func (s *SandboxFilesystemSnapshot) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *SandboxFilesystemSnapshot) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *SandboxFilesystemSnapshot) SetSizeBytes(val int64) {
+	s.SizeBytes = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxFilesystemSnapshot) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *SandboxFilesystemSnapshot) SetExpiresAt(val OptNilDateTime) {
+	s.ExpiresAt = val
+}
+
+type SandboxFilesystemState string
+
+const (
+	SandboxFilesystemStateAvailable SandboxFilesystemState = "available"
+	SandboxFilesystemStateBound     SandboxFilesystemState = "bound"
+	SandboxFilesystemStateDeleted   SandboxFilesystemState = "deleted"
+)
+
+// AllValues returns all SandboxFilesystemState values.
+func (SandboxFilesystemState) AllValues() []SandboxFilesystemState {
+	return []SandboxFilesystemState{
+		SandboxFilesystemStateAvailable,
+		SandboxFilesystemStateBound,
+		SandboxFilesystemStateDeleted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxFilesystemState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxFilesystemStateAvailable:
+		return []byte(s), nil
+	case SandboxFilesystemStateBound:
+		return []byte(s), nil
+	case SandboxFilesystemStateDeleted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxFilesystemState) UnmarshalText(data []byte) error {
+	switch SandboxFilesystemState(data) {
+	case SandboxFilesystemStateAvailable:
+		*s = SandboxFilesystemStateAvailable
+		return nil
+	case SandboxFilesystemStateBound:
+		*s = SandboxFilesystemStateBound
+		return nil
+	case SandboxFilesystemStateDeleted:
+		*s = SandboxFilesystemStateDeleted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Function code executed by procd for a sandbox service request. cluster-gateway owns public ingress
@@ -13899,7 +14540,8 @@ type SandboxStatus struct {
 	TemplateID    OptString                 `json:"template_id"`
 	TeamID        OptString                 `json:"team_id"`
 	UserID        OptString                 `json:"user_id"`
-	PodName       OptString                 `json:"pod_name"`
+	FilesystemID  OptNilString              `json:"filesystem_id"`
+	PodName       OptNilString              `json:"pod_name"`
 	Status        OptSandboxLifecycleStatus `json:"status"`
 	ClaimedAt     OptString                 `json:"claimed_at"`
 	ExpiresAt     OptString                 `json:"expires_at"`
@@ -13927,8 +14569,13 @@ func (s *SandboxStatus) GetUserID() OptString {
 	return s.UserID
 }
 
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxStatus) GetFilesystemID() OptNilString {
+	return s.FilesystemID
+}
+
 // GetPodName returns the value of PodName.
-func (s *SandboxStatus) GetPodName() OptString {
+func (s *SandboxStatus) GetPodName() OptNilString {
 	return s.PodName
 }
 
@@ -13977,8 +14624,13 @@ func (s *SandboxStatus) SetUserID(val OptString) {
 	s.UserID = val
 }
 
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxStatus) SetFilesystemID(val OptNilString) {
+	s.FilesystemID = val
+}
+
 // SetPodName sets the value of PodName.
-func (s *SandboxStatus) SetPodName(val OptString) {
+func (s *SandboxStatus) SetPodName(val OptNilString) {
 	s.PodName = val
 }
 
@@ -14015,9 +14667,10 @@ type SandboxSummary struct {
 	Paused     bool                   `json:"paused"`
 	PowerState SandboxPowerState      `json:"power_state"`
 	// Cluster where sandbox runs (multi-cluster only).
-	ClusterID OptNilString `json:"cluster_id"`
-	CreatedAt time.Time    `json:"created_at"`
-	ExpiresAt time.Time    `json:"expires_at"`
+	ClusterID    OptNilString `json:"cluster_id"`
+	FilesystemID OptNilString `json:"filesystem_id"`
+	CreatedAt    time.Time    `json:"created_at"`
+	ExpiresAt    time.Time    `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
 	HardExpiresAt time.Time `json:"hard_expires_at"`
 }
@@ -14050,6 +14703,11 @@ func (s *SandboxSummary) GetPowerState() SandboxPowerState {
 // GetClusterID returns the value of ClusterID.
 func (s *SandboxSummary) GetClusterID() OptNilString {
 	return s.ClusterID
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxSummary) GetFilesystemID() OptNilString {
+	return s.FilesystemID
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -14095,6 +14753,11 @@ func (s *SandboxSummary) SetPowerState(val SandboxPowerState) {
 // SetClusterID sets the value of ClusterID.
 func (s *SandboxSummary) SetClusterID(val OptNilString) {
 	s.ClusterID = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxSummary) SetFilesystemID(val OptNilString) {
+	s.FilesystemID = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
@@ -16597,6 +17260,179 @@ func (SuccessSSHPublicKeyResponseSuccess) AllValues() []SuccessSSHPublicKeyRespo
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessSandboxFilesystemListResponse
+type SuccessSandboxFilesystemListResponse struct {
+	Success SuccessSandboxFilesystemListResponseSuccess `json:"success"`
+	// Merged property.
+	Data []SandboxFilesystem `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxFilesystemListResponse) GetSuccess() SuccessSandboxFilesystemListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxFilesystemListResponse) GetData() []SandboxFilesystem {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxFilesystemListResponse) SetSuccess(val SuccessSandboxFilesystemListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxFilesystemListResponse) SetData(val []SandboxFilesystem) {
+	s.Data = val
+}
+
+type SuccessSandboxFilesystemListResponseSuccess bool
+
+const (
+	SuccessSandboxFilesystemListResponseSuccessTrue SuccessSandboxFilesystemListResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxFilesystemListResponseSuccess values.
+func (SuccessSandboxFilesystemListResponseSuccess) AllValues() []SuccessSandboxFilesystemListResponseSuccess {
+	return []SuccessSandboxFilesystemListResponseSuccess{
+		SuccessSandboxFilesystemListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxFilesystemResponse
+type SuccessSandboxFilesystemResponse struct {
+	Success SuccessSandboxFilesystemResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxFilesystem `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxFilesystemResponse) GetSuccess() SuccessSandboxFilesystemResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxFilesystemResponse) GetData() OptSandboxFilesystem {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxFilesystemResponse) SetSuccess(val SuccessSandboxFilesystemResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxFilesystemResponse) SetData(val OptSandboxFilesystem) {
+	s.Data = val
+}
+
+func (*SuccessSandboxFilesystemResponse) aPIV1SandboxfilesystemsIDForkPostRes() {}
+func (*SuccessSandboxFilesystemResponse) aPIV1SandboxfilesystemsIDGetRes()      {}
+func (*SuccessSandboxFilesystemResponse) aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes() {
+}
+func (*SuccessSandboxFilesystemResponse) aPIV1SandboxfilesystemsPostRes() {}
+
+type SuccessSandboxFilesystemResponseSuccess bool
+
+const (
+	SuccessSandboxFilesystemResponseSuccessTrue SuccessSandboxFilesystemResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxFilesystemResponseSuccess values.
+func (SuccessSandboxFilesystemResponseSuccess) AllValues() []SuccessSandboxFilesystemResponseSuccess {
+	return []SuccessSandboxFilesystemResponseSuccess{
+		SuccessSandboxFilesystemResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxFilesystemSnapshotListResponse
+type SuccessSandboxFilesystemSnapshotListResponse struct {
+	Success SuccessSandboxFilesystemSnapshotListResponseSuccess `json:"success"`
+	// Merged property.
+	Data []SandboxFilesystemSnapshot `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxFilesystemSnapshotListResponse) GetSuccess() SuccessSandboxFilesystemSnapshotListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxFilesystemSnapshotListResponse) GetData() []SandboxFilesystemSnapshot {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxFilesystemSnapshotListResponse) SetSuccess(val SuccessSandboxFilesystemSnapshotListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxFilesystemSnapshotListResponse) SetData(val []SandboxFilesystemSnapshot) {
+	s.Data = val
+}
+
+type SuccessSandboxFilesystemSnapshotListResponseSuccess bool
+
+const (
+	SuccessSandboxFilesystemSnapshotListResponseSuccessTrue SuccessSandboxFilesystemSnapshotListResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxFilesystemSnapshotListResponseSuccess values.
+func (SuccessSandboxFilesystemSnapshotListResponseSuccess) AllValues() []SuccessSandboxFilesystemSnapshotListResponseSuccess {
+	return []SuccessSandboxFilesystemSnapshotListResponseSuccess{
+		SuccessSandboxFilesystemSnapshotListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxFilesystemSnapshotResponse
+type SuccessSandboxFilesystemSnapshotResponse struct {
+	Success SuccessSandboxFilesystemSnapshotResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxFilesystemSnapshot `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxFilesystemSnapshotResponse) GetSuccess() SuccessSandboxFilesystemSnapshotResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxFilesystemSnapshotResponse) GetData() OptSandboxFilesystemSnapshot {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxFilesystemSnapshotResponse) SetSuccess(val SuccessSandboxFilesystemSnapshotResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxFilesystemSnapshotResponse) SetData(val OptSandboxFilesystemSnapshot) {
+	s.Data = val
+}
+
+func (*SuccessSandboxFilesystemSnapshotResponse) aPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes() {
+}
+
+type SuccessSandboxFilesystemSnapshotResponseSuccess bool
+
+const (
+	SuccessSandboxFilesystemSnapshotResponseSuccessTrue SuccessSandboxFilesystemSnapshotResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxFilesystemSnapshotResponseSuccess values.
+func (SuccessSandboxFilesystemSnapshotResponseSuccess) AllValues() []SuccessSandboxFilesystemSnapshotResponseSuccess {
+	return []SuccessSandboxFilesystemSnapshotResponseSuccess{
+		SuccessSandboxFilesystemSnapshotResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessSandboxListResponse
 type SuccessSandboxListResponse struct {
 	Success SuccessSandboxListResponseSuccess `json:"success"`
@@ -16748,8 +17584,10 @@ func (s *SuccessSandboxResponse) SetData(val OptSandbox) {
 	s.Data = val
 }
 
-func (*SuccessSandboxResponse) aPIV1SandboxesIDGetRes() {}
-func (*SuccessSandboxResponse) aPIV1SandboxesIDPutRes() {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDCleanPostRes()   {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDGetRes()         {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDPutRes()         {}
+func (*SuccessSandboxResponse) aPIV1SandboxesIDRestorePostRes() {}
 
 type SuccessSandboxResponseSuccess bool
 

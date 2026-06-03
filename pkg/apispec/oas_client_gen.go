@@ -171,6 +171,12 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes
 	APIV1SandboxesGet(ctx context.Context, params APIV1SandboxesGetParams, options ...RequestOption) (APIV1SandboxesGetRes, error)
+	// APIV1SandboxesIDCleanPost invokes POST /api/v1/sandboxes/{id}/clean operation.
+	//
+	// Stops the runtime pod while preserving sandbox identity and persistent filesystem state.
+	//
+	// POST /api/v1/sandboxes/{id}/clean
+	APIV1SandboxesIDCleanPost(ctx context.Context, params APIV1SandboxesIDCleanPostParams, options ...RequestOption) (APIV1SandboxesIDCleanPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDDelete invokes DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 	//
 	// Delete context.
@@ -356,9 +362,15 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/refresh
 	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
+	// APIV1SandboxesIDRestorePost invokes POST /api/v1/sandboxes/{id}/restore operation.
+	//
+	// Claims a matching pooled pod and binds the sandbox filesystem before releasing procd.
+	//
+	// POST /api/v1/sandboxes/{id}/restore
+	APIV1SandboxesIDRestorePost(ctx context.Context, params APIV1SandboxesIDRestorePostParams, options ...RequestOption) (APIV1SandboxesIDRestorePostRes, error)
 	// APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 	//
-	// Resume a sandbox.
+	// Resumes paused sandbox power state only. Cleaned sandboxes must use the restore API.
 	//
 	// POST /api/v1/sandboxes/{id}/resume
 	APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
@@ -386,6 +398,67 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes
 	APIV1SandboxesPost(ctx context.Context, request *ClaimRequest, options ...RequestOption) (APIV1SandboxesPostRes, error)
+	// APIV1SandboxfilesystemsGet invokes GET /api/v1/sandboxfilesystems operation.
+	//
+	// List sandbox filesystems.
+	//
+	// GET /api/v1/sandboxfilesystems
+	APIV1SandboxfilesystemsGet(ctx context.Context, options ...RequestOption) (*SuccessSandboxFilesystemListResponse, error)
+	// APIV1SandboxfilesystemsIDDelete invokes DELETE /api/v1/sandboxfilesystems/{id} operation.
+	//
+	// Delete sandbox filesystem.
+	//
+	// DELETE /api/v1/sandboxfilesystems/{id}
+	APIV1SandboxfilesystemsIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	// APIV1SandboxfilesystemsIDForkPost invokes POST /api/v1/sandboxfilesystems/{id}/fork operation.
+	//
+	// Fork sandbox filesystem.
+	//
+	// POST /api/v1/sandboxfilesystems/{id}/fork
+	APIV1SandboxfilesystemsIDForkPost(ctx context.Context, request OptForkSandboxFilesystemRequest, params APIV1SandboxfilesystemsIDForkPostParams, options ...RequestOption) (APIV1SandboxfilesystemsIDForkPostRes, error)
+	// APIV1SandboxfilesystemsIDGet invokes GET /api/v1/sandboxfilesystems/{id} operation.
+	//
+	// Get sandbox filesystem.
+	//
+	// GET /api/v1/sandboxfilesystems/{id}
+	APIV1SandboxfilesystemsIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDGetParams, options ...RequestOption) (APIV1SandboxfilesystemsIDGetRes, error)
+	// APIV1SandboxfilesystemsIDSnapshotsGet invokes GET /api/v1/sandboxfilesystems/{id}/snapshots operation.
+	//
+	// List sandbox filesystem snapshots.
+	//
+	// GET /api/v1/sandboxfilesystems/{id}/snapshots
+	APIV1SandboxfilesystemsIDSnapshotsGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsGetParams, options ...RequestOption) (*SuccessSandboxFilesystemSnapshotListResponse, error)
+	// APIV1SandboxfilesystemsIDSnapshotsPost invokes POST /api/v1/sandboxfilesystems/{id}/snapshots operation.
+	//
+	// Create sandbox filesystem snapshot.
+	//
+	// POST /api/v1/sandboxfilesystems/{id}/snapshots
+	APIV1SandboxfilesystemsIDSnapshotsPost(ctx context.Context, request *CreateSandboxFilesystemSnapshotRequest, params APIV1SandboxfilesystemsIDSnapshotsPostParams, options ...RequestOption) (*SuccessSandboxFilesystemSnapshotResponse, error)
+	// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete invokes DELETE /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+	//
+	// Delete sandbox filesystem snapshot.
+	//
+	// DELETE /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}
+	APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet invokes GET /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+	//
+	// Get sandbox filesystem snapshot.
+	//
+	// GET /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}
+	APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetParams, options ...RequestOption) (APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes, error)
+	// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost invokes POST /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}/restore operation.
+	//
+	// Restores filesystem content metadata from a filesystem snapshot. This is distinct from sandbox
+	// runtime restore.
+	//
+	// POST /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}/restore
+	APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes, error)
+	// APIV1SandboxfilesystemsPost invokes POST /api/v1/sandboxfilesystems operation.
+	//
+	// Create sandbox filesystem.
+	//
+	// POST /api/v1/sandboxfilesystems
+	APIV1SandboxfilesystemsPost(ctx context.Context, request *CreateSandboxFilesystemRequest, options ...RequestOption) (APIV1SandboxfilesystemsPostRes, error)
 	// APIV1SandboxvolumesGet invokes GET /api/v1/sandboxvolumes operation.
 	//
 	// List sandbox volumes.
@@ -2468,6 +2541,120 @@ func (c *Client) sendAPIV1SandboxesGet(ctx context.Context, params APIV1Sandboxe
 	}
 
 	result, err := decodeAPIV1SandboxesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDCleanPost invokes POST /api/v1/sandboxes/{id}/clean operation.
+//
+// Stops the runtime pod while preserving sandbox identity and persistent filesystem state.
+//
+// POST /api/v1/sandboxes/{id}/clean
+func (c *Client) APIV1SandboxesIDCleanPost(ctx context.Context, params APIV1SandboxesIDCleanPostParams, options ...RequestOption) (APIV1SandboxesIDCleanPostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDCleanPost(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDCleanPost(ctx context.Context, params APIV1SandboxesIDCleanPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDCleanPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/clean"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDCleanPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDCleanPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -5905,9 +6092,123 @@ func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request Op
 	return result, nil
 }
 
+// APIV1SandboxesIDRestorePost invokes POST /api/v1/sandboxes/{id}/restore operation.
+//
+// Claims a matching pooled pod and binds the sandbox filesystem before releasing procd.
+//
+// POST /api/v1/sandboxes/{id}/restore
+func (c *Client) APIV1SandboxesIDRestorePost(ctx context.Context, params APIV1SandboxesIDRestorePostParams, options ...RequestOption) (APIV1SandboxesIDRestorePostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDRestorePost(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDRestorePost(ctx context.Context, params APIV1SandboxesIDRestorePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDRestorePostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restore"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDRestorePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDRestorePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 //
-// Resume a sandbox.
+// Resumes paused sandbox power state only. Cleaned sandboxes must use the restore API.
 //
 // POST /api/v1/sandboxes/{id}/resume
 func (c *Client) APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error) {
@@ -6455,6 +6756,1171 @@ func (c *Client) sendAPIV1SandboxesPost(ctx context.Context, request *ClaimReque
 	}
 
 	result, err := decodeAPIV1SandboxesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsGet invokes GET /api/v1/sandboxfilesystems operation.
+//
+// List sandbox filesystems.
+//
+// GET /api/v1/sandboxfilesystems
+func (c *Client) APIV1SandboxfilesystemsGet(ctx context.Context, options ...RequestOption) (*SuccessSandboxFilesystemListResponse, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessSandboxFilesystemListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/sandboxfilesystems"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDDelete invokes DELETE /api/v1/sandboxfilesystems/{id} operation.
+//
+// Delete sandbox filesystem.
+//
+// DELETE /api/v1/sandboxfilesystems/{id}
+func (c *Client) APIV1SandboxfilesystemsIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDForkPost invokes POST /api/v1/sandboxfilesystems/{id}/fork operation.
+//
+// Fork sandbox filesystem.
+//
+// POST /api/v1/sandboxfilesystems/{id}/fork
+func (c *Client) APIV1SandboxfilesystemsIDForkPost(ctx context.Context, request OptForkSandboxFilesystemRequest, params APIV1SandboxfilesystemsIDForkPostParams, options ...RequestOption) (APIV1SandboxfilesystemsIDForkPostRes, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDForkPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDForkPost(ctx context.Context, request OptForkSandboxFilesystemRequest, params APIV1SandboxfilesystemsIDForkPostParams, requestOptions ...RequestOption) (res APIV1SandboxfilesystemsIDForkPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/fork"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxfilesystemsIDForkPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDForkPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDForkPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDGet invokes GET /api/v1/sandboxfilesystems/{id} operation.
+//
+// Get sandbox filesystem.
+//
+// GET /api/v1/sandboxfilesystems/{id}
+func (c *Client) APIV1SandboxfilesystemsIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDGetParams, options ...RequestOption) (APIV1SandboxfilesystemsIDGetRes, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDGetParams, requestOptions ...RequestOption) (res APIV1SandboxfilesystemsIDGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [2]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsGet invokes GET /api/v1/sandboxfilesystems/{id}/snapshots operation.
+//
+// List sandbox filesystem snapshots.
+//
+// GET /api/v1/sandboxfilesystems/{id}/snapshots
+func (c *Client) APIV1SandboxfilesystemsIDSnapshotsGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsGetParams, options ...RequestOption) (*SuccessSandboxFilesystemSnapshotListResponse, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDSnapshotsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDSnapshotsGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsGetParams, requestOptions ...RequestOption) (res *SuccessSandboxFilesystemSnapshotListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDSnapshotsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDSnapshotsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsPost invokes POST /api/v1/sandboxfilesystems/{id}/snapshots operation.
+//
+// Create sandbox filesystem snapshot.
+//
+// POST /api/v1/sandboxfilesystems/{id}/snapshots
+func (c *Client) APIV1SandboxfilesystemsIDSnapshotsPost(ctx context.Context, request *CreateSandboxFilesystemSnapshotRequest, params APIV1SandboxfilesystemsIDSnapshotsPostParams, options ...RequestOption) (*SuccessSandboxFilesystemSnapshotResponse, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDSnapshotsPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDSnapshotsPost(ctx context.Context, request *CreateSandboxFilesystemSnapshotRequest, params APIV1SandboxfilesystemsIDSnapshotsPostParams, requestOptions ...RequestOption) (res *SuccessSandboxFilesystemSnapshotResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxfilesystemsIDSnapshotsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDSnapshotsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDSnapshotsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete invokes DELETE /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+//
+// Delete sandbox filesystem snapshot.
+//
+// DELETE /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}
+func (c *Client) APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots/"
+	{
+		// Encode "snapshot_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "snapshot_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.SnapshotID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet invokes GET /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id} operation.
+//
+// Get sandbox filesystem snapshot.
+//
+// GET /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}
+func (c *Client) APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetParams, options ...RequestOption) (APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGet(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetParams, requestOptions ...RequestOption) (res APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots/"
+	{
+		// Encode "snapshot_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "snapshot_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.SnapshotID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost invokes POST /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}/restore operation.
+//
+// Restores filesystem content metadata from a filesystem snapshot. This is distinct from sandbox
+// runtime restore.
+//
+// POST /api/v1/sandboxfilesystems/{id}/snapshots/{snapshot_id}/restore
+func (c *Client) APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostParams, requestOptions ...RequestOption) (res APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxfilesystems/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots/"
+	{
+		// Encode "snapshot_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "snapshot_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.SnapshotID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/restore"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsIDSnapshotsSnapshotIDRestorePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxfilesystemsPost invokes POST /api/v1/sandboxfilesystems operation.
+//
+// Create sandbox filesystem.
+//
+// POST /api/v1/sandboxfilesystems
+func (c *Client) APIV1SandboxfilesystemsPost(ctx context.Context, request *CreateSandboxFilesystemRequest, options ...RequestOption) (APIV1SandboxfilesystemsPostRes, error) {
+	res, err := c.sendAPIV1SandboxfilesystemsPost(ctx, request, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxfilesystemsPost(ctx context.Context, request *CreateSandboxFilesystemRequest, requestOptions ...RequestOption) (res APIV1SandboxfilesystemsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/sandboxfilesystems"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxfilesystemsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxfilesystemsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxfilesystemsPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
