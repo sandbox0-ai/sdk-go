@@ -29,12 +29,7 @@ func TestTemplateCRUD(t *testing.T) {
 
 	source := templates[0]
 	sourceSpec := source.Spec
-	sourceSpec.WarmProcesses = []apispec.WarmProcessSpec{{
-		Type:    apispec.WarmProcessSpecTypeCmd,
-		Alias:   apispec.NewOptString("codex"),
-		Command: []string{"sh", "-lc", "touch /tmp/ready; tail -f /dev/null"},
-		Cwd:     apispec.NewOptString("/workspace"),
-	}}
+	sourceSpec.EnvVars = apispec.NewOptSandboxTemplateSpecEnvVars(apispec.SandboxTemplateSpecEnvVars{"SDK_E2E_MARKER": "created"})
 	templateID := fmt.Sprintf("sdk-e2e-%d", time.Now().UnixNano())
 
 	createReq := apispec.TemplateCreateRequest{
@@ -48,11 +43,8 @@ func TestTemplateCRUD(t *testing.T) {
 	if created == nil || created.TemplateID == "" {
 		t.Fatalf("create template returned empty template")
 	}
-	if len(created.Spec.WarmProcesses) != 1 {
-		t.Fatalf("created template warmProcesses = %d, want 1", len(created.Spec.WarmProcesses))
-	}
-	if created.Spec.WarmProcesses[0].Type != apispec.WarmProcessSpecTypeCmd {
-		t.Fatalf("created template warm process type = %q, want cmd", created.Spec.WarmProcesses[0].Type)
+	if envVars, ok := created.Spec.EnvVars.Get(); !ok || envVars["SDK_E2E_MARKER"] != "created" {
+		t.Fatalf("created template envVars = %#v, want marker", envVars)
 	}
 	deleted := false
 	t.Cleanup(func() {
@@ -68,19 +60,20 @@ func TestTemplateCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("get template failed: %v", err)
 	}
-	if len(fetched.Spec.WarmProcesses) != 1 {
-		t.Fatalf("fetched template warmProcesses = %d, want 1", len(fetched.Spec.WarmProcesses))
+	if envVars, ok := fetched.Spec.EnvVars.Get(); !ok || envVars["SDK_E2E_MARKER"] != "created" {
+		t.Fatalf("fetched template envVars = %#v, want marker", envVars)
 	}
 
 	updatedSpec := fetched.Spec
 	updatedSpec.DisplayName = apispec.NewOptString("SDK E2E Updated")
+	updatedSpec.EnvVars = apispec.NewOptSandboxTemplateSpecEnvVars(apispec.SandboxTemplateSpecEnvVars{"SDK_E2E_MARKER": "updated"})
 	updateReq := apispec.TemplateUpdateRequest{Spec: updatedSpec}
 	updated, err := client.UpdateTemplate(ctx, templateID, updateReq)
 	if err != nil {
 		t.Fatalf("update template failed: %v", err)
 	}
-	if len(updated.Spec.WarmProcesses) != 1 {
-		t.Fatalf("updated template warmProcesses = %d, want 1", len(updated.Spec.WarmProcesses))
+	if envVars, ok := updated.Spec.EnvVars.Get(); !ok || envVars["SDK_E2E_MARKER"] != "updated" {
+		t.Fatalf("updated template envVars = %#v, want updated marker", envVars)
 	}
 
 	if _, err := client.DeleteTemplate(ctx, templateID); err != nil {

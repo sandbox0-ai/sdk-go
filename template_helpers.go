@@ -8,9 +8,6 @@ type TemplateOption func(*apispec.SandboxTemplateSpec)
 // TemplateContainerOption configures the main container spec.
 type TemplateContainerOption func(*apispec.ContainerSpec)
 
-// TemplateWarmProcessOption configures a warm process spec.
-type TemplateWarmProcessOption func(*apispec.WarmProcessSpec)
-
 // TemplateEmptyDirMount builds an emptyDir mount spec.
 func TemplateEmptyDirMount(mountPath, sizeLimit string) apispec.EmptyDirMountSpec {
 	mount := apispec.EmptyDirMountSpec{MountPath: mountPath}
@@ -66,15 +63,6 @@ func TemplateMainContainer(image, cpu, memory string, opts ...TemplateContainerO
 		opt(&container)
 	}
 	return container
-}
-
-// TemplateWarmProcess builds a warm process spec.
-func TemplateWarmProcess(processType apispec.WarmProcessSpecType, opts ...TemplateWarmProcessOption) apispec.WarmProcessSpec {
-	process := apispec.WarmProcessSpec{Type: processType}
-	for _, opt := range opts {
-		opt(&process)
-	}
-	return process
 }
 
 // WithTemplateDescription sets the template description.
@@ -186,20 +174,6 @@ func WithTemplateEmptyDirMounts(mounts ...apispec.EmptyDirMountSpec) TemplateOpt
 	}
 }
 
-// WithTemplateWarmProcess appends one warm process.
-func WithTemplateWarmProcess(process apispec.WarmProcessSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.WarmProcesses = append(spec.WarmProcesses, process)
-	}
-}
-
-// WithTemplateWarmProcesses appends multiple warm processes.
-func WithTemplateWarmProcesses(processes ...apispec.WarmProcessSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.WarmProcesses = append(spec.WarmProcesses, processes...)
-	}
-}
-
 // WithTemplateContainerEnv sets main container environment variables.
 func WithTemplateContainerEnv(env ...apispec.EnvVar) TemplateContainerOption {
 	return func(container *apispec.ContainerSpec) {
@@ -218,41 +192,5 @@ func WithTemplateContainerImagePullPolicy(policy string) TemplateContainerOption
 func WithTemplateContainerSecurityContext(securityContext apispec.SecurityContext) TemplateContainerOption {
 	return func(container *apispec.ContainerSpec) {
 		container.SecurityContext = apispec.NewOptSecurityContext(securityContext)
-	}
-}
-
-// WithTemplateWarmProcessAlias sets the process alias.
-func WithTemplateWarmProcessAlias(alias string) TemplateWarmProcessOption {
-	return func(process *apispec.WarmProcessSpec) {
-		process.Alias = apispec.NewOptString(alias)
-	}
-}
-
-// WithTemplateWarmProcessCommand sets the command used by a cmd warm process.
-func WithTemplateWarmProcessCommand(command ...string) TemplateWarmProcessOption {
-	return func(process *apispec.WarmProcessSpec) {
-		process.Command = append([]string(nil), command...)
-	}
-}
-
-// WithTemplateWarmProcessCWD sets the process working directory.
-func WithTemplateWarmProcessCWD(cwd string) TemplateWarmProcessOption {
-	return func(process *apispec.WarmProcessSpec) {
-		process.Cwd = apispec.NewOptString(cwd)
-	}
-}
-
-// WithTemplateWarmProcessEnvVars sets process-level environment variables.
-func WithTemplateWarmProcessEnvVars(envVars map[string]string) TemplateWarmProcessOption {
-	return func(process *apispec.WarmProcessSpec) {
-		if envVars == nil {
-			process.EnvVars = apispec.OptWarmProcessSpecEnvVars{}
-			return
-		}
-		copied := make(apispec.WarmProcessSpecEnvVars, len(envVars))
-		for key, value := range envVars {
-			copied[key] = value
-		}
-		process.EnvVars = apispec.NewOptWarmProcessSpecEnvVars(copied)
 	}
 }
