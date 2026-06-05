@@ -7,11 +7,11 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-func TestTemplateCreateRequestWarmProcessRoundTrip(t *testing.T) {
+func TestTemplateCreateRequestEnvVarsRoundTrip(t *testing.T) {
 	t.Parallel()
 
 	req := apispec.TemplateCreateRequest{
-		TemplateID: "tpl-warm-process",
+		TemplateID: "tpl-env-vars",
 		Spec: apispec.SandboxTemplateSpec{
 			MainContainer: apispec.NewOptContainerSpec(apispec.ContainerSpec{
 				Image: "nginx:1.27-alpine",
@@ -20,13 +20,7 @@ func TestTemplateCreateRequestWarmProcessRoundTrip(t *testing.T) {
 					Memory: apispec.NewOptString("2Gi"),
 				},
 			}),
-			WarmProcesses: []apispec.WarmProcessSpec{{
-				Type:    apispec.WarmProcessSpecTypeCmd,
-				Alias:   apispec.NewOptString("helper"),
-				Command: []string{"sh", "-lc", "tail -f /dev/null"},
-				Cwd:     apispec.NewOptString("/workspace"),
-				EnvVars: apispec.NewOptWarmProcessSpecEnvVars(apispec.WarmProcessSpecEnvVars{"MODE": "warm"}),
-			}},
+			EnvVars: apispec.NewOptSandboxTemplateSpecEnvVars(apispec.SandboxTemplateSpecEnvVars{"MODE": "template"}),
 		},
 	}
 
@@ -40,29 +34,19 @@ func TestTemplateCreateRequestWarmProcessRoundTrip(t *testing.T) {
 		t.Fatalf("Unmarshal() error = %v", err)
 	}
 
-	if len(decoded.Spec.WarmProcesses) != 1 {
-		t.Fatalf("len(decoded.Spec.WarmProcesses) = %d, want 1", len(decoded.Spec.WarmProcesses))
-	}
-	process := decoded.Spec.WarmProcesses[0]
-	if process.Type != apispec.WarmProcessSpecTypeCmd {
-		t.Fatalf("decoded warm process type = %q, want cmd", process.Type)
-	}
-	if len(process.Command) != 3 || process.Command[2] != "tail -f /dev/null" {
-		t.Fatalf("decoded warm process command = %#v, want shell command", process.Command)
-	}
-	envVars, ok := process.EnvVars.Get()
-	if !ok || envVars["MODE"] != "warm" {
-		t.Fatalf("decoded warm process envVars = %#v, want MODE=warm", envVars)
+	envVars, ok := decoded.Spec.EnvVars.Get()
+	if !ok || envVars["MODE"] != "template" {
+		t.Fatalf("decoded envVars = %#v, want MODE=template", envVars)
 	}
 }
 
-func TestNormalizeNullMapsHandlesWarmProcesses(t *testing.T) {
+func TestNormalizeNullMapsHandlesTemplateTags(t *testing.T) {
 	t.Parallel()
 
 	payload := any(map[string]any{
 		"data": map[string]any{
 			"spec": map[string]any{
-				"warmProcesses": nil,
+				"tags": nil,
 			},
 		},
 	})
@@ -74,7 +58,7 @@ func TestNormalizeNullMapsHandlesWarmProcesses(t *testing.T) {
 	root := payload.(map[string]any)
 	data := root["data"].(map[string]any)
 	spec := data["spec"].(map[string]any)
-	if warmProcesses, ok := spec["warmProcesses"].([]any); !ok || len(warmProcesses) != 0 {
-		t.Fatalf("warmProcesses = %#v, want empty slice", spec["warmProcesses"])
+	if tags, ok := spec["tags"].([]any); !ok || len(tags) != 0 {
+		t.Fatalf("tags = %#v, want empty slice", spec["tags"])
 	}
 }

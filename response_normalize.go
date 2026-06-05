@@ -53,7 +53,6 @@ var nullArrayKeys = map[string]struct{}{
 	"templates":     {},
 	"tolerations":   {},
 	"values":        {},
-	"warmProcesses": {},
 }
 
 func normalizeNullMapResponse(_ context.Context, resp *http.Response) error {
