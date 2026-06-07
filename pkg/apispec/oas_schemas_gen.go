@@ -403,6 +403,10 @@ type APIV1SandboxesIDPausePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
 
+type APIV1SandboxesIDPausePostServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostServiceUnavailable) aPIV1SandboxesIDPausePostRes() {}
+
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -422,6 +426,14 @@ func (*APIV1SandboxesIDResumePostGatewayTimeout) aPIV1SandboxesIDResumePostRes()
 type APIV1SandboxesIDResumePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostNotFound) aPIV1SandboxesIDResumePostRes() {}
+
+type APIV1SandboxesIDResumePostServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostServiceUnavailable) aPIV1SandboxesIDResumePostRes() {}
+
+type APIV1SandboxesIDResumePostTooManyRequests ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostTooManyRequests) aPIV1SandboxesIDResumePostRes() {}
 
 type APIV1SandboxesPostBadRequest ErrorEnvelope
 
@@ -10218,7 +10230,6 @@ func (s *PTYSize) SetCols(val OptInt32) {
 type PauseSandboxResponse struct {
 	SandboxID     string                  `json:"sandbox_id"`
 	Paused        bool                    `json:"paused"`
-	PowerState    SandboxPowerState       `json:"power_state"`
 	ResourceUsage OptSandboxResourceUsage `json:"resource_usage"`
 	UpdatedMemory OptString               `json:"updated_memory"`
 	UpdatedCPU    OptString               `json:"updated_cpu"`
@@ -10232,11 +10243,6 @@ func (s *PauseSandboxResponse) GetSandboxID() string {
 // GetPaused returns the value of Paused.
 func (s *PauseSandboxResponse) GetPaused() bool {
 	return s.Paused
-}
-
-// GetPowerState returns the value of PowerState.
-func (s *PauseSandboxResponse) GetPowerState() SandboxPowerState {
-	return s.PowerState
 }
 
 // GetResourceUsage returns the value of ResourceUsage.
@@ -10262,11 +10268,6 @@ func (s *PauseSandboxResponse) SetSandboxID(val string) {
 // SetPaused sets the value of Paused.
 func (s *PauseSandboxResponse) SetPaused(val bool) {
 	s.Paused = val
-}
-
-// SetPowerState sets the value of PowerState.
-func (s *PauseSandboxResponse) SetPowerState(val SandboxPowerState) {
-	s.PowerState = val
 }
 
 // SetResourceUsage sets the value of ResourceUsage.
@@ -11595,10 +11596,9 @@ func (s *ResourceUsage) SetMemoryBytes(val OptInt64) {
 
 // Ref: #/components/schemas/ResumeSandboxResponse
 type ResumeSandboxResponse struct {
-	SandboxID      string            `json:"sandbox_id"`
-	Resumed        bool              `json:"resumed"`
-	PowerState     SandboxPowerState `json:"power_state"`
-	RestoredMemory OptString         `json:"restored_memory"`
+	SandboxID      string    `json:"sandbox_id"`
+	Resumed        bool      `json:"resumed"`
+	RestoredMemory OptString `json:"restored_memory"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -11609,11 +11609,6 @@ func (s *ResumeSandboxResponse) GetSandboxID() string {
 // GetResumed returns the value of Resumed.
 func (s *ResumeSandboxResponse) GetResumed() bool {
 	return s.Resumed
-}
-
-// GetPowerState returns the value of PowerState.
-func (s *ResumeSandboxResponse) GetPowerState() SandboxPowerState {
-	return s.PowerState
 }
 
 // GetRestoredMemory returns the value of RestoredMemory.
@@ -11629,11 +11624,6 @@ func (s *ResumeSandboxResponse) SetSandboxID(val string) {
 // SetResumed sets the value of Resumed.
 func (s *ResumeSandboxResponse) SetResumed(val bool) {
 	s.Resumed = val
-}
-
-// SetPowerState sets the value of PowerState.
-func (s *ResumeSandboxResponse) SetPowerState(val SandboxPowerState) {
-	s.PowerState = val
 }
 
 // SetRestoredMemory sets the value of RestoredMemory.
@@ -11776,24 +11766,27 @@ func (s *SSHPublicKey) SetUpdatedAt(val time.Time) {
 
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID         string                  `json:"id"`
-	TemplateID string                  `json:"template_id"`
-	TeamID     string                  `json:"team_id"`
-	UserID     OptString               `json:"user_id"`
-	Status     SandboxLifecycleStatus  `json:"status"`
-	Paused     bool                    `json:"paused"`
-	PowerState SandboxPowerState       `json:"power_state"`
-	AutoResume bool                    `json:"auto_resume"`
-	Services   []SandboxAppService     `json:"services"`
-	Mounts     []ClaimMountRequest     `json:"mounts"`
-	PodName    string                  `json:"pod_name"`
-	SSH        OptSandboxSSHConnection `json:"ssh"`
+	ID         string                 `json:"id"`
+	TemplateID string                 `json:"template_id"`
+	TeamID     string                 `json:"team_id"`
+	UserID     OptString              `json:"user_id"`
+	Status     SandboxLifecycleStatus `json:"status"`
+	// True when status is paused and no runtime is attached.
+	Paused     bool                `json:"paused"`
+	AutoResume bool                `json:"auto_resume"`
+	Services   []SandboxAppService `json:"services"`
+	Mounts     []ClaimMountRequest `json:"mounts"`
+	PodName    string              `json:"pod_name"`
+	// Monotonically increasing runtime generation. Resume starts a new generation.
+	RuntimeGeneration int64                   `json:"runtime_generation"`
+	SSH               OptSandboxSSHConnection `json:"ssh"`
 	// Soft expiration timestamp. Zero value means not set.
 	ExpiresAt time.Time `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
 	HardExpiresAt time.Time `json:"hard_expires_at"`
 	ClaimedAt     time.Time `json:"claimed_at"`
 	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -11826,11 +11819,6 @@ func (s *Sandbox) GetPaused() bool {
 	return s.Paused
 }
 
-// GetPowerState returns the value of PowerState.
-func (s *Sandbox) GetPowerState() SandboxPowerState {
-	return s.PowerState
-}
-
 // GetAutoResume returns the value of AutoResume.
 func (s *Sandbox) GetAutoResume() bool {
 	return s.AutoResume
@@ -11849,6 +11837,11 @@ func (s *Sandbox) GetMounts() []ClaimMountRequest {
 // GetPodName returns the value of PodName.
 func (s *Sandbox) GetPodName() string {
 	return s.PodName
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *Sandbox) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
 }
 
 // GetSSH returns the value of SSH.
@@ -11874,6 +11867,11 @@ func (s *Sandbox) GetClaimedAt() time.Time {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *Sandbox) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *Sandbox) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
 }
 
 // SetID sets the value of ID.
@@ -11906,11 +11904,6 @@ func (s *Sandbox) SetPaused(val bool) {
 	s.Paused = val
 }
 
-// SetPowerState sets the value of PowerState.
-func (s *Sandbox) SetPowerState(val SandboxPowerState) {
-	s.PowerState = val
-}
-
 // SetAutoResume sets the value of AutoResume.
 func (s *Sandbox) SetAutoResume(val bool) {
 	s.AutoResume = val
@@ -11929,6 +11922,11 @@ func (s *Sandbox) SetMounts(val []ClaimMountRequest) {
 // SetPodName sets the value of PodName.
 func (s *Sandbox) SetPodName(val string) {
 	s.PodName = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *Sandbox) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
 }
 
 // SetSSH sets the value of SSH.
@@ -11954,6 +11952,11 @@ func (s *Sandbox) SetClaimedAt(val time.Time) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *Sandbox) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *Sandbox) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
 }
 
 // Canonical service model for sandbox exposure.
@@ -12601,9 +12604,11 @@ func (s *SandboxAppServiceView) SetPublicURL(val OptString) {
 // Ref: #/components/schemas/SandboxConfig
 type SandboxConfig struct {
 	EnvVars OptSandboxConfigEnvVars `json:"env_vars"`
-	TTL     OptInt32                `json:"ttl"`
-	// Hard time-to-live in seconds. When it expires, Sandbox0 cleans the runtime pod and preserves the
-	// sandbox identity, services, and public URLs until the sandbox is explicitly deleted.
+	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
+	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
+	TTL OptInt32 `json:"ttl"`
+	// Sandbox hard time-to-live in seconds. When it expires, Sandbox0 deletes the sandbox identity and
+	// durable state, including paused rootfs checkpoints.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	Webhook OptWebhookConfig        `json:"webhook"`
@@ -12840,10 +12845,11 @@ type SandboxLifecycleStatus string
 const (
 	SandboxLifecycleStatusStarting    SandboxLifecycleStatus = "starting"
 	SandboxLifecycleStatusRunning     SandboxLifecycleStatus = "running"
-	SandboxLifecycleStatusFailed      SandboxLifecycleStatus = "failed"
-	SandboxLifecycleStatusCompleted   SandboxLifecycleStatus = "completed"
+	SandboxLifecycleStatusPausing     SandboxLifecycleStatus = "pausing"
+	SandboxLifecycleStatusPaused      SandboxLifecycleStatus = "paused"
+	SandboxLifecycleStatusResuming    SandboxLifecycleStatus = "resuming"
 	SandboxLifecycleStatusTerminating SandboxLifecycleStatus = "terminating"
-	SandboxLifecycleStatusCleaned     SandboxLifecycleStatus = "cleaned"
+	SandboxLifecycleStatusFailed      SandboxLifecycleStatus = "failed"
 )
 
 // AllValues returns all SandboxLifecycleStatus values.
@@ -12851,10 +12857,11 @@ func (SandboxLifecycleStatus) AllValues() []SandboxLifecycleStatus {
 	return []SandboxLifecycleStatus{
 		SandboxLifecycleStatusStarting,
 		SandboxLifecycleStatusRunning,
-		SandboxLifecycleStatusFailed,
-		SandboxLifecycleStatusCompleted,
+		SandboxLifecycleStatusPausing,
+		SandboxLifecycleStatusPaused,
+		SandboxLifecycleStatusResuming,
 		SandboxLifecycleStatusTerminating,
-		SandboxLifecycleStatusCleaned,
+		SandboxLifecycleStatusFailed,
 	}
 }
 
@@ -12865,13 +12872,15 @@ func (s SandboxLifecycleStatus) MarshalText() ([]byte, error) {
 		return []byte(s), nil
 	case SandboxLifecycleStatusRunning:
 		return []byte(s), nil
-	case SandboxLifecycleStatusFailed:
+	case SandboxLifecycleStatusPausing:
 		return []byte(s), nil
-	case SandboxLifecycleStatusCompleted:
+	case SandboxLifecycleStatusPaused:
+		return []byte(s), nil
+	case SandboxLifecycleStatusResuming:
 		return []byte(s), nil
 	case SandboxLifecycleStatusTerminating:
 		return []byte(s), nil
-	case SandboxLifecycleStatusCleaned:
+	case SandboxLifecycleStatusFailed:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -12887,17 +12896,20 @@ func (s *SandboxLifecycleStatus) UnmarshalText(data []byte) error {
 	case SandboxLifecycleStatusRunning:
 		*s = SandboxLifecycleStatusRunning
 		return nil
-	case SandboxLifecycleStatusFailed:
-		*s = SandboxLifecycleStatusFailed
+	case SandboxLifecycleStatusPausing:
+		*s = SandboxLifecycleStatusPausing
 		return nil
-	case SandboxLifecycleStatusCompleted:
-		*s = SandboxLifecycleStatusCompleted
+	case SandboxLifecycleStatusPaused:
+		*s = SandboxLifecycleStatusPaused
+		return nil
+	case SandboxLifecycleStatusResuming:
+		*s = SandboxLifecycleStatusResuming
 		return nil
 	case SandboxLifecycleStatusTerminating:
 		*s = SandboxLifecycleStatusTerminating
 		return nil
-	case SandboxLifecycleStatusCleaned:
-		*s = SandboxLifecycleStatusCleaned
+	case SandboxLifecycleStatusFailed:
+		*s = SandboxLifecycleStatusFailed
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -12976,195 +12988,6 @@ func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxNetworkPolicyModeBlockAll:
 		*s = SandboxNetworkPolicyModeBlockAll
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-// Ref: #/components/schemas/SandboxPowerState
-type SandboxPowerState struct {
-	Desired            SandboxPowerStateDesired  `json:"desired"`
-	DesiredGeneration  int64                     `json:"desired_generation"`
-	Observed           SandboxPowerStateObserved `json:"observed"`
-	ObservedGeneration int64                     `json:"observed_generation"`
-	Phase              SandboxPowerStatePhase    `json:"phase"`
-}
-
-// GetDesired returns the value of Desired.
-func (s *SandboxPowerState) GetDesired() SandboxPowerStateDesired {
-	return s.Desired
-}
-
-// GetDesiredGeneration returns the value of DesiredGeneration.
-func (s *SandboxPowerState) GetDesiredGeneration() int64 {
-	return s.DesiredGeneration
-}
-
-// GetObserved returns the value of Observed.
-func (s *SandboxPowerState) GetObserved() SandboxPowerStateObserved {
-	return s.Observed
-}
-
-// GetObservedGeneration returns the value of ObservedGeneration.
-func (s *SandboxPowerState) GetObservedGeneration() int64 {
-	return s.ObservedGeneration
-}
-
-// GetPhase returns the value of Phase.
-func (s *SandboxPowerState) GetPhase() SandboxPowerStatePhase {
-	return s.Phase
-}
-
-// SetDesired sets the value of Desired.
-func (s *SandboxPowerState) SetDesired(val SandboxPowerStateDesired) {
-	s.Desired = val
-}
-
-// SetDesiredGeneration sets the value of DesiredGeneration.
-func (s *SandboxPowerState) SetDesiredGeneration(val int64) {
-	s.DesiredGeneration = val
-}
-
-// SetObserved sets the value of Observed.
-func (s *SandboxPowerState) SetObserved(val SandboxPowerStateObserved) {
-	s.Observed = val
-}
-
-// SetObservedGeneration sets the value of ObservedGeneration.
-func (s *SandboxPowerState) SetObservedGeneration(val int64) {
-	s.ObservedGeneration = val
-}
-
-// SetPhase sets the value of Phase.
-func (s *SandboxPowerState) SetPhase(val SandboxPowerStatePhase) {
-	s.Phase = val
-}
-
-type SandboxPowerStateDesired string
-
-const (
-	SandboxPowerStateDesiredActive SandboxPowerStateDesired = "active"
-	SandboxPowerStateDesiredPaused SandboxPowerStateDesired = "paused"
-)
-
-// AllValues returns all SandboxPowerStateDesired values.
-func (SandboxPowerStateDesired) AllValues() []SandboxPowerStateDesired {
-	return []SandboxPowerStateDesired{
-		SandboxPowerStateDesiredActive,
-		SandboxPowerStateDesiredPaused,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SandboxPowerStateDesired) MarshalText() ([]byte, error) {
-	switch s {
-	case SandboxPowerStateDesiredActive:
-		return []byte(s), nil
-	case SandboxPowerStateDesiredPaused:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SandboxPowerStateDesired) UnmarshalText(data []byte) error {
-	switch SandboxPowerStateDesired(data) {
-	case SandboxPowerStateDesiredActive:
-		*s = SandboxPowerStateDesiredActive
-		return nil
-	case SandboxPowerStateDesiredPaused:
-		*s = SandboxPowerStateDesiredPaused
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-type SandboxPowerStateObserved string
-
-const (
-	SandboxPowerStateObservedActive SandboxPowerStateObserved = "active"
-	SandboxPowerStateObservedPaused SandboxPowerStateObserved = "paused"
-)
-
-// AllValues returns all SandboxPowerStateObserved values.
-func (SandboxPowerStateObserved) AllValues() []SandboxPowerStateObserved {
-	return []SandboxPowerStateObserved{
-		SandboxPowerStateObservedActive,
-		SandboxPowerStateObservedPaused,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SandboxPowerStateObserved) MarshalText() ([]byte, error) {
-	switch s {
-	case SandboxPowerStateObservedActive:
-		return []byte(s), nil
-	case SandboxPowerStateObservedPaused:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SandboxPowerStateObserved) UnmarshalText(data []byte) error {
-	switch SandboxPowerStateObserved(data) {
-	case SandboxPowerStateObservedActive:
-		*s = SandboxPowerStateObservedActive
-		return nil
-	case SandboxPowerStateObservedPaused:
-		*s = SandboxPowerStateObservedPaused
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-type SandboxPowerStatePhase string
-
-const (
-	SandboxPowerStatePhaseStable   SandboxPowerStatePhase = "stable"
-	SandboxPowerStatePhasePausing  SandboxPowerStatePhase = "pausing"
-	SandboxPowerStatePhaseResuming SandboxPowerStatePhase = "resuming"
-)
-
-// AllValues returns all SandboxPowerStatePhase values.
-func (SandboxPowerStatePhase) AllValues() []SandboxPowerStatePhase {
-	return []SandboxPowerStatePhase{
-		SandboxPowerStatePhaseStable,
-		SandboxPowerStatePhasePausing,
-		SandboxPowerStatePhaseResuming,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SandboxPowerStatePhase) MarshalText() ([]byte, error) {
-	switch s {
-	case SandboxPowerStatePhaseStable:
-		return []byte(s), nil
-	case SandboxPowerStatePhasePausing:
-		return []byte(s), nil
-	case SandboxPowerStatePhaseResuming:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SandboxPowerStatePhase) UnmarshalText(data []byte) error {
-	switch SandboxPowerStatePhase(data) {
-	case SandboxPowerStatePhaseStable:
-		*s = SandboxPowerStatePhaseStable
-		return nil
-	case SandboxPowerStatePhasePausing:
-		*s = SandboxPowerStatePhasePausing
-		return nil
-	case SandboxPowerStatePhaseResuming:
-		*s = SandboxPowerStatePhaseResuming
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -13505,14 +13328,17 @@ type SandboxSummary struct {
 	ID         string                 `json:"id"`
 	TemplateID string                 `json:"template_id"`
 	Status     SandboxLifecycleStatus `json:"status"`
-	Paused     bool                   `json:"paused"`
-	PowerState SandboxPowerState      `json:"power_state"`
+	// True when status is paused and no runtime is attached.
+	Paused bool `json:"paused"`
+	// Monotonically increasing runtime generation. Resume starts a new generation.
+	RuntimeGeneration int64 `json:"runtime_generation"`
 	// Cluster where sandbox runs (multi-cluster only).
 	ClusterID OptNilString `json:"cluster_id"`
 	CreatedAt time.Time    `json:"created_at"`
 	ExpiresAt time.Time    `json:"expires_at"`
 	// Hard expiration timestamp. Zero value means not set.
 	HardExpiresAt time.Time `json:"hard_expires_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -13535,9 +13361,9 @@ func (s *SandboxSummary) GetPaused() bool {
 	return s.Paused
 }
 
-// GetPowerState returns the value of PowerState.
-func (s *SandboxSummary) GetPowerState() SandboxPowerState {
-	return s.PowerState
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxSummary) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
 }
 
 // GetClusterID returns the value of ClusterID.
@@ -13560,6 +13386,11 @@ func (s *SandboxSummary) GetHardExpiresAt() time.Time {
 	return s.HardExpiresAt
 }
 
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SandboxSummary) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
 // SetID sets the value of ID.
 func (s *SandboxSummary) SetID(val string) {
 	s.ID = val
@@ -13580,9 +13411,9 @@ func (s *SandboxSummary) SetPaused(val bool) {
 	s.Paused = val
 }
 
-// SetPowerState sets the value of PowerState.
-func (s *SandboxSummary) SetPowerState(val SandboxPowerState) {
-	s.PowerState = val
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxSummary) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
 }
 
 // SetClusterID sets the value of ClusterID.
@@ -13603,6 +13434,11 @@ func (s *SandboxSummary) SetExpiresAt(val time.Time) {
 // SetHardExpiresAt sets the value of HardExpiresAt.
 func (s *SandboxSummary) SetHardExpiresAt(val time.Time) {
 	s.HardExpiresAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SandboxSummary) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
 }
 
 // Ref: #/components/schemas/SandboxTemplateCondition
@@ -13874,9 +13710,11 @@ func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
 // Note: env_vars and webhook are not included as they only affect new processes or require restart.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
+	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
+	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
-	// Hard time-to-live in seconds. When it expires, Sandbox0 cleans the runtime pod and preserves the
-	// sandbox identity, services, and public URLs until the sandbox is explicitly deleted.
+	// Sandbox hard time-to-live in seconds. When it expires, Sandbox0 deletes the sandbox identity and
+	// durable state, including paused rootfs checkpoints.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
