@@ -1976,6 +1976,8 @@ func (s *ProtocolRule) Validate() error {
 
 func (s ProtocolRuleProtocol) Validate() error {
 	switch s {
+	case "http":
+		return nil
 	case "mcp":
 		return nil
 	default:

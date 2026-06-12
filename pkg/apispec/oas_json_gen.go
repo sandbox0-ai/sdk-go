@@ -9614,6 +9614,358 @@ func (s *HTTPMatch) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *HTTPMethodPolicy) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPMethodPolicy) encodeFields(e *jx.Encoder) {
+	{
+		if s.Allowed != nil {
+			e.FieldStart("allowed")
+			e.ArrStart()
+			for _, elem := range s.Allowed {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Denied != nil {
+			e.FieldStart("denied")
+			e.ArrStart()
+			for _, elem := range s.Denied {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPMethodPolicy = [2]string{
+	0: "allowed",
+	1: "denied",
+}
+
+// Decode decodes HTTPMethodPolicy from json.
+func (s *HTTPMethodPolicy) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPMethodPolicy to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "allowed":
+			if err := func() error {
+				s.Allowed = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Allowed = append(s.Allowed, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowed\"")
+			}
+		case "denied":
+			if err := func() error {
+				s.Denied = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Denied = append(s.Denied, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"denied\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPMethodPolicy")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPMethodPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPMethodPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPPathPolicy) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPPathPolicy) encodeFields(e *jx.Encoder) {
+	{
+		if s.Allowed != nil {
+			e.FieldStart("allowed")
+			e.ArrStart()
+			for _, elem := range s.Allowed {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Denied != nil {
+			e.FieldStart("denied")
+			e.ArrStart()
+			for _, elem := range s.Denied {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.AllowedPrefixes != nil {
+			e.FieldStart("allowedPrefixes")
+			e.ArrStart()
+			for _, elem := range s.AllowedPrefixes {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.DeniedPrefixes != nil {
+			e.FieldStart("deniedPrefixes")
+			e.ArrStart()
+			for _, elem := range s.DeniedPrefixes {
+				e.Str(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPPathPolicy = [4]string{
+	0: "allowed",
+	1: "denied",
+	2: "allowedPrefixes",
+	3: "deniedPrefixes",
+}
+
+// Decode decodes HTTPPathPolicy from json.
+func (s *HTTPPathPolicy) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPPathPolicy to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "allowed":
+			if err := func() error {
+				s.Allowed = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Allowed = append(s.Allowed, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowed\"")
+			}
+		case "denied":
+			if err := func() error {
+				s.Denied = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.Denied = append(s.Denied, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"denied\"")
+			}
+		case "allowedPrefixes":
+			if err := func() error {
+				s.AllowedPrefixes = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.AllowedPrefixes = append(s.AllowedPrefixes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowedPrefixes\"")
+			}
+		case "deniedPrefixes":
+			if err := func() error {
+				s.DeniedPrefixes = make([]string, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
+					if err != nil {
+						return err
+					}
+					s.DeniedPrefixes = append(s.DeniedPrefixes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"deniedPrefixes\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPPathPolicy")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPPathPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPPathPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *HTTPProtocolRule) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *HTTPProtocolRule) encodeFields(e *jx.Encoder) {
+	{
+		if s.Methods.Set {
+			e.FieldStart("methods")
+			s.Methods.Encode(e)
+		}
+	}
+	{
+		if s.Paths.Set {
+			e.FieldStart("paths")
+			s.Paths.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfHTTPProtocolRule = [2]string{
+	0: "methods",
+	1: "paths",
+}
+
+// Decode decodes HTTPProtocolRule from json.
+func (s *HTTPProtocolRule) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode HTTPProtocolRule to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "methods":
+			if err := func() error {
+				s.Methods.Reset()
+				if err := s.Methods.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"methods\"")
+			}
+		case "paths":
+			if err := func() error {
+				s.Paths.Reset()
+				if err := s.Paths.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"paths\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode HTTPProtocolRule")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *HTTPProtocolRule) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *HTTPProtocolRule) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *HTTPValueMatch) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -12929,6 +13281,105 @@ func (s OptHTTPMatch) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptHTTPMatch) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes HTTPMethodPolicy as json.
+func (o OptHTTPMethodPolicy) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes HTTPMethodPolicy from json.
+func (o *OptHTTPMethodPolicy) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptHTTPMethodPolicy to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptHTTPMethodPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptHTTPMethodPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes HTTPPathPolicy as json.
+func (o OptHTTPPathPolicy) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes HTTPPathPolicy from json.
+func (o *OptHTTPPathPolicy) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptHTTPPathPolicy to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptHTTPPathPolicy) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptHTTPPathPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes HTTPProtocolRule as json.
+func (o OptHTTPProtocolRule) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes HTTPProtocolRule from json.
+func (o *OptHTTPProtocolRule) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptHTTPProtocolRule to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptHTTPProtocolRule) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptHTTPProtocolRule) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -17619,6 +18070,12 @@ func (s *ProtocolRule) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.HTTP.Set {
+			e.FieldStart("http")
+			s.HTTP.Encode(e)
+		}
+	}
+	{
 		if s.Mcp.Set {
 			e.FieldStart("mcp")
 			s.Mcp.Encode(e)
@@ -17626,14 +18083,15 @@ func (s *ProtocolRule) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfProtocolRule = [7]string{
+var jsonFieldsNameOfProtocolRule = [8]string{
 	0: "name",
 	1: "protocol",
 	2: "domains",
 	3: "ports",
 	4: "tlsMode",
 	5: "httpMatch",
-	6: "mcp",
+	6: "http",
+	7: "mcp",
 }
 
 // Decode decodes ProtocolRule from json.
@@ -17721,6 +18179,16 @@ func (s *ProtocolRule) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"httpMatch\"")
 			}
+		case "http":
+			if err := func() error {
+				s.HTTP.Reset()
+				if err := s.HTTP.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"http\"")
+			}
 		case "mcp":
 			if err := func() error {
 				s.Mcp.Reset()
@@ -17803,6 +18271,8 @@ func (s *ProtocolRuleProtocol) Decode(d *jx.Decoder) error {
 	}
 	// Try to use constant string.
 	switch ProtocolRuleProtocol(v) {
+	case ProtocolRuleProtocolHTTP:
+		*s = ProtocolRuleProtocolHTTP
 	case ProtocolRuleProtocolMcp:
 		*s = ProtocolRuleProtocolMcp
 	default:
