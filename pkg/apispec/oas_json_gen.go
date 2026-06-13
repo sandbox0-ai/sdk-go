@@ -36848,14 +36848,35 @@ func (s *TeamMember) encodeFields(e *jx.Encoder) {
 		e.FieldStart("joined_at")
 		json.EncodeDateTime(e, s.JoinedAt)
 	}
+	{
+		if s.Email.Set {
+			e.FieldStart("email")
+			s.Email.Encode(e)
+		}
+	}
+	{
+		if s.Name.Set {
+			e.FieldStart("name")
+			s.Name.Encode(e)
+		}
+	}
+	{
+		if s.AvatarURL.Set {
+			e.FieldStart("avatar_url")
+			s.AvatarURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfTeamMember = [5]string{
+var jsonFieldsNameOfTeamMember = [8]string{
 	0: "id",
 	1: "team_id",
 	2: "user_id",
 	3: "role",
 	4: "joined_at",
+	5: "email",
+	6: "name",
+	7: "avatar_url",
 }
 
 // Decode decodes TeamMember from json.
@@ -36926,6 +36947,36 @@ func (s *TeamMember) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"joined_at\"")
+			}
+		case "email":
+			if err := func() error {
+				s.Email.Reset()
+				if err := s.Email.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"email\"")
+			}
+		case "name":
+			if err := func() error {
+				s.Name.Reset()
+				if err := s.Name.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "avatar_url":
+			if err := func() error {
+				s.AvatarURL.Reset()
+				if err := s.AvatarURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"avatar_url\"")
 			}
 		default:
 			return d.Skip()

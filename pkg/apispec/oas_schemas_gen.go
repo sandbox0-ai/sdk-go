@@ -17287,6 +17287,12 @@ type TeamMember struct {
 	UserID   string    `json:"user_id"`
 	Role     string    `json:"role"`
 	JoinedAt time.Time `json:"joined_at"`
+	// User email address. Present in team member list responses.
+	Email OptString `json:"email"`
+	// User display name. Present in team member list responses.
+	Name OptString `json:"name"`
+	// User avatar URL. Present in team member list responses.
+	AvatarURL OptString `json:"avatar_url"`
 }
 
 // GetID returns the value of ID.
@@ -17314,6 +17320,21 @@ func (s *TeamMember) GetJoinedAt() time.Time {
 	return s.JoinedAt
 }
 
+// GetEmail returns the value of Email.
+func (s *TeamMember) GetEmail() OptString {
+	return s.Email
+}
+
+// GetName returns the value of Name.
+func (s *TeamMember) GetName() OptString {
+	return s.Name
+}
+
+// GetAvatarURL returns the value of AvatarURL.
+func (s *TeamMember) GetAvatarURL() OptString {
+	return s.AvatarURL
+}
+
 // SetID sets the value of ID.
 func (s *TeamMember) SetID(val string) {
 	s.ID = val
@@ -17337,6 +17358,21 @@ func (s *TeamMember) SetRole(val string) {
 // SetJoinedAt sets the value of JoinedAt.
 func (s *TeamMember) SetJoinedAt(val time.Time) {
 	s.JoinedAt = val
+}
+
+// SetEmail sets the value of Email.
+func (s *TeamMember) SetEmail(val OptString) {
+	s.Email = val
+}
+
+// SetName sets the value of Name.
+func (s *TeamMember) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetAvatarURL sets the value of AvatarURL.
+func (s *TeamMember) SetAvatarURL(val OptString) {
+	s.AvatarURL = val
 }
 
 // Ref: #/components/schemas/TeamQuota
