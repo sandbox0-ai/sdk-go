@@ -3519,6 +3519,115 @@ func (s *HTTPMatch) SetHeaders(val []HTTPValueMatch) {
 	s.Headers = val
 }
 
+// HTTP method allow and deny lists.
+// Ref: #/components/schemas/HTTPMethodPolicy
+type HTTPMethodPolicy struct {
+	// When non-empty, only listed HTTP methods are allowed.
+	Allowed []string `json:"allowed"`
+	// HTTP methods that are always denied before allowed is evaluated.
+	Denied []string `json:"denied"`
+}
+
+// GetAllowed returns the value of Allowed.
+func (s *HTTPMethodPolicy) GetAllowed() []string {
+	return s.Allowed
+}
+
+// GetDenied returns the value of Denied.
+func (s *HTTPMethodPolicy) GetDenied() []string {
+	return s.Denied
+}
+
+// SetAllowed sets the value of Allowed.
+func (s *HTTPMethodPolicy) SetAllowed(val []string) {
+	s.Allowed = val
+}
+
+// SetDenied sets the value of Denied.
+func (s *HTTPMethodPolicy) SetDenied(val []string) {
+	s.Denied = val
+}
+
+// HTTP path allow and deny lists.
+// Ref: #/components/schemas/HTTPPathPolicy
+type HTTPPathPolicy struct {
+	// When any allowed path list is non-empty, only listed exact paths are allowed.
+	Allowed []string `json:"allowed"`
+	// Exact paths that are always denied before allowed is evaluated.
+	Denied []string `json:"denied"`
+	// When any allowed path list is non-empty, only paths with listed prefixes are allowed.
+	AllowedPrefixes []string `json:"allowedPrefixes"`
+	// Path prefixes that are always denied before allowed is evaluated.
+	DeniedPrefixes []string `json:"deniedPrefixes"`
+}
+
+// GetAllowed returns the value of Allowed.
+func (s *HTTPPathPolicy) GetAllowed() []string {
+	return s.Allowed
+}
+
+// GetDenied returns the value of Denied.
+func (s *HTTPPathPolicy) GetDenied() []string {
+	return s.Denied
+}
+
+// GetAllowedPrefixes returns the value of AllowedPrefixes.
+func (s *HTTPPathPolicy) GetAllowedPrefixes() []string {
+	return s.AllowedPrefixes
+}
+
+// GetDeniedPrefixes returns the value of DeniedPrefixes.
+func (s *HTTPPathPolicy) GetDeniedPrefixes() []string {
+	return s.DeniedPrefixes
+}
+
+// SetAllowed sets the value of Allowed.
+func (s *HTTPPathPolicy) SetAllowed(val []string) {
+	s.Allowed = val
+}
+
+// SetDenied sets the value of Denied.
+func (s *HTTPPathPolicy) SetDenied(val []string) {
+	s.Denied = val
+}
+
+// SetAllowedPrefixes sets the value of AllowedPrefixes.
+func (s *HTTPPathPolicy) SetAllowedPrefixes(val []string) {
+	s.AllowedPrefixes = val
+}
+
+// SetDeniedPrefixes sets the value of DeniedPrefixes.
+func (s *HTTPPathPolicy) SetDeniedPrefixes(val []string) {
+	s.DeniedPrefixes = val
+}
+
+// HTTP request operation policy.
+// Ref: #/components/schemas/HTTPProtocolRule
+type HTTPProtocolRule struct {
+	Methods OptHTTPMethodPolicy `json:"methods"`
+	Paths   OptHTTPPathPolicy   `json:"paths"`
+}
+
+// GetMethods returns the value of Methods.
+func (s *HTTPProtocolRule) GetMethods() OptHTTPMethodPolicy {
+	return s.Methods
+}
+
+// GetPaths returns the value of Paths.
+func (s *HTTPProtocolRule) GetPaths() OptHTTPPathPolicy {
+	return s.Paths
+}
+
+// SetMethods sets the value of Methods.
+func (s *HTTPProtocolRule) SetMethods(val OptHTTPMethodPolicy) {
+	s.Methods = val
+}
+
+// SetPaths sets the value of Paths.
+func (s *HTTPProtocolRule) SetPaths(val OptHTTPPathPolicy) {
+	s.Paths = val
+}
+
 // Ref: #/components/schemas/HTTPValueMatch
 type HTTPValueMatch struct {
 	// Header or query parameter name.
@@ -5819,6 +5928,144 @@ func (o OptHTTPMatch) Get() (v HTTPMatch, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptHTTPMatch) Or(d HTTPMatch) HTTPMatch {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPMethodPolicy returns new OptHTTPMethodPolicy with value set to v.
+func NewOptHTTPMethodPolicy(v HTTPMethodPolicy) OptHTTPMethodPolicy {
+	return OptHTTPMethodPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPMethodPolicy is optional HTTPMethodPolicy.
+type OptHTTPMethodPolicy struct {
+	Value HTTPMethodPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPMethodPolicy was set.
+func (o OptHTTPMethodPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPMethodPolicy) Reset() {
+	var v HTTPMethodPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPMethodPolicy) SetTo(v HTTPMethodPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPMethodPolicy) Get() (v HTTPMethodPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPMethodPolicy) Or(d HTTPMethodPolicy) HTTPMethodPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPPathPolicy returns new OptHTTPPathPolicy with value set to v.
+func NewOptHTTPPathPolicy(v HTTPPathPolicy) OptHTTPPathPolicy {
+	return OptHTTPPathPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPPathPolicy is optional HTTPPathPolicy.
+type OptHTTPPathPolicy struct {
+	Value HTTPPathPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPPathPolicy was set.
+func (o OptHTTPPathPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPPathPolicy) Reset() {
+	var v HTTPPathPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPPathPolicy) SetTo(v HTTPPathPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPPathPolicy) Get() (v HTTPPathPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPPathPolicy) Or(d HTTPPathPolicy) HTTPPathPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPProtocolRule returns new OptHTTPProtocolRule with value set to v.
+func NewOptHTTPProtocolRule(v HTTPProtocolRule) OptHTTPProtocolRule {
+	return OptHTTPProtocolRule{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPProtocolRule is optional HTTPProtocolRule.
+type OptHTTPProtocolRule struct {
+	Value HTTPProtocolRule
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPProtocolRule was set.
+func (o OptHTTPProtocolRule) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPProtocolRule) Reset() {
+	var v HTTPProtocolRule
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPProtocolRule) SetTo(v HTTPProtocolRule) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPProtocolRule) Get() (v HTTPProtocolRule, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPProtocolRule) Or(d HTTPProtocolRule) HTTPProtocolRule {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10671,10 +10918,11 @@ type ProtocolRule struct {
 	// Domain match list for the rule.
 	Domains []string `json:"domains"`
 	// Port/protocol constraints for the rule.
-	Ports     []PortSpec         `json:"ports"`
-	TlsMode   OptEgressTLSMode   `json:"tlsMode"`
-	HttpMatch OptHTTPMatch       `json:"httpMatch"`
-	Mcp       OptMCPProtocolRule `json:"mcp"`
+	Ports     []PortSpec          `json:"ports"`
+	TlsMode   OptEgressTLSMode    `json:"tlsMode"`
+	HttpMatch OptHTTPMatch        `json:"httpMatch"`
+	HTTP      OptHTTPProtocolRule `json:"http"`
+	Mcp       OptMCPProtocolRule  `json:"mcp"`
 }
 
 // GetName returns the value of Name.
@@ -10705,6 +10953,11 @@ func (s *ProtocolRule) GetTlsMode() OptEgressTLSMode {
 // GetHttpMatch returns the value of HttpMatch.
 func (s *ProtocolRule) GetHttpMatch() OptHTTPMatch {
 	return s.HttpMatch
+}
+
+// GetHTTP returns the value of HTTP.
+func (s *ProtocolRule) GetHTTP() OptHTTPProtocolRule {
+	return s.HTTP
 }
 
 // GetMcp returns the value of Mcp.
@@ -10742,6 +10995,11 @@ func (s *ProtocolRule) SetHttpMatch(val OptHTTPMatch) {
 	s.HttpMatch = val
 }
 
+// SetHTTP sets the value of HTTP.
+func (s *ProtocolRule) SetHTTP(val OptHTTPProtocolRule) {
+	s.HTTP = val
+}
+
 // SetMcp sets the value of Mcp.
 func (s *ProtocolRule) SetMcp(val OptMCPProtocolRule) {
 	s.Mcp = val
@@ -10751,12 +11009,14 @@ func (s *ProtocolRule) SetMcp(val OptMCPProtocolRule) {
 type ProtocolRuleProtocol string
 
 const (
-	ProtocolRuleProtocolMcp ProtocolRuleProtocol = "mcp"
+	ProtocolRuleProtocolHTTP ProtocolRuleProtocol = "http"
+	ProtocolRuleProtocolMcp  ProtocolRuleProtocol = "mcp"
 )
 
 // AllValues returns all ProtocolRuleProtocol values.
 func (ProtocolRuleProtocol) AllValues() []ProtocolRuleProtocol {
 	return []ProtocolRuleProtocol{
+		ProtocolRuleProtocolHTTP,
 		ProtocolRuleProtocolMcp,
 	}
 }
@@ -10764,6 +11024,8 @@ func (ProtocolRuleProtocol) AllValues() []ProtocolRuleProtocol {
 // MarshalText implements encoding.TextMarshaler.
 func (s ProtocolRuleProtocol) MarshalText() ([]byte, error) {
 	switch s {
+	case ProtocolRuleProtocolHTTP:
+		return []byte(s), nil
 	case ProtocolRuleProtocolMcp:
 		return []byte(s), nil
 	default:
@@ -10774,6 +11036,9 @@ func (s ProtocolRuleProtocol) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	switch ProtocolRuleProtocol(data) {
+	case ProtocolRuleProtocolHTTP:
+		*s = ProtocolRuleProtocolHTTP
+		return nil
 	case ProtocolRuleProtocolMcp:
 		*s = ProtocolRuleProtocolMcp
 		return nil
