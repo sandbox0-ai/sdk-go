@@ -229,6 +229,10 @@ type TeamsIDMembersUserIdPutRes interface {
 	teamsIDMembersUserIdPutRes()
 }
 
+type TeamsIDOwnerPutRes interface {
+	teamsIDOwnerPutRes()
+}
+
 type TeamsIDPutRes interface {
 	teamsIDPutRes()
 }

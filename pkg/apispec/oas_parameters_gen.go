@@ -399,6 +399,8 @@ type TeamsIDGetParams struct {
 // TeamsIDMembersGetParams is parameters of GET /teams/{id}/members operation.
 type TeamsIDMembersGetParams struct {
 	ID string
+	// Search by member email, display name, or user ID.
+	Query OptString `json:",omitempty,omitzero"`
 }
 
 // TeamsIDMembersPostParams is parameters of POST /teams/{id}/members operation.
@@ -416,6 +418,11 @@ type TeamsIDMembersUserIdDeleteParams struct {
 type TeamsIDMembersUserIdPutParams struct {
 	ID     string
 	UserId string
+}
+
+// TeamsIDOwnerPutParams is parameters of PUT /teams/{id}/owner operation.
+type TeamsIDOwnerPutParams struct {
+	ID string
 }
 
 // TeamsIDPutParams is parameters of PUT /teams/{id} operation.

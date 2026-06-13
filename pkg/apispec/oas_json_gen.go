@@ -6346,6 +6346,8 @@ func (s *CredentialProjectionType) Decode(d *jx.Decoder) error {
 	switch CredentialProjectionType(v) {
 	case CredentialProjectionTypeHTTPHeaders:
 		*s = CredentialProjectionTypeHTTPHeaders
+	case CredentialProjectionTypePlaceholderSubstitution:
+		*s = CredentialProjectionTypePlaceholderSubstitution
 	case CredentialProjectionTypeTLSClientCertificate:
 		*s = CredentialProjectionTypeTLSClientCertificate
 	case CredentialProjectionTypeUsernamePassword:
@@ -14006,6 +14008,39 @@ func (s *OptPauseSandboxResponse) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes PlaceholderSubstitutionProjection as json.
+func (o OptPlaceholderSubstitutionProjection) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes PlaceholderSubstitutionProjection from json.
+func (o *OptPlaceholderSubstitutionProjection) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptPlaceholderSubstitutionProjection to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptPlaceholderSubstitutionProjection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptPlaceholderSubstitutionProjection) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes PodAffinity as json.
 func (o OptPodAffinity) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -16652,6 +16687,12 @@ func (s *PauseSandboxResponse) encodeFields(e *jx.Encoder) {
 		e.Bool(s.Paused)
 	}
 	{
+		if s.Status.Set {
+			e.FieldStart("status")
+			s.Status.Encode(e)
+		}
+	}
+	{
 		if s.ResourceUsage.Set {
 			e.FieldStart("resource_usage")
 			s.ResourceUsage.Encode(e)
@@ -16671,12 +16712,13 @@ func (s *PauseSandboxResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfPauseSandboxResponse = [5]string{
+var jsonFieldsNameOfPauseSandboxResponse = [6]string{
 	0: "sandbox_id",
 	1: "paused",
-	2: "resource_usage",
-	3: "updated_memory",
-	4: "updated_cpu",
+	2: "status",
+	3: "resource_usage",
+	4: "updated_memory",
+	5: "updated_cpu",
 }
 
 // Decode decodes PauseSandboxResponse from json.
@@ -16711,6 +16753,16 @@ func (s *PauseSandboxResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"paused\"")
+			}
+		case "status":
+			if err := func() error {
+				s.Status.Reset()
+				if err := s.Status.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"status\"")
 			}
 		case "resource_usage":
 			if err := func() error {
@@ -16794,6 +16846,262 @@ func (s *PauseSandboxResponse) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *PauseSandboxResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *PlaceholderReplacement) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *PlaceholderReplacement) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("placeholder")
+		e.Str(s.Placeholder)
+	}
+	{
+		e.FieldStart("valueTemplate")
+		e.Str(s.ValueTemplate)
+	}
+	{
+		e.FieldStart("locations")
+		e.ArrStart()
+		for _, elem := range s.Locations {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+}
+
+var jsonFieldsNameOfPlaceholderReplacement = [3]string{
+	0: "placeholder",
+	1: "valueTemplate",
+	2: "locations",
+}
+
+// Decode decodes PlaceholderReplacement from json.
+func (s *PlaceholderReplacement) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PlaceholderReplacement to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "placeholder":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Placeholder = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"placeholder\"")
+			}
+		case "valueTemplate":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.ValueTemplate = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"valueTemplate\"")
+			}
+		case "locations":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				s.Locations = make([]PlaceholderSubstitutionLocation, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem PlaceholderSubstitutionLocation
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Locations = append(s.Locations, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"locations\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode PlaceholderReplacement")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfPlaceholderReplacement) {
+					name = jsonFieldsNameOfPlaceholderReplacement[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *PlaceholderReplacement) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PlaceholderReplacement) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes PlaceholderSubstitutionLocation as json.
+func (s PlaceholderSubstitutionLocation) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes PlaceholderSubstitutionLocation from json.
+func (s *PlaceholderSubstitutionLocation) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PlaceholderSubstitutionLocation to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch PlaceholderSubstitutionLocation(v) {
+	case PlaceholderSubstitutionLocationHeader:
+		*s = PlaceholderSubstitutionLocationHeader
+	case PlaceholderSubstitutionLocationQuery:
+		*s = PlaceholderSubstitutionLocationQuery
+	case PlaceholderSubstitutionLocationBody:
+		*s = PlaceholderSubstitutionLocationBody
+	default:
+		*s = PlaceholderSubstitutionLocation(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s PlaceholderSubstitutionLocation) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PlaceholderSubstitutionLocation) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *PlaceholderSubstitutionProjection) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *PlaceholderSubstitutionProjection) encodeFields(e *jx.Encoder) {
+	{
+		if s.Replacements != nil {
+			e.FieldStart("replacements")
+			e.ArrStart()
+			for _, elem := range s.Replacements {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfPlaceholderSubstitutionProjection = [1]string{
+	0: "replacements",
+}
+
+// Decode decodes PlaceholderSubstitutionProjection from json.
+func (s *PlaceholderSubstitutionProjection) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PlaceholderSubstitutionProjection to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "replacements":
+			if err := func() error {
+				s.Replacements = make([]PlaceholderReplacement, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem PlaceholderReplacement
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Replacements = append(s.Replacements, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"replacements\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode PlaceholderSubstitutionProjection")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *PlaceholderSubstitutionProjection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PlaceholderSubstitutionProjection) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -17872,6 +18180,12 @@ func (s *ProjectionSpec) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.PlaceholderSubstitution.Set {
+			e.FieldStart("placeholderSubstitution")
+			s.PlaceholderSubstitution.Encode(e)
+		}
+	}
+	{
 		if s.TlsClientCertificate != nil {
 			e.FieldStart("tlsClientCertificate")
 			s.TlsClientCertificate.Encode(e)
@@ -17891,12 +18205,13 @@ func (s *ProjectionSpec) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfProjectionSpec = [5]string{
+var jsonFieldsNameOfProjectionSpec = [6]string{
 	0: "type",
 	1: "httpHeaders",
-	2: "tlsClientCertificate",
-	3: "usernamePassword",
-	4: "sshProxy",
+	2: "placeholderSubstitution",
+	3: "tlsClientCertificate",
+	4: "usernamePassword",
+	5: "sshProxy",
 }
 
 // Decode decodes ProjectionSpec from json.
@@ -17927,6 +18242,16 @@ func (s *ProjectionSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"httpHeaders\"")
+			}
+		case "placeholderSubstitution":
+			if err := func() error {
+				s.PlaceholderSubstitution.Reset()
+				if err := s.PlaceholderSubstitution.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"placeholderSubstitution\"")
 			}
 		case "tlsClientCertificate":
 			if err := func() error {
@@ -37428,6 +37753,44 @@ func (s *TeamsIDMembersPostNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes TeamsIDMembersUserIdDeleteBadRequest as json.
+func (s *TeamsIDMembersUserIdDeleteBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes TeamsIDMembersUserIdDeleteBadRequest from json.
+func (s *TeamsIDMembersUserIdDeleteBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamsIDMembersUserIdDeleteBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = TeamsIDMembersUserIdDeleteBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TeamsIDMembersUserIdDeleteBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamsIDMembersUserIdDeleteBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes TeamsIDMembersUserIdDeleteForbidden as json.
 func (s *TeamsIDMembersUserIdDeleteForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -37504,6 +37867,44 @@ func (s *TeamsIDMembersUserIdDeleteNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes TeamsIDMembersUserIdPutBadRequest as json.
+func (s *TeamsIDMembersUserIdPutBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes TeamsIDMembersUserIdPutBadRequest from json.
+func (s *TeamsIDMembersUserIdPutBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamsIDMembersUserIdPutBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = TeamsIDMembersUserIdPutBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TeamsIDMembersUserIdPutBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamsIDMembersUserIdPutBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes TeamsIDMembersUserIdPutForbidden as json.
 func (s *TeamsIDMembersUserIdPutForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -37576,6 +37977,120 @@ func (s *TeamsIDMembersUserIdPutNotFound) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *TeamsIDMembersUserIdPutNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TeamsIDOwnerPutBadRequest as json.
+func (s *TeamsIDOwnerPutBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes TeamsIDOwnerPutBadRequest from json.
+func (s *TeamsIDOwnerPutBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamsIDOwnerPutBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = TeamsIDOwnerPutBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TeamsIDOwnerPutBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamsIDOwnerPutBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TeamsIDOwnerPutForbidden as json.
+func (s *TeamsIDOwnerPutForbidden) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes TeamsIDOwnerPutForbidden from json.
+func (s *TeamsIDOwnerPutForbidden) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamsIDOwnerPutForbidden to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = TeamsIDOwnerPutForbidden(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TeamsIDOwnerPutForbidden) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamsIDOwnerPutForbidden) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TeamsIDOwnerPutNotFound as json.
+func (s *TeamsIDOwnerPutNotFound) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes TeamsIDOwnerPutNotFound from json.
+func (s *TeamsIDOwnerPutNotFound) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamsIDOwnerPutNotFound to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = TeamsIDOwnerPutNotFound(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TeamsIDOwnerPutNotFound) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamsIDOwnerPutNotFound) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -38583,6 +39098,102 @@ func (s TrafficRuleAppProtocol) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *TrafficRuleAppProtocol) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *TransferTeamOwnerRequest) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *TransferTeamOwnerRequest) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("user_id")
+		e.Str(s.UserID)
+	}
+}
+
+var jsonFieldsNameOfTransferTeamOwnerRequest = [1]string{
+	0: "user_id",
+}
+
+// Decode decodes TransferTeamOwnerRequest from json.
+func (s *TransferTeamOwnerRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TransferTeamOwnerRequest to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "user_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.UserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"user_id\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode TransferTeamOwnerRequest")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfTransferTeamOwnerRequest) {
+					name = jsonFieldsNameOfTransferTeamOwnerRequest[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *TransferTeamOwnerRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TransferTeamOwnerRequest) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
