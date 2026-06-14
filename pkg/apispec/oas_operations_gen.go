@@ -102,6 +102,7 @@ const (
 	TeamsIDMembersPostOperation                                  OperationName = "TeamsIDMembersPost"
 	TeamsIDMembersUserIdDeleteOperation                          OperationName = "TeamsIDMembersUserIdDelete"
 	TeamsIDMembersUserIdPutOperation                             OperationName = "TeamsIDMembersUserIdPut"
+	TeamsIDOwnerPutOperation                                     OperationName = "TeamsIDOwnerPut"
 	TeamsIDPutOperation                                          OperationName = "TeamsIDPut"
 	TeamsPostOperation                                           OperationName = "TeamsPost"
 	UsersMeGetOperation                                          OperationName = "UsersMeGet"

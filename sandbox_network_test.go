@@ -121,3 +121,123 @@ func TestSandboxUpdateNetworkPolicyWithEgressProxy(t *testing.T) {
 		t.Fatalf("UpdateNetworkPolicy() error = %v", err)
 	}
 }
+
+func TestSandboxUpdateNetworkPolicyWithPlaceholderSubstitution(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Fatalf("method = %s, want PUT", r.Method)
+		}
+		if r.URL.Path != "/api/v1/sandboxes/sbx_123/network" {
+			t.Fatalf("path = %s, want /api/v1/sandboxes/sbx_123/network", r.URL.Path)
+		}
+		var policy apispec.SandboxNetworkPolicy
+		if err := json.NewDecoder(r.Body).Decode(&policy); err != nil {
+			t.Fatalf("decode network policy request: %v", err)
+		}
+		egress, ok := policy.Egress.Get()
+		if !ok {
+			t.Fatal("egress policy not set")
+		}
+		if len(egress.CredentialRules) != 1 {
+			t.Fatalf("credentialRules count = %d, want 1", len(egress.CredentialRules))
+		}
+		credentialRule := egress.CredentialRules[0]
+		if credentialRule.CredentialRef != "api-token" {
+			t.Fatalf("credentialRef = %q, want api-token", credentialRule.CredentialRef)
+		}
+		protocol, ok := credentialRule.Protocol.Get()
+		if !ok || protocol != apispec.EgressAuthProtocolHTTP {
+			t.Fatalf("protocol = %q, want http", protocol)
+		}
+		failurePolicy, ok := credentialRule.FailurePolicy.Get()
+		if !ok || failurePolicy != apispec.EgressAuthFailurePolicyFailClosed {
+			t.Fatalf("failurePolicy = %q, want fail-closed", failurePolicy)
+		}
+		if len(policy.CredentialBindings) != 1 {
+			t.Fatalf("credentialBindings count = %d, want 1", len(policy.CredentialBindings))
+		}
+		projection := policy.CredentialBindings[0].Projection
+		if projection.Type != apispec.CredentialProjectionTypePlaceholderSubstitution {
+			t.Fatalf("projection type = %q, want placeholder_substitution", projection.Type)
+		}
+		placeholderProjection, ok := projection.PlaceholderSubstitution.Get()
+		if !ok {
+			t.Fatal("placeholderSubstitution projection not set")
+		}
+		if len(placeholderProjection.Replacements) != 1 {
+			t.Fatalf("replacement count = %d, want 1", len(placeholderProjection.Replacements))
+		}
+		replacement := placeholderProjection.Replacements[0]
+		if replacement.Placeholder != "s0env_api_token" {
+			t.Fatalf("placeholder = %q, want s0env_api_token", replacement.Placeholder)
+		}
+		if replacement.ValueTemplate != "{{ .token }}" {
+			t.Fatalf("valueTemplate = %q, want {{ .token }}", replacement.ValueTemplate)
+		}
+		wantLocations := []apispec.PlaceholderSubstitutionLocation{
+			apispec.PlaceholderSubstitutionLocationHeader,
+			apispec.PlaceholderSubstitutionLocationQuery,
+			apispec.PlaceholderSubstitutionLocationBody,
+		}
+		if len(replacement.Locations) != len(wantLocations) {
+			t.Fatalf("locations = %#v, want %#v", replacement.Locations, wantLocations)
+		}
+		for i := range wantLocations {
+			if replacement.Locations[i] != wantLocations[i] {
+				t.Fatalf("locations = %#v, want %#v", replacement.Locations, wantLocations)
+			}
+		}
+		writeJSON(t, w, http.StatusOK, map[string]any{
+			"success": true,
+			"data":    policy,
+		})
+	})
+	defer server.Close()
+
+	sandbox := client.Sandbox("sbx_123")
+	_, err := sandbox.UpdateNetworkPolicy(context.Background(), apispec.SandboxNetworkPolicy{
+		Mode: apispec.SandboxNetworkPolicyModeBlockAll,
+		Egress: apispec.NewOptNetworkEgressPolicy(apispec.NetworkEgressPolicy{
+			TrafficRules: []apispec.TrafficRule{{
+				Name:   apispec.NewOptString("allow-example-api"),
+				Action: apispec.TrafficRuleActionAllow,
+				Domains: []string{
+					"api.example.com",
+				},
+				Ports: []apispec.PortSpec{{
+					Port:     443,
+					Protocol: apispec.NewOptString("tcp"),
+				}},
+			}},
+			CredentialRules: []apispec.EgressCredentialRule{{
+				Name:          apispec.NewOptString("inject-api-token"),
+				CredentialRef: "api-token",
+				Protocol:      apispec.NewOptEgressAuthProtocol(apispec.EgressAuthProtocolHTTP),
+				FailurePolicy: apispec.NewOptEgressAuthFailurePolicy(apispec.EgressAuthFailurePolicyFailClosed),
+				Domains:       []string{"api.example.com"},
+				Ports:         []apispec.PortSpec{{Port: 443, Protocol: apispec.NewOptString("tcp")}},
+			}},
+		}),
+		CredentialBindings: []apispec.CredentialBinding{{
+			Ref:       "api-token",
+			SourceRef: "api-token-source",
+			Projection: apispec.ProjectionSpec{
+				Type: apispec.CredentialProjectionTypePlaceholderSubstitution,
+				PlaceholderSubstitution: apispec.NewOptPlaceholderSubstitutionProjection(apispec.PlaceholderSubstitutionProjection{
+					Replacements: []apispec.PlaceholderReplacement{{
+						Placeholder:   "s0env_api_token",
+						ValueTemplate: "{{ .token }}",
+						Locations: []apispec.PlaceholderSubstitutionLocation{
+							apispec.PlaceholderSubstitutionLocationHeader,
+							apispec.PlaceholderSubstitutionLocationQuery,
+							apispec.PlaceholderSubstitutionLocationBody,
+						},
+					}},
+				}),
+			},
+		}},
+	})
+	if err != nil {
+		t.Fatalf("UpdateNetworkPolicy() error = %v", err)
+	}
+}

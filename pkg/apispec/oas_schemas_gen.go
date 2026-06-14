@@ -2015,16 +2015,18 @@ func (s *CredentialBinding) SetCachePolicy(val OptCachePolicySpec) {
 type CredentialProjectionType string
 
 const (
-	CredentialProjectionTypeHTTPHeaders          CredentialProjectionType = "http_headers"
-	CredentialProjectionTypeTLSClientCertificate CredentialProjectionType = "tls_client_certificate"
-	CredentialProjectionTypeUsernamePassword     CredentialProjectionType = "username_password"
-	CredentialProjectionTypeSSHProxy             CredentialProjectionType = "ssh_proxy"
+	CredentialProjectionTypeHTTPHeaders             CredentialProjectionType = "http_headers"
+	CredentialProjectionTypePlaceholderSubstitution CredentialProjectionType = "placeholder_substitution"
+	CredentialProjectionTypeTLSClientCertificate    CredentialProjectionType = "tls_client_certificate"
+	CredentialProjectionTypeUsernamePassword        CredentialProjectionType = "username_password"
+	CredentialProjectionTypeSSHProxy                CredentialProjectionType = "ssh_proxy"
 )
 
 // AllValues returns all CredentialProjectionType values.
 func (CredentialProjectionType) AllValues() []CredentialProjectionType {
 	return []CredentialProjectionType{
 		CredentialProjectionTypeHTTPHeaders,
+		CredentialProjectionTypePlaceholderSubstitution,
 		CredentialProjectionTypeTLSClientCertificate,
 		CredentialProjectionTypeUsernamePassword,
 		CredentialProjectionTypeSSHProxy,
@@ -2035,6 +2037,8 @@ func (CredentialProjectionType) AllValues() []CredentialProjectionType {
 func (s CredentialProjectionType) MarshalText() ([]byte, error) {
 	switch s {
 	case CredentialProjectionTypeHTTPHeaders:
+		return []byte(s), nil
+	case CredentialProjectionTypePlaceholderSubstitution:
 		return []byte(s), nil
 	case CredentialProjectionTypeTLSClientCertificate:
 		return []byte(s), nil
@@ -2052,6 +2056,9 @@ func (s *CredentialProjectionType) UnmarshalText(data []byte) error {
 	switch CredentialProjectionType(data) {
 	case CredentialProjectionTypeHTTPHeaders:
 		*s = CredentialProjectionTypeHTTPHeaders
+		return nil
+	case CredentialProjectionTypePlaceholderSubstitution:
+		*s = CredentialProjectionTypePlaceholderSubstitution
 		return nil
 	case CredentialProjectionTypeTLSClientCertificate:
 		*s = CredentialProjectionTypeTLSClientCertificate
@@ -6905,6 +6912,52 @@ func (o OptPauseSandboxResponse) Or(d PauseSandboxResponse) PauseSandboxResponse
 	return d
 }
 
+// NewOptPlaceholderSubstitutionProjection returns new OptPlaceholderSubstitutionProjection with value set to v.
+func NewOptPlaceholderSubstitutionProjection(v PlaceholderSubstitutionProjection) OptPlaceholderSubstitutionProjection {
+	return OptPlaceholderSubstitutionProjection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPlaceholderSubstitutionProjection is optional PlaceholderSubstitutionProjection.
+type OptPlaceholderSubstitutionProjection struct {
+	Value PlaceholderSubstitutionProjection
+	Set   bool
+}
+
+// IsSet returns true if OptPlaceholderSubstitutionProjection was set.
+func (o OptPlaceholderSubstitutionProjection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPlaceholderSubstitutionProjection) Reset() {
+	var v PlaceholderSubstitutionProjection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPlaceholderSubstitutionProjection) SetTo(v PlaceholderSubstitutionProjection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPlaceholderSubstitutionProjection) Get() (v PlaceholderSubstitutionProjection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPlaceholderSubstitutionProjection) Or(d PlaceholderSubstitutionProjection) PlaceholderSubstitutionProjection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptPodAffinity returns new OptPodAffinity with value set to v.
 func NewOptPodAffinity(v PodAffinity) OptPodAffinity {
 	return OptPodAffinity{
@@ -10475,11 +10528,14 @@ func (s *PTYSize) SetCols(val OptInt32) {
 
 // Ref: #/components/schemas/PauseSandboxResponse
 type PauseSandboxResponse struct {
-	SandboxID     string                  `json:"sandbox_id"`
-	Paused        bool                    `json:"paused"`
-	ResourceUsage OptSandboxResourceUsage `json:"resource_usage"`
-	UpdatedMemory OptString               `json:"updated_memory"`
-	UpdatedCPU    OptString               `json:"updated_cpu"`
+	SandboxID string `json:"sandbox_id"`
+	// True when checkpoint completion has finished and the sandbox is paused.
+	Paused bool `json:"paused"`
+	// Current lifecycle status. Async pause requests usually return pausing.
+	Status        OptSandboxLifecycleStatus `json:"status"`
+	ResourceUsage OptSandboxResourceUsage   `json:"resource_usage"`
+	UpdatedMemory OptString                 `json:"updated_memory"`
+	UpdatedCPU    OptString                 `json:"updated_cpu"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -10490,6 +10546,11 @@ func (s *PauseSandboxResponse) GetSandboxID() string {
 // GetPaused returns the value of Paused.
 func (s *PauseSandboxResponse) GetPaused() bool {
 	return s.Paused
+}
+
+// GetStatus returns the value of Status.
+func (s *PauseSandboxResponse) GetStatus() OptSandboxLifecycleStatus {
+	return s.Status
 }
 
 // GetResourceUsage returns the value of ResourceUsage.
@@ -10517,6 +10578,11 @@ func (s *PauseSandboxResponse) SetPaused(val bool) {
 	s.Paused = val
 }
 
+// SetStatus sets the value of Status.
+func (s *PauseSandboxResponse) SetStatus(val OptSandboxLifecycleStatus) {
+	s.Status = val
+}
+
 // SetResourceUsage sets the value of ResourceUsage.
 func (s *PauseSandboxResponse) SetResourceUsage(val OptSandboxResourceUsage) {
 	s.ResourceUsage = val
@@ -10530,6 +10596,111 @@ func (s *PauseSandboxResponse) SetUpdatedMemory(val OptString) {
 // SetUpdatedCPU sets the value of UpdatedCPU.
 func (s *PauseSandboxResponse) SetUpdatedCPU(val OptString) {
 	s.UpdatedCPU = val
+}
+
+// Ref: #/components/schemas/PlaceholderReplacement
+type PlaceholderReplacement struct {
+	// Opaque sandbox-visible value to replace.
+	Placeholder string `json:"placeholder"`
+	// Template rendered against the resolved credential source payload.
+	ValueTemplate string `json:"valueTemplate"`
+	// HTTP request locations where this placeholder can be replaced.
+	Locations []PlaceholderSubstitutionLocation `json:"locations"`
+}
+
+// GetPlaceholder returns the value of Placeholder.
+func (s *PlaceholderReplacement) GetPlaceholder() string {
+	return s.Placeholder
+}
+
+// GetValueTemplate returns the value of ValueTemplate.
+func (s *PlaceholderReplacement) GetValueTemplate() string {
+	return s.ValueTemplate
+}
+
+// GetLocations returns the value of Locations.
+func (s *PlaceholderReplacement) GetLocations() []PlaceholderSubstitutionLocation {
+	return s.Locations
+}
+
+// SetPlaceholder sets the value of Placeholder.
+func (s *PlaceholderReplacement) SetPlaceholder(val string) {
+	s.Placeholder = val
+}
+
+// SetValueTemplate sets the value of ValueTemplate.
+func (s *PlaceholderReplacement) SetValueTemplate(val string) {
+	s.ValueTemplate = val
+}
+
+// SetLocations sets the value of Locations.
+func (s *PlaceholderReplacement) SetLocations(val []PlaceholderSubstitutionLocation) {
+	s.Locations = val
+}
+
+// Ref: #/components/schemas/PlaceholderSubstitutionLocation
+type PlaceholderSubstitutionLocation string
+
+const (
+	PlaceholderSubstitutionLocationHeader PlaceholderSubstitutionLocation = "header"
+	PlaceholderSubstitutionLocationQuery  PlaceholderSubstitutionLocation = "query"
+	PlaceholderSubstitutionLocationBody   PlaceholderSubstitutionLocation = "body"
+)
+
+// AllValues returns all PlaceholderSubstitutionLocation values.
+func (PlaceholderSubstitutionLocation) AllValues() []PlaceholderSubstitutionLocation {
+	return []PlaceholderSubstitutionLocation{
+		PlaceholderSubstitutionLocationHeader,
+		PlaceholderSubstitutionLocationQuery,
+		PlaceholderSubstitutionLocationBody,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s PlaceholderSubstitutionLocation) MarshalText() ([]byte, error) {
+	switch s {
+	case PlaceholderSubstitutionLocationHeader:
+		return []byte(s), nil
+	case PlaceholderSubstitutionLocationQuery:
+		return []byte(s), nil
+	case PlaceholderSubstitutionLocationBody:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *PlaceholderSubstitutionLocation) UnmarshalText(data []byte) error {
+	switch PlaceholderSubstitutionLocation(data) {
+	case PlaceholderSubstitutionLocationHeader:
+		*s = PlaceholderSubstitutionLocationHeader
+		return nil
+	case PlaceholderSubstitutionLocationQuery:
+		*s = PlaceholderSubstitutionLocationQuery
+		return nil
+	case PlaceholderSubstitutionLocationBody:
+		*s = PlaceholderSubstitutionLocationBody
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/PlaceholderSubstitutionProjection
+type PlaceholderSubstitutionProjection struct {
+	// Placeholder replacements applied to outbound HTTP requests at the egress boundary.
+	Replacements []PlaceholderReplacement `json:"replacements"`
+}
+
+// GetReplacements returns the value of Replacements.
+func (s *PlaceholderSubstitutionProjection) GetReplacements() []PlaceholderReplacement {
+	return s.Replacements
+}
+
+// SetReplacements sets the value of Replacements.
+func (s *PlaceholderSubstitutionProjection) SetReplacements(val []PlaceholderReplacement) {
+	s.Replacements = val
 }
 
 // Ref: #/components/schemas/PodAffinity
@@ -10852,11 +11023,12 @@ func (s *ProjectedHeader) SetValueTemplate(val string) {
 
 // Ref: #/components/schemas/ProjectionSpec
 type ProjectionSpec struct {
-	Type                 CredentialProjectionType        `json:"type"`
-	HttpHeaders          OptHTTPHeadersProjection        `json:"httpHeaders"`
-	TlsClientCertificate *TLSClientCertificateProjection `json:"tlsClientCertificate"`
-	UsernamePassword     *UsernamePasswordProjection     `json:"usernamePassword"`
-	SshProxy             OptSSHProxyProjection           `json:"sshProxy"`
+	Type                    CredentialProjectionType             `json:"type"`
+	HttpHeaders             OptHTTPHeadersProjection             `json:"httpHeaders"`
+	PlaceholderSubstitution OptPlaceholderSubstitutionProjection `json:"placeholderSubstitution"`
+	TlsClientCertificate    *TLSClientCertificateProjection      `json:"tlsClientCertificate"`
+	UsernamePassword        *UsernamePasswordProjection          `json:"usernamePassword"`
+	SshProxy                OptSSHProxyProjection                `json:"sshProxy"`
 }
 
 // GetType returns the value of Type.
@@ -10867,6 +11039,11 @@ func (s *ProjectionSpec) GetType() CredentialProjectionType {
 // GetHttpHeaders returns the value of HttpHeaders.
 func (s *ProjectionSpec) GetHttpHeaders() OptHTTPHeadersProjection {
 	return s.HttpHeaders
+}
+
+// GetPlaceholderSubstitution returns the value of PlaceholderSubstitution.
+func (s *ProjectionSpec) GetPlaceholderSubstitution() OptPlaceholderSubstitutionProjection {
+	return s.PlaceholderSubstitution
 }
 
 // GetTlsClientCertificate returns the value of TlsClientCertificate.
@@ -10892,6 +11069,11 @@ func (s *ProjectionSpec) SetType(val CredentialProjectionType) {
 // SetHttpHeaders sets the value of HttpHeaders.
 func (s *ProjectionSpec) SetHttpHeaders(val OptHTTPHeadersProjection) {
 	s.HttpHeaders = val
+}
+
+// SetPlaceholderSubstitution sets the value of PlaceholderSubstitution.
+func (s *ProjectionSpec) SetPlaceholderSubstitution(val OptPlaceholderSubstitutionProjection) {
+	s.PlaceholderSubstitution = val
 }
 
 // SetTlsClientCertificate sets the value of TlsClientCertificate.
@@ -16926,9 +17108,10 @@ func (s *SuccessTeamResponse) SetData(val OptTeam) {
 	s.Data = val
 }
 
-func (*SuccessTeamResponse) teamsIDGetRes() {}
-func (*SuccessTeamResponse) teamsIDPutRes() {}
-func (*SuccessTeamResponse) teamsPostRes()  {}
+func (*SuccessTeamResponse) teamsIDGetRes()      {}
+func (*SuccessTeamResponse) teamsIDOwnerPutRes() {}
+func (*SuccessTeamResponse) teamsIDPutRes()      {}
+func (*SuccessTeamResponse) teamsPostRes()       {}
 
 type SuccessTeamResponseSuccess bool
 
@@ -17440,6 +17623,10 @@ type TeamsIDMembersPostNotFound ErrorEnvelope
 
 func (*TeamsIDMembersPostNotFound) teamsIDMembersPostRes() {}
 
+type TeamsIDMembersUserIdDeleteBadRequest ErrorEnvelope
+
+func (*TeamsIDMembersUserIdDeleteBadRequest) teamsIDMembersUserIdDeleteRes() {}
+
 type TeamsIDMembersUserIdDeleteForbidden ErrorEnvelope
 
 func (*TeamsIDMembersUserIdDeleteForbidden) teamsIDMembersUserIdDeleteRes() {}
@@ -17448,6 +17635,10 @@ type TeamsIDMembersUserIdDeleteNotFound ErrorEnvelope
 
 func (*TeamsIDMembersUserIdDeleteNotFound) teamsIDMembersUserIdDeleteRes() {}
 
+type TeamsIDMembersUserIdPutBadRequest ErrorEnvelope
+
+func (*TeamsIDMembersUserIdPutBadRequest) teamsIDMembersUserIdPutRes() {}
+
 type TeamsIDMembersUserIdPutForbidden ErrorEnvelope
 
 func (*TeamsIDMembersUserIdPutForbidden) teamsIDMembersUserIdPutRes() {}
@@ -17455,6 +17646,18 @@ func (*TeamsIDMembersUserIdPutForbidden) teamsIDMembersUserIdPutRes() {}
 type TeamsIDMembersUserIdPutNotFound ErrorEnvelope
 
 func (*TeamsIDMembersUserIdPutNotFound) teamsIDMembersUserIdPutRes() {}
+
+type TeamsIDOwnerPutBadRequest ErrorEnvelope
+
+func (*TeamsIDOwnerPutBadRequest) teamsIDOwnerPutRes() {}
+
+type TeamsIDOwnerPutForbidden ErrorEnvelope
+
+func (*TeamsIDOwnerPutForbidden) teamsIDOwnerPutRes() {}
+
+type TeamsIDOwnerPutNotFound ErrorEnvelope
+
+func (*TeamsIDOwnerPutNotFound) teamsIDOwnerPutRes() {}
 
 type TeamsIDPutBadRequest ErrorEnvelope
 
@@ -17866,6 +18069,21 @@ func (s *TrafficRuleAppProtocol) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/TransferTeamOwnerRequest
+type TransferTeamOwnerRequest struct {
+	UserID string `json:"user_id"`
+}
+
+// GetUserID returns the value of UserID.
+func (s *TransferTeamOwnerRequest) GetUserID() string {
+	return s.UserID
+}
+
+// SetUserID sets the value of UserID.
+func (s *TransferTeamOwnerRequest) SetUserID(val string) {
+	s.UserID = val
 }
 
 // Ref: #/components/schemas/UpdateRegionRequest
