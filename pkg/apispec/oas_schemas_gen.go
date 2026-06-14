@@ -8660,6 +8660,52 @@ func (o OptSandboxUpdateConfig) Or(d SandboxUpdateConfig) SandboxUpdateConfig {
 	return d
 }
 
+// NewOptSandboxUpdateConfigEnvVars returns new OptSandboxUpdateConfigEnvVars with value set to v.
+func NewOptSandboxUpdateConfigEnvVars(v SandboxUpdateConfigEnvVars) OptSandboxUpdateConfigEnvVars {
+	return OptSandboxUpdateConfigEnvVars{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxUpdateConfigEnvVars is optional SandboxUpdateConfigEnvVars.
+type OptSandboxUpdateConfigEnvVars struct {
+	Value SandboxUpdateConfigEnvVars
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxUpdateConfigEnvVars was set.
+func (o OptSandboxUpdateConfigEnvVars) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxUpdateConfigEnvVars) Reset() {
+	var v SandboxUpdateConfigEnvVars
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxUpdateConfigEnvVars) SetTo(v SandboxUpdateConfigEnvVars) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxUpdateConfigEnvVars) Get() (v SandboxUpdateConfigEnvVars, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxUpdateConfigEnvVars) Or(d SandboxUpdateConfigEnvVars) SandboxUpdateConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxVolume returns new OptSandboxVolume with value set to v.
 func NewOptSandboxVolume(v SandboxVolume) OptSandboxVolume {
 	return OptSandboxVolume{
@@ -14154,9 +14200,13 @@ func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
 }
 
 // Subset of SandboxConfig fields that can be updated at runtime without restarting the sandbox.
-// Note: env_vars and webhook are not included as they only affect new processes or require restart.
+// Note: env_vars only affect new processes. webhook is not included as it requires restart.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
+	// Sandbox-level environment variables used as defaults for new procd-managed
+	// processes. Omitting this field preserves the existing environment map; passing
+	// an empty object clears it.
+	EnvVars OptSandboxUpdateConfigEnvVars `json:"env_vars"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
@@ -14168,6 +14218,11 @@ type SandboxUpdateConfig struct {
 	// (API or public exposure) must not auto resume the sandbox.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
+}
+
+// GetEnvVars returns the value of EnvVars.
+func (s *SandboxUpdateConfig) GetEnvVars() OptSandboxUpdateConfigEnvVars {
+	return s.EnvVars
 }
 
 // GetTTL returns the value of TTL.
@@ -14195,6 +14250,11 @@ func (s *SandboxUpdateConfig) GetServices() []SandboxAppService {
 	return s.Services
 }
 
+// SetEnvVars sets the value of EnvVars.
+func (s *SandboxUpdateConfig) SetEnvVars(val OptSandboxUpdateConfigEnvVars) {
+	s.EnvVars = val
+}
+
 // SetTTL sets the value of TTL.
 func (s *SandboxUpdateConfig) SetTTL(val OptInt32) {
 	s.TTL = val
@@ -14218,6 +14278,20 @@ func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
 // SetServices sets the value of Services.
 func (s *SandboxUpdateConfig) SetServices(val []SandboxAppService) {
 	s.Services = val
+}
+
+// Sandbox-level environment variables used as defaults for new procd-managed
+// processes. Omitting this field preserves the existing environment map; passing
+// an empty object clears it.
+type SandboxUpdateConfigEnvVars map[string]string
+
+func (s *SandboxUpdateConfigEnvVars) init() SandboxUpdateConfigEnvVars {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
 }
 
 // Ref: #/components/schemas/SandboxUpdateRequest

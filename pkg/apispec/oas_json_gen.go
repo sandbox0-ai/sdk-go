@@ -15266,6 +15266,40 @@ func (s *OptSandboxUpdateConfig) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxUpdateConfigEnvVars as json.
+func (o OptSandboxUpdateConfigEnvVars) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxUpdateConfigEnvVars from json.
+func (o *OptSandboxUpdateConfigEnvVars) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxUpdateConfigEnvVars to nil")
+	}
+	o.Set = true
+	o.Value = make(SandboxUpdateConfigEnvVars)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxUpdateConfigEnvVars) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxUpdateConfigEnvVars) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SandboxVolume as json.
 func (o OptSandboxVolume) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -26056,6 +26090,12 @@ func (s *SandboxUpdateConfig) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 	{
+		if s.EnvVars.Set {
+			e.FieldStart("env_vars")
+			s.EnvVars.Encode(e)
+		}
+	}
+	{
 		if s.TTL.Set {
 			e.FieldStart("ttl")
 			s.TTL.Encode(e)
@@ -26091,12 +26131,13 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxUpdateConfig = [5]string{
-	0: "ttl",
-	1: "hard_ttl",
-	2: "network",
-	3: "auto_resume",
-	4: "services",
+var jsonFieldsNameOfSandboxUpdateConfig = [6]string{
+	0: "env_vars",
+	1: "ttl",
+	2: "hard_ttl",
+	3: "network",
+	4: "auto_resume",
+	5: "services",
 }
 
 // Decode decodes SandboxUpdateConfig from json.
@@ -26108,6 +26149,16 @@ func (s *SandboxUpdateConfig) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "env_vars":
+			if err := func() error {
+				s.EnvVars.Reset()
+				if err := s.EnvVars.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"env_vars\"")
+			}
 		case "ttl":
 			if err := func() error {
 				s.TTL.Reset()
@@ -26185,6 +26236,62 @@ func (s *SandboxUpdateConfig) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxUpdateConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s SandboxUpdateConfigEnvVars) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s SandboxUpdateConfigEnvVars) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		e.Str(elem)
+	}
+}
+
+// Decode decodes SandboxUpdateConfigEnvVars from json.
+func (s *SandboxUpdateConfigEnvVars) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxUpdateConfigEnvVars to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem string
+		if err := func() error {
+			v, err := d.Str()
+			elem = string(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxUpdateConfigEnvVars")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxUpdateConfigEnvVars) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxUpdateConfigEnvVars) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
