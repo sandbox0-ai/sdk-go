@@ -144,6 +144,147 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 	}
 }
 
+func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
+	calls := make([]string, 0, 6)
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		key := r.Method + " " + r.URL.Path
+		calls = append(calls, key)
+
+		switch key {
+		case "POST /api/v1/sandboxes/sb_1/snapshots":
+			var req apispec.CreateSandboxRootFSSnapshotRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				t.Fatalf("decode create snapshot request: %v", err)
+			}
+			name, ok := req.Name.Get()
+			if !ok || name != "snap" {
+				t.Fatalf("snapshot name = %q, %v; want snap, true", name, ok)
+			}
+			writeJSON(t, w, http.StatusCreated, map[string]any{
+				"success": true,
+				"data":    sandboxRootFSSnapshotJSON("snap_1", "sb_1"),
+			})
+		case "GET /api/v1/sandboxes/sb_1/snapshots":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"snapshots": []map[string]any{sandboxRootFSSnapshotJSON("snap_1", "sb_1")},
+					"count":     1,
+				},
+			})
+		case "GET /api/v1/sandbox-rootfs-snapshots/snap_1":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data":    sandboxRootFSSnapshotJSON("snap_1", "sb_1"),
+			})
+		case "DELETE /api/v1/sandbox-rootfs-snapshots/snap_1":
+			writeJSON(t, w, http.StatusOK, map[string]any{"success": true})
+		case "POST /api/v1/sandboxes/sb_1/rootfs/restore":
+			var req apispec.RestoreSandboxRootFSRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				t.Fatalf("decode restore request: %v", err)
+			}
+			if req.SnapshotID != "snap_1" {
+				t.Fatalf("snapshot_id = %q, want snap_1", req.SnapshotID)
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id":  "sb_1",
+					"snapshot_id": "snap_1",
+					"status":      "paused",
+				},
+			})
+		case "POST /api/v1/sandboxes/sb_1/fork":
+			var req map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				t.Fatalf("decode fork request: %v", err)
+			}
+			if len(req) != 0 {
+				t.Fatalf("fork request = %+v, want empty object", req)
+			}
+			writeJSON(t, w, http.StatusCreated, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"source_sandbox_id": "sb_1",
+					"sandbox":           sandboxJSON("sb_2"),
+				},
+			})
+		default:
+			t.Fatalf("unexpected request %s", key)
+		}
+	})
+	defer server.Close()
+
+	ctx := context.Background()
+	snapshot, err := client.CreateSandboxRootFSSnapshot(ctx, "sb_1", &apispec.CreateSandboxRootFSSnapshotRequest{
+		Name: apispec.NewOptString("snap"),
+	})
+	if err != nil {
+		t.Fatalf("CreateSandboxRootFSSnapshot() error = %v", err)
+	}
+	if snapshot.ID != "snap_1" {
+		t.Fatalf("snapshot.ID = %q, want snap_1", snapshot.ID)
+	}
+
+	snapshots, err := client.ListSandboxRootFSSnapshots(ctx, "sb_1")
+	if err != nil {
+		t.Fatalf("ListSandboxRootFSSnapshots() error = %v", err)
+	}
+	if snapshots.Count != 1 || len(snapshots.Snapshots) != 1 {
+		t.Fatalf("snapshots = %+v, want one snapshot", snapshots)
+	}
+
+	fetched, err := client.GetSandboxRootFSSnapshot(ctx, "snap_1")
+	if err != nil {
+		t.Fatalf("GetSandboxRootFSSnapshot() error = %v", err)
+	}
+	if fetched.SandboxID != "sb_1" {
+		t.Fatalf("fetched.SandboxID = %q, want sb_1", fetched.SandboxID)
+	}
+
+	deleted, err := client.DeleteSandboxRootFSSnapshot(ctx, "snap_1")
+	if err != nil {
+		t.Fatalf("DeleteSandboxRootFSSnapshot() error = %v", err)
+	}
+	if !deleted.Success {
+		t.Fatal("deleted.Success = false, want true")
+	}
+
+	restored, err := client.RestoreSandboxRootFS(ctx, "sb_1", apispec.RestoreSandboxRootFSRequest{SnapshotID: "snap_1"})
+	if err != nil {
+		t.Fatalf("RestoreSandboxRootFS() error = %v", err)
+	}
+	if restored.SnapshotID != "snap_1" || restored.Status != apispec.SandboxLifecycleStatusPaused {
+		t.Fatalf("restored = %+v, want snapshot snap_1 paused", restored)
+	}
+
+	forked, err := client.ForkSandbox(ctx, "sb_1", nil)
+	if err != nil {
+		t.Fatalf("ForkSandbox() error = %v", err)
+	}
+	if forked.SourceSandboxID != "sb_1" || forked.Sandbox.ID != "sb_2" {
+		t.Fatalf("forked = %+v, want source sb_1 and sandbox sb_2", forked)
+	}
+
+	wantCalls := []string{
+		"POST /api/v1/sandboxes/sb_1/snapshots",
+		"GET /api/v1/sandboxes/sb_1/snapshots",
+		"GET /api/v1/sandbox-rootfs-snapshots/snap_1",
+		"DELETE /api/v1/sandbox-rootfs-snapshots/snap_1",
+		"POST /api/v1/sandboxes/sb_1/rootfs/restore",
+		"POST /api/v1/sandboxes/sb_1/fork",
+	}
+	if len(calls) != len(wantCalls) {
+		t.Fatalf("calls = %v, want %v", calls, wantCalls)
+	}
+	for i := range wantCalls {
+		if calls[i] != wantCalls[i] {
+			t.Fatalf("calls[%d] = %q, want %q", i, calls[i], wantCalls[i])
+		}
+	}
+}
+
 func decodeClaimRequest(t *testing.T, r *http.Request) apispec.ClaimRequest {
 	t.Helper()
 
@@ -156,4 +297,34 @@ func decodeClaimRequest(t *testing.T, r *http.Request) apispec.ClaimRequest {
 		t.Fatalf("decode claim request: %v", err)
 	}
 	return req
+}
+
+func sandboxRootFSSnapshotJSON(snapshotID, sandboxID string) map[string]any {
+	return map[string]any{
+		"id":          snapshotID,
+		"sandbox_id":  sandboxID,
+		"name":        "snap",
+		"description": "test snapshot",
+		"created_at":  "2026-01-02T03:04:05Z",
+	}
+}
+
+func sandboxJSON(id string) map[string]any {
+	return map[string]any{
+		"id":                 id,
+		"template_id":        "default",
+		"team_id":            "team_1",
+		"status":             "paused",
+		"paused":             true,
+		"auto_resume":        false,
+		"services":           []map[string]any{},
+		"mounts":             []map[string]any{},
+		"pod_name":           "",
+		"runtime_generation": 1,
+		"expires_at":         "2026-01-02T04:04:05Z",
+		"hard_expires_at":    "2026-01-03T03:04:05Z",
+		"claimed_at":         "2026-01-02T03:04:05Z",
+		"created_at":         "2026-01-02T03:04:05Z",
+		"updated_at":         "2026-01-02T03:04:05Z",
+	}
 }

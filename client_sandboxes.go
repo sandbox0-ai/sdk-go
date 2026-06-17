@@ -321,6 +321,117 @@ func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *
 	}
 }
 
+// CreateSandboxRootFSSnapshot creates a root filesystem snapshot for a paused sandbox.
+func (c *Client) CreateSandboxRootFSSnapshot(ctx context.Context, sandboxID string, request *apispec.CreateSandboxRootFSSnapshotRequest) (*apispec.SandboxRootFSSnapshot, error) {
+	var req apispec.OptCreateSandboxRootFSSnapshotRequest
+	if request != nil {
+		req = apispec.NewOptCreateSandboxRootFSSnapshotRequest(*request)
+	}
+	resp, err := c.api.APIV1SandboxesIDSnapshotsPost(ctx, req, apispec.APIV1SandboxesIDSnapshotsPostParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxRootFSSnapshotResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// ListSandboxRootFSSnapshots lists root filesystem snapshots for a sandbox.
+func (c *Client) ListSandboxRootFSSnapshots(ctx context.Context, sandboxID string) (*apispec.SandboxRootFSSnapshotList, error) {
+	resp, err := c.api.APIV1SandboxesIDSnapshotsGet(ctx, apispec.APIV1SandboxesIDSnapshotsGetParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxRootFSSnapshotListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// GetSandboxRootFSSnapshot returns a root filesystem snapshot by ID.
+func (c *Client) GetSandboxRootFSSnapshot(ctx context.Context, snapshotID string) (*apispec.SandboxRootFSSnapshot, error) {
+	resp, err := c.api.APIV1SandboxRootfsSnapshotsSnapshotIDGet(ctx, apispec.APIV1SandboxRootfsSnapshotsSnapshotIDGetParams{SnapshotID: snapshotID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxRootFSSnapshotResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// DeleteSandboxRootFSSnapshot deletes a root filesystem snapshot by ID.
+func (c *Client) DeleteSandboxRootFSSnapshot(ctx context.Context, snapshotID string) (*apispec.SuccessDeletedResponse, error) {
+	resp, err := c.api.APIV1SandboxRootfsSnapshotsSnapshotIDDelete(ctx, apispec.APIV1SandboxRootfsSnapshotsSnapshotIDDeleteParams{SnapshotID: snapshotID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessDeletedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// RestoreSandboxRootFS restores a paused sandbox root filesystem from a rootfs snapshot.
+func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, request apispec.RestoreSandboxRootFSRequest) (*apispec.RestoreSandboxRootFSResponse, error) {
+	resp, err := c.api.APIV1SandboxesIDRootfsRestorePost(ctx, &request, apispec.APIV1SandboxesIDRootfsRestorePostParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessRestoreSandboxRootFSResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
+// ForkSandbox creates a paused sandbox fork from a paused source sandbox root filesystem.
+func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
+	if request == nil {
+		request = &apispec.ForkSandboxRequest{}
+	}
+	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, request, apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessForkSandboxResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
 // ListSandboxesOptions configures the list sandboxes request.
 type ListSandboxesOptions struct {
 	Status     string

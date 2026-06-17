@@ -136,3 +136,115 @@ func TestClaimSandboxWithBootstrapMounts(t *testing.T) {
 		t.Fatalf("mounted bootstrap file content = %q, want %q", string(got), string(seedContent))
 	}
 }
+
+func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
+	cfg := loadE2EConfig(t)
+	token := e2eToken(t, cfg)
+	client := newClientWithToken(t, cfg, token)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+
+	source, err := client.ClaimSandbox(ctx, cfg.template)
+	if err != nil {
+		t.Fatalf("claim sandbox failed: %v", err)
+	}
+	t.Cleanup(func() {
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cleanupCancel()
+		_, _ = client.DeleteSandbox(cleanupCtx, source.ID)
+	})
+
+	const markerPath = "/tmp/sdk-go-rootfs-marker.txt"
+	if _, err := source.WriteFile(ctx, markerPath, []byte("rootfs-v1\n")); err != nil {
+		t.Fatalf("write v1 marker failed: %v", err)
+	}
+	if _, err := client.PauseSandbox(ctx, source.ID); err != nil {
+		t.Fatalf("pause source failed: %v", err)
+	}
+
+	snapshot, err := client.CreateSandboxRootFSSnapshot(ctx, source.ID, &apispec.CreateSandboxRootFSSnapshotRequest{
+		Name: apispec.NewOptString("sdk-go-e2e-rootfs"),
+	})
+	if err != nil {
+		t.Fatalf("create rootfs snapshot failed: %v", err)
+	}
+	t.Cleanup(func() {
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cleanupCancel()
+		_, _ = client.DeleteSandboxRootFSSnapshot(cleanupCtx, snapshot.ID)
+	})
+
+	snapshots, err := client.ListSandboxRootFSSnapshots(ctx, source.ID)
+	if err != nil {
+		t.Fatalf("list rootfs snapshots failed: %v", err)
+	}
+	found := false
+	for _, item := range snapshots.Snapshots {
+		if item.ID == snapshot.ID {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("created snapshot %q not found in list", snapshot.ID)
+	}
+	if fetched, err := client.GetSandboxRootFSSnapshot(ctx, snapshot.ID); err != nil {
+		t.Fatalf("get rootfs snapshot failed: %v", err)
+	} else if fetched.ID != snapshot.ID {
+		t.Fatalf("fetched snapshot ID = %q, want %q", fetched.ID, snapshot.ID)
+	}
+
+	if _, err := client.ResumeSandbox(ctx, source.ID); err != nil {
+		t.Fatalf("resume source failed: %v", err)
+	}
+	if _, err := source.WriteFile(ctx, markerPath, []byte("rootfs-v2\n")); err != nil {
+		t.Fatalf("write v2 marker failed: %v", err)
+	}
+	if _, err := client.PauseSandbox(ctx, source.ID); err != nil {
+		t.Fatalf("pause source for restore failed: %v", err)
+	}
+	if restored, err := client.RestoreSandboxRootFS(ctx, source.ID, apispec.RestoreSandboxRootFSRequest{SnapshotID: snapshot.ID}); err != nil {
+		t.Fatalf("restore rootfs failed: %v", err)
+	} else if restored.SnapshotID != snapshot.ID {
+		t.Fatalf("restored snapshot ID = %q, want %q", restored.SnapshotID, snapshot.ID)
+	}
+
+	forked, err := client.ForkSandbox(ctx, source.ID, nil)
+	if err != nil {
+		t.Fatalf("fork sandbox failed: %v", err)
+	}
+	t.Cleanup(func() {
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cleanupCancel()
+		_, _ = client.DeleteSandbox(cleanupCtx, forked.Sandbox.ID)
+	})
+	if forked.SourceSandboxID != source.ID {
+		t.Fatalf("fork source ID = %q, want %q", forked.SourceSandboxID, source.ID)
+	}
+
+	if _, err := client.DeleteSandboxRootFSSnapshot(ctx, snapshot.ID); err != nil {
+		t.Fatalf("delete rootfs snapshot failed: %v", err)
+	}
+	if _, err := client.ResumeSandbox(ctx, source.ID); err != nil {
+		t.Fatalf("resume restored source failed: %v", err)
+	}
+	if _, err := client.ResumeSandbox(ctx, forked.Sandbox.ID); err != nil {
+		t.Fatalf("resume fork failed: %v", err)
+	}
+
+	sourceContent, err := source.ReadFile(ctx, markerPath)
+	if err != nil {
+		t.Fatalf("read source marker failed: %v", err)
+	}
+	if !bytes.Equal(sourceContent, []byte("rootfs-v1\n")) {
+		t.Fatalf("source marker = %q, want rootfs-v1", string(sourceContent))
+	}
+	forkContent, err := client.Sandbox(forked.Sandbox.ID).ReadFile(ctx, markerPath)
+	if err != nil {
+		t.Fatalf("read fork marker failed: %v", err)
+	}
+	if !bytes.Equal(forkContent, []byte("rootfs-v1\n")) {
+		t.Fatalf("fork marker = %q, want rootfs-v1", string(forkContent))
+	}
+}

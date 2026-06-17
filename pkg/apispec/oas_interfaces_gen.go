@@ -41,6 +41,14 @@ type APIV1RegistryCredentialsPostRes interface {
 	aPIV1RegistryCredentialsPostRes()
 }
 
+type APIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes interface {
+	aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes()
+}
+
+type APIV1SandboxRootfsSnapshotsSnapshotIDGetRes interface {
+	aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()
+}
+
 type APIV1SandboxesGetRes interface {
 	aPIV1SandboxesGetRes()
 }
@@ -55,6 +63,10 @@ type APIV1SandboxesIDFilesGetRes interface {
 
 type APIV1SandboxesIDFilesPostRes interface {
 	aPIV1SandboxesIDFilesPostRes()
+}
+
+type APIV1SandboxesIDForkPostRes interface {
+	aPIV1SandboxesIDForkPostRes()
 }
 
 type APIV1SandboxesIDGetRes interface {
@@ -85,12 +97,24 @@ type APIV1SandboxesIDResumePostRes interface {
 	aPIV1SandboxesIDResumePostRes()
 }
 
+type APIV1SandboxesIDRootfsRestorePostRes interface {
+	aPIV1SandboxesIDRootfsRestorePostRes()
+}
+
 type APIV1SandboxesIDServicesGetRes interface {
 	aPIV1SandboxesIDServicesGetRes()
 }
 
 type APIV1SandboxesIDServicesPutRes interface {
 	aPIV1SandboxesIDServicesPutRes()
+}
+
+type APIV1SandboxesIDSnapshotsGetRes interface {
+	aPIV1SandboxesIDSnapshotsGetRes()
+}
+
+type APIV1SandboxesIDSnapshotsPostRes interface {
+	aPIV1SandboxesIDSnapshotsPostRes()
 }
 
 type APIV1SandboxesIDStatusGetRes interface {
