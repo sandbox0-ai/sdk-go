@@ -42,6 +42,16 @@ type APIV1QuotasDimensionPutParams struct {
 	Dimension QuotaDimension
 }
 
+// APIV1SandboxRootfsSnapshotsSnapshotIDDeleteParams is parameters of DELETE /api/v1/sandbox-rootfs-snapshots/{snapshot_id} operation.
+type APIV1SandboxRootfsSnapshotsSnapshotIDDeleteParams struct {
+	SnapshotID string
+}
+
+// APIV1SandboxRootfsSnapshotsSnapshotIDGetParams is parameters of GET /api/v1/sandbox-rootfs-snapshots/{snapshot_id} operation.
+type APIV1SandboxRootfsSnapshotsSnapshotIDGetParams struct {
+	SnapshotID string
+}
+
 // APIV1SandboxesGetParams is parameters of GET /api/v1/sandboxes operation.
 type APIV1SandboxesGetParams struct {
 	// Filter by sandbox status.
@@ -167,6 +177,11 @@ type APIV1SandboxesIDFilesWatchGetParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDForkPostParams is parameters of POST /api/v1/sandboxes/{id}/fork operation.
+type APIV1SandboxesIDForkPostParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDGetParams is parameters of GET /api/v1/sandboxes/{id} operation.
 type APIV1SandboxesIDGetParams struct {
 	ID string
@@ -222,6 +237,11 @@ type APIV1SandboxesIDResumePostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDRootfsRestorePostParams is parameters of POST /api/v1/sandboxes/{id}/rootfs/restore operation.
+type APIV1SandboxesIDRootfsRestorePostParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDServicesGetParams is parameters of GET /api/v1/sandboxes/{id}/services operation.
 type APIV1SandboxesIDServicesGetParams struct {
 	ID string
@@ -229,6 +249,16 @@ type APIV1SandboxesIDServicesGetParams struct {
 
 // APIV1SandboxesIDServicesPutParams is parameters of PUT /api/v1/sandboxes/{id}/services operation.
 type APIV1SandboxesIDServicesPutParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDSnapshotsGetParams is parameters of GET /api/v1/sandboxes/{id}/snapshots operation.
+type APIV1SandboxesIDSnapshotsGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDSnapshotsPostParams is parameters of POST /api/v1/sandboxes/{id}/snapshots operation.
+type APIV1SandboxesIDSnapshotsPostParams struct {
 	ID string
 }
 

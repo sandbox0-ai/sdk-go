@@ -296,6 +296,14 @@ func (s APIV1SandboxesIDFilesPostReq) Read(p []byte) (n int, err error) {
 // APIV1SandboxesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxesIDFilesWatchGet operation.
 type APIV1SandboxesIDFilesWatchGetSwitchingProtocols struct{}
 
+type APIV1SandboxesIDForkPostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
+
+type APIV1SandboxesIDForkPostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDForkPostNotFound) aPIV1SandboxesIDForkPostRes() {}
+
 type APIV1SandboxesIDGetForbidden ErrorEnvelope
 
 func (*APIV1SandboxesIDGetForbidden) aPIV1SandboxesIDGetRes() {}
@@ -434,6 +442,22 @@ func (*APIV1SandboxesIDResumePostServiceUnavailable) aPIV1SandboxesIDResumePostR
 type APIV1SandboxesIDResumePostTooManyRequests ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostTooManyRequests) aPIV1SandboxesIDResumePostRes() {}
+
+type APIV1SandboxesIDRootfsRestorePostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRestorePostConflict) aPIV1SandboxesIDRootfsRestorePostRes() {}
+
+type APIV1SandboxesIDRootfsRestorePostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRestorePostNotFound) aPIV1SandboxesIDRootfsRestorePostRes() {}
+
+type APIV1SandboxesIDSnapshotsPostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsPostConflict) aPIV1SandboxesIDSnapshotsPostRes() {}
+
+type APIV1SandboxesIDSnapshotsPostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsPostNotFound) aPIV1SandboxesIDSnapshotsPostRes() {}
 
 type APIV1SandboxesPostBadRequest ErrorEnvelope
 
@@ -1844,6 +1868,44 @@ func (s *CreateSSHPublicKeyRequest) SetPublicKey(val string) {
 	s.PublicKey = val
 }
 
+// Ref: #/components/schemas/CreateSandboxRootFSSnapshotRequest
+type CreateSandboxRootFSSnapshotRequest struct {
+	Name        OptString `json:"name"`
+	Description OptString `json:"description"`
+	// Optional snapshot expiration timestamp. Zero value means not set.
+	ExpiresAt OptDateTime `json:"expires_at"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateSandboxRootFSSnapshotRequest) GetName() OptString {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *CreateSandboxRootFSSnapshotRequest) GetDescription() OptString {
+	return s.Description
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *CreateSandboxRootFSSnapshotRequest) GetExpiresAt() OptDateTime {
+	return s.ExpiresAt
+}
+
+// SetName sets the value of Name.
+func (s *CreateSandboxRootFSSnapshotRequest) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *CreateSandboxRootFSSnapshotRequest) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *CreateSandboxRootFSSnapshotRequest) SetExpiresAt(val OptDateTime) {
+	s.ExpiresAt = val
+}
+
 // Ref: #/components/schemas/CreateSandboxVolumeRequest
 type CreateSandboxVolumeRequest struct {
 	// Optional snapshot ID used to initialize the new volume from immutable snapshot state.
@@ -3073,11 +3135,14 @@ func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionDeleteRes()                  {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionPutRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
+func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()    {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
 func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
@@ -3334,6 +3399,35 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/ForkSandboxRequest
+type ForkSandboxRequest struct{}
+
+// Ref: #/components/schemas/ForkSandboxResponse
+type ForkSandboxResponse struct {
+	SourceSandboxID string  `json:"source_sandbox_id"`
+	Sandbox         Sandbox `json:"sandbox"`
+}
+
+// GetSourceSandboxID returns the value of SourceSandboxID.
+func (s *ForkSandboxResponse) GetSourceSandboxID() string {
+	return s.SourceSandboxID
+}
+
+// GetSandbox returns the value of Sandbox.
+func (s *ForkSandboxResponse) GetSandbox() Sandbox {
+	return s.Sandbox
+}
+
+// SetSourceSandboxID sets the value of SourceSandboxID.
+func (s *ForkSandboxResponse) SetSourceSandboxID(val string) {
+	s.SourceSandboxID = val
+}
+
+// SetSandbox sets the value of Sandbox.
+func (s *ForkSandboxResponse) SetSandbox(val Sandbox) {
+	s.Sandbox = val
 }
 
 // Ref: #/components/schemas/ForkVolumeRequest
@@ -5067,6 +5161,52 @@ func (o OptCreateREPLContextRequest) Or(d CreateREPLContextRequest) CreateREPLCo
 	return d
 }
 
+// NewOptCreateSandboxRootFSSnapshotRequest returns new OptCreateSandboxRootFSSnapshotRequest with value set to v.
+func NewOptCreateSandboxRootFSSnapshotRequest(v CreateSandboxRootFSSnapshotRequest) OptCreateSandboxRootFSSnapshotRequest {
+	return OptCreateSandboxRootFSSnapshotRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateSandboxRootFSSnapshotRequest is optional CreateSandboxRootFSSnapshotRequest.
+type OptCreateSandboxRootFSSnapshotRequest struct {
+	Value CreateSandboxRootFSSnapshotRequest
+	Set   bool
+}
+
+// IsSet returns true if OptCreateSandboxRootFSSnapshotRequest was set.
+func (o OptCreateSandboxRootFSSnapshotRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateSandboxRootFSSnapshotRequest) Reset() {
+	var v CreateSandboxRootFSSnapshotRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateSandboxRootFSSnapshotRequest) SetTo(v CreateSandboxRootFSSnapshotRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateSandboxRootFSSnapshotRequest) Get() (v CreateSandboxRootFSSnapshotRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateSandboxRootFSSnapshotRequest) Or(d CreateSandboxRootFSSnapshotRequest) CreateSandboxRootFSSnapshotRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptCredentialSourceMetadata returns new OptCredentialSourceMetadata with value set to v.
 func NewOptCredentialSourceMetadata(v CredentialSourceMetadata) OptCredentialSourceMetadata {
 	return OptCredentialSourceMetadata{
@@ -5751,6 +5891,52 @@ func (o OptFloat64) Get() (v float64, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptFloat64) Or(d float64) float64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptForkSandboxResponse returns new OptForkSandboxResponse with value set to v.
+func NewOptForkSandboxResponse(v ForkSandboxResponse) OptForkSandboxResponse {
+	return OptForkSandboxResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptForkSandboxResponse is optional ForkSandboxResponse.
+type OptForkSandboxResponse struct {
+	Value ForkSandboxResponse
+	Set   bool
+}
+
+// IsSet returns true if OptForkSandboxResponse was set.
+func (o OptForkSandboxResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptForkSandboxResponse) Reset() {
+	var v ForkSandboxResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptForkSandboxResponse) SetTo(v ForkSandboxResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptForkSandboxResponse) Get() (v ForkSandboxResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptForkSandboxResponse) Or(d ForkSandboxResponse) ForkSandboxResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7648,6 +7834,52 @@ func (o OptResourceUsage) Or(d ResourceUsage) ResourceUsage {
 	return d
 }
 
+// NewOptRestoreSandboxRootFSResponse returns new OptRestoreSandboxRootFSResponse with value set to v.
+func NewOptRestoreSandboxRootFSResponse(v RestoreSandboxRootFSResponse) OptRestoreSandboxRootFSResponse {
+	return OptRestoreSandboxRootFSResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRestoreSandboxRootFSResponse is optional RestoreSandboxRootFSResponse.
+type OptRestoreSandboxRootFSResponse struct {
+	Value RestoreSandboxRootFSResponse
+	Set   bool
+}
+
+// IsSet returns true if OptRestoreSandboxRootFSResponse was set.
+func (o OptRestoreSandboxRootFSResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRestoreSandboxRootFSResponse) Reset() {
+	var v RestoreSandboxRootFSResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRestoreSandboxRootFSResponse) SetTo(v RestoreSandboxRootFSResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRestoreSandboxRootFSResponse) Get() (v RestoreSandboxRootFSResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRestoreSandboxRootFSResponse) Or(d RestoreSandboxRootFSResponse) RestoreSandboxRootFSResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptResumeSandboxResponse returns new OptResumeSandboxResponse with value set to v.
 func NewOptResumeSandboxResponse(v ResumeSandboxResponse) OptResumeSandboxResponse {
 	return OptResumeSandboxResponse{
@@ -8424,6 +8656,98 @@ func (o OptSandboxResourceUsage) Get() (v SandboxResourceUsage, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxResourceUsage) Or(d SandboxResourceUsage) SandboxResourceUsage {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRootFSSnapshot returns new OptSandboxRootFSSnapshot with value set to v.
+func NewOptSandboxRootFSSnapshot(v SandboxRootFSSnapshot) OptSandboxRootFSSnapshot {
+	return OptSandboxRootFSSnapshot{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRootFSSnapshot is optional SandboxRootFSSnapshot.
+type OptSandboxRootFSSnapshot struct {
+	Value SandboxRootFSSnapshot
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRootFSSnapshot was set.
+func (o OptSandboxRootFSSnapshot) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRootFSSnapshot) Reset() {
+	var v SandboxRootFSSnapshot
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRootFSSnapshot) SetTo(v SandboxRootFSSnapshot) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRootFSSnapshot) Get() (v SandboxRootFSSnapshot, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRootFSSnapshot) Or(d SandboxRootFSSnapshot) SandboxRootFSSnapshot {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRootFSSnapshotList returns new OptSandboxRootFSSnapshotList with value set to v.
+func NewOptSandboxRootFSSnapshotList(v SandboxRootFSSnapshotList) OptSandboxRootFSSnapshotList {
+	return OptSandboxRootFSSnapshotList{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRootFSSnapshotList is optional SandboxRootFSSnapshotList.
+type OptSandboxRootFSSnapshotList struct {
+	Value SandboxRootFSSnapshotList
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRootFSSnapshotList was set.
+func (o OptSandboxRootFSSnapshotList) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRootFSSnapshotList) Reset() {
+	var v SandboxRootFSSnapshotList
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRootFSSnapshotList) SetTo(v SandboxRootFSSnapshotList) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRootFSSnapshotList) Get() (v SandboxRootFSSnapshotList, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRootFSSnapshotList) Or(d SandboxRootFSSnapshotList) SandboxRootFSSnapshotList {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12087,6 +12411,58 @@ func (s *ResourceUsage) SetMemoryBytes(val OptInt64) {
 	s.MemoryBytes = val
 }
 
+// Ref: #/components/schemas/RestoreSandboxRootFSRequest
+type RestoreSandboxRootFSRequest struct {
+	SnapshotID string `json:"snapshot_id"`
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *RestoreSandboxRootFSRequest) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *RestoreSandboxRootFSRequest) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// Ref: #/components/schemas/RestoreSandboxRootFSResponse
+type RestoreSandboxRootFSResponse struct {
+	SandboxID  string                 `json:"sandbox_id"`
+	SnapshotID string                 `json:"snapshot_id"`
+	Status     SandboxLifecycleStatus `json:"status"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *RestoreSandboxRootFSResponse) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *RestoreSandboxRootFSResponse) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetStatus returns the value of Status.
+func (s *RestoreSandboxRootFSResponse) GetStatus() SandboxLifecycleStatus {
+	return s.Status
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *RestoreSandboxRootFSResponse) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *RestoreSandboxRootFSResponse) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetStatus sets the value of Status.
+func (s *RestoreSandboxRootFSResponse) SetStatus(val SandboxLifecycleStatus) {
+	s.Status = val
+}
+
 // Ref: #/components/schemas/ResumeSandboxResponse
 type ResumeSandboxResponse struct {
 	SandboxID      string    `json:"sandbox_id"`
@@ -13648,6 +14024,103 @@ func (s *SandboxResourceUsage) SetPausedContextCount(val OptInt) {
 // SetContexts sets the value of Contexts.
 func (s *SandboxResourceUsage) SetContexts(val []ContextResourceUsage) {
 	s.Contexts = val
+}
+
+// Ref: #/components/schemas/SandboxRootFSSnapshot
+type SandboxRootFSSnapshot struct {
+	ID          string    `json:"id"`
+	SandboxID   string    `json:"sandbox_id"`
+	Name        OptString `json:"name"`
+	Description OptString `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+	// Optional snapshot expiration timestamp. Zero value means not set.
+	ExpiresAt OptDateTime `json:"expires_at"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxRootFSSnapshot) GetID() string {
+	return s.ID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxRootFSSnapshot) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetName returns the value of Name.
+func (s *SandboxRootFSSnapshot) GetName() OptString {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *SandboxRootFSSnapshot) GetDescription() OptString {
+	return s.Description
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxRootFSSnapshot) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *SandboxRootFSSnapshot) GetExpiresAt() OptDateTime {
+	return s.ExpiresAt
+}
+
+// SetID sets the value of ID.
+func (s *SandboxRootFSSnapshot) SetID(val string) {
+	s.ID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxRootFSSnapshot) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetName sets the value of Name.
+func (s *SandboxRootFSSnapshot) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *SandboxRootFSSnapshot) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxRootFSSnapshot) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *SandboxRootFSSnapshot) SetExpiresAt(val OptDateTime) {
+	s.ExpiresAt = val
+}
+
+// Ref: #/components/schemas/SandboxRootFSSnapshotList
+type SandboxRootFSSnapshotList struct {
+	Snapshots []SandboxRootFSSnapshot `json:"snapshots"`
+	Count     int                     `json:"count"`
+}
+
+// GetSnapshots returns the value of Snapshots.
+func (s *SandboxRootFSSnapshotList) GetSnapshots() []SandboxRootFSSnapshot {
+	return s.Snapshots
+}
+
+// GetCount returns the value of Count.
+func (s *SandboxRootFSSnapshotList) GetCount() int {
+	return s.Count
+}
+
+// SetSnapshots sets the value of Snapshots.
+func (s *SandboxRootFSSnapshotList) SetSnapshots(val []SandboxRootFSSnapshot) {
+	s.Snapshots = val
+}
+
+// SetCount sets the value of Count.
+func (s *SandboxRootFSSnapshotList) SetCount(val int) {
+	s.Count = val
 }
 
 // Ref: #/components/schemas/SandboxSSHConnection
@@ -15406,8 +15879,9 @@ func (s *SuccessDeletedResponse) SetData(val OptSuccessDeletedResponseData) {
 	s.Data = val
 }
 
-func (*SuccessDeletedResponse) aPIV1QuotasDimensionDeleteRes()  {}
-func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes() {}
+func (*SuccessDeletedResponse) aPIV1QuotasDimensionDeleteRes()                  {}
+func (*SuccessDeletedResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
+func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes()                 {}
 
 type SuccessDeletedResponseData struct {
 	Deleted OptBool `json:"deleted"`
@@ -15615,6 +16089,49 @@ const (
 func (SuccessFileStatResponseSuccess) AllValues() []SuccessFileStatResponseSuccess {
 	return []SuccessFileStatResponseSuccess{
 		SuccessFileStatResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessForkSandboxResponse
+type SuccessForkSandboxResponse struct {
+	Success SuccessForkSandboxResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptForkSandboxResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessForkSandboxResponse) GetSuccess() SuccessForkSandboxResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessForkSandboxResponse) GetData() OptForkSandboxResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessForkSandboxResponse) SetSuccess(val SuccessForkSandboxResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessForkSandboxResponse) SetData(val OptForkSandboxResponse) {
+	s.Data = val
+}
+
+func (*SuccessForkSandboxResponse) aPIV1SandboxesIDForkPostRes() {}
+
+type SuccessForkSandboxResponseSuccess bool
+
+const (
+	SuccessForkSandboxResponseSuccessTrue SuccessForkSandboxResponseSuccess = true
+)
+
+// AllValues returns all SuccessForkSandboxResponseSuccess values.
+func (SuccessForkSandboxResponseSuccess) AllValues() []SuccessForkSandboxResponseSuccess {
+	return []SuccessForkSandboxResponseSuccess{
+		SuccessForkSandboxResponseSuccessTrue,
 	}
 }
 
@@ -16295,6 +16812,49 @@ func (SuccessRestoreResponseSuccess) AllValues() []SuccessRestoreResponseSuccess
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessRestoreSandboxRootFSResponse
+type SuccessRestoreSandboxRootFSResponse struct {
+	Success SuccessRestoreSandboxRootFSResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptRestoreSandboxRootFSResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessRestoreSandboxRootFSResponse) GetSuccess() SuccessRestoreSandboxRootFSResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessRestoreSandboxRootFSResponse) GetData() OptRestoreSandboxRootFSResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessRestoreSandboxRootFSResponse) SetSuccess(val SuccessRestoreSandboxRootFSResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessRestoreSandboxRootFSResponse) SetData(val OptRestoreSandboxRootFSResponse) {
+	s.Data = val
+}
+
+func (*SuccessRestoreSandboxRootFSResponse) aPIV1SandboxesIDRootfsRestorePostRes() {}
+
+type SuccessRestoreSandboxRootFSResponseSuccess bool
+
+const (
+	SuccessRestoreSandboxRootFSResponseSuccessTrue SuccessRestoreSandboxRootFSResponseSuccess = true
+)
+
+// AllValues returns all SuccessRestoreSandboxRootFSResponseSuccess values.
+func (SuccessRestoreSandboxRootFSResponseSuccess) AllValues() []SuccessRestoreSandboxRootFSResponseSuccess {
+	return []SuccessRestoreSandboxRootFSResponseSuccess{
+		SuccessRestoreSandboxRootFSResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessResumeSandboxResponse
 type SuccessResumeSandboxResponse struct {
 	Success SuccessResumeSandboxResponseSuccess `json:"success"`
@@ -16602,6 +17162,93 @@ const (
 func (SuccessSandboxResponseSuccess) AllValues() []SuccessSandboxResponseSuccess {
 	return []SuccessSandboxResponseSuccess{
 		SuccessSandboxResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRootFSSnapshotListResponse
+type SuccessSandboxRootFSSnapshotListResponse struct {
+	Success SuccessSandboxRootFSSnapshotListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxRootFSSnapshotList `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRootFSSnapshotListResponse) GetSuccess() SuccessSandboxRootFSSnapshotListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRootFSSnapshotListResponse) GetData() OptSandboxRootFSSnapshotList {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRootFSSnapshotListResponse) SetSuccess(val SuccessSandboxRootFSSnapshotListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRootFSSnapshotListResponse) SetData(val OptSandboxRootFSSnapshotList) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRootFSSnapshotListResponse) aPIV1SandboxesIDSnapshotsGetRes() {}
+
+type SuccessSandboxRootFSSnapshotListResponseSuccess bool
+
+const (
+	SuccessSandboxRootFSSnapshotListResponseSuccessTrue SuccessSandboxRootFSSnapshotListResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRootFSSnapshotListResponseSuccess values.
+func (SuccessSandboxRootFSSnapshotListResponseSuccess) AllValues() []SuccessSandboxRootFSSnapshotListResponseSuccess {
+	return []SuccessSandboxRootFSSnapshotListResponseSuccess{
+		SuccessSandboxRootFSSnapshotListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRootFSSnapshotResponse
+type SuccessSandboxRootFSSnapshotResponse struct {
+	Success SuccessSandboxRootFSSnapshotResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxRootFSSnapshot `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRootFSSnapshotResponse) GetSuccess() SuccessSandboxRootFSSnapshotResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRootFSSnapshotResponse) GetData() OptSandboxRootFSSnapshot {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRootFSSnapshotResponse) SetSuccess(val SuccessSandboxRootFSSnapshotResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRootFSSnapshotResponse) SetData(val OptSandboxRootFSSnapshot) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRootFSSnapshotResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes() {}
+func (*SuccessSandboxRootFSSnapshotResponse) aPIV1SandboxesIDSnapshotsPostRes()            {}
+
+type SuccessSandboxRootFSSnapshotResponseSuccess bool
+
+const (
+	SuccessSandboxRootFSSnapshotResponseSuccessTrue SuccessSandboxRootFSSnapshotResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRootFSSnapshotResponseSuccess values.
+func (SuccessSandboxRootFSSnapshotResponseSuccess) AllValues() []SuccessSandboxRootFSSnapshotResponseSuccess {
+	return []SuccessSandboxRootFSSnapshotResponseSuccess{
+		SuccessSandboxRootFSSnapshotResponseSuccessTrue,
 	}
 }
 
