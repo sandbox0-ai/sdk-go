@@ -41,6 +41,10 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		if body.Mounts[1].SandboxvolumeID != "vol_2" || body.Mounts[1].MountPoint != "/workspace/readonly" {
 			t.Fatalf("mount[1] = %+v, want vol_2:/workspace/readonly", body.Mounts[1])
 		}
+		snapshotID, ok := body.SnapshotID.Get()
+		if !ok || snapshotID != "snap_123" {
+			t.Fatalf("snapshot_id = %q, want snap_123", snapshotID)
+		}
 
 		writeJSON(t, w, http.StatusCreated, map[string]any{
 			"success": true,
@@ -71,6 +75,7 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 			SandboxVolumeID: "vol_2",
 			MountPoint:      "/workspace/readonly",
 		}),
+		WithSandboxSnapshotID("snap_123"),
 	)
 	if err != nil {
 		t.Fatalf("ClaimSandbox() error = %v", err)
