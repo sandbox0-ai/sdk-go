@@ -115,27 +115,6 @@ func WithTemplateNetwork(network apispec.SandboxNetworkPolicy) TemplateOption {
 	}
 }
 
-// WithTemplateLifecycle sets the lifecycle policy.
-func WithTemplateLifecycle(lifecycle apispec.LifecyclePolicy) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Lifecycle = apispec.NewOptLifecyclePolicy(lifecycle)
-	}
-}
-
-// WithTemplatePublic sets the template visibility.
-func WithTemplatePublic(public bool) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Public = apispec.NewOptBool(public)
-	}
-}
-
-// WithTemplateAllowedTeams sets the allow-list for a template.
-func WithTemplateAllowedTeams(teamIDs ...string) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.AllowedTeams = append([]string(nil), teamIDs...)
-	}
-}
-
 // WithTemplateClusterID pins the template to a cluster.
 func WithTemplateClusterID(clusterID string) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {

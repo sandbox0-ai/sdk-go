@@ -36,6 +36,8 @@ type CmdResult struct {
 	SandboxID string
 	ContextID string
 	OutputRaw string
+	ExitCode  *int
+	State     string
 }
 
 type runOptions struct {
@@ -180,6 +182,8 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 		SandboxID: s.ID,
 		ContextID: contextResp.ID,
 		OutputRaw: outputRaw,
+		ExitCode:  optInt32ToIntPtr(contextResp.ExitCode),
+		State:     optStringValue(contextResp.State),
 	}, nil
 }
 
@@ -254,6 +258,23 @@ func buildCmdCreateContextRequest(options cmdOptions, waitUntilDone bool) apispe
 		req.TTLSec = apispec.NewOptInt32(*options.ttlSec)
 	}
 	return req
+}
+
+func optInt32ToIntPtr(value apispec.OptInt32) *int {
+	raw, ok := value.Get()
+	if !ok {
+		return nil
+	}
+	converted := int(raw)
+	return &converted
+}
+
+func optStringValue(value apispec.OptString) string {
+	raw, ok := value.Get()
+	if !ok {
+		return ""
+	}
+	return raw
 }
 
 func (s *Sandbox) ensureReplContext(ctx context.Context, alias string, options runOptions) (string, error) {

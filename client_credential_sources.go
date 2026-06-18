@@ -43,11 +43,16 @@ func (c *Client) CreateCredentialSource(ctx context.Context, request apispec.Cre
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessCredentialSourceResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // UpdateCredentialSource updates a credential source.
@@ -58,11 +63,16 @@ func (c *Client) UpdateCredentialSource(ctx context.Context, name string, reques
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessCredentialSourceResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // DeleteCredentialSource deletes a credential source.

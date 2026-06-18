@@ -4167,10 +4167,24 @@ func (s *ContextExecResponse) encodeFields(e *jx.Encoder) {
 		e.FieldStart("output_raw")
 		e.Str(s.OutputRaw)
 	}
+	{
+		if s.ExitCode.Set {
+			e.FieldStart("exit_code")
+			s.ExitCode.Encode(e)
+		}
+	}
+	{
+		if s.State.Set {
+			e.FieldStart("state")
+			s.State.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfContextExecResponse = [1]string{
+var jsonFieldsNameOfContextExecResponse = [3]string{
 	0: "output_raw",
+	1: "exit_code",
+	2: "state",
 }
 
 // Decode decodes ContextExecResponse from json.
@@ -4193,6 +4207,26 @@ func (s *ContextExecResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"output_raw\"")
+			}
+		case "exit_code":
+			if err := func() error {
+				s.ExitCode.Reset()
+				if err := s.ExitCode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exit_code\"")
+			}
+		case "state":
+			if err := func() error {
+				s.State.Reset()
+				if err := s.State.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"state\"")
 			}
 		default:
 			return d.Skip()
@@ -4547,18 +4581,32 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 			s.OutputRaw.Encode(e)
 		}
 	}
+	{
+		if s.ExitCode.Set {
+			e.FieldStart("exit_code")
+			s.ExitCode.Encode(e)
+		}
+	}
+	{
+		if s.State.Set {
+			e.FieldStart("state")
+			s.State.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfContextResponse = [9]string{
-	0: "id",
-	1: "type",
-	2: "alias",
-	3: "cwd",
-	4: "env_vars",
-	5: "running",
-	6: "paused",
-	7: "created_at",
-	8: "output_raw",
+var jsonFieldsNameOfContextResponse = [11]string{
+	0:  "id",
+	1:  "type",
+	2:  "alias",
+	3:  "cwd",
+	4:  "env_vars",
+	5:  "running",
+	6:  "paused",
+	7:  "created_at",
+	8:  "output_raw",
+	9:  "exit_code",
+	10: "state",
 }
 
 // Decode decodes ContextResponse from json.
@@ -4667,6 +4715,26 @@ func (s *ContextResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"output_raw\"")
+			}
+		case "exit_code":
+			if err := func() error {
+				s.ExitCode.Reset()
+				if err := s.ExitCode.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"exit_code\"")
+			}
+		case "state":
+			if err := func() error {
+				s.State.Reset()
+				if err := s.State.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"state\"")
 			}
 		default:
 			return d.Skip()
@@ -11011,120 +11079,6 @@ func (s *LabelSelectorRequirement) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *LifecyclePolicy) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *LifecyclePolicy) encodeFields(e *jx.Encoder) {
-	{
-		if s.DefaultTTL.Set {
-			e.FieldStart("defaultTTL")
-			s.DefaultTTL.Encode(e)
-		}
-	}
-	{
-		if s.MaxTTL.Set {
-			e.FieldStart("maxTTL")
-			s.MaxTTL.Encode(e)
-		}
-	}
-	{
-		if s.IdleTimeout.Set {
-			e.FieldStart("idleTimeout")
-			s.IdleTimeout.Encode(e)
-		}
-	}
-	{
-		if s.PreStop.Set {
-			e.FieldStart("preStop")
-			s.PreStop.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfLifecyclePolicy = [4]string{
-	0: "defaultTTL",
-	1: "maxTTL",
-	2: "idleTimeout",
-	3: "preStop",
-}
-
-// Decode decodes LifecyclePolicy from json.
-func (s *LifecyclePolicy) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode LifecyclePolicy to nil")
-	}
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "defaultTTL":
-			if err := func() error {
-				s.DefaultTTL.Reset()
-				if err := s.DefaultTTL.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"defaultTTL\"")
-			}
-		case "maxTTL":
-			if err := func() error {
-				s.MaxTTL.Reset()
-				if err := s.MaxTTL.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"maxTTL\"")
-			}
-		case "idleTimeout":
-			if err := func() error {
-				s.IdleTimeout.Reset()
-				if err := s.IdleTimeout.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"idleTimeout\"")
-			}
-		case "preStop":
-			if err := func() error {
-				s.PreStop.Reset()
-				if err := s.PreStop.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"preStop\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode LifecyclePolicy")
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *LifecyclePolicy) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *LifecyclePolicy) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
 func (s *LoginRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -14104,39 +14058,6 @@ func (s *OptLabelSelectorMatchLabels) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes LifecyclePolicy as json.
-func (o OptLifecyclePolicy) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes LifecyclePolicy from json.
-func (o *OptLifecyclePolicy) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptLifecyclePolicy to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptLifecyclePolicy) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptLifecyclePolicy) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes LoginResponse as json.
 func (o OptLoginResponse) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -14716,39 +14637,6 @@ func (s OptPoolStrategy) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptPoolStrategy) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PreStopHook as json.
-func (o OptPreStopHook) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes PreStopHook from json.
-func (o *OptPreStopHook) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptPreStopHook to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptPreStopHook) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptPreStopHook) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -18478,99 +18366,6 @@ func (s *PortSpec) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *PortSpec) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *PreStopHook) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *PreStopHook) encodeFields(e *jx.Encoder) {
-	{
-		if s.Command != nil {
-			e.FieldStart("command")
-			e.ArrStart()
-			for _, elem := range s.Command {
-				e.Str(elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.TimeoutSeconds.Set {
-			e.FieldStart("timeoutSeconds")
-			s.TimeoutSeconds.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfPreStopHook = [2]string{
-	0: "command",
-	1: "timeoutSeconds",
-}
-
-// Decode decodes PreStopHook from json.
-func (s *PreStopHook) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PreStopHook to nil")
-	}
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "command":
-			if err := func() error {
-				s.Command = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.Command = append(s.Command, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"command\"")
-			}
-		case "timeoutSeconds":
-			if err := func() error {
-				s.TimeoutSeconds.Reset()
-				if err := s.TimeoutSeconds.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"timeoutSeconds\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode PreStopHook")
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PreStopHook) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PreStopHook) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -26834,31 +26629,9 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Lifecycle.Set {
-			e.FieldStart("lifecycle")
-			s.Lifecycle.Encode(e)
-		}
-	}
-	{
 		if s.EnvVars.Set {
 			e.FieldStart("envVars")
 			s.EnvVars.Encode(e)
-		}
-	}
-	{
-		if s.Public.Set {
-			e.FieldStart("public")
-			s.Public.Encode(e)
-		}
-	}
-	{
-		if s.AllowedTeams != nil {
-			e.FieldStart("allowedTeams")
-			e.ArrStart()
-			for _, elem := range s.AllowedTeams {
-				e.Str(elem)
-			}
-			e.ArrEnd()
 		}
 	}
 	{
@@ -26869,20 +26642,17 @@ func (s *SandboxTemplateSpec) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxTemplateSpec = [13]string{
-	0:  "description",
-	1:  "displayName",
-	2:  "tags",
-	3:  "mainContainer",
-	4:  "volumeMounts",
-	5:  "pod",
-	6:  "network",
-	7:  "pool",
-	8:  "lifecycle",
-	9:  "envVars",
-	10: "public",
-	11: "allowedTeams",
-	12: "clusterId",
+var jsonFieldsNameOfSandboxTemplateSpec = [10]string{
+	0: "description",
+	1: "displayName",
+	2: "tags",
+	3: "mainContainer",
+	4: "volumeMounts",
+	5: "pod",
+	6: "network",
+	7: "pool",
+	8: "envVars",
+	9: "clusterId",
 }
 
 // Decode decodes SandboxTemplateSpec from json.
@@ -26989,16 +26759,6 @@ func (s *SandboxTemplateSpec) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"pool\"")
 			}
-		case "lifecycle":
-			if err := func() error {
-				s.Lifecycle.Reset()
-				if err := s.Lifecycle.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"lifecycle\"")
-			}
 		case "envVars":
 			if err := func() error {
 				s.EnvVars.Reset()
@@ -27008,35 +26768,6 @@ func (s *SandboxTemplateSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"envVars\"")
-			}
-		case "public":
-			if err := func() error {
-				s.Public.Reset()
-				if err := s.Public.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"public\"")
-			}
-		case "allowedTeams":
-			if err := func() error {
-				s.AllowedTeams = make([]string, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
-					if err != nil {
-						return err
-					}
-					s.AllowedTeams = append(s.AllowedTeams, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"allowedTeams\"")
 			}
 		case "clusterId":
 			if err := func() error {

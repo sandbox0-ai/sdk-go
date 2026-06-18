@@ -25,6 +25,14 @@ type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
 
+type APIV1CredentialSourcesNamePutRes interface {
+	aPIV1CredentialSourcesNamePutRes()
+}
+
+type APIV1CredentialSourcesPostRes interface {
+	aPIV1CredentialSourcesPostRes()
+}
+
 type APIV1QuotasDimensionDeleteRes interface {
 	aPIV1QuotasDimensionDeleteRes()
 }
