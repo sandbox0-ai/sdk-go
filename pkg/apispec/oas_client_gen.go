@@ -133,13 +133,13 @@ type Invoker interface {
 	// Update credential source.
 	//
 	// PUT /api/v1/credential-sources/{name}
-	APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (*SuccessCredentialSourceResponse, error)
+	APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (APIV1CredentialSourcesNamePutRes, error)
 	// APIV1CredentialSourcesPost invokes POST /api/v1/credential-sources operation.
 	//
 	// Create credential source.
 	//
 	// POST /api/v1/credential-sources
-	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (*SuccessCredentialSourceResponse, error)
+	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (APIV1CredentialSourcesPostRes, error)
 	// APIV1QuotasDimensionDelete invokes DELETE /api/v1/quotas/{dimension} operation.
 	//
 	// Delete team quota.
@@ -1684,12 +1684,12 @@ func (c *Client) sendAPIV1CredentialSourcesNameGet(ctx context.Context, params A
 // Update credential source.
 //
 // PUT /api/v1/credential-sources/{name}
-func (c *Client) APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (*SuccessCredentialSourceResponse, error) {
+func (c *Client) APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (APIV1CredentialSourcesNamePutRes, error) {
 	res, err := c.sendAPIV1CredentialSourcesNamePut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, requestOptions ...RequestOption) (res *SuccessCredentialSourceResponse, err error) {
+func (c *Client) sendAPIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, requestOptions ...RequestOption) (res APIV1CredentialSourcesNamePutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -1800,12 +1800,12 @@ func (c *Client) sendAPIV1CredentialSourcesNamePut(ctx context.Context, request 
 // Create credential source.
 //
 // POST /api/v1/credential-sources
-func (c *Client) APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (*SuccessCredentialSourceResponse, error) {
+func (c *Client) APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (APIV1CredentialSourcesPostRes, error) {
 	res, err := c.sendAPIV1CredentialSourcesPost(ctx, request, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, requestOptions ...RequestOption) (res *SuccessCredentialSourceResponse, err error) {
+func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, requestOptions ...RequestOption) (res APIV1CredentialSourcesPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)

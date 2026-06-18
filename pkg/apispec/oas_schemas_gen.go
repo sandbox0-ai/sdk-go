@@ -1184,6 +1184,10 @@ func (s *ContainerSpec) SetSecurityContext(val OptSecurityContext) {
 type ContextExecResponse struct {
 	// Raw PTY output, may contain terminal control characters (e.g. \r).
 	OutputRaw string `json:"output_raw"`
+	// Present when the underlying process has exited.
+	ExitCode OptInt32 `json:"exit_code"`
+	// Final process state when the underlying process has exited.
+	State OptString `json:"state"`
 }
 
 // GetOutputRaw returns the value of OutputRaw.
@@ -1191,9 +1195,29 @@ func (s *ContextExecResponse) GetOutputRaw() string {
 	return s.OutputRaw
 }
 
+// GetExitCode returns the value of ExitCode.
+func (s *ContextExecResponse) GetExitCode() OptInt32 {
+	return s.ExitCode
+}
+
+// GetState returns the value of State.
+func (s *ContextExecResponse) GetState() OptString {
+	return s.State
+}
+
 // SetOutputRaw sets the value of OutputRaw.
 func (s *ContextExecResponse) SetOutputRaw(val string) {
 	s.OutputRaw = val
+}
+
+// SetExitCode sets the value of ExitCode.
+func (s *ContextExecResponse) SetExitCode(val OptInt32) {
+	s.ExitCode = val
+}
+
+// SetState sets the value of State.
+func (s *ContextExecResponse) SetState(val OptString) {
+	s.State = val
 }
 
 // Ref: #/components/schemas/ContextInputRequest
@@ -1297,6 +1321,10 @@ type ContextResponse struct {
 	CreatedAt string                    `json:"created_at"`
 	// Raw PTY output for CMD contexts with wait=true, may contain terminal control characters.
 	OutputRaw OptString `json:"output_raw"`
+	// Present when the underlying process has exited.
+	ExitCode OptInt32 `json:"exit_code"`
+	// Final process state when the underlying process has exited.
+	State OptString `json:"state"`
 }
 
 // GetID returns the value of ID.
@@ -1344,6 +1372,16 @@ func (s *ContextResponse) GetOutputRaw() OptString {
 	return s.OutputRaw
 }
 
+// GetExitCode returns the value of ExitCode.
+func (s *ContextResponse) GetExitCode() OptInt32 {
+	return s.ExitCode
+}
+
+// GetState returns the value of State.
+func (s *ContextResponse) GetState() OptString {
+	return s.State
+}
+
 // SetID sets the value of ID.
 func (s *ContextResponse) SetID(val string) {
 	s.ID = val
@@ -1387,6 +1425,16 @@ func (s *ContextResponse) SetCreatedAt(val string) {
 // SetOutputRaw sets the value of OutputRaw.
 func (s *ContextResponse) SetOutputRaw(val OptString) {
 	s.OutputRaw = val
+}
+
+// SetExitCode sets the value of ExitCode.
+func (s *ContextResponse) SetExitCode(val OptInt32) {
+	s.ExitCode = val
+}
+
+// SetState sets the value of State.
+func (s *ContextResponse) SetState(val OptString) {
+	s.State = val
 }
 
 type ContextResponseEnvVars map[string]string
@@ -3132,6 +3180,8 @@ func (s *ErrorEnvelope) SetError(val Error) {
 func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNamePutRes()               {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                  {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionDeleteRes()                  {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionPutRes()                     {}
@@ -3878,54 +3928,6 @@ func (s *LabelSelectorRequirement) SetOperator(val string) {
 // SetValues sets the value of Values.
 func (s *LabelSelectorRequirement) SetValues(val []string) {
 	s.Values = val
-}
-
-// Ref: #/components/schemas/LifecyclePolicy
-type LifecyclePolicy struct {
-	DefaultTTL  OptInt32       `json:"defaultTTL"`
-	MaxTTL      OptInt32       `json:"maxTTL"`
-	IdleTimeout OptInt32       `json:"idleTimeout"`
-	PreStop     OptPreStopHook `json:"preStop"`
-}
-
-// GetDefaultTTL returns the value of DefaultTTL.
-func (s *LifecyclePolicy) GetDefaultTTL() OptInt32 {
-	return s.DefaultTTL
-}
-
-// GetMaxTTL returns the value of MaxTTL.
-func (s *LifecyclePolicy) GetMaxTTL() OptInt32 {
-	return s.MaxTTL
-}
-
-// GetIdleTimeout returns the value of IdleTimeout.
-func (s *LifecyclePolicy) GetIdleTimeout() OptInt32 {
-	return s.IdleTimeout
-}
-
-// GetPreStop returns the value of PreStop.
-func (s *LifecyclePolicy) GetPreStop() OptPreStopHook {
-	return s.PreStop
-}
-
-// SetDefaultTTL sets the value of DefaultTTL.
-func (s *LifecyclePolicy) SetDefaultTTL(val OptInt32) {
-	s.DefaultTTL = val
-}
-
-// SetMaxTTL sets the value of MaxTTL.
-func (s *LifecyclePolicy) SetMaxTTL(val OptInt32) {
-	s.MaxTTL = val
-}
-
-// SetIdleTimeout sets the value of IdleTimeout.
-func (s *LifecyclePolicy) SetIdleTimeout(val OptInt32) {
-	s.IdleTimeout = val
-}
-
-// SetPreStop sets the value of PreStop.
-func (s *LifecyclePolicy) SetPreStop(val OptPreStopHook) {
-	s.PreStop = val
 }
 
 // Ref: #/components/schemas/LoginRequest
@@ -6495,52 +6497,6 @@ func (o OptLabelSelectorMatchLabels) Or(d LabelSelectorMatchLabels) LabelSelecto
 	return d
 }
 
-// NewOptLifecyclePolicy returns new OptLifecyclePolicy with value set to v.
-func NewOptLifecyclePolicy(v LifecyclePolicy) OptLifecyclePolicy {
-	return OptLifecyclePolicy{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptLifecyclePolicy is optional LifecyclePolicy.
-type OptLifecyclePolicy struct {
-	Value LifecyclePolicy
-	Set   bool
-}
-
-// IsSet returns true if OptLifecyclePolicy was set.
-func (o OptLifecyclePolicy) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptLifecyclePolicy) Reset() {
-	var v LifecyclePolicy
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptLifecyclePolicy) SetTo(v LifecyclePolicy) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptLifecyclePolicy) Get() (v LifecyclePolicy, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptLifecyclePolicy) Or(d LifecyclePolicy) LifecyclePolicy {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptLoginResponse returns new OptLoginResponse with value set to v.
 func NewOptLoginResponse(v LoginResponse) OptLoginResponse {
 	return OptLoginResponse{
@@ -7322,52 +7278,6 @@ func (o OptPoolStrategy) Get() (v PoolStrategy, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPoolStrategy) Or(d PoolStrategy) PoolStrategy {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPreStopHook returns new OptPreStopHook with value set to v.
-func NewOptPreStopHook(v PreStopHook) OptPreStopHook {
-	return OptPreStopHook{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPreStopHook is optional PreStopHook.
-type OptPreStopHook struct {
-	Value PreStopHook
-	Set   bool
-}
-
-// IsSet returns true if OptPreStopHook was set.
-func (o OptPreStopHook) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPreStopHook) Reset() {
-	var v PreStopHook
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPreStopHook) SetTo(v PreStopHook) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPreStopHook) Get() (v PreStopHook, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPreStopHook) Or(d PreStopHook) PreStopHook {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11269,32 +11179,6 @@ func (s *PortSpec) SetEndPort(val OptInt32) {
 	s.EndPort = val
 }
 
-// Ref: #/components/schemas/PreStopHook
-type PreStopHook struct {
-	Command        []string `json:"command"`
-	TimeoutSeconds OptInt32 `json:"timeoutSeconds"`
-}
-
-// GetCommand returns the value of Command.
-func (s *PreStopHook) GetCommand() []string {
-	return s.Command
-}
-
-// GetTimeoutSeconds returns the value of TimeoutSeconds.
-func (s *PreStopHook) GetTimeoutSeconds() OptInt32 {
-	return s.TimeoutSeconds
-}
-
-// SetCommand sets the value of Command.
-func (s *PreStopHook) SetCommand(val []string) {
-	s.Command = val
-}
-
-// SetTimeoutSeconds sets the value of TimeoutSeconds.
-func (s *PreStopHook) SetTimeoutSeconds(val OptInt32) {
-	s.TimeoutSeconds = val
-}
-
 // Ref: #/components/schemas/PreferredSchedulingTerm
 type PreferredSchedulingTerm struct {
 	Weight     int32            `json:"weight"`
@@ -14476,10 +14360,7 @@ type SandboxTemplateSpec struct {
 	Pod           OptPodSpecOverride            `json:"pod"`
 	Network       OptSandboxNetworkPolicy       `json:"network"`
 	Pool          OptPoolStrategy               `json:"pool"`
-	Lifecycle     OptLifecyclePolicy            `json:"lifecycle"`
 	EnvVars       OptSandboxTemplateSpecEnvVars `json:"envVars"`
-	Public        OptBool                       `json:"public"`
-	AllowedTeams  []string                      `json:"allowedTeams"`
 	ClusterId     OptString                     `json:"clusterId"`
 }
 
@@ -14523,24 +14404,9 @@ func (s *SandboxTemplateSpec) GetPool() OptPoolStrategy {
 	return s.Pool
 }
 
-// GetLifecycle returns the value of Lifecycle.
-func (s *SandboxTemplateSpec) GetLifecycle() OptLifecyclePolicy {
-	return s.Lifecycle
-}
-
 // GetEnvVars returns the value of EnvVars.
 func (s *SandboxTemplateSpec) GetEnvVars() OptSandboxTemplateSpecEnvVars {
 	return s.EnvVars
-}
-
-// GetPublic returns the value of Public.
-func (s *SandboxTemplateSpec) GetPublic() OptBool {
-	return s.Public
-}
-
-// GetAllowedTeams returns the value of AllowedTeams.
-func (s *SandboxTemplateSpec) GetAllowedTeams() []string {
-	return s.AllowedTeams
 }
 
 // GetClusterId returns the value of ClusterId.
@@ -14588,24 +14454,9 @@ func (s *SandboxTemplateSpec) SetPool(val OptPoolStrategy) {
 	s.Pool = val
 }
 
-// SetLifecycle sets the value of Lifecycle.
-func (s *SandboxTemplateSpec) SetLifecycle(val OptLifecyclePolicy) {
-	s.Lifecycle = val
-}
-
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxTemplateSpec) SetEnvVars(val OptSandboxTemplateSpecEnvVars) {
 	s.EnvVars = val
-}
-
-// SetPublic sets the value of Public.
-func (s *SandboxTemplateSpec) SetPublic(val OptBool) {
-	s.Public = val
-}
-
-// SetAllowedTeams sets the value of AllowedTeams.
-func (s *SandboxTemplateSpec) SetAllowedTeams(val []string) {
-	s.AllowedTeams = val
 }
 
 // SetClusterId sets the value of ClusterId.
@@ -15780,6 +15631,8 @@ func (s *SuccessCredentialSourceResponse) SetData(val OptCredentialSourceMetadat
 }
 
 func (*SuccessCredentialSourceResponse) aPIV1CredentialSourcesNameGetRes() {}
+func (*SuccessCredentialSourceResponse) aPIV1CredentialSourcesNamePutRes() {}
+func (*SuccessCredentialSourceResponse) aPIV1CredentialSourcesPostRes()    {}
 
 type SuccessCredentialSourceResponseSuccess bool
 
