@@ -3699,6 +3699,12 @@ func (s *ClaimRequest) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SnapshotID.Set {
+			e.FieldStart("snapshot_id")
+			s.SnapshotID.Encode(e)
+		}
+	}
+	{
 		if s.Config.Set {
 			e.FieldStart("config")
 			s.Config.Encode(e)
@@ -3716,10 +3722,11 @@ func (s *ClaimRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfClaimRequest = [3]string{
+var jsonFieldsNameOfClaimRequest = [4]string{
 	0: "template",
-	1: "config",
-	2: "mounts",
+	1: "snapshot_id",
+	2: "config",
+	3: "mounts",
 }
 
 // Decode decodes ClaimRequest from json.
@@ -3739,6 +3746,16 @@ func (s *ClaimRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"template\"")
+			}
+		case "snapshot_id":
+			if err := func() error {
+				s.SnapshotID.Reset()
+				if err := s.SnapshotID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"snapshot_id\"")
 			}
 		case "config":
 			if err := func() error {

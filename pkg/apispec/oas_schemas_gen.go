@@ -1016,14 +1016,22 @@ func (s *ClaimMountRequest) SetMountPoint(val string) {
 
 // Ref: #/components/schemas/ClaimRequest
 type ClaimRequest struct {
-	Template OptString           `json:"template"`
-	Config   OptSandboxConfig    `json:"config"`
-	Mounts   []ClaimMountRequest `json:"mounts"`
+	Template OptString `json:"template"`
+	// Optional sandbox rootfs snapshot ID used to initialize the claimed sandbox writable root
+	// filesystem.
+	SnapshotID OptString           `json:"snapshot_id"`
+	Config     OptSandboxConfig    `json:"config"`
+	Mounts     []ClaimMountRequest `json:"mounts"`
 }
 
 // GetTemplate returns the value of Template.
 func (s *ClaimRequest) GetTemplate() OptString {
 	return s.Template
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *ClaimRequest) GetSnapshotID() OptString {
+	return s.SnapshotID
 }
 
 // GetConfig returns the value of Config.
@@ -1039,6 +1047,11 @@ func (s *ClaimRequest) GetMounts() []ClaimMountRequest {
 // SetTemplate sets the value of Template.
 func (s *ClaimRequest) SetTemplate(val OptString) {
 	s.Template = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *ClaimRequest) SetSnapshotID(val OptString) {
+	s.SnapshotID = val
 }
 
 // SetConfig sets the value of Config.

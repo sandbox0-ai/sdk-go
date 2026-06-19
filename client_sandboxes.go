@@ -7,8 +7,9 @@ import (
 )
 
 type sandboxOptions struct {
-	config *apispec.SandboxConfig
-	mounts []apispec.ClaimMountRequest
+	config     *apispec.SandboxConfig
+	mounts     []apispec.ClaimMountRequest
+	snapshotID string
 }
 
 // SandboxBootstrapMount configures a volume mount during sandbox claim.
@@ -55,6 +56,13 @@ func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
 			}
 			opts.mounts = append(opts.mounts, claimMount)
 		}
+	}
+}
+
+// WithSandboxSnapshotID initializes the new sandbox root filesystem from a rootfs snapshot.
+func WithSandboxSnapshotID(snapshotID string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		opts.snapshotID = snapshotID
 	}
 }
 
@@ -149,6 +157,9 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	}
 	if len(options.mounts) > 0 {
 		req.Mounts = append(req.Mounts, options.mounts...)
+	}
+	if options.snapshotID != "" {
+		req.SnapshotID = apispec.NewOptString(options.snapshotID)
 	}
 
 	return c.ClaimSandboxRequest(ctx, req)
