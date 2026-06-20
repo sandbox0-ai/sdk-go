@@ -12,7 +12,8 @@ type sandboxOptions struct {
 	snapshotID string
 }
 
-// SandboxBootstrapMount configures a volume mount during sandbox claim.
+// SandboxBootstrapMount binds an existing volume to a template-declared mount
+// point during sandbox claim.
 type SandboxBootstrapMount struct {
 	SandboxVolumeID string
 	MountPoint      string
@@ -36,6 +37,8 @@ func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 }
 
 // WithSandboxBootstrapMount requests mounting an existing volume during claim.
+// The mount point must be declared by the template. If a template declares
+// volume mounts, the claim must bind every declared mount point.
 func WithSandboxBootstrapMount(volumeID, mountPoint string) SandboxOption {
 	return func(opts *sandboxOptions) {
 		mount := apispec.ClaimMountRequest{
@@ -47,6 +50,8 @@ func WithSandboxBootstrapMount(volumeID, mountPoint string) SandboxOption {
 }
 
 // WithSandboxBootstrapMounts requests mounting multiple existing volumes during claim.
+// The mount points must be declared by the template. If a template declares
+// volume mounts, the claim must bind every declared mount point.
 func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
 	return func(opts *sandboxOptions) {
 		for _, mount := range mounts {

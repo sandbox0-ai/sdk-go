@@ -102,6 +102,8 @@ fmt.Printf("exit=%d state=%s\n", *done.ExitCode, done.State)
 
 You can request existing volumes during `ClaimSandbox` so the sandbox starts with them already mounted:
 
+The mount point must be declared in the sandbox template's `volumeMounts`. If the template declares volume mounts, provide a mount for every declared path in the claim request.
+
 ```go
 volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{})
 if err != nil {
