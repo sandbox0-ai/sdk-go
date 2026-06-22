@@ -4185,6 +4185,18 @@ func (s *ContextExecResponse) encodeFields(e *jx.Encoder) {
 		e.Str(s.OutputRaw)
 	}
 	{
+		if s.Stdout.Set {
+			e.FieldStart("stdout")
+			s.Stdout.Encode(e)
+		}
+	}
+	{
+		if s.Stderr.Set {
+			e.FieldStart("stderr")
+			s.Stderr.Encode(e)
+		}
+	}
+	{
 		if s.ExitCode.Set {
 			e.FieldStart("exit_code")
 			s.ExitCode.Encode(e)
@@ -4198,10 +4210,12 @@ func (s *ContextExecResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfContextExecResponse = [3]string{
+var jsonFieldsNameOfContextExecResponse = [5]string{
 	0: "output_raw",
-	1: "exit_code",
-	2: "state",
+	1: "stdout",
+	2: "stderr",
+	3: "exit_code",
+	4: "state",
 }
 
 // Decode decodes ContextExecResponse from json.
@@ -4224,6 +4238,26 @@ func (s *ContextExecResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"output_raw\"")
+			}
+		case "stdout":
+			if err := func() error {
+				s.Stdout.Reset()
+				if err := s.Stdout.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stdout\"")
+			}
+		case "stderr":
+			if err := func() error {
+				s.Stderr.Reset()
+				if err := s.Stderr.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stderr\"")
 			}
 		case "exit_code":
 			if err := func() error {
@@ -4599,6 +4633,18 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Stdout.Set {
+			e.FieldStart("stdout")
+			s.Stdout.Encode(e)
+		}
+	}
+	{
+		if s.Stderr.Set {
+			e.FieldStart("stderr")
+			s.Stderr.Encode(e)
+		}
+	}
+	{
 		if s.ExitCode.Set {
 			e.FieldStart("exit_code")
 			s.ExitCode.Encode(e)
@@ -4612,7 +4658,7 @@ func (s *ContextResponse) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfContextResponse = [11]string{
+var jsonFieldsNameOfContextResponse = [13]string{
 	0:  "id",
 	1:  "type",
 	2:  "alias",
@@ -4622,8 +4668,10 @@ var jsonFieldsNameOfContextResponse = [11]string{
 	6:  "paused",
 	7:  "created_at",
 	8:  "output_raw",
-	9:  "exit_code",
-	10: "state",
+	9:  "stdout",
+	10: "stderr",
+	11: "exit_code",
+	12: "state",
 }
 
 // Decode decodes ContextResponse from json.
@@ -4732,6 +4780,26 @@ func (s *ContextResponse) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"output_raw\"")
+			}
+		case "stdout":
+			if err := func() error {
+				s.Stdout.Reset()
+				if err := s.Stdout.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stdout\"")
+			}
+		case "stderr":
+			if err := func() error {
+				s.Stderr.Reset()
+				if err := s.Stderr.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stderr\"")
 			}
 		case "exit_code":
 			if err := func() error {

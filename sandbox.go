@@ -36,6 +36,8 @@ type CmdResult struct {
 	SandboxID string
 	ContextID string
 	OutputRaw string
+	Stdout    string
+	Stderr    string
 	ExitCode  *int
 	State     string
 }
@@ -177,11 +179,21 @@ func (s *Sandbox) Cmd(ctx context.Context, cmd string, opts ...CmdOption) (CmdRe
 	if value, ok := contextResp.OutputRaw.Get(); ok {
 		outputRaw = value
 	}
+	stdout := ""
+	if value, ok := contextResp.Stdout.Get(); ok {
+		stdout = value
+	}
+	stderr := ""
+	if value, ok := contextResp.Stderr.Get(); ok {
+		stderr = value
+	}
 
 	return CmdResult{
 		SandboxID: s.ID,
 		ContextID: contextResp.ID,
 		OutputRaw: outputRaw,
+		Stdout:    stdout,
+		Stderr:    stderr,
 		ExitCode:  optInt32ToIntPtr(contextResp.ExitCode),
 		State:     optStringValue(contextResp.State),
 	}, nil
