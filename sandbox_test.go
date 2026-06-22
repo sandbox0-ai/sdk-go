@@ -35,7 +35,9 @@ func TestSandboxCmdReturnsTerminalStatus(t *testing.T) {
 				"running":    false,
 				"paused":     false,
 				"created_at": "2026-06-18T00:00:00Z",
-				"output_raw": "failed\n",
+				"output_raw": "outerr",
+				"stdout":     "out",
+				"stderr":     "err",
 				"exit_code":  7,
 				"state":      "crashed",
 			},
@@ -48,8 +50,14 @@ func TestSandboxCmdReturnsTerminalStatus(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Cmd() error = %v", err)
 	}
-	if result.OutputRaw != "failed\n" {
-		t.Fatalf("OutputRaw = %q, want failed newline", result.OutputRaw)
+	if result.OutputRaw != "outerr" {
+		t.Fatalf("OutputRaw = %q, want outerr", result.OutputRaw)
+	}
+	if result.Stdout != "out" {
+		t.Fatalf("Stdout = %q, want out", result.Stdout)
+	}
+	if result.Stderr != "err" {
+		t.Fatalf("Stderr = %q, want err", result.Stderr)
 	}
 	if result.ExitCode == nil || *result.ExitCode != 7 {
 		t.Fatalf("ExitCode = %v, want 7", result.ExitCode)

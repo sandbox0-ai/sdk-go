@@ -1019,9 +1019,12 @@ type ClaimRequest struct {
 	Template OptString `json:"template"`
 	// Optional sandbox rootfs snapshot ID used to initialize the claimed sandbox writable root
 	// filesystem.
-	SnapshotID OptString           `json:"snapshot_id"`
-	Config     OptSandboxConfig    `json:"config"`
-	Mounts     []ClaimMountRequest `json:"mounts"`
+	SnapshotID OptString        `json:"snapshot_id"`
+	Config     OptSandboxConfig `json:"config"`
+	// Optional claim-time Sandbox Volume bindings. A claim may bind any subset of template-declared
+	// mount points; omitted declared mount points remain writable rootfs-backed directories and are
+	// included in rootfs checkpoints.
+	Mounts []ClaimMountRequest `json:"mounts"`
 }
 
 // GetTemplate returns the value of Template.
@@ -1197,6 +1200,10 @@ func (s *ContainerSpec) SetSecurityContext(val OptSecurityContext) {
 type ContextExecResponse struct {
 	// Raw PTY output, may contain terminal control characters (e.g. \r).
 	OutputRaw string `json:"output_raw"`
+	// Captured stdout for non-PTY CMD contexts when available.
+	Stdout OptString `json:"stdout"`
+	// Captured stderr for non-PTY CMD contexts when available.
+	Stderr OptString `json:"stderr"`
 	// Present when the underlying process has exited.
 	ExitCode OptInt32 `json:"exit_code"`
 	// Final process state when the underlying process has exited.
@@ -1206,6 +1213,16 @@ type ContextExecResponse struct {
 // GetOutputRaw returns the value of OutputRaw.
 func (s *ContextExecResponse) GetOutputRaw() string {
 	return s.OutputRaw
+}
+
+// GetStdout returns the value of Stdout.
+func (s *ContextExecResponse) GetStdout() OptString {
+	return s.Stdout
+}
+
+// GetStderr returns the value of Stderr.
+func (s *ContextExecResponse) GetStderr() OptString {
+	return s.Stderr
 }
 
 // GetExitCode returns the value of ExitCode.
@@ -1221,6 +1238,16 @@ func (s *ContextExecResponse) GetState() OptString {
 // SetOutputRaw sets the value of OutputRaw.
 func (s *ContextExecResponse) SetOutputRaw(val string) {
 	s.OutputRaw = val
+}
+
+// SetStdout sets the value of Stdout.
+func (s *ContextExecResponse) SetStdout(val OptString) {
+	s.Stdout = val
+}
+
+// SetStderr sets the value of Stderr.
+func (s *ContextExecResponse) SetStderr(val OptString) {
+	s.Stderr = val
 }
 
 // SetExitCode sets the value of ExitCode.
@@ -1334,6 +1361,10 @@ type ContextResponse struct {
 	CreatedAt string                    `json:"created_at"`
 	// Raw PTY output for CMD contexts with wait=true, may contain terminal control characters.
 	OutputRaw OptString `json:"output_raw"`
+	// Captured stdout for non-PTY CMD contexts when available.
+	Stdout OptString `json:"stdout"`
+	// Captured stderr for non-PTY CMD contexts when available.
+	Stderr OptString `json:"stderr"`
 	// Present when the underlying process has exited.
 	ExitCode OptInt32 `json:"exit_code"`
 	// Final process state when the underlying process has exited.
@@ -1383,6 +1414,16 @@ func (s *ContextResponse) GetCreatedAt() string {
 // GetOutputRaw returns the value of OutputRaw.
 func (s *ContextResponse) GetOutputRaw() OptString {
 	return s.OutputRaw
+}
+
+// GetStdout returns the value of Stdout.
+func (s *ContextResponse) GetStdout() OptString {
+	return s.Stdout
+}
+
+// GetStderr returns the value of Stderr.
+func (s *ContextResponse) GetStderr() OptString {
+	return s.Stderr
 }
 
 // GetExitCode returns the value of ExitCode.
@@ -1438,6 +1479,16 @@ func (s *ContextResponse) SetCreatedAt(val string) {
 // SetOutputRaw sets the value of OutputRaw.
 func (s *ContextResponse) SetOutputRaw(val OptString) {
 	s.OutputRaw = val
+}
+
+// SetStdout sets the value of Stdout.
+func (s *ContextResponse) SetStdout(val OptString) {
+	s.Stdout = val
+}
+
+// SetStderr sets the value of Stderr.
+func (s *ContextResponse) SetStderr(val OptString) {
+	s.Stderr = val
 }
 
 // SetExitCode sets the value of ExitCode.
@@ -12148,7 +12199,7 @@ func (s *ResizeContextRequest) SetCols(val int32) {
 type ResourceQuota struct {
 	CPU    OptString `json:"cpu"`
 	Memory OptString `json:"memory"`
-	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 512Mi when
+	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 8Gi when
 	// omitted.
 	EphemeralStorage OptString `json:"ephemeralStorage"`
 }
