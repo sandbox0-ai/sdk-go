@@ -15741,6 +15741,39 @@ func (s *OptSandboxRefreshRequest) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxResourceConfig as json.
+func (o OptSandboxResourceConfig) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxResourceConfig from json.
+func (o *OptSandboxResourceConfig) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxResourceConfig to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxResourceConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxResourceConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SandboxResourceUsage as json.
 func (o OptSandboxResourceUsage) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -22486,6 +22519,12 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Resources.Set {
+			e.FieldStart("resources")
+			s.Resources.Encode(e)
+		}
+	}
+	{
 		if s.Mounts != nil {
 			e.FieldStart("mounts")
 			e.ArrStart()
@@ -22531,7 +22570,7 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [17]string{
+var jsonFieldsNameOfSandbox = [18]string{
 	0:  "id",
 	1:  "template_id",
 	2:  "team_id",
@@ -22540,15 +22579,16 @@ var jsonFieldsNameOfSandbox = [17]string{
 	5:  "paused",
 	6:  "auto_resume",
 	7:  "services",
-	8:  "mounts",
-	9:  "pod_name",
-	10: "runtime_generation",
-	11: "ssh",
-	12: "expires_at",
-	13: "hard_expires_at",
-	14: "claimed_at",
-	15: "created_at",
-	16: "updated_at",
+	8:  "resources",
+	9:  "mounts",
+	10: "pod_name",
+	11: "runtime_generation",
+	12: "ssh",
+	13: "expires_at",
+	14: "hard_expires_at",
+	15: "claimed_at",
+	16: "created_at",
+	17: "updated_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -22657,6 +22697,16 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"services\"")
 			}
+		case "resources":
+			if err := func() error {
+				s.Resources.Reset()
+				if err := s.Resources.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"resources\"")
+			}
 		case "mounts":
 			if err := func() error {
 				s.Mounts = make([]ClaimMountRequest, 0)
@@ -22675,7 +22725,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"mounts\"")
 			}
 		case "pod_name":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
 				s.PodName = string(v)
@@ -22687,7 +22737,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"pod_name\"")
 			}
 		case "runtime_generation":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := d.Int64()
 				s.RuntimeGeneration = int64(v)
@@ -22709,7 +22759,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"ssh\"")
 			}
 		case "expires_at":
-			requiredBitSet[1] |= 1 << 4
+			requiredBitSet[1] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ExpiresAt = v
@@ -22721,7 +22771,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"expires_at\"")
 			}
 		case "hard_expires_at":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[1] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.HardExpiresAt = v
@@ -22733,7 +22783,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"hard_expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[1] |= 1 << 6
+			requiredBitSet[1] |= 1 << 7
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -22745,7 +22795,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 7
+			requiredBitSet[2] |= 1 << 0
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -22757,7 +22807,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[2] |= 1 << 0
+			requiredBitSet[2] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -22779,8 +22829,8 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [3]uint8{
 		0b01110111,
-		0b11110110,
-		0b00000001,
+		0b11101100,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -24472,6 +24522,12 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Resources.Set {
+			e.FieldStart("resources")
+			s.Resources.Encode(e)
+		}
+	}
+	{
 		if s.TTL.Set {
 			e.FieldStart("ttl")
 			s.TTL.Encode(e)
@@ -24513,14 +24569,15 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxConfig = [7]string{
+var jsonFieldsNameOfSandboxConfig = [8]string{
 	0: "env_vars",
-	1: "ttl",
-	2: "hard_ttl",
-	3: "network",
-	4: "webhook",
-	5: "auto_resume",
-	6: "services",
+	1: "resources",
+	2: "ttl",
+	3: "hard_ttl",
+	4: "network",
+	5: "webhook",
+	6: "auto_resume",
+	7: "services",
 }
 
 // Decode decodes SandboxConfig from json.
@@ -24541,6 +24598,16 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"env_vars\"")
+			}
+		case "resources":
+			if err := func() error {
+				s.Resources.Reset()
+				if err := s.Resources.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"resources\"")
 			}
 		case "ttl":
 			if err := func() error {
@@ -25303,6 +25370,69 @@ func (s *SandboxRefreshRequest) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxRefreshRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxResourceConfig) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxResourceConfig) encodeFields(e *jx.Encoder) {
+	{
+		if s.Memory.Set {
+			e.FieldStart("memory")
+			s.Memory.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxResourceConfig = [1]string{
+	0: "memory",
+}
+
+// Decode decodes SandboxResourceConfig from json.
+func (s *SandboxResourceConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxResourceConfig to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "memory":
+			if err := func() error {
+				s.Memory.Reset()
+				if err := s.Memory.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"memory\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxResourceConfig")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxResourceConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxResourceConfig) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -27157,6 +27287,12 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Resources.Set {
+			e.FieldStart("resources")
+			s.Resources.Encode(e)
+		}
+	}
+	{
 		if s.TTL.Set {
 			e.FieldStart("ttl")
 			s.TTL.Encode(e)
@@ -27192,13 +27328,14 @@ func (s *SandboxUpdateConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxUpdateConfig = [6]string{
+var jsonFieldsNameOfSandboxUpdateConfig = [7]string{
 	0: "env_vars",
-	1: "ttl",
-	2: "hard_ttl",
-	3: "network",
-	4: "auto_resume",
-	5: "services",
+	1: "resources",
+	2: "ttl",
+	3: "hard_ttl",
+	4: "network",
+	5: "auto_resume",
+	6: "services",
 }
 
 // Decode decodes SandboxUpdateConfig from json.
@@ -27219,6 +27356,16 @@ func (s *SandboxUpdateConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"env_vars\"")
+			}
+		case "resources":
+			if err := func() error {
+				s.Resources.Reset()
+				if err := s.Resources.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"resources\"")
 			}
 		case "ttl":
 			if err := func() error {

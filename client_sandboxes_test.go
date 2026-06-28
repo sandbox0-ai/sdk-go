@@ -32,6 +32,14 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		if !ok || ttl != 300 {
 			t.Fatalf("ttl = %d, want 300", ttl)
 		}
+		resources, ok := config.Resources.Get()
+		if !ok {
+			t.Fatal("resources not set")
+		}
+		memory, ok := resources.Memory.Get()
+		if !ok || memory != "512Mi" {
+			t.Fatalf("memory = %q, want 512Mi", memory)
+		}
 		if len(body.Mounts) != 2 {
 			t.Fatalf("mount count = %d, want 2", len(body.Mounts))
 		}
@@ -70,6 +78,7 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		context.Background(),
 		"default",
 		WithSandboxTTL(300),
+		WithSandboxMemory("512Mi"),
 		WithSandboxBootstrapMount("vol_1", "/workspace/data"),
 		WithSandboxBootstrapMounts(SandboxBootstrapMount{
 			SandboxVolumeID: "vol_2",
@@ -146,6 +155,55 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatalf("ClaimSandbox() error = %v", err)
+	}
+}
+
+func TestUpdateSandboxMemoryBuildsRequest(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Fatalf("method = %s, want PUT", r.Method)
+		}
+		if r.URL.Path != "/api/v1/sandboxes/sb_123" {
+			t.Fatalf("path = %s, want /api/v1/sandboxes/sb_123", r.URL.Path)
+		}
+
+		var body apispec.SandboxUpdateRequest
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Fatalf("decode update request: %v", err)
+		}
+		config, ok := body.Config.Get()
+		if !ok {
+			t.Fatal("config not set")
+		}
+		resources, ok := config.Resources.Get()
+		if !ok {
+			t.Fatal("resources not set")
+		}
+		memory, ok := resources.Memory.Get()
+		if !ok || memory != "2Gi" {
+			t.Fatalf("memory = %q, want 2Gi", memory)
+		}
+
+		payload := sandboxJSON("sb_123")
+		payload["resources"] = map[string]any{"memory": "2Gi"}
+		writeJSON(t, w, http.StatusOK, map[string]any{
+			"success": true,
+			"data":    payload,
+		})
+	})
+	defer server.Close()
+
+	sandbox, err := client.UpdateSandboxMemory(context.Background(), "sb_123", "2Gi")
+	if err != nil {
+		t.Fatalf("UpdateSandboxMemory() error = %v", err)
+	}
+	resources, ok := sandbox.Resources.Get()
+	if !ok {
+		t.Fatal("sandbox resources not set")
+	}
+	memory, ok := resources.Memory.Get()
+	if !ok || memory != "2Gi" {
+		t.Fatalf("sandbox memory = %q, want 2Gi", memory)
 	}
 }
 
