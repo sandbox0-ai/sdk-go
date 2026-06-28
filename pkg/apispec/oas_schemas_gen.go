@@ -8640,6 +8640,52 @@ func (o OptSandboxRefreshRequest) Or(d SandboxRefreshRequest) SandboxRefreshRequ
 	return d
 }
 
+// NewOptSandboxResourceConfig returns new OptSandboxResourceConfig with value set to v.
+func NewOptSandboxResourceConfig(v SandboxResourceConfig) OptSandboxResourceConfig {
+	return OptSandboxResourceConfig{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxResourceConfig is optional SandboxResourceConfig.
+type OptSandboxResourceConfig struct {
+	Value SandboxResourceConfig
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxResourceConfig was set.
+func (o OptSandboxResourceConfig) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxResourceConfig) Reset() {
+	var v SandboxResourceConfig
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxResourceConfig) SetTo(v SandboxResourceConfig) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxResourceConfig) Get() (v SandboxResourceConfig, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxResourceConfig) Or(d SandboxResourceConfig) SandboxResourceConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxResourceUsage returns new OptSandboxResourceUsage with value set to v.
 func NewOptSandboxResourceUsage(v SandboxResourceUsage) OptSandboxResourceUsage {
 	return OptSandboxResourceUsage{
@@ -12671,11 +12717,12 @@ type Sandbox struct {
 	UserID     OptString              `json:"user_id"`
 	Status     SandboxLifecycleStatus `json:"status"`
 	// True when status is paused.
-	Paused     bool                `json:"paused"`
-	AutoResume bool                `json:"auto_resume"`
-	Services   []SandboxAppService `json:"services"`
-	Mounts     []ClaimMountRequest `json:"mounts"`
-	PodName    string              `json:"pod_name"`
+	Paused     bool                     `json:"paused"`
+	AutoResume bool                     `json:"auto_resume"`
+	Services   []SandboxAppService      `json:"services"`
+	Resources  OptSandboxResourceConfig `json:"resources"`
+	Mounts     []ClaimMountRequest      `json:"mounts"`
+	PodName    string                   `json:"pod_name"`
 	// Monotonically increasing runtime generation. Resume starts a new generation.
 	RuntimeGeneration int64                   `json:"runtime_generation"`
 	SSH               OptSandboxSSHConnection `json:"ssh"`
@@ -12726,6 +12773,11 @@ func (s *Sandbox) GetAutoResume() bool {
 // GetServices returns the value of Services.
 func (s *Sandbox) GetServices() []SandboxAppService {
 	return s.Services
+}
+
+// GetResources returns the value of Resources.
+func (s *Sandbox) GetResources() OptSandboxResourceConfig {
+	return s.Resources
 }
 
 // GetMounts returns the value of Mounts.
@@ -12811,6 +12863,11 @@ func (s *Sandbox) SetAutoResume(val bool) {
 // SetServices sets the value of Services.
 func (s *Sandbox) SetServices(val []SandboxAppService) {
 	s.Services = val
+}
+
+// SetResources sets the value of Resources.
+func (s *Sandbox) SetResources(val OptSandboxResourceConfig) {
+	s.Resources = val
 }
 
 // SetMounts sets the value of Mounts.
@@ -13504,7 +13561,8 @@ func (s *SandboxAppServiceView) SetPublicURL(val OptString) {
 
 // Ref: #/components/schemas/SandboxConfig
 type SandboxConfig struct {
-	EnvVars OptSandboxConfigEnvVars `json:"env_vars"`
+	EnvVars   OptSandboxConfigEnvVars  `json:"env_vars"`
+	Resources OptSandboxResourceConfig `json:"resources"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
@@ -13522,6 +13580,11 @@ type SandboxConfig struct {
 // GetEnvVars returns the value of EnvVars.
 func (s *SandboxConfig) GetEnvVars() OptSandboxConfigEnvVars {
 	return s.EnvVars
+}
+
+// GetResources returns the value of Resources.
+func (s *SandboxConfig) GetResources() OptSandboxResourceConfig {
+	return s.Resources
 }
 
 // GetTTL returns the value of TTL.
@@ -13557,6 +13620,11 @@ func (s *SandboxConfig) GetServices() []SandboxAppService {
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxConfig) SetEnvVars(val OptSandboxConfigEnvVars) {
 	s.EnvVars = val
+}
+
+// SetResources sets the value of Resources.
+func (s *SandboxConfig) SetResources(val OptSandboxResourceConfig) {
+	s.Resources = val
 }
 
 // SetTTL sets the value of TTL.
@@ -13908,6 +13976,25 @@ func (s *SandboxRefreshRequest) GetDuration() OptInt32 {
 // SetDuration sets the value of Duration.
 func (s *SandboxRefreshRequest) SetDuration(val OptInt32) {
 	s.Duration = val
+}
+
+// Instance-level sandbox resource override. Sandbox0 exposes memory only and derives CPU from the
+// platform memory-per-CPU ratio.
+// Ref: #/components/schemas/SandboxResourceConfig
+type SandboxResourceConfig struct {
+	// Sandbox memory limit. Must be at least 128Mi and no more than the platform sandbox maximum, which
+	// defaults to 32Gi.
+	Memory OptString `json:"memory"`
+}
+
+// GetMemory returns the value of Memory.
+func (s *SandboxResourceConfig) GetMemory() OptString {
+	return s.Memory
+}
+
+// SetMemory sets the value of Memory.
+func (s *SandboxResourceConfig) SetMemory(val OptString) {
+	s.Memory = val
 }
 
 // Ref: #/components/schemas/SandboxResourceUsage
@@ -14677,7 +14764,8 @@ type SandboxUpdateConfig struct {
 	// Sandbox-level environment variables used as defaults for new procd-managed
 	// processes. Omitting this field preserves the existing environment map; passing
 	// an empty object clears it.
-	EnvVars OptSandboxUpdateConfigEnvVars `json:"env_vars"`
+	EnvVars   OptSandboxUpdateConfigEnvVars `json:"env_vars"`
+	Resources OptSandboxResourceConfig      `json:"resources"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
@@ -14694,6 +14782,11 @@ type SandboxUpdateConfig struct {
 // GetEnvVars returns the value of EnvVars.
 func (s *SandboxUpdateConfig) GetEnvVars() OptSandboxUpdateConfigEnvVars {
 	return s.EnvVars
+}
+
+// GetResources returns the value of Resources.
+func (s *SandboxUpdateConfig) GetResources() OptSandboxResourceConfig {
+	return s.Resources
 }
 
 // GetTTL returns the value of TTL.
@@ -14724,6 +14817,11 @@ func (s *SandboxUpdateConfig) GetServices() []SandboxAppService {
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxUpdateConfig) SetEnvVars(val OptSandboxUpdateConfigEnvVars) {
 	s.EnvVars = val
+}
+
+// SetResources sets the value of Resources.
+func (s *SandboxUpdateConfig) SetResources(val OptSandboxResourceConfig) {
+	s.Resources = val
 }
 
 // SetTTL sets the value of TTL.

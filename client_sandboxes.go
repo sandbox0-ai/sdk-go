@@ -82,6 +82,17 @@ func WithSandboxHardTTL(ttlSec int32) SandboxOption {
 	}
 }
 
+// WithSandboxMemory sets the sandbox memory limit, such as "512Mi" or "2Gi".
+// Sandbox0 derives CPU from the platform memory-per-CPU ratio.
+func WithSandboxMemory(memory string) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		config.Resources = apispec.NewOptSandboxResourceConfig(apispec.SandboxResourceConfig{
+			Memory: apispec.NewOptString(memory),
+		})
+	}
+}
+
 // WithSandboxWebhook configures webhook delivery for sandbox events.
 func WithSandboxWebhook(url, secret string) SandboxOption {
 	return func(opts *sandboxOptions) {
@@ -231,6 +242,18 @@ func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request ap
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
+}
+
+// UpdateSandboxMemory updates the sandbox memory limit. Sandbox0 derives CPU
+// from the platform memory-per-CPU ratio.
+func (c *Client) UpdateSandboxMemory(ctx context.Context, sandboxID, memory string) (*apispec.Sandbox, error) {
+	return c.UpdateSandbox(ctx, sandboxID, apispec.SandboxUpdateRequest{
+		Config: apispec.NewOptSandboxUpdateConfig(apispec.SandboxUpdateConfig{
+			Resources: apispec.NewOptSandboxResourceConfig(apispec.SandboxResourceConfig{
+				Memory: apispec.NewOptString(memory),
+			}),
+		}),
+	})
 }
 
 // DeleteSandbox terminates a sandbox.
