@@ -33,16 +33,8 @@ type APIV1CredentialSourcesPostRes interface {
 	aPIV1CredentialSourcesPostRes()
 }
 
-type APIV1QuotasDimensionDeleteRes interface {
-	aPIV1QuotasDimensionDeleteRes()
-}
-
 type APIV1QuotasDimensionGetRes interface {
 	aPIV1QuotasDimensionGetRes()
-}
-
-type APIV1QuotasDimensionPutRes interface {
-	aPIV1QuotasDimensionPutRes()
 }
 
 type APIV1RegistryCredentialsPostRes interface {
