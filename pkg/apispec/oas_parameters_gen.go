@@ -27,18 +27,8 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
-// APIV1QuotasDimensionDeleteParams is parameters of DELETE /api/v1/quotas/{dimension} operation.
-type APIV1QuotasDimensionDeleteParams struct {
-	Dimension QuotaDimension
-}
-
 // APIV1QuotasDimensionGetParams is parameters of GET /api/v1/quotas/{dimension} operation.
 type APIV1QuotasDimensionGetParams struct {
-	Dimension QuotaDimension
-}
-
-// APIV1QuotasDimensionPutParams is parameters of PUT /api/v1/quotas/{dimension} operation.
-type APIV1QuotasDimensionPutParams struct {
 	Dimension QuotaDimension
 }
 

@@ -194,6 +194,14 @@ type APIKeysPostForbidden ErrorEnvelope
 
 func (*APIKeysPostForbidden) aPIKeysPostRes() {}
 
+type APIV1CredentialSourcesNamePutBadRequest ErrorEnvelope
+
+func (*APIV1CredentialSourcesNamePutBadRequest) aPIV1CredentialSourcesNamePutRes() {}
+
+type APIV1CredentialSourcesNamePutNotFound ErrorEnvelope
+
+func (*APIV1CredentialSourcesNamePutNotFound) aPIV1CredentialSourcesNamePutRes() {}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -3244,11 +3252,8 @@ func (s *ErrorEnvelope) SetError(val Error) {
 func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesNamePutRes()               {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                  {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionDeleteRes()                  {}
 func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionPutRes()                     {}
 func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
 func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()    {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
@@ -4431,6 +4436,51 @@ func (s *NetworkEgressPolicy) SetCredentialRules(val []EgressCredentialRule) {
 // SetProxy sets the value of Proxy.
 func (s *NetworkEgressPolicy) SetProxy(val OptEgressProxyPolicy) {
 	s.Proxy = val
+}
+
+// NewNilInt64 returns new NilInt64 with value set to v.
+func NewNilInt64(v int64) NilInt64 {
+	return NilInt64{
+		Value: v,
+	}
+}
+
+// NilInt64 is nullable int64.
+type NilInt64 struct {
+	Value int64
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilInt64) SetTo(v int64) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o NilInt64) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *NilInt64) SetToNull() {
+	o.Null = true
+	var v int64
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilInt64) Get() (v int64, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilInt64) Or(d int64) int64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // Ref: #/components/schemas/NodeAffinity
@@ -10522,6 +10572,52 @@ func (o OptTeam) Or(d Team) Team {
 	return d
 }
 
+// NewOptTeamDeleteConflictDetails returns new OptTeamDeleteConflictDetails with value set to v.
+func NewOptTeamDeleteConflictDetails(v TeamDeleteConflictDetails) OptTeamDeleteConflictDetails {
+	return OptTeamDeleteConflictDetails{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTeamDeleteConflictDetails is optional TeamDeleteConflictDetails.
+type OptTeamDeleteConflictDetails struct {
+	Value TeamDeleteConflictDetails
+	Set   bool
+}
+
+// IsSet returns true if OptTeamDeleteConflictDetails was set.
+func (o OptTeamDeleteConflictDetails) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTeamDeleteConflictDetails) Reset() {
+	var v TeamDeleteConflictDetails
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTeamDeleteConflictDetails) SetTo(v TeamDeleteConflictDetails) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTeamDeleteConflictDetails) Get() (v TeamDeleteConflictDetails, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTeamDeleteConflictDetails) Or(d TeamDeleteConflictDetails) TeamDeleteConflictDetails {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptTeamMember returns new OptTeamMember with value set to v.
 func NewOptTeamMember(v TeamMember) OptTeamMember {
 	return OptTeamMember{
@@ -10873,9 +10969,10 @@ func (s *PTYSize) SetCols(val OptInt32) {
 // Ref: #/components/schemas/PauseSandboxResponse
 type PauseSandboxResponse struct {
 	SandboxID string `json:"sandbox_id"`
-	// True when checkpoint completion has finished and the sandbox is paused.
+	// True when checkpoint persistence has finished, runtime deletion has been accepted, and the sandbox
+	// is paused.
 	Paused bool `json:"paused"`
-	// Current lifecycle status. Async pause requests usually return pausing.
+	// Current committed lifecycle status.
 	Status        OptSandboxLifecycleStatus `json:"status"`
 	ResourceUsage OptSandboxResourceUsage   `json:"resource_usage"`
 	UpdatedMemory OptString                 `json:"updated_memory"`
@@ -11545,21 +11642,6 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
-}
-
-// Ref: #/components/schemas/PutTeamQuotaRequest
-type PutTeamQuotaRequest struct {
-	LimitValue int64 `json:"limit_value"`
-}
-
-// GetLimitValue returns the value of LimitValue.
-func (s *PutTeamQuotaRequest) GetLimitValue() int64 {
-	return s.LimitValue
-}
-
-// SetLimitValue sets the value of LimitValue.
-func (s *PutTeamQuotaRequest) SetLimitValue(val int64) {
-	s.LimitValue = val
 }
 
 // Ref: #/components/schemas/QuotaDimension
@@ -12588,7 +12670,7 @@ type Sandbox struct {
 	TeamID     string                 `json:"team_id"`
 	UserID     OptString              `json:"user_id"`
 	Status     SandboxLifecycleStatus `json:"status"`
-	// True when status is paused and no runtime is attached.
+	// True when status is paused.
 	Paused     bool                `json:"paused"`
 	AutoResume bool                `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
@@ -12901,7 +12983,9 @@ type SandboxAppServiceRoute struct {
 	Cors           OptSandboxAppServiceRouteCORS      `json:"cors"`
 	RateLimit      OptSandboxAppServiceRouteRateLimit `json:"rate_limit"`
 	TimeoutSeconds OptInt32                           `json:"timeout_seconds"`
-	Resume         bool                               `json:"resume"`
+	// Allows this public route to wake a paused sandbox when sandbox auto_resume is true.
+	// Resume-enabled public routes require a restartable service runtime: cmd or function.
+	Resume bool `json:"resume"`
 }
 
 // GetID returns the value of ID.
@@ -13523,8 +13607,11 @@ type SandboxFunction struct {
 	// Function runtime. Only python is supported in this version.
 	Runtime SandboxFunctionRuntime `json:"runtime"`
 	// Python callable name. Defaults to handler.
-	Handler OptString             `json:"handler"`
-	Source  SandboxFunctionSource `json:"source"`
+	Handler OptString `json:"handler"`
+	// Maximum in-flight executions for this function service inside one sandbox runtime. Omit or set to
+	// 0 for unlimited.
+	MaxConcurrency OptInt32              `json:"max_concurrency"`
+	Source         SandboxFunctionSource `json:"source"`
 }
 
 // GetRuntime returns the value of Runtime.
@@ -13535,6 +13622,11 @@ func (s *SandboxFunction) GetRuntime() SandboxFunctionRuntime {
 // GetHandler returns the value of Handler.
 func (s *SandboxFunction) GetHandler() OptString {
 	return s.Handler
+}
+
+// GetMaxConcurrency returns the value of MaxConcurrency.
+func (s *SandboxFunction) GetMaxConcurrency() OptInt32 {
+	return s.MaxConcurrency
 }
 
 // GetSource returns the value of Source.
@@ -13550,6 +13642,11 @@ func (s *SandboxFunction) SetRuntime(val SandboxFunctionRuntime) {
 // SetHandler sets the value of Handler.
 func (s *SandboxFunction) SetHandler(val OptString) {
 	s.Handler = val
+}
+
+// SetMaxConcurrency sets the value of MaxConcurrency.
+func (s *SandboxFunction) SetMaxConcurrency(val OptInt32) {
+	s.MaxConcurrency = val
 }
 
 // SetSource sets the value of Source.
@@ -13662,9 +13759,7 @@ type SandboxLifecycleStatus string
 const (
 	SandboxLifecycleStatusStarting    SandboxLifecycleStatus = "starting"
 	SandboxLifecycleStatusRunning     SandboxLifecycleStatus = "running"
-	SandboxLifecycleStatusPausing     SandboxLifecycleStatus = "pausing"
 	SandboxLifecycleStatusPaused      SandboxLifecycleStatus = "paused"
-	SandboxLifecycleStatusResuming    SandboxLifecycleStatus = "resuming"
 	SandboxLifecycleStatusTerminating SandboxLifecycleStatus = "terminating"
 	SandboxLifecycleStatusFailed      SandboxLifecycleStatus = "failed"
 )
@@ -13674,9 +13769,7 @@ func (SandboxLifecycleStatus) AllValues() []SandboxLifecycleStatus {
 	return []SandboxLifecycleStatus{
 		SandboxLifecycleStatusStarting,
 		SandboxLifecycleStatusRunning,
-		SandboxLifecycleStatusPausing,
 		SandboxLifecycleStatusPaused,
-		SandboxLifecycleStatusResuming,
 		SandboxLifecycleStatusTerminating,
 		SandboxLifecycleStatusFailed,
 	}
@@ -13689,11 +13782,7 @@ func (s SandboxLifecycleStatus) MarshalText() ([]byte, error) {
 		return []byte(s), nil
 	case SandboxLifecycleStatusRunning:
 		return []byte(s), nil
-	case SandboxLifecycleStatusPausing:
-		return []byte(s), nil
 	case SandboxLifecycleStatusPaused:
-		return []byte(s), nil
-	case SandboxLifecycleStatusResuming:
 		return []byte(s), nil
 	case SandboxLifecycleStatusTerminating:
 		return []byte(s), nil
@@ -13713,14 +13802,8 @@ func (s *SandboxLifecycleStatus) UnmarshalText(data []byte) error {
 	case SandboxLifecycleStatusRunning:
 		*s = SandboxLifecycleStatusRunning
 		return nil
-	case SandboxLifecycleStatusPausing:
-		*s = SandboxLifecycleStatusPausing
-		return nil
 	case SandboxLifecycleStatusPaused:
 		*s = SandboxLifecycleStatusPaused
-		return nil
-	case SandboxLifecycleStatusResuming:
-		*s = SandboxLifecycleStatusResuming
 		return nil
 	case SandboxLifecycleStatusTerminating:
 		*s = SandboxLifecycleStatusTerminating
@@ -14242,7 +14325,7 @@ type SandboxSummary struct {
 	ID         string                 `json:"id"`
 	TemplateID string                 `json:"template_id"`
 	Status     SandboxLifecycleStatus `json:"status"`
-	// True when status is paused and no runtime is attached.
+	// True when status is paused.
 	Paused bool `json:"paused"`
 	// Monotonically increasing runtime generation. Resume starts a new generation.
 	RuntimeGeneration int64 `json:"runtime_generation"`
@@ -15796,7 +15879,6 @@ func (s *SuccessDeletedResponse) SetData(val OptSuccessDeletedResponseData) {
 	s.Data = val
 }
 
-func (*SuccessDeletedResponse) aPIV1QuotasDimensionDeleteRes()                  {}
 func (*SuccessDeletedResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
 func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes()                 {}
 
@@ -17703,7 +17785,6 @@ func (s *SuccessTeamQuotaResponse) SetData(val OptTeamQuota) {
 }
 
 func (*SuccessTeamQuotaResponse) aPIV1QuotasDimensionGetRes() {}
-func (*SuccessTeamQuotaResponse) aPIV1QuotasDimensionPutRes() {}
 
 type SuccessTeamQuotaResponseSuccess bool
 
@@ -18101,6 +18182,149 @@ func (s *Team) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
+// Ref: #/components/schemas/TeamDeleteConflictDetails
+type TeamDeleteConflictDetails struct {
+	TeamID string `json:"team_id"`
+	// Resources that must be removed before the team can be deleted.
+	BlockingResources []TeamDeleteResourceCount `json:"blocking_resources"`
+	// Historical resources retained by policy. These do not block deletion.
+	RetainedResources []TeamDeleteResourceCount `json:"retained_resources"`
+	// Summary of the historical metering retention policy for team deletion.
+	RetentionPolicy OptString `json:"retention_policy"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *TeamDeleteConflictDetails) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetBlockingResources returns the value of BlockingResources.
+func (s *TeamDeleteConflictDetails) GetBlockingResources() []TeamDeleteResourceCount {
+	return s.BlockingResources
+}
+
+// GetRetainedResources returns the value of RetainedResources.
+func (s *TeamDeleteConflictDetails) GetRetainedResources() []TeamDeleteResourceCount {
+	return s.RetainedResources
+}
+
+// GetRetentionPolicy returns the value of RetentionPolicy.
+func (s *TeamDeleteConflictDetails) GetRetentionPolicy() OptString {
+	return s.RetentionPolicy
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *TeamDeleteConflictDetails) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetBlockingResources sets the value of BlockingResources.
+func (s *TeamDeleteConflictDetails) SetBlockingResources(val []TeamDeleteResourceCount) {
+	s.BlockingResources = val
+}
+
+// SetRetainedResources sets the value of RetainedResources.
+func (s *TeamDeleteConflictDetails) SetRetainedResources(val []TeamDeleteResourceCount) {
+	s.RetainedResources = val
+}
+
+// SetRetentionPolicy sets the value of RetentionPolicy.
+func (s *TeamDeleteConflictDetails) SetRetentionPolicy(val OptString) {
+	s.RetentionPolicy = val
+}
+
+// Ref: #/components/schemas/TeamDeleteConflictResponse
+type TeamDeleteConflictResponse struct {
+	Success bool                            `json:"success"`
+	Error   TeamDeleteConflictResponseError `json:"error"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *TeamDeleteConflictResponse) GetSuccess() bool {
+	return s.Success
+}
+
+// GetError returns the value of Error.
+func (s *TeamDeleteConflictResponse) GetError() TeamDeleteConflictResponseError {
+	return s.Error
+}
+
+// SetSuccess sets the value of Success.
+func (s *TeamDeleteConflictResponse) SetSuccess(val bool) {
+	s.Success = val
+}
+
+// SetError sets the value of Error.
+func (s *TeamDeleteConflictResponse) SetError(val TeamDeleteConflictResponseError) {
+	s.Error = val
+}
+
+func (*TeamDeleteConflictResponse) teamsIDDeleteRes() {}
+
+type TeamDeleteConflictResponseError struct {
+	Code    string                       `json:"code"`
+	Message string                       `json:"message"`
+	Details OptTeamDeleteConflictDetails `json:"details"`
+}
+
+// GetCode returns the value of Code.
+func (s *TeamDeleteConflictResponseError) GetCode() string {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *TeamDeleteConflictResponseError) GetMessage() string {
+	return s.Message
+}
+
+// GetDetails returns the value of Details.
+func (s *TeamDeleteConflictResponseError) GetDetails() OptTeamDeleteConflictDetails {
+	return s.Details
+}
+
+// SetCode sets the value of Code.
+func (s *TeamDeleteConflictResponseError) SetCode(val string) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *TeamDeleteConflictResponseError) SetMessage(val string) {
+	s.Message = val
+}
+
+// SetDetails sets the value of Details.
+func (s *TeamDeleteConflictResponseError) SetDetails(val OptTeamDeleteConflictDetails) {
+	s.Details = val
+}
+
+// Ref: #/components/schemas/TeamDeleteResourceCount
+type TeamDeleteResourceCount struct {
+	// Machine-readable resource category that still references the team.
+	Category string `json:"category"`
+	// Number of resources in this category.
+	Count int64 `json:"count"`
+}
+
+// GetCategory returns the value of Category.
+func (s *TeamDeleteResourceCount) GetCategory() string {
+	return s.Category
+}
+
+// GetCount returns the value of Count.
+func (s *TeamDeleteResourceCount) GetCount() int64 {
+	return s.Count
+}
+
+// SetCategory sets the value of Category.
+func (s *TeamDeleteResourceCount) SetCategory(val string) {
+	s.Category = val
+}
+
+// SetCount sets the value of Count.
+func (s *TeamDeleteResourceCount) SetCount(val int64) {
+	s.Count = val
+}
+
 // Ref: #/components/schemas/TeamMember
 type TeamMember struct {
 	ID       string    `json:"id"`
@@ -18200,7 +18424,11 @@ func (s *TeamMember) SetAvatarURL(val OptString) {
 type TeamQuota struct {
 	TeamID     string         `json:"team_id"`
 	Dimension  QuotaDimension `json:"dimension"`
-	LimitValue OptNilInt64    `json:"limit_value"`
+	LimitValue NilInt64       `json:"limit_value"`
+	Current    int64          `json:"current"`
+	Remaining  NilInt64       `json:"remaining"`
+	Unlimited  bool           `json:"unlimited"`
+	Unit       TeamQuotaUnit  `json:"unit"`
 }
 
 // GetTeamID returns the value of TeamID.
@@ -18214,8 +18442,28 @@ func (s *TeamQuota) GetDimension() QuotaDimension {
 }
 
 // GetLimitValue returns the value of LimitValue.
-func (s *TeamQuota) GetLimitValue() OptNilInt64 {
+func (s *TeamQuota) GetLimitValue() NilInt64 {
 	return s.LimitValue
+}
+
+// GetCurrent returns the value of Current.
+func (s *TeamQuota) GetCurrent() int64 {
+	return s.Current
+}
+
+// GetRemaining returns the value of Remaining.
+func (s *TeamQuota) GetRemaining() NilInt64 {
+	return s.Remaining
+}
+
+// GetUnlimited returns the value of Unlimited.
+func (s *TeamQuota) GetUnlimited() bool {
+	return s.Unlimited
+}
+
+// GetUnit returns the value of Unit.
+func (s *TeamQuota) GetUnit() TeamQuotaUnit {
+	return s.Unit
 }
 
 // SetTeamID sets the value of TeamID.
@@ -18229,8 +18477,90 @@ func (s *TeamQuota) SetDimension(val QuotaDimension) {
 }
 
 // SetLimitValue sets the value of LimitValue.
-func (s *TeamQuota) SetLimitValue(val OptNilInt64) {
+func (s *TeamQuota) SetLimitValue(val NilInt64) {
 	s.LimitValue = val
+}
+
+// SetCurrent sets the value of Current.
+func (s *TeamQuota) SetCurrent(val int64) {
+	s.Current = val
+}
+
+// SetRemaining sets the value of Remaining.
+func (s *TeamQuota) SetRemaining(val NilInt64) {
+	s.Remaining = val
+}
+
+// SetUnlimited sets the value of Unlimited.
+func (s *TeamQuota) SetUnlimited(val bool) {
+	s.Unlimited = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *TeamQuota) SetUnit(val TeamQuotaUnit) {
+	s.Unit = val
+}
+
+type TeamQuotaUnit string
+
+const (
+	TeamQuotaUnitCount    TeamQuotaUnit = "count"
+	TeamQuotaUnitMillicpu TeamQuotaUnit = "millicpu"
+	TeamQuotaUnitMiB      TeamQuotaUnit = "MiB"
+	TeamQuotaUnitGB       TeamQuotaUnit = "GB"
+	TeamQuotaUnitBytes    TeamQuotaUnit = "bytes"
+)
+
+// AllValues returns all TeamQuotaUnit values.
+func (TeamQuotaUnit) AllValues() []TeamQuotaUnit {
+	return []TeamQuotaUnit{
+		TeamQuotaUnitCount,
+		TeamQuotaUnitMillicpu,
+		TeamQuotaUnitMiB,
+		TeamQuotaUnitGB,
+		TeamQuotaUnitBytes,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaUnit) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaUnitCount:
+		return []byte(s), nil
+	case TeamQuotaUnitMillicpu:
+		return []byte(s), nil
+	case TeamQuotaUnitMiB:
+		return []byte(s), nil
+	case TeamQuotaUnitGB:
+		return []byte(s), nil
+	case TeamQuotaUnitBytes:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaUnit) UnmarshalText(data []byte) error {
+	switch TeamQuotaUnit(data) {
+	case TeamQuotaUnitCount:
+		*s = TeamQuotaUnitCount
+		return nil
+	case TeamQuotaUnitMillicpu:
+		*s = TeamQuotaUnitMillicpu
+		return nil
+	case TeamQuotaUnitMiB:
+		*s = TeamQuotaUnitMiB
+		return nil
+	case TeamQuotaUnitGB:
+		*s = TeamQuotaUnitGB
+		return nil
+	case TeamQuotaUnitBytes:
+		*s = TeamQuotaUnitBytes
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 type TeamsIDDeleteForbidden ErrorEnvelope

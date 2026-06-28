@@ -130,7 +130,8 @@ type Invoker interface {
 	APIV1CredentialSourcesNameGet(ctx context.Context, params APIV1CredentialSourcesNameGetParams, options ...RequestOption) (APIV1CredentialSourcesNameGetRes, error)
 	// APIV1CredentialSourcesNamePut invokes PUT /api/v1/credential-sources/{name} operation.
 	//
-	// Update credential source.
+	// Replace the secret material for an existing credential source. The resolver kind is immutable for
+	// a source name; create a new source when changing resolver kinds.
 	//
 	// PUT /api/v1/credential-sources/{name}
 	APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (APIV1CredentialSourcesNamePutRes, error)
@@ -140,24 +141,12 @@ type Invoker interface {
 	//
 	// POST /api/v1/credential-sources
 	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (APIV1CredentialSourcesPostRes, error)
-	// APIV1QuotasDimensionDelete invokes DELETE /api/v1/quotas/{dimension} operation.
-	//
-	// Delete team quota.
-	//
-	// DELETE /api/v1/quotas/{dimension}
-	APIV1QuotasDimensionDelete(ctx context.Context, params APIV1QuotasDimensionDeleteParams, options ...RequestOption) (APIV1QuotasDimensionDeleteRes, error)
 	// APIV1QuotasDimensionGet invokes GET /api/v1/quotas/{dimension} operation.
 	//
 	// Get team quota.
 	//
 	// GET /api/v1/quotas/{dimension}
 	APIV1QuotasDimensionGet(ctx context.Context, params APIV1QuotasDimensionGetParams, options ...RequestOption) (APIV1QuotasDimensionGetRes, error)
-	// APIV1QuotasDimensionPut invokes PUT /api/v1/quotas/{dimension} operation.
-	//
-	// Set team quota.
-	//
-	// PUT /api/v1/quotas/{dimension}
-	APIV1QuotasDimensionPut(ctx context.Context, request *PutTeamQuotaRequest, params APIV1QuotasDimensionPutParams, options ...RequestOption) (APIV1QuotasDimensionPutRes, error)
 	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
 	//
 	// Get registry credentials for uploads.
@@ -1681,7 +1670,8 @@ func (c *Client) sendAPIV1CredentialSourcesNameGet(ctx context.Context, params A
 
 // APIV1CredentialSourcesNamePut invokes PUT /api/v1/credential-sources/{name} operation.
 //
-// Update credential source.
+// Replace the secret material for an existing credential source. The resolver kind is immutable for
+// a source name; create a new source when changing resolver kinds.
 //
 // PUT /api/v1/credential-sources/{name}
 func (c *Client) APIV1CredentialSourcesNamePut(ctx context.Context, request *CredentialSourceWriteRequest, params APIV1CredentialSourcesNamePutParams, options ...RequestOption) (APIV1CredentialSourcesNamePutRes, error) {
@@ -1893,119 +1883,6 @@ func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *Cr
 	return result, nil
 }
 
-// APIV1QuotasDimensionDelete invokes DELETE /api/v1/quotas/{dimension} operation.
-//
-// Delete team quota.
-//
-// DELETE /api/v1/quotas/{dimension}
-func (c *Client) APIV1QuotasDimensionDelete(ctx context.Context, params APIV1QuotasDimensionDeleteParams, options ...RequestOption) (APIV1QuotasDimensionDeleteRes, error) {
-	res, err := c.sendAPIV1QuotasDimensionDelete(ctx, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1QuotasDimensionDelete(ctx context.Context, params APIV1QuotasDimensionDeleteParams, requestOptions ...RequestOption) (res APIV1QuotasDimensionDeleteRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [2]string
-	pathParts[0] = "/api/v1/quotas/"
-	{
-		// Encode "dimension" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "dimension",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(string(params.Dimension)))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "DELETE", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1QuotasDimensionDeleteOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1QuotasDimensionDeleteResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // APIV1QuotasDimensionGet invokes GET /api/v1/quotas/{dimension} operation.
 //
 // Get team quota.
@@ -2112,122 +1989,6 @@ func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1Qu
 	}
 
 	result, err := decodeAPIV1QuotasDimensionGetResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1QuotasDimensionPut invokes PUT /api/v1/quotas/{dimension} operation.
-//
-// Set team quota.
-//
-// PUT /api/v1/quotas/{dimension}
-func (c *Client) APIV1QuotasDimensionPut(ctx context.Context, request *PutTeamQuotaRequest, params APIV1QuotasDimensionPutParams, options ...RequestOption) (APIV1QuotasDimensionPutRes, error) {
-	res, err := c.sendAPIV1QuotasDimensionPut(ctx, request, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1QuotasDimensionPut(ctx context.Context, request *PutTeamQuotaRequest, params APIV1QuotasDimensionPutParams, requestOptions ...RequestOption) (res APIV1QuotasDimensionPutRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [2]string
-	pathParts[0] = "/api/v1/quotas/"
-	{
-		// Encode "dimension" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "dimension",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(string(params.Dimension)))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "PUT", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAPIV1QuotasDimensionPutRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1QuotasDimensionPutOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1QuotasDimensionPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
