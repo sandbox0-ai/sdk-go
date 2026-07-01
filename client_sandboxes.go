@@ -447,10 +447,11 @@ func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, req
 
 // ForkSandbox creates a paused sandbox fork from a paused source sandbox root filesystem.
 func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
-	if request == nil {
-		request = &apispec.ForkSandboxRequest{}
+	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
+	if request != nil {
+		body = apispec.NewOptForkSandboxRequest(*request)
 	}
-	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, request, apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID})
+	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, body, apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}

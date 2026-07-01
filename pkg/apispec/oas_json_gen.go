@@ -9656,6 +9656,86 @@ func (s *FileInfoType) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *ForkSandboxConfig) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ForkSandboxConfig) encodeFields(e *jx.Encoder) {
+	{
+		if s.TTL.Set {
+			e.FieldStart("ttl")
+			s.TTL.Encode(e)
+		}
+	}
+	{
+		if s.HardTTL.Set {
+			e.FieldStart("hard_ttl")
+			s.HardTTL.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfForkSandboxConfig = [2]string{
+	0: "ttl",
+	1: "hard_ttl",
+}
+
+// Decode decodes ForkSandboxConfig from json.
+func (s *ForkSandboxConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ForkSandboxConfig to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "ttl":
+			if err := func() error {
+				s.TTL.Reset()
+				if err := s.TTL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ttl\"")
+			}
+		case "hard_ttl":
+			if err := func() error {
+				s.HardTTL.Reset()
+				if err := s.HardTTL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hard_ttl\"")
+			}
+		default:
+			return errors.Errorf("unexpected field %q", k)
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ForkSandboxConfig")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ForkSandboxConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ForkSandboxConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *ForkSandboxRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -9664,9 +9744,17 @@ func (s *ForkSandboxRequest) Encode(e *jx.Encoder) {
 
 // encodeFields encodes fields.
 func (s *ForkSandboxRequest) encodeFields(e *jx.Encoder) {
+	{
+		if s.Config.Set {
+			e.FieldStart("config")
+			s.Config.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfForkSandboxRequest = [0]string{}
+var jsonFieldsNameOfForkSandboxRequest = [1]string{
+	0: "config",
+}
 
 // Decode decodes ForkSandboxRequest from json.
 func (s *ForkSandboxRequest) Decode(d *jx.Decoder) error {
@@ -9676,9 +9764,20 @@ func (s *ForkSandboxRequest) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "config":
+			if err := func() error {
+				s.Config.Reset()
+				if err := s.Config.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"config\"")
+			}
 		default:
 			return errors.Errorf("unexpected field %q", k)
 		}
+		return nil
 	}); err != nil {
 		return errors.Wrap(err, "decode ForkSandboxRequest")
 	}
@@ -13825,6 +13924,72 @@ func (s OptFloat64) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptFloat64) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ForkSandboxConfig as json.
+func (o OptForkSandboxConfig) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes ForkSandboxConfig from json.
+func (o *OptForkSandboxConfig) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptForkSandboxConfig to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptForkSandboxConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptForkSandboxConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ForkSandboxRequest as json.
+func (o OptForkSandboxRequest) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes ForkSandboxRequest from json.
+func (o *OptForkSandboxRequest) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptForkSandboxRequest to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptForkSandboxRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptForkSandboxRequest) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

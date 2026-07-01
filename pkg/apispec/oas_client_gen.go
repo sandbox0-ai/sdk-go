@@ -315,7 +315,7 @@ type Invoker interface {
 	// Fork sandbox from paused rootfs.
 	//
 	// POST /api/v1/sandboxes/{id}/fork
-	APIV1SandboxesIDForkPost(ctx context.Context, request *ForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error)
+	APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error)
 	// APIV1SandboxesIDGet invokes GET /api/v1/sandboxes/{id} operation.
 	//
 	// Get sandbox by ID.
@@ -5007,12 +5007,12 @@ func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params A
 // Fork sandbox from paused rootfs.
 //
 // POST /api/v1/sandboxes/{id}/fork
-func (c *Client) APIV1SandboxesIDForkPost(ctx context.Context, request *ForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error) {
+func (c *Client) APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDForkPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDForkPost(ctx context.Context, request *ForkSandboxRequest, params APIV1SandboxesIDForkPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDForkPostRes, err error) {
+func (c *Client) sendAPIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDForkPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
