@@ -167,13 +167,17 @@ func encodeAPIV1SandboxesIDFilesPostRequest(
 }
 
 func encodeAPIV1SandboxesIDForkPostRequest(
-	req *ForkSandboxRequest,
+	req OptForkSandboxRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
+	if !req.Set {
+		// Keep request with empty body if value is not set.
+		return nil
+	}
 	e := new(jx.Encoder)
 	{
-		if req != nil {
+		if req.Set {
 			req.Encode(e)
 		}
 	}

@@ -348,6 +348,56 @@ func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
 	}
 }
 
+func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Fatalf("method = %s, want POST", r.Method)
+		}
+		if r.URL.Path != "/api/v1/sandboxes/sb_source/fork" {
+			t.Fatalf("path = %s, want /api/v1/sandboxes/sb_source/fork", r.URL.Path)
+		}
+
+		var req apispec.ForkSandboxRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			t.Fatalf("decode fork request: %v", err)
+		}
+		config, ok := req.Config.Get()
+		if !ok {
+			t.Fatal("config not set")
+		}
+		ttl, ok := config.TTL.Get()
+		if !ok || ttl != 60 {
+			t.Fatalf("ttl = %d, want 60", ttl)
+		}
+		hardTTL, ok := config.HardTTL.Get()
+		if !ok || hardTTL != 120 {
+			t.Fatalf("hard_ttl = %d, want 120", hardTTL)
+		}
+
+		writeJSON(t, w, http.StatusCreated, map[string]any{
+			"success": true,
+			"data": map[string]any{
+				"source_sandbox_id": "sb_source",
+				"sandbox":           sandboxJSON("sb_fork"),
+			},
+		})
+	})
+	defer server.Close()
+
+	forked, err := client.ForkSandbox(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
+		Config: apispec.NewOptForkSandboxConfig(apispec.ForkSandboxConfig{
+			TTL:     apispec.NewOptInt32(60),
+			HardTTL: apispec.NewOptInt32(120),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("ForkSandbox() error = %v", err)
+	}
+	if forked.SourceSandboxID != "sb_source" || forked.Sandbox.ID != "sb_fork" {
+		t.Fatalf("forked = %+v, want source sb_source and sandbox sb_fork", forked)
+	}
+}
+
 func decodeClaimRequest(t *testing.T, r *http.Request) apispec.ClaimRequest {
 	t.Helper()
 

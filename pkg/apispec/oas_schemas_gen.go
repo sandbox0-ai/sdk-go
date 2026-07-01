@@ -3520,8 +3520,51 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/ForkSandboxConfig
+type ForkSandboxConfig struct {
+	// Runtime soft time-to-live in seconds for the forked sandbox. Omit to inherit the source setting.
+	// Set 0 to disable soft expiration.
+	TTL OptInt32 `json:"ttl"`
+	// Sandbox hard time-to-live in seconds for the forked sandbox. Omit to inherit the source setting.
+	// Set 0 to disable hard expiration.
+	HardTTL OptInt32 `json:"hard_ttl"`
+}
+
+// GetTTL returns the value of TTL.
+func (s *ForkSandboxConfig) GetTTL() OptInt32 {
+	return s.TTL
+}
+
+// GetHardTTL returns the value of HardTTL.
+func (s *ForkSandboxConfig) GetHardTTL() OptInt32 {
+	return s.HardTTL
+}
+
+// SetTTL sets the value of TTL.
+func (s *ForkSandboxConfig) SetTTL(val OptInt32) {
+	s.TTL = val
+}
+
+// SetHardTTL sets the value of HardTTL.
+func (s *ForkSandboxConfig) SetHardTTL(val OptInt32) {
+	s.HardTTL = val
+}
+
+// Optional fork overrides. Omit config to inherit the source sandbox configuration.
 // Ref: #/components/schemas/ForkSandboxRequest
-type ForkSandboxRequest struct{}
+type ForkSandboxRequest struct {
+	Config OptForkSandboxConfig `json:"config"`
+}
+
+// GetConfig returns the value of Config.
+func (s *ForkSandboxRequest) GetConfig() OptForkSandboxConfig {
+	return s.Config
+}
+
+// SetConfig sets the value of Config.
+func (s *ForkSandboxRequest) SetConfig(val OptForkSandboxConfig) {
+	s.Config = val
+}
 
 // Ref: #/components/schemas/ForkSandboxResponse
 type ForkSandboxResponse struct {
@@ -6007,6 +6050,98 @@ func (o OptFloat64) Get() (v float64, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptFloat64) Or(d float64) float64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptForkSandboxConfig returns new OptForkSandboxConfig with value set to v.
+func NewOptForkSandboxConfig(v ForkSandboxConfig) OptForkSandboxConfig {
+	return OptForkSandboxConfig{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptForkSandboxConfig is optional ForkSandboxConfig.
+type OptForkSandboxConfig struct {
+	Value ForkSandboxConfig
+	Set   bool
+}
+
+// IsSet returns true if OptForkSandboxConfig was set.
+func (o OptForkSandboxConfig) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptForkSandboxConfig) Reset() {
+	var v ForkSandboxConfig
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptForkSandboxConfig) SetTo(v ForkSandboxConfig) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptForkSandboxConfig) Get() (v ForkSandboxConfig, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptForkSandboxConfig) Or(d ForkSandboxConfig) ForkSandboxConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptForkSandboxRequest returns new OptForkSandboxRequest with value set to v.
+func NewOptForkSandboxRequest(v ForkSandboxRequest) OptForkSandboxRequest {
+	return OptForkSandboxRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptForkSandboxRequest is optional ForkSandboxRequest.
+type OptForkSandboxRequest struct {
+	Value ForkSandboxRequest
+	Set   bool
+}
+
+// IsSet returns true if OptForkSandboxRequest was set.
+func (o OptForkSandboxRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptForkSandboxRequest) Reset() {
+	var v ForkSandboxRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptForkSandboxRequest) SetTo(v ForkSandboxRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptForkSandboxRequest) Get() (v ForkSandboxRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptForkSandboxRequest) Or(d ForkSandboxRequest) ForkSandboxRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
