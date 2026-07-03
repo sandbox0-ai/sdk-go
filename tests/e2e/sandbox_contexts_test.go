@@ -60,9 +60,6 @@ func TestSandboxContextOperations(t *testing.T) {
 	if _, err := sandbox.ContextSignal(ctx, contextResp.ID, "SIGINT"); err != nil {
 		t.Fatalf("context signal failed: %v", err)
 	}
-	if _, err := sandbox.ContextStats(ctx, contextResp.ID); err != nil {
-		t.Fatalf("context stats failed: %v", err)
-	}
 	if _, err := sandbox.RestartContext(ctx, contextResp.ID); err != nil {
 		t.Fatalf("restart context failed: %v", err)
 	}
