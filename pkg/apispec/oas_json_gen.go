@@ -799,6 +799,120 @@ func (s *APIV1RegistryCredentialsPostUnauthorized) UnmarshalJSON(data []byte) er
 	return s.Decode(d)
 }
 
+// Encode encodes APIV1SandboxesIDAuditEventsGetBadRequest as json.
+func (s *APIV1SandboxesIDAuditEventsGetBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDAuditEventsGetBadRequest from json.
+func (s *APIV1SandboxesIDAuditEventsGetBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDAuditEventsGetBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDAuditEventsGetBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDAuditEventsGetBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDAuditEventsGetForbidden as json.
+func (s *APIV1SandboxesIDAuditEventsGetForbidden) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDAuditEventsGetForbidden from json.
+func (s *APIV1SandboxesIDAuditEventsGetForbidden) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetForbidden to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDAuditEventsGetForbidden(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDAuditEventsGetForbidden) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDAuditEventsGetForbidden) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDAuditEventsGetServiceUnavailable as json.
+func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDAuditEventsGetServiceUnavailable from json.
+func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetServiceUnavailable to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDAuditEventsGetServiceUnavailable(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes APIV1SandboxesIDDeleteForbidden as json.
 func (s *APIV1SandboxesIDDeleteForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -1170,17 +1284,17 @@ func (s *APIV1SandboxesIDGetNotFound) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDLogsGetBadRequest as json.
-func (s *APIV1SandboxesIDLogsGetBadRequest) Encode(e *jx.Encoder) {
+// Encode encodes APIV1SandboxesIDObservabilityEventsGetBadRequest as json.
+func (s *APIV1SandboxesIDObservabilityEventsGetBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes APIV1SandboxesIDLogsGetBadRequest from json.
-func (s *APIV1SandboxesIDLogsGetBadRequest) Decode(d *jx.Decoder) error {
+// Decode decodes APIV1SandboxesIDObservabilityEventsGetBadRequest from json.
+func (s *APIV1SandboxesIDObservabilityEventsGetBadRequest) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDLogsGetBadRequest to nil")
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityEventsGetBadRequest to nil")
 	}
 	var unwrapped ErrorEnvelope
 	if err := func() error {
@@ -1191,34 +1305,34 @@ func (s *APIV1SandboxesIDLogsGetBadRequest) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = APIV1SandboxesIDLogsGetBadRequest(unwrapped)
+	*s = APIV1SandboxesIDObservabilityEventsGetBadRequest(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDLogsGetBadRequest) MarshalJSON() ([]byte, error) {
+func (s *APIV1SandboxesIDObservabilityEventsGetBadRequest) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDLogsGetBadRequest) UnmarshalJSON(data []byte) error {
+func (s *APIV1SandboxesIDObservabilityEventsGetBadRequest) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDLogsGetForbidden as json.
-func (s *APIV1SandboxesIDLogsGetForbidden) Encode(e *jx.Encoder) {
+// Encode encodes APIV1SandboxesIDObservabilityEventsGetForbidden as json.
+func (s *APIV1SandboxesIDObservabilityEventsGetForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes APIV1SandboxesIDLogsGetForbidden from json.
-func (s *APIV1SandboxesIDLogsGetForbidden) Decode(d *jx.Decoder) error {
+// Decode decodes APIV1SandboxesIDObservabilityEventsGetForbidden from json.
+func (s *APIV1SandboxesIDObservabilityEventsGetForbidden) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDLogsGetForbidden to nil")
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityEventsGetForbidden to nil")
 	}
 	var unwrapped ErrorEnvelope
 	if err := func() error {
@@ -1229,34 +1343,34 @@ func (s *APIV1SandboxesIDLogsGetForbidden) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = APIV1SandboxesIDLogsGetForbidden(unwrapped)
+	*s = APIV1SandboxesIDObservabilityEventsGetForbidden(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDLogsGetForbidden) MarshalJSON() ([]byte, error) {
+func (s *APIV1SandboxesIDObservabilityEventsGetForbidden) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDLogsGetForbidden) UnmarshalJSON(data []byte) error {
+func (s *APIV1SandboxesIDObservabilityEventsGetForbidden) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDLogsGetNotFound as json.
-func (s *APIV1SandboxesIDLogsGetNotFound) Encode(e *jx.Encoder) {
+// Encode encodes APIV1SandboxesIDObservabilityEventsGetServiceUnavailable as json.
+func (s *APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes APIV1SandboxesIDLogsGetNotFound from json.
-func (s *APIV1SandboxesIDLogsGetNotFound) Decode(d *jx.Decoder) error {
+// Decode decodes APIV1SandboxesIDObservabilityEventsGetServiceUnavailable from json.
+func (s *APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDLogsGetNotFound to nil")
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityEventsGetServiceUnavailable to nil")
 	}
 	var unwrapped ErrorEnvelope
 	if err := func() error {
@@ -1267,19 +1381,247 @@ func (s *APIV1SandboxesIDLogsGetNotFound) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = APIV1SandboxesIDLogsGetNotFound(unwrapped)
+	*s = APIV1SandboxesIDObservabilityEventsGetServiceUnavailable(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDLogsGetNotFound) MarshalJSON() ([]byte, error) {
+func (s *APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDLogsGetNotFound) UnmarshalJSON(data []byte) error {
+func (s *APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityLogsGetBadRequest as json.
+func (s *APIV1SandboxesIDObservabilityLogsGetBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityLogsGetBadRequest from json.
+func (s *APIV1SandboxesIDObservabilityLogsGetBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityLogsGetBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityLogsGetBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityLogsGetForbidden as json.
+func (s *APIV1SandboxesIDObservabilityLogsGetForbidden) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityLogsGetForbidden from json.
+func (s *APIV1SandboxesIDObservabilityLogsGetForbidden) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityLogsGetForbidden to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityLogsGetForbidden(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetForbidden) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetForbidden) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityLogsGetServiceUnavailable as json.
+func (s *APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityLogsGetServiceUnavailable from json.
+func (s *APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityLogsGetServiceUnavailable to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityLogsGetServiceUnavailable(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityMetricsGetBadRequest as json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetBadRequest) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityMetricsGetBadRequest from json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetBadRequest) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityMetricsGetBadRequest to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityMetricsGetBadRequest(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetBadRequest) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetBadRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityMetricsGetForbidden as json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetForbidden) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityMetricsGetForbidden from json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetForbidden) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityMetricsGetForbidden to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityMetricsGetForbidden(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetForbidden) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetForbidden) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable as json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable from json.
+func (s *APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -5006,154 +5348,6 @@ func (s ContextResponseEnvVars) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ContextResponseEnvVars) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *ContextStatsResponse) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *ContextStatsResponse) encodeFields(e *jx.Encoder) {
-	{
-		if s.ContextID.Set {
-			e.FieldStart("context_id")
-			s.ContextID.Encode(e)
-		}
-	}
-	{
-		if s.Type.Set {
-			e.FieldStart("type")
-			s.Type.Encode(e)
-		}
-	}
-	{
-		if s.Alias.Set {
-			e.FieldStart("alias")
-			s.Alias.Encode(e)
-		}
-	}
-	{
-		if s.Running.Set {
-			e.FieldStart("running")
-			s.Running.Encode(e)
-		}
-	}
-	{
-		if s.Paused.Set {
-			e.FieldStart("paused")
-			s.Paused.Encode(e)
-		}
-	}
-	{
-		if s.Usage.Set {
-			e.FieldStart("usage")
-			s.Usage.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfContextStatsResponse = [6]string{
-	0: "context_id",
-	1: "type",
-	2: "alias",
-	3: "running",
-	4: "paused",
-	5: "usage",
-}
-
-// Decode decodes ContextStatsResponse from json.
-func (s *ContextStatsResponse) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ContextStatsResponse to nil")
-	}
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "context_id":
-			if err := func() error {
-				s.ContextID.Reset()
-				if err := s.ContextID.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"context_id\"")
-			}
-		case "type":
-			if err := func() error {
-				s.Type.Reset()
-				if err := s.Type.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
-		case "alias":
-			if err := func() error {
-				s.Alias.Reset()
-				if err := s.Alias.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"alias\"")
-			}
-		case "running":
-			if err := func() error {
-				s.Running.Reset()
-				if err := s.Running.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"running\"")
-			}
-		case "paused":
-			if err := func() error {
-				s.Paused.Reset()
-				if err := s.Paused.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"paused\"")
-			}
-		case "usage":
-			if err := func() error {
-				s.Usage.Reset()
-				if err := s.Usage.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"usage\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode ContextStatsResponse")
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *ContextStatsResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ContextStatsResponse) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -12897,6 +13091,48 @@ func (s *NodeSelectorTerm) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes ObservabilityEventSource as json.
+func (s ObservabilityEventSource) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes ObservabilityEventSource from json.
+func (s *ObservabilityEventSource) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ObservabilityEventSource to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch ObservabilityEventSource(v) {
+	case ObservabilityEventSourceManager:
+		*s = ObservabilityEventSourceManager
+	case ObservabilityEventSourceNetd:
+		*s = ObservabilityEventSourceNetd
+	case ObservabilityEventSourceProcd:
+		*s = ObservabilityEventSourceProcd
+	default:
+		*s = ObservabilityEventSource(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ObservabilityEventSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ObservabilityEventSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes Affinity as json.
 func (o OptAffinity) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -13226,39 +13462,6 @@ func (s OptContextResponseEnvVars) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptContextResponseEnvVars) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes ContextStatsResponse as json.
-func (o OptContextStatsResponse) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes ContextStatsResponse from json.
-func (o *OptContextStatsResponse) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptContextStatsResponse to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptContextStatsResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptContextStatsResponse) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -14781,6 +14984,39 @@ func (s *OptNodeSelector) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes ObservabilityEventSource as json.
+func (o OptObservabilityEventSource) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes ObservabilityEventSource from json.
+func (o *OptObservabilityEventSource) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptObservabilityEventSource to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptObservabilityEventSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptObservabilityEventSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes PTYSize as json.
 func (o OptPTYSize) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -15869,6 +16105,306 @@ func (s OptSandboxNetworkPolicy) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandboxNetworkPolicy) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityEventAttributes as json.
+func (o OptSandboxObservabilityEventAttributes) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityEventAttributes from json.
+func (o *OptSandboxObservabilityEventAttributes) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityEventAttributes to nil")
+	}
+	o.Set = true
+	o.Value = make(SandboxObservabilityEventAttributes)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityEventAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityEventAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityEventType as json.
+func (o OptSandboxObservabilityEventType) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SandboxObservabilityEventType from json.
+func (o *OptSandboxObservabilityEventType) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityEventType to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityEventType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityEventType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityEventsResponse as json.
+func (o OptSandboxObservabilityEventsResponse) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityEventsResponse from json.
+func (o *OptSandboxObservabilityEventsResponse) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityEventsResponse to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityEventsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityEventsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityLogEntryAttributes as json.
+func (o OptSandboxObservabilityLogEntryAttributes) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityLogEntryAttributes from json.
+func (o *OptSandboxObservabilityLogEntryAttributes) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityLogEntryAttributes to nil")
+	}
+	o.Set = true
+	o.Value = make(SandboxObservabilityLogEntryAttributes)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityLogEntryAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityLogEntryAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityLogStream as json.
+func (o OptSandboxObservabilityLogStream) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SandboxObservabilityLogStream from json.
+func (o *OptSandboxObservabilityLogStream) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityLogStream to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityLogStream) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityLogStream) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityLogsResponse as json.
+func (o OptSandboxObservabilityLogsResponse) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityLogsResponse from json.
+func (o *OptSandboxObservabilityLogsResponse) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityLogsResponse to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityLogsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityLogsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityMetricSampleAttributes as json.
+func (o OptSandboxObservabilityMetricSampleAttributes) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityMetricSampleAttributes from json.
+func (o *OptSandboxObservabilityMetricSampleAttributes) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityMetricSampleAttributes to nil")
+	}
+	o.Set = true
+	o.Value = make(SandboxObservabilityMetricSampleAttributes)
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityMetricSampleAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityMetricSampleAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityMetricsResponse as json.
+func (o OptSandboxObservabilityMetricsResponse) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxObservabilityMetricsResponse from json.
+func (o *OptSandboxObservabilityMetricsResponse) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityMetricsResponse to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityMetricsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityMetricsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityOutcome as json.
+func (o OptSandboxObservabilityOutcome) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SandboxObservabilityOutcome from json.
+func (o *OptSandboxObservabilityOutcome) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxObservabilityOutcome to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxObservabilityOutcome) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxObservabilityOutcome) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -25477,6 +26013,1578 @@ func (s *SandboxNetworkPolicyMode) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SandboxObservabilityEvent) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityEvent) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("team_id")
+		e.Str(s.TeamID)
+	}
+	{
+		e.FieldStart("sandbox_id")
+		e.Str(s.SandboxID)
+	}
+	{
+		e.FieldStart("region_id")
+		e.Str(s.RegionID)
+	}
+	{
+		e.FieldStart("cluster_id")
+		e.Str(s.ClusterID)
+	}
+	{
+		e.FieldStart("occurred_at")
+		json.EncodeDateTime(e, s.OccurredAt)
+	}
+	{
+		e.FieldStart("ingested_at")
+		json.EncodeDateTime(e, s.IngestedAt)
+	}
+	{
+		e.FieldStart("source")
+		s.Source.Encode(e)
+	}
+	{
+		e.FieldStart("event_type")
+		s.EventType.Encode(e)
+	}
+	{
+		if s.Outcome.Set {
+			e.FieldStart("outcome")
+			s.Outcome.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("cursor")
+		e.Str(s.Cursor)
+	}
+	{
+		e.FieldStart("watermark")
+		e.Str(s.Watermark)
+	}
+	{
+		if s.Attributes.Set {
+			e.FieldStart("attributes")
+			s.Attributes.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityEvent = [12]string{
+	0:  "team_id",
+	1:  "sandbox_id",
+	2:  "region_id",
+	3:  "cluster_id",
+	4:  "occurred_at",
+	5:  "ingested_at",
+	6:  "source",
+	7:  "event_type",
+	8:  "outcome",
+	9:  "cursor",
+	10: "watermark",
+	11: "attributes",
+}
+
+// Decode decodes SandboxObservabilityEvent from json.
+func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityEvent to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "team_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.TeamID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"team_id\"")
+			}
+		case "sandbox_id":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.SandboxID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_id\"")
+			}
+		case "region_id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.RegionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region_id\"")
+			}
+		case "cluster_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClusterID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cluster_id\"")
+			}
+		case "occurred_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.OccurredAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"occurred_at\"")
+			}
+		case "ingested_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.IngestedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ingested_at\"")
+			}
+		case "source":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				if err := s.Source.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source\"")
+			}
+		case "event_type":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				if err := s.EventType.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"event_type\"")
+			}
+		case "outcome":
+			if err := func() error {
+				s.Outcome.Reset()
+				if err := s.Outcome.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"outcome\"")
+			}
+		case "cursor":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Cursor = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cursor\"")
+			}
+		case "watermark":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Watermark = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"watermark\"")
+			}
+		case "attributes":
+			if err := func() error {
+				s.Attributes.Reset()
+				if err := s.Attributes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attributes\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityEvent")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00000110,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityEvent) {
+					name = jsonFieldsNameOfSandboxObservabilityEvent[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityEvent) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityEvent) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s SandboxObservabilityEventAttributes) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s SandboxObservabilityEventAttributes) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		if len(elem) != 0 {
+			e.Raw(elem)
+		}
+	}
+}
+
+// Decode decodes SandboxObservabilityEventAttributes from json.
+func (s *SandboxObservabilityEventAttributes) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityEventAttributes to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem jx.Raw
+		if err := func() error {
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityEventAttributes")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityEventAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityEventAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityEventType as json.
+func (s SandboxObservabilityEventType) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxObservabilityEventType from json.
+func (s *SandboxObservabilityEventType) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityEventType to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxObservabilityEventType(v) {
+	case SandboxObservabilityEventTypeLifecycle:
+		*s = SandboxObservabilityEventTypeLifecycle
+	case SandboxObservabilityEventTypeNetworkAudit:
+		*s = SandboxObservabilityEventTypeNetworkAudit
+	case SandboxObservabilityEventTypeRuntimeStats:
+		*s = SandboxObservabilityEventTypeRuntimeStats
+	default:
+		*s = SandboxObservabilityEventType(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityEventType) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityEventType) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxObservabilityEventsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityEventsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("events")
+		e.ArrStart()
+		for _, elem := range s.Events {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+	{
+		if s.NextCursor.Set {
+			e.FieldStart("next_cursor")
+			s.NextCursor.Encode(e)
+		}
+	}
+	{
+		if s.Watermark.Set {
+			e.FieldStart("watermark")
+			s.Watermark.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityEventsResponse = [3]string{
+	0: "events",
+	1: "next_cursor",
+	2: "watermark",
+}
+
+// Decode decodes SandboxObservabilityEventsResponse from json.
+func (s *SandboxObservabilityEventsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityEventsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "events":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				s.Events = make([]SandboxObservabilityEvent, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem SandboxObservabilityEvent
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Events = append(s.Events, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"events\"")
+			}
+		case "next_cursor":
+			if err := func() error {
+				s.NextCursor.Reset()
+				if err := s.NextCursor.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"next_cursor\"")
+			}
+		case "watermark":
+			if err := func() error {
+				s.Watermark.Reset()
+				if err := s.Watermark.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"watermark\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityEventsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityEventsResponse) {
+					name = jsonFieldsNameOfSandboxObservabilityEventsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityEventsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityEventsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxObservabilityLogEntry) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityLogEntry) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("team_id")
+		e.Str(s.TeamID)
+	}
+	{
+		e.FieldStart("sandbox_id")
+		e.Str(s.SandboxID)
+	}
+	{
+		e.FieldStart("region_id")
+		e.Str(s.RegionID)
+	}
+	{
+		e.FieldStart("cluster_id")
+		e.Str(s.ClusterID)
+	}
+	{
+		if s.ContextID.Set {
+			e.FieldStart("context_id")
+			s.ContextID.Encode(e)
+		}
+	}
+	{
+		if s.ProcessID.Set {
+			e.FieldStart("process_id")
+			s.ProcessID.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("occurred_at")
+		json.EncodeDateTime(e, s.OccurredAt)
+	}
+	{
+		e.FieldStart("ingested_at")
+		json.EncodeDateTime(e, s.IngestedAt)
+	}
+	{
+		if s.Stream.Set {
+			e.FieldStart("stream")
+			s.Stream.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("message")
+		e.Str(s.Message)
+	}
+	{
+		e.FieldStart("cursor")
+		e.Str(s.Cursor)
+	}
+	{
+		if s.Attributes.Set {
+			e.FieldStart("attributes")
+			s.Attributes.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityLogEntry = [12]string{
+	0:  "team_id",
+	1:  "sandbox_id",
+	2:  "region_id",
+	3:  "cluster_id",
+	4:  "context_id",
+	5:  "process_id",
+	6:  "occurred_at",
+	7:  "ingested_at",
+	8:  "stream",
+	9:  "message",
+	10: "cursor",
+	11: "attributes",
+}
+
+// Decode decodes SandboxObservabilityLogEntry from json.
+func (s *SandboxObservabilityLogEntry) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityLogEntry to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "team_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.TeamID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"team_id\"")
+			}
+		case "sandbox_id":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.SandboxID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_id\"")
+			}
+		case "region_id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.RegionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region_id\"")
+			}
+		case "cluster_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClusterID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cluster_id\"")
+			}
+		case "context_id":
+			if err := func() error {
+				s.ContextID.Reset()
+				if err := s.ContextID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"context_id\"")
+			}
+		case "process_id":
+			if err := func() error {
+				s.ProcessID.Reset()
+				if err := s.ProcessID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"process_id\"")
+			}
+		case "occurred_at":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.OccurredAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"occurred_at\"")
+			}
+		case "ingested_at":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.IngestedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ingested_at\"")
+			}
+		case "stream":
+			if err := func() error {
+				s.Stream.Reset()
+				if err := s.Stream.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stream\"")
+			}
+		case "message":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Message = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"message\"")
+			}
+		case "cursor":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Cursor = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cursor\"")
+			}
+		case "attributes":
+			if err := func() error {
+				s.Attributes.Reset()
+				if err := s.Attributes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attributes\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityLogEntry")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b11001111,
+		0b00000110,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityLogEntry) {
+					name = jsonFieldsNameOfSandboxObservabilityLogEntry[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityLogEntry) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityLogEntry) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s SandboxObservabilityLogEntryAttributes) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s SandboxObservabilityLogEntryAttributes) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		if len(elem) != 0 {
+			e.Raw(elem)
+		}
+	}
+}
+
+// Decode decodes SandboxObservabilityLogEntryAttributes from json.
+func (s *SandboxObservabilityLogEntryAttributes) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityLogEntryAttributes to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem jx.Raw
+		if err := func() error {
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityLogEntryAttributes")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityLogEntryAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityLogEntryAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityLogStream as json.
+func (s SandboxObservabilityLogStream) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxObservabilityLogStream from json.
+func (s *SandboxObservabilityLogStream) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityLogStream to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxObservabilityLogStream(v) {
+	case SandboxObservabilityLogStreamStdout:
+		*s = SandboxObservabilityLogStreamStdout
+	case SandboxObservabilityLogStreamStderr:
+		*s = SandboxObservabilityLogStreamStderr
+	case SandboxObservabilityLogStreamPty:
+		*s = SandboxObservabilityLogStreamPty
+	default:
+		*s = SandboxObservabilityLogStream(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityLogStream) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityLogStream) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxObservabilityLogsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityLogsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("logs")
+		e.ArrStart()
+		for _, elem := range s.Logs {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+	{
+		if s.NextCursor.Set {
+			e.FieldStart("next_cursor")
+			s.NextCursor.Encode(e)
+		}
+	}
+	{
+		if s.Watermark.Set {
+			e.FieldStart("watermark")
+			s.Watermark.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityLogsResponse = [3]string{
+	0: "logs",
+	1: "next_cursor",
+	2: "watermark",
+}
+
+// Decode decodes SandboxObservabilityLogsResponse from json.
+func (s *SandboxObservabilityLogsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityLogsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "logs":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				s.Logs = make([]SandboxObservabilityLogEntry, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem SandboxObservabilityLogEntry
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Logs = append(s.Logs, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"logs\"")
+			}
+		case "next_cursor":
+			if err := func() error {
+				s.NextCursor.Reset()
+				if err := s.NextCursor.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"next_cursor\"")
+			}
+		case "watermark":
+			if err := func() error {
+				s.Watermark.Reset()
+				if err := s.Watermark.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"watermark\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityLogsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityLogsResponse) {
+					name = jsonFieldsNameOfSandboxObservabilityLogsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityLogsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityLogsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxObservabilityMetricSample) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityMetricSample) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("team_id")
+		e.Str(s.TeamID)
+	}
+	{
+		e.FieldStart("sandbox_id")
+		e.Str(s.SandboxID)
+	}
+	{
+		e.FieldStart("region_id")
+		e.Str(s.RegionID)
+	}
+	{
+		e.FieldStart("cluster_id")
+		e.Str(s.ClusterID)
+	}
+	{
+		if s.ContextID.Set {
+			e.FieldStart("context_id")
+			s.ContextID.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("occurred_at")
+		json.EncodeDateTime(e, s.OccurredAt)
+	}
+	{
+		e.FieldStart("ingested_at")
+		json.EncodeDateTime(e, s.IngestedAt)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Unit.Set {
+			e.FieldStart("unit")
+			s.Unit.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("value")
+		e.Float64(s.Value)
+	}
+	{
+		e.FieldStart("cursor")
+		e.Str(s.Cursor)
+	}
+	{
+		if s.Attributes.Set {
+			e.FieldStart("attributes")
+			s.Attributes.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityMetricSample = [12]string{
+	0:  "team_id",
+	1:  "sandbox_id",
+	2:  "region_id",
+	3:  "cluster_id",
+	4:  "context_id",
+	5:  "occurred_at",
+	6:  "ingested_at",
+	7:  "name",
+	8:  "unit",
+	9:  "value",
+	10: "cursor",
+	11: "attributes",
+}
+
+// Decode decodes SandboxObservabilityMetricSample from json.
+func (s *SandboxObservabilityMetricSample) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityMetricSample to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "team_id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.TeamID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"team_id\"")
+			}
+		case "sandbox_id":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.SandboxID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sandbox_id\"")
+			}
+		case "region_id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.RegionID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region_id\"")
+			}
+		case "cluster_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClusterID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cluster_id\"")
+			}
+		case "context_id":
+			if err := func() error {
+				s.ContextID.Reset()
+				if err := s.ContextID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"context_id\"")
+			}
+		case "occurred_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.OccurredAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"occurred_at\"")
+			}
+		case "ingested_at":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.IngestedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ingested_at\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "unit":
+			if err := func() error {
+				s.Unit.Reset()
+				if err := s.Unit.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"unit\"")
+			}
+		case "value":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Float64()
+				s.Value = float64(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"value\"")
+			}
+		case "cursor":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Cursor = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cursor\"")
+			}
+		case "attributes":
+			if err := func() error {
+				s.Attributes.Reset()
+				if err := s.Attributes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attributes\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityMetricSample")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b11101111,
+		0b00000110,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityMetricSample) {
+					name = jsonFieldsNameOfSandboxObservabilityMetricSample[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityMetricSample) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityMetricSample) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s SandboxObservabilityMetricSampleAttributes) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields implements json.Marshaler.
+func (s SandboxObservabilityMetricSampleAttributes) encodeFields(e *jx.Encoder) {
+	for k, elem := range s {
+		e.FieldStart(k)
+
+		if len(elem) != 0 {
+			e.Raw(elem)
+		}
+	}
+}
+
+// Decode decodes SandboxObservabilityMetricSampleAttributes from json.
+func (s *SandboxObservabilityMetricSampleAttributes) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityMetricSampleAttributes to nil")
+	}
+	m := s.init()
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		var elem jx.Raw
+		if err := func() error {
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return errors.Wrapf(err, "decode field %q", k)
+		}
+		m[string(k)] = elem
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityMetricSampleAttributes")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityMetricSampleAttributes) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityMetricSampleAttributes) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxObservabilityMetricsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityMetricsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("samples")
+		e.ArrStart()
+		for _, elem := range s.Samples {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+	{
+		if s.NextCursor.Set {
+			e.FieldStart("next_cursor")
+			s.NextCursor.Encode(e)
+		}
+	}
+	{
+		if s.Watermark.Set {
+			e.FieldStart("watermark")
+			s.Watermark.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityMetricsResponse = [3]string{
+	0: "samples",
+	1: "next_cursor",
+	2: "watermark",
+}
+
+// Decode decodes SandboxObservabilityMetricsResponse from json.
+func (s *SandboxObservabilityMetricsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityMetricsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "samples":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				s.Samples = make([]SandboxObservabilityMetricSample, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem SandboxObservabilityMetricSample
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Samples = append(s.Samples, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"samples\"")
+			}
+		case "next_cursor":
+			if err := func() error {
+				s.NextCursor.Reset()
+				if err := s.NextCursor.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"next_cursor\"")
+			}
+		case "watermark":
+			if err := func() error {
+				s.Watermark.Reset()
+				if err := s.Watermark.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"watermark\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityMetricsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityMetricsResponse) {
+					name = jsonFieldsNameOfSandboxObservabilityMetricsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityMetricsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityMetricsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxObservabilityOutcome as json.
+func (s SandboxObservabilityOutcome) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxObservabilityOutcome from json.
+func (s *SandboxObservabilityOutcome) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityOutcome to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxObservabilityOutcome(v) {
+	case SandboxObservabilityOutcomeCompleted:
+		*s = SandboxObservabilityOutcomeCompleted
+	case SandboxObservabilityOutcomeDenied:
+		*s = SandboxObservabilityOutcomeDenied
+	case SandboxObservabilityOutcomeError:
+		*s = SandboxObservabilityOutcomeError
+	case SandboxObservabilityOutcomeSucceeded:
+		*s = SandboxObservabilityOutcomeSucceeded
+	case SandboxObservabilityOutcomeFailed:
+		*s = SandboxObservabilityOutcomeFailed
+	default:
+		*s = SandboxObservabilityOutcome(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxObservabilityOutcome) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityOutcome) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SandboxRefreshRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -30162,149 +32270,6 @@ func (s SuccessContextResponseSuccess) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SuccessContextResponseSuccess) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *SuccessContextStatsResponse) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *SuccessContextStatsResponse) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("success")
-		s.Success.Encode(e)
-	}
-	{
-		if s.Data.Set {
-			e.FieldStart("data")
-			s.Data.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfSuccessContextStatsResponse = [2]string{
-	0: "success",
-	1: "data",
-}
-
-// Decode decodes SuccessContextStatsResponse from json.
-func (s *SuccessContextStatsResponse) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SuccessContextStatsResponse to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "success":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Success.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"success\"")
-			}
-		case "data":
-			if err := func() error {
-				s.Data.Reset()
-				if err := s.Data.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"data\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode SuccessContextStatsResponse")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfSuccessContextStatsResponse) {
-					name = jsonFieldsNameOfSuccessContextStatsResponse[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *SuccessContextStatsResponse) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SuccessContextStatsResponse) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes SuccessContextStatsResponseSuccess as json.
-func (s SuccessContextStatsResponseSuccess) Encode(e *jx.Encoder) {
-	e.Bool(bool(s))
-}
-
-// Decode decodes SuccessContextStatsResponseSuccess from json.
-func (s *SuccessContextStatsResponseSuccess) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode SuccessContextStatsResponseSuccess to nil")
-	}
-	v, err := d.Bool()
-	if err != nil {
-		return err
-	}
-	*s = SuccessContextStatsResponseSuccess(v)
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s SuccessContextStatsResponseSuccess) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *SuccessContextStatsResponseSuccess) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -35563,6 +37528,435 @@ func (s SuccessSandboxNetworkPolicyResponseSuccess) MarshalJSON() ([]byte, error
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SuccessSandboxNetworkPolicyResponseSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SuccessSandboxObservabilityEventsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSandboxObservabilityEventsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data.Set {
+			e.FieldStart("data")
+			s.Data.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSandboxObservabilityEventsResponse = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes SuccessSandboxObservabilityEventsResponse from json.
+func (s *SuccessSandboxObservabilityEventsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityEventsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data.Reset()
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSandboxObservabilityEventsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSuccessSandboxObservabilityEventsResponse) {
+					name = jsonFieldsNameOfSuccessSandboxObservabilityEventsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSandboxObservabilityEventsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityEventsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSandboxObservabilityEventsResponseSuccess as json.
+func (s SuccessSandboxObservabilityEventsResponseSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes SuccessSandboxObservabilityEventsResponseSuccess from json.
+func (s *SuccessSandboxObservabilityEventsResponseSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityEventsResponseSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = SuccessSandboxObservabilityEventsResponseSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SuccessSandboxObservabilityEventsResponseSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityEventsResponseSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SuccessSandboxObservabilityLogsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSandboxObservabilityLogsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data.Set {
+			e.FieldStart("data")
+			s.Data.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSandboxObservabilityLogsResponse = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes SuccessSandboxObservabilityLogsResponse from json.
+func (s *SuccessSandboxObservabilityLogsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityLogsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data.Reset()
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSandboxObservabilityLogsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSuccessSandboxObservabilityLogsResponse) {
+					name = jsonFieldsNameOfSuccessSandboxObservabilityLogsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSandboxObservabilityLogsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityLogsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSandboxObservabilityLogsResponseSuccess as json.
+func (s SuccessSandboxObservabilityLogsResponseSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes SuccessSandboxObservabilityLogsResponseSuccess from json.
+func (s *SuccessSandboxObservabilityLogsResponseSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityLogsResponseSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = SuccessSandboxObservabilityLogsResponseSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SuccessSandboxObservabilityLogsResponseSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityLogsResponseSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SuccessSandboxObservabilityMetricsResponse) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SuccessSandboxObservabilityMetricsResponse) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data.Set {
+			e.FieldStart("data")
+			s.Data.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSuccessSandboxObservabilityMetricsResponse = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes SuccessSandboxObservabilityMetricsResponse from json.
+func (s *SuccessSandboxObservabilityMetricsResponse) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityMetricsResponse to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data.Reset()
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SuccessSandboxObservabilityMetricsResponse")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSuccessSandboxObservabilityMetricsResponse) {
+					name = jsonFieldsNameOfSuccessSandboxObservabilityMetricsResponse[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SuccessSandboxObservabilityMetricsResponse) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityMetricsResponse) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SuccessSandboxObservabilityMetricsResponseSuccess as json.
+func (s SuccessSandboxObservabilityMetricsResponseSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes SuccessSandboxObservabilityMetricsResponseSuccess from json.
+func (s *SuccessSandboxObservabilityMetricsResponseSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SuccessSandboxObservabilityMetricsResponseSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = SuccessSandboxObservabilityMetricsResponseSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SuccessSandboxObservabilityMetricsResponseSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SuccessSandboxObservabilityMetricsResponseSuccess) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

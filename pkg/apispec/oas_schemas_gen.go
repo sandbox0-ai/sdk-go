@@ -218,6 +218,18 @@ type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
 
+type APIV1SandboxesIDAuditEventsGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDAuditEventsGetBadRequest) aPIV1SandboxesIDAuditEventsGetRes() {}
+
+type APIV1SandboxesIDAuditEventsGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDAuditEventsGetForbidden) aPIV1SandboxesIDAuditEventsGetRes() {}
+
+type APIV1SandboxesIDAuditEventsGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDAuditEventsGetServiceUnavailable) aPIV1SandboxesIDAuditEventsGetRes() {}
+
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
 
@@ -320,92 +332,47 @@ type APIV1SandboxesIDGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDGetNotFound) aPIV1SandboxesIDGetRes() {}
 
-type APIV1SandboxesIDLogsGetBadRequest ErrorEnvelope
+type APIV1SandboxesIDObservabilityEventsGetBadRequest ErrorEnvelope
 
-func (*APIV1SandboxesIDLogsGetBadRequest) aPIV1SandboxesIDLogsGetRes() {}
-
-type APIV1SandboxesIDLogsGetForbidden ErrorEnvelope
-
-func (*APIV1SandboxesIDLogsGetForbidden) aPIV1SandboxesIDLogsGetRes() {}
-
-type APIV1SandboxesIDLogsGetNotFound ErrorEnvelope
-
-func (*APIV1SandboxesIDLogsGetNotFound) aPIV1SandboxesIDLogsGetRes() {}
-
-type APIV1SandboxesIDLogsGetOK struct {
-	Data io.Reader
+func (*APIV1SandboxesIDObservabilityEventsGetBadRequest) aPIV1SandboxesIDObservabilityEventsGetRes() {
 }
 
-// Read reads data from the Data reader.
-//
-// Kept to satisfy the io.Reader interface.
-func (s APIV1SandboxesIDLogsGetOK) Read(p []byte) (n int, err error) {
-	if s.Data == nil {
-		return 0, io.EOF
-	}
-	return s.Data.Read(p)
+type APIV1SandboxesIDObservabilityEventsGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityEventsGetForbidden) aPIV1SandboxesIDObservabilityEventsGetRes() {}
+
+type APIV1SandboxesIDObservabilityEventsGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) aPIV1SandboxesIDObservabilityEventsGetRes() {
 }
 
-// APIV1SandboxesIDLogsGetOKHeaders wraps APIV1SandboxesIDLogsGetOK with response headers.
-type APIV1SandboxesIDLogsGetOKHeaders struct {
-	XSandboxID           OptString
-	XSandboxLogContainer OptString
-	XSandboxLogPrevious  OptBool
-	XSandboxPodName      OptString
-	Response             APIV1SandboxesIDLogsGetOK
+type APIV1SandboxesIDObservabilityLogsGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityLogsGetBadRequest) aPIV1SandboxesIDObservabilityLogsGetRes() {}
+
+type APIV1SandboxesIDObservabilityLogsGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityLogsGetForbidden) aPIV1SandboxesIDObservabilityLogsGetRes() {}
+
+type APIV1SandboxesIDObservabilityLogsGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) aPIV1SandboxesIDObservabilityLogsGetRes() {
 }
 
-// GetXSandboxID returns the value of XSandboxID.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxID() OptString {
-	return s.XSandboxID
+type APIV1SandboxesIDObservabilityMetricsGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityMetricsGetBadRequest) aPIV1SandboxesIDObservabilityMetricsGetRes() {
 }
 
-// GetXSandboxLogContainer returns the value of XSandboxLogContainer.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxLogContainer() OptString {
-	return s.XSandboxLogContainer
+type APIV1SandboxesIDObservabilityMetricsGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityMetricsGetForbidden) aPIV1SandboxesIDObservabilityMetricsGetRes() {
 }
 
-// GetXSandboxLogPrevious returns the value of XSandboxLogPrevious.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxLogPrevious() OptBool {
-	return s.XSandboxLogPrevious
-}
+type APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable ErrorEnvelope
 
-// GetXSandboxPodName returns the value of XSandboxPodName.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) GetXSandboxPodName() OptString {
-	return s.XSandboxPodName
+func (*APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) aPIV1SandboxesIDObservabilityMetricsGetRes() {
 }
-
-// GetResponse returns the value of Response.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) GetResponse() APIV1SandboxesIDLogsGetOK {
-	return s.Response
-}
-
-// SetXSandboxID sets the value of XSandboxID.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxID(val OptString) {
-	s.XSandboxID = val
-}
-
-// SetXSandboxLogContainer sets the value of XSandboxLogContainer.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxLogContainer(val OptString) {
-	s.XSandboxLogContainer = val
-}
-
-// SetXSandboxLogPrevious sets the value of XSandboxLogPrevious.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxLogPrevious(val OptBool) {
-	s.XSandboxLogPrevious = val
-}
-
-// SetXSandboxPodName sets the value of XSandboxPodName.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) SetXSandboxPodName(val OptString) {
-	s.XSandboxPodName = val
-}
-
-// SetResponse sets the value of Response.
-func (s *APIV1SandboxesIDLogsGetOKHeaders) SetResponse(val APIV1SandboxesIDLogsGetOK) {
-	s.Response = val
-}
-
-func (*APIV1SandboxesIDLogsGetOKHeaders) aPIV1SandboxesIDLogsGetRes() {}
 
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
@@ -1518,77 +1485,6 @@ func (s *ContextResponseEnvVars) init() ContextResponseEnvVars {
 		*s = m
 	}
 	return m
-}
-
-// Ref: #/components/schemas/ContextStatsResponse
-type ContextStatsResponse struct {
-	ContextID OptString `json:"context_id"`
-	Type      OptString `json:"type"`
-	// Alias for the REPL or CLI tool (e.g., python, node, bash, redis-cli).
-	Alias   OptString        `json:"alias"`
-	Running OptBool          `json:"running"`
-	Paused  OptBool          `json:"paused"`
-	Usage   OptResourceUsage `json:"usage"`
-}
-
-// GetContextID returns the value of ContextID.
-func (s *ContextStatsResponse) GetContextID() OptString {
-	return s.ContextID
-}
-
-// GetType returns the value of Type.
-func (s *ContextStatsResponse) GetType() OptString {
-	return s.Type
-}
-
-// GetAlias returns the value of Alias.
-func (s *ContextStatsResponse) GetAlias() OptString {
-	return s.Alias
-}
-
-// GetRunning returns the value of Running.
-func (s *ContextStatsResponse) GetRunning() OptBool {
-	return s.Running
-}
-
-// GetPaused returns the value of Paused.
-func (s *ContextStatsResponse) GetPaused() OptBool {
-	return s.Paused
-}
-
-// GetUsage returns the value of Usage.
-func (s *ContextStatsResponse) GetUsage() OptResourceUsage {
-	return s.Usage
-}
-
-// SetContextID sets the value of ContextID.
-func (s *ContextStatsResponse) SetContextID(val OptString) {
-	s.ContextID = val
-}
-
-// SetType sets the value of Type.
-func (s *ContextStatsResponse) SetType(val OptString) {
-	s.Type = val
-}
-
-// SetAlias sets the value of Alias.
-func (s *ContextStatsResponse) SetAlias(val OptString) {
-	s.Alias = val
-}
-
-// SetRunning sets the value of Running.
-func (s *ContextStatsResponse) SetRunning(val OptBool) {
-	s.Running = val
-}
-
-// SetPaused sets the value of Paused.
-func (s *ContextStatsResponse) SetPaused(val OptBool) {
-	s.Paused = val
-}
-
-// SetUsage sets the value of Usage.
-func (s *ContextStatsResponse) SetUsage(val OptResourceUsage) {
-	s.Usage = val
 }
 
 // Ref: #/components/schemas/CreateAPIKeyRequest
@@ -4630,6 +4526,55 @@ func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 	s.MatchFields = val
 }
 
+// Ref: #/components/schemas/ObservabilityEventSource
+type ObservabilityEventSource string
+
+const (
+	ObservabilityEventSourceManager ObservabilityEventSource = "manager"
+	ObservabilityEventSourceNetd    ObservabilityEventSource = "netd"
+	ObservabilityEventSourceProcd   ObservabilityEventSource = "procd"
+)
+
+// AllValues returns all ObservabilityEventSource values.
+func (ObservabilityEventSource) AllValues() []ObservabilityEventSource {
+	return []ObservabilityEventSource{
+		ObservabilityEventSourceManager,
+		ObservabilityEventSourceNetd,
+		ObservabilityEventSourceProcd,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ObservabilityEventSource) MarshalText() ([]byte, error) {
+	switch s {
+	case ObservabilityEventSourceManager:
+		return []byte(s), nil
+	case ObservabilityEventSourceNetd:
+		return []byte(s), nil
+	case ObservabilityEventSourceProcd:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
+	switch ObservabilityEventSource(data) {
+	case ObservabilityEventSourceManager:
+		*s = ObservabilityEventSourceManager
+		return nil
+	case ObservabilityEventSourceNetd:
+		*s = ObservabilityEventSourceNetd
+		return nil
+	case ObservabilityEventSourceProcd:
+		*s = ObservabilityEventSourceProcd
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // NewOptAffinity returns new OptAffinity with value set to v.
 func NewOptAffinity(v Affinity) OptAffinity {
 	return OptAffinity{
@@ -5084,52 +5029,6 @@ func (o OptContextResponseEnvVars) Get() (v ContextResponseEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptContextResponseEnvVars) Or(d ContextResponseEnvVars) ContextResponseEnvVars {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptContextStatsResponse returns new OptContextStatsResponse with value set to v.
-func NewOptContextStatsResponse(v ContextStatsResponse) OptContextStatsResponse {
-	return OptContextStatsResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptContextStatsResponse is optional ContextStatsResponse.
-type OptContextStatsResponse struct {
-	Value ContextStatsResponse
-	Set   bool
-}
-
-// IsSet returns true if OptContextStatsResponse was set.
-func (o OptContextStatsResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptContextStatsResponse) Reset() {
-	var v ContextStatsResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptContextStatsResponse) SetTo(v ContextStatsResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptContextStatsResponse) Get() (v ContextStatsResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptContextStatsResponse) Or(d ContextStatsResponse) ContextStatsResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7211,6 +7110,52 @@ func (o OptNodeSelector) Or(d NodeSelector) NodeSelector {
 	return d
 }
 
+// NewOptObservabilityEventSource returns new OptObservabilityEventSource with value set to v.
+func NewOptObservabilityEventSource(v ObservabilityEventSource) OptObservabilityEventSource {
+	return OptObservabilityEventSource{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptObservabilityEventSource is optional ObservabilityEventSource.
+type OptObservabilityEventSource struct {
+	Value ObservabilityEventSource
+	Set   bool
+}
+
+// IsSet returns true if OptObservabilityEventSource was set.
+func (o OptObservabilityEventSource) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptObservabilityEventSource) Reset() {
+	var v ObservabilityEventSource
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptObservabilityEventSource) SetTo(v ObservabilityEventSource) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptObservabilityEventSource) Get() (v ObservabilityEventSource, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptObservabilityEventSource) Or(d ObservabilityEventSource) ObservabilityEventSource {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptPTYSize returns new OptPTYSize with value set to v.
 func NewOptPTYSize(v PTYSize) OptPTYSize {
 	return OptPTYSize{
@@ -8723,6 +8668,420 @@ func (o OptSandboxNetworkPolicy) Get() (v SandboxNetworkPolicy, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxNetworkPolicy) Or(d SandboxNetworkPolicy) SandboxNetworkPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityEventAttributes returns new OptSandboxObservabilityEventAttributes with value set to v.
+func NewOptSandboxObservabilityEventAttributes(v SandboxObservabilityEventAttributes) OptSandboxObservabilityEventAttributes {
+	return OptSandboxObservabilityEventAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityEventAttributes is optional SandboxObservabilityEventAttributes.
+type OptSandboxObservabilityEventAttributes struct {
+	Value SandboxObservabilityEventAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityEventAttributes was set.
+func (o OptSandboxObservabilityEventAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityEventAttributes) Reset() {
+	var v SandboxObservabilityEventAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityEventAttributes) SetTo(v SandboxObservabilityEventAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityEventAttributes) Get() (v SandboxObservabilityEventAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityEventAttributes) Or(d SandboxObservabilityEventAttributes) SandboxObservabilityEventAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityEventType returns new OptSandboxObservabilityEventType with value set to v.
+func NewOptSandboxObservabilityEventType(v SandboxObservabilityEventType) OptSandboxObservabilityEventType {
+	return OptSandboxObservabilityEventType{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityEventType is optional SandboxObservabilityEventType.
+type OptSandboxObservabilityEventType struct {
+	Value SandboxObservabilityEventType
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityEventType was set.
+func (o OptSandboxObservabilityEventType) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityEventType) Reset() {
+	var v SandboxObservabilityEventType
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityEventType) SetTo(v SandboxObservabilityEventType) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityEventType) Get() (v SandboxObservabilityEventType, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityEventType) Or(d SandboxObservabilityEventType) SandboxObservabilityEventType {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityEventsResponse returns new OptSandboxObservabilityEventsResponse with value set to v.
+func NewOptSandboxObservabilityEventsResponse(v SandboxObservabilityEventsResponse) OptSandboxObservabilityEventsResponse {
+	return OptSandboxObservabilityEventsResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityEventsResponse is optional SandboxObservabilityEventsResponse.
+type OptSandboxObservabilityEventsResponse struct {
+	Value SandboxObservabilityEventsResponse
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityEventsResponse was set.
+func (o OptSandboxObservabilityEventsResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityEventsResponse) Reset() {
+	var v SandboxObservabilityEventsResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityEventsResponse) SetTo(v SandboxObservabilityEventsResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityEventsResponse) Get() (v SandboxObservabilityEventsResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityEventsResponse) Or(d SandboxObservabilityEventsResponse) SandboxObservabilityEventsResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityLogEntryAttributes returns new OptSandboxObservabilityLogEntryAttributes with value set to v.
+func NewOptSandboxObservabilityLogEntryAttributes(v SandboxObservabilityLogEntryAttributes) OptSandboxObservabilityLogEntryAttributes {
+	return OptSandboxObservabilityLogEntryAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityLogEntryAttributes is optional SandboxObservabilityLogEntryAttributes.
+type OptSandboxObservabilityLogEntryAttributes struct {
+	Value SandboxObservabilityLogEntryAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityLogEntryAttributes was set.
+func (o OptSandboxObservabilityLogEntryAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityLogEntryAttributes) Reset() {
+	var v SandboxObservabilityLogEntryAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityLogEntryAttributes) SetTo(v SandboxObservabilityLogEntryAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityLogEntryAttributes) Get() (v SandboxObservabilityLogEntryAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityLogEntryAttributes) Or(d SandboxObservabilityLogEntryAttributes) SandboxObservabilityLogEntryAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityLogStream returns new OptSandboxObservabilityLogStream with value set to v.
+func NewOptSandboxObservabilityLogStream(v SandboxObservabilityLogStream) OptSandboxObservabilityLogStream {
+	return OptSandboxObservabilityLogStream{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityLogStream is optional SandboxObservabilityLogStream.
+type OptSandboxObservabilityLogStream struct {
+	Value SandboxObservabilityLogStream
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityLogStream was set.
+func (o OptSandboxObservabilityLogStream) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityLogStream) Reset() {
+	var v SandboxObservabilityLogStream
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityLogStream) SetTo(v SandboxObservabilityLogStream) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityLogStream) Get() (v SandboxObservabilityLogStream, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityLogStream) Or(d SandboxObservabilityLogStream) SandboxObservabilityLogStream {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityLogsResponse returns new OptSandboxObservabilityLogsResponse with value set to v.
+func NewOptSandboxObservabilityLogsResponse(v SandboxObservabilityLogsResponse) OptSandboxObservabilityLogsResponse {
+	return OptSandboxObservabilityLogsResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityLogsResponse is optional SandboxObservabilityLogsResponse.
+type OptSandboxObservabilityLogsResponse struct {
+	Value SandboxObservabilityLogsResponse
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityLogsResponse was set.
+func (o OptSandboxObservabilityLogsResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityLogsResponse) Reset() {
+	var v SandboxObservabilityLogsResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityLogsResponse) SetTo(v SandboxObservabilityLogsResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityLogsResponse) Get() (v SandboxObservabilityLogsResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityLogsResponse) Or(d SandboxObservabilityLogsResponse) SandboxObservabilityLogsResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityMetricSampleAttributes returns new OptSandboxObservabilityMetricSampleAttributes with value set to v.
+func NewOptSandboxObservabilityMetricSampleAttributes(v SandboxObservabilityMetricSampleAttributes) OptSandboxObservabilityMetricSampleAttributes {
+	return OptSandboxObservabilityMetricSampleAttributes{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityMetricSampleAttributes is optional SandboxObservabilityMetricSampleAttributes.
+type OptSandboxObservabilityMetricSampleAttributes struct {
+	Value SandboxObservabilityMetricSampleAttributes
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityMetricSampleAttributes was set.
+func (o OptSandboxObservabilityMetricSampleAttributes) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityMetricSampleAttributes) Reset() {
+	var v SandboxObservabilityMetricSampleAttributes
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityMetricSampleAttributes) SetTo(v SandboxObservabilityMetricSampleAttributes) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityMetricSampleAttributes) Get() (v SandboxObservabilityMetricSampleAttributes, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityMetricSampleAttributes) Or(d SandboxObservabilityMetricSampleAttributes) SandboxObservabilityMetricSampleAttributes {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityMetricsResponse returns new OptSandboxObservabilityMetricsResponse with value set to v.
+func NewOptSandboxObservabilityMetricsResponse(v SandboxObservabilityMetricsResponse) OptSandboxObservabilityMetricsResponse {
+	return OptSandboxObservabilityMetricsResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityMetricsResponse is optional SandboxObservabilityMetricsResponse.
+type OptSandboxObservabilityMetricsResponse struct {
+	Value SandboxObservabilityMetricsResponse
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityMetricsResponse was set.
+func (o OptSandboxObservabilityMetricsResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityMetricsResponse) Reset() {
+	var v SandboxObservabilityMetricsResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityMetricsResponse) SetTo(v SandboxObservabilityMetricsResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityMetricsResponse) Get() (v SandboxObservabilityMetricsResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityMetricsResponse) Or(d SandboxObservabilityMetricsResponse) SandboxObservabilityMetricsResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxObservabilityOutcome returns new OptSandboxObservabilityOutcome with value set to v.
+func NewOptSandboxObservabilityOutcome(v SandboxObservabilityOutcome) OptSandboxObservabilityOutcome {
+	return OptSandboxObservabilityOutcome{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxObservabilityOutcome is optional SandboxObservabilityOutcome.
+type OptSandboxObservabilityOutcome struct {
+	Value SandboxObservabilityOutcome
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxObservabilityOutcome was set.
+func (o OptSandboxObservabilityOutcome) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxObservabilityOutcome) Reset() {
+	var v SandboxObservabilityOutcome
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxObservabilityOutcome) SetTo(v SandboxObservabilityOutcome) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxObservabilityOutcome) Get() (v SandboxObservabilityOutcome, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxObservabilityOutcome) Or(d SandboxObservabilityOutcome) SandboxObservabilityOutcome {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -14097,6 +14456,719 @@ func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/SandboxObservabilityEvent
+type SandboxObservabilityEvent struct {
+	TeamID     string                                 `json:"team_id"`
+	SandboxID  string                                 `json:"sandbox_id"`
+	RegionID   string                                 `json:"region_id"`
+	ClusterID  string                                 `json:"cluster_id"`
+	OccurredAt time.Time                              `json:"occurred_at"`
+	IngestedAt time.Time                              `json:"ingested_at"`
+	Source     ObservabilityEventSource               `json:"source"`
+	EventType  SandboxObservabilityEventType          `json:"event_type"`
+	Outcome    OptSandboxObservabilityOutcome         `json:"outcome"`
+	Cursor     string                                 `json:"cursor"`
+	Watermark  string                                 `json:"watermark"`
+	Attributes OptSandboxObservabilityEventAttributes `json:"attributes"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SandboxObservabilityEvent) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxObservabilityEvent) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *SandboxObservabilityEvent) GetRegionID() string {
+	return s.RegionID
+}
+
+// GetClusterID returns the value of ClusterID.
+func (s *SandboxObservabilityEvent) GetClusterID() string {
+	return s.ClusterID
+}
+
+// GetOccurredAt returns the value of OccurredAt.
+func (s *SandboxObservabilityEvent) GetOccurredAt() time.Time {
+	return s.OccurredAt
+}
+
+// GetIngestedAt returns the value of IngestedAt.
+func (s *SandboxObservabilityEvent) GetIngestedAt() time.Time {
+	return s.IngestedAt
+}
+
+// GetSource returns the value of Source.
+func (s *SandboxObservabilityEvent) GetSource() ObservabilityEventSource {
+	return s.Source
+}
+
+// GetEventType returns the value of EventType.
+func (s *SandboxObservabilityEvent) GetEventType() SandboxObservabilityEventType {
+	return s.EventType
+}
+
+// GetOutcome returns the value of Outcome.
+func (s *SandboxObservabilityEvent) GetOutcome() OptSandboxObservabilityOutcome {
+	return s.Outcome
+}
+
+// GetCursor returns the value of Cursor.
+func (s *SandboxObservabilityEvent) GetCursor() string {
+	return s.Cursor
+}
+
+// GetWatermark returns the value of Watermark.
+func (s *SandboxObservabilityEvent) GetWatermark() string {
+	return s.Watermark
+}
+
+// GetAttributes returns the value of Attributes.
+func (s *SandboxObservabilityEvent) GetAttributes() OptSandboxObservabilityEventAttributes {
+	return s.Attributes
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SandboxObservabilityEvent) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxObservabilityEvent) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *SandboxObservabilityEvent) SetRegionID(val string) {
+	s.RegionID = val
+}
+
+// SetClusterID sets the value of ClusterID.
+func (s *SandboxObservabilityEvent) SetClusterID(val string) {
+	s.ClusterID = val
+}
+
+// SetOccurredAt sets the value of OccurredAt.
+func (s *SandboxObservabilityEvent) SetOccurredAt(val time.Time) {
+	s.OccurredAt = val
+}
+
+// SetIngestedAt sets the value of IngestedAt.
+func (s *SandboxObservabilityEvent) SetIngestedAt(val time.Time) {
+	s.IngestedAt = val
+}
+
+// SetSource sets the value of Source.
+func (s *SandboxObservabilityEvent) SetSource(val ObservabilityEventSource) {
+	s.Source = val
+}
+
+// SetEventType sets the value of EventType.
+func (s *SandboxObservabilityEvent) SetEventType(val SandboxObservabilityEventType) {
+	s.EventType = val
+}
+
+// SetOutcome sets the value of Outcome.
+func (s *SandboxObservabilityEvent) SetOutcome(val OptSandboxObservabilityOutcome) {
+	s.Outcome = val
+}
+
+// SetCursor sets the value of Cursor.
+func (s *SandboxObservabilityEvent) SetCursor(val string) {
+	s.Cursor = val
+}
+
+// SetWatermark sets the value of Watermark.
+func (s *SandboxObservabilityEvent) SetWatermark(val string) {
+	s.Watermark = val
+}
+
+// SetAttributes sets the value of Attributes.
+func (s *SandboxObservabilityEvent) SetAttributes(val OptSandboxObservabilityEventAttributes) {
+	s.Attributes = val
+}
+
+type SandboxObservabilityEventAttributes map[string]jx.Raw
+
+func (s *SandboxObservabilityEventAttributes) init() SandboxObservabilityEventAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxObservabilityEventType
+type SandboxObservabilityEventType string
+
+const (
+	SandboxObservabilityEventTypeLifecycle    SandboxObservabilityEventType = "lifecycle"
+	SandboxObservabilityEventTypeNetworkAudit SandboxObservabilityEventType = "network_audit"
+	SandboxObservabilityEventTypeRuntimeStats SandboxObservabilityEventType = "runtime_stats"
+)
+
+// AllValues returns all SandboxObservabilityEventType values.
+func (SandboxObservabilityEventType) AllValues() []SandboxObservabilityEventType {
+	return []SandboxObservabilityEventType{
+		SandboxObservabilityEventTypeLifecycle,
+		SandboxObservabilityEventTypeNetworkAudit,
+		SandboxObservabilityEventTypeRuntimeStats,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxObservabilityEventType) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxObservabilityEventTypeLifecycle:
+		return []byte(s), nil
+	case SandboxObservabilityEventTypeNetworkAudit:
+		return []byte(s), nil
+	case SandboxObservabilityEventTypeRuntimeStats:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxObservabilityEventType) UnmarshalText(data []byte) error {
+	switch SandboxObservabilityEventType(data) {
+	case SandboxObservabilityEventTypeLifecycle:
+		*s = SandboxObservabilityEventTypeLifecycle
+		return nil
+	case SandboxObservabilityEventTypeNetworkAudit:
+		*s = SandboxObservabilityEventTypeNetworkAudit
+		return nil
+	case SandboxObservabilityEventTypeRuntimeStats:
+		*s = SandboxObservabilityEventTypeRuntimeStats
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxObservabilityEventsResponse
+type SandboxObservabilityEventsResponse struct {
+	Events     []SandboxObservabilityEvent `json:"events"`
+	NextCursor OptString                   `json:"next_cursor"`
+	Watermark  OptString                   `json:"watermark"`
+}
+
+// GetEvents returns the value of Events.
+func (s *SandboxObservabilityEventsResponse) GetEvents() []SandboxObservabilityEvent {
+	return s.Events
+}
+
+// GetNextCursor returns the value of NextCursor.
+func (s *SandboxObservabilityEventsResponse) GetNextCursor() OptString {
+	return s.NextCursor
+}
+
+// GetWatermark returns the value of Watermark.
+func (s *SandboxObservabilityEventsResponse) GetWatermark() OptString {
+	return s.Watermark
+}
+
+// SetEvents sets the value of Events.
+func (s *SandboxObservabilityEventsResponse) SetEvents(val []SandboxObservabilityEvent) {
+	s.Events = val
+}
+
+// SetNextCursor sets the value of NextCursor.
+func (s *SandboxObservabilityEventsResponse) SetNextCursor(val OptString) {
+	s.NextCursor = val
+}
+
+// SetWatermark sets the value of Watermark.
+func (s *SandboxObservabilityEventsResponse) SetWatermark(val OptString) {
+	s.Watermark = val
+}
+
+// Ref: #/components/schemas/SandboxObservabilityLogEntry
+type SandboxObservabilityLogEntry struct {
+	TeamID     string                                    `json:"team_id"`
+	SandboxID  string                                    `json:"sandbox_id"`
+	RegionID   string                                    `json:"region_id"`
+	ClusterID  string                                    `json:"cluster_id"`
+	ContextID  OptString                                 `json:"context_id"`
+	ProcessID  OptString                                 `json:"process_id"`
+	OccurredAt time.Time                                 `json:"occurred_at"`
+	IngestedAt time.Time                                 `json:"ingested_at"`
+	Stream     OptSandboxObservabilityLogStream          `json:"stream"`
+	Message    string                                    `json:"message"`
+	Cursor     string                                    `json:"cursor"`
+	Attributes OptSandboxObservabilityLogEntryAttributes `json:"attributes"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SandboxObservabilityLogEntry) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxObservabilityLogEntry) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *SandboxObservabilityLogEntry) GetRegionID() string {
+	return s.RegionID
+}
+
+// GetClusterID returns the value of ClusterID.
+func (s *SandboxObservabilityLogEntry) GetClusterID() string {
+	return s.ClusterID
+}
+
+// GetContextID returns the value of ContextID.
+func (s *SandboxObservabilityLogEntry) GetContextID() OptString {
+	return s.ContextID
+}
+
+// GetProcessID returns the value of ProcessID.
+func (s *SandboxObservabilityLogEntry) GetProcessID() OptString {
+	return s.ProcessID
+}
+
+// GetOccurredAt returns the value of OccurredAt.
+func (s *SandboxObservabilityLogEntry) GetOccurredAt() time.Time {
+	return s.OccurredAt
+}
+
+// GetIngestedAt returns the value of IngestedAt.
+func (s *SandboxObservabilityLogEntry) GetIngestedAt() time.Time {
+	return s.IngestedAt
+}
+
+// GetStream returns the value of Stream.
+func (s *SandboxObservabilityLogEntry) GetStream() OptSandboxObservabilityLogStream {
+	return s.Stream
+}
+
+// GetMessage returns the value of Message.
+func (s *SandboxObservabilityLogEntry) GetMessage() string {
+	return s.Message
+}
+
+// GetCursor returns the value of Cursor.
+func (s *SandboxObservabilityLogEntry) GetCursor() string {
+	return s.Cursor
+}
+
+// GetAttributes returns the value of Attributes.
+func (s *SandboxObservabilityLogEntry) GetAttributes() OptSandboxObservabilityLogEntryAttributes {
+	return s.Attributes
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SandboxObservabilityLogEntry) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxObservabilityLogEntry) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *SandboxObservabilityLogEntry) SetRegionID(val string) {
+	s.RegionID = val
+}
+
+// SetClusterID sets the value of ClusterID.
+func (s *SandboxObservabilityLogEntry) SetClusterID(val string) {
+	s.ClusterID = val
+}
+
+// SetContextID sets the value of ContextID.
+func (s *SandboxObservabilityLogEntry) SetContextID(val OptString) {
+	s.ContextID = val
+}
+
+// SetProcessID sets the value of ProcessID.
+func (s *SandboxObservabilityLogEntry) SetProcessID(val OptString) {
+	s.ProcessID = val
+}
+
+// SetOccurredAt sets the value of OccurredAt.
+func (s *SandboxObservabilityLogEntry) SetOccurredAt(val time.Time) {
+	s.OccurredAt = val
+}
+
+// SetIngestedAt sets the value of IngestedAt.
+func (s *SandboxObservabilityLogEntry) SetIngestedAt(val time.Time) {
+	s.IngestedAt = val
+}
+
+// SetStream sets the value of Stream.
+func (s *SandboxObservabilityLogEntry) SetStream(val OptSandboxObservabilityLogStream) {
+	s.Stream = val
+}
+
+// SetMessage sets the value of Message.
+func (s *SandboxObservabilityLogEntry) SetMessage(val string) {
+	s.Message = val
+}
+
+// SetCursor sets the value of Cursor.
+func (s *SandboxObservabilityLogEntry) SetCursor(val string) {
+	s.Cursor = val
+}
+
+// SetAttributes sets the value of Attributes.
+func (s *SandboxObservabilityLogEntry) SetAttributes(val OptSandboxObservabilityLogEntryAttributes) {
+	s.Attributes = val
+}
+
+type SandboxObservabilityLogEntryAttributes map[string]jx.Raw
+
+func (s *SandboxObservabilityLogEntryAttributes) init() SandboxObservabilityLogEntryAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxObservabilityLogStream
+type SandboxObservabilityLogStream string
+
+const (
+	SandboxObservabilityLogStreamStdout SandboxObservabilityLogStream = "stdout"
+	SandboxObservabilityLogStreamStderr SandboxObservabilityLogStream = "stderr"
+	SandboxObservabilityLogStreamPty    SandboxObservabilityLogStream = "pty"
+)
+
+// AllValues returns all SandboxObservabilityLogStream values.
+func (SandboxObservabilityLogStream) AllValues() []SandboxObservabilityLogStream {
+	return []SandboxObservabilityLogStream{
+		SandboxObservabilityLogStreamStdout,
+		SandboxObservabilityLogStreamStderr,
+		SandboxObservabilityLogStreamPty,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxObservabilityLogStream) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxObservabilityLogStreamStdout:
+		return []byte(s), nil
+	case SandboxObservabilityLogStreamStderr:
+		return []byte(s), nil
+	case SandboxObservabilityLogStreamPty:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxObservabilityLogStream) UnmarshalText(data []byte) error {
+	switch SandboxObservabilityLogStream(data) {
+	case SandboxObservabilityLogStreamStdout:
+		*s = SandboxObservabilityLogStreamStdout
+		return nil
+	case SandboxObservabilityLogStreamStderr:
+		*s = SandboxObservabilityLogStreamStderr
+		return nil
+	case SandboxObservabilityLogStreamPty:
+		*s = SandboxObservabilityLogStreamPty
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxObservabilityLogsResponse
+type SandboxObservabilityLogsResponse struct {
+	Logs       []SandboxObservabilityLogEntry `json:"logs"`
+	NextCursor OptString                      `json:"next_cursor"`
+	Watermark  OptString                      `json:"watermark"`
+}
+
+// GetLogs returns the value of Logs.
+func (s *SandboxObservabilityLogsResponse) GetLogs() []SandboxObservabilityLogEntry {
+	return s.Logs
+}
+
+// GetNextCursor returns the value of NextCursor.
+func (s *SandboxObservabilityLogsResponse) GetNextCursor() OptString {
+	return s.NextCursor
+}
+
+// GetWatermark returns the value of Watermark.
+func (s *SandboxObservabilityLogsResponse) GetWatermark() OptString {
+	return s.Watermark
+}
+
+// SetLogs sets the value of Logs.
+func (s *SandboxObservabilityLogsResponse) SetLogs(val []SandboxObservabilityLogEntry) {
+	s.Logs = val
+}
+
+// SetNextCursor sets the value of NextCursor.
+func (s *SandboxObservabilityLogsResponse) SetNextCursor(val OptString) {
+	s.NextCursor = val
+}
+
+// SetWatermark sets the value of Watermark.
+func (s *SandboxObservabilityLogsResponse) SetWatermark(val OptString) {
+	s.Watermark = val
+}
+
+// Ref: #/components/schemas/SandboxObservabilityMetricSample
+type SandboxObservabilityMetricSample struct {
+	TeamID     string                                        `json:"team_id"`
+	SandboxID  string                                        `json:"sandbox_id"`
+	RegionID   string                                        `json:"region_id"`
+	ClusterID  string                                        `json:"cluster_id"`
+	ContextID  OptString                                     `json:"context_id"`
+	OccurredAt time.Time                                     `json:"occurred_at"`
+	IngestedAt time.Time                                     `json:"ingested_at"`
+	Name       string                                        `json:"name"`
+	Unit       OptString                                     `json:"unit"`
+	Value      float64                                       `json:"value"`
+	Cursor     string                                        `json:"cursor"`
+	Attributes OptSandboxObservabilityMetricSampleAttributes `json:"attributes"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *SandboxObservabilityMetricSample) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxObservabilityMetricSample) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *SandboxObservabilityMetricSample) GetRegionID() string {
+	return s.RegionID
+}
+
+// GetClusterID returns the value of ClusterID.
+func (s *SandboxObservabilityMetricSample) GetClusterID() string {
+	return s.ClusterID
+}
+
+// GetContextID returns the value of ContextID.
+func (s *SandboxObservabilityMetricSample) GetContextID() OptString {
+	return s.ContextID
+}
+
+// GetOccurredAt returns the value of OccurredAt.
+func (s *SandboxObservabilityMetricSample) GetOccurredAt() time.Time {
+	return s.OccurredAt
+}
+
+// GetIngestedAt returns the value of IngestedAt.
+func (s *SandboxObservabilityMetricSample) GetIngestedAt() time.Time {
+	return s.IngestedAt
+}
+
+// GetName returns the value of Name.
+func (s *SandboxObservabilityMetricSample) GetName() string {
+	return s.Name
+}
+
+// GetUnit returns the value of Unit.
+func (s *SandboxObservabilityMetricSample) GetUnit() OptString {
+	return s.Unit
+}
+
+// GetValue returns the value of Value.
+func (s *SandboxObservabilityMetricSample) GetValue() float64 {
+	return s.Value
+}
+
+// GetCursor returns the value of Cursor.
+func (s *SandboxObservabilityMetricSample) GetCursor() string {
+	return s.Cursor
+}
+
+// GetAttributes returns the value of Attributes.
+func (s *SandboxObservabilityMetricSample) GetAttributes() OptSandboxObservabilityMetricSampleAttributes {
+	return s.Attributes
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *SandboxObservabilityMetricSample) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxObservabilityMetricSample) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *SandboxObservabilityMetricSample) SetRegionID(val string) {
+	s.RegionID = val
+}
+
+// SetClusterID sets the value of ClusterID.
+func (s *SandboxObservabilityMetricSample) SetClusterID(val string) {
+	s.ClusterID = val
+}
+
+// SetContextID sets the value of ContextID.
+func (s *SandboxObservabilityMetricSample) SetContextID(val OptString) {
+	s.ContextID = val
+}
+
+// SetOccurredAt sets the value of OccurredAt.
+func (s *SandboxObservabilityMetricSample) SetOccurredAt(val time.Time) {
+	s.OccurredAt = val
+}
+
+// SetIngestedAt sets the value of IngestedAt.
+func (s *SandboxObservabilityMetricSample) SetIngestedAt(val time.Time) {
+	s.IngestedAt = val
+}
+
+// SetName sets the value of Name.
+func (s *SandboxObservabilityMetricSample) SetName(val string) {
+	s.Name = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *SandboxObservabilityMetricSample) SetUnit(val OptString) {
+	s.Unit = val
+}
+
+// SetValue sets the value of Value.
+func (s *SandboxObservabilityMetricSample) SetValue(val float64) {
+	s.Value = val
+}
+
+// SetCursor sets the value of Cursor.
+func (s *SandboxObservabilityMetricSample) SetCursor(val string) {
+	s.Cursor = val
+}
+
+// SetAttributes sets the value of Attributes.
+func (s *SandboxObservabilityMetricSample) SetAttributes(val OptSandboxObservabilityMetricSampleAttributes) {
+	s.Attributes = val
+}
+
+type SandboxObservabilityMetricSampleAttributes map[string]jx.Raw
+
+func (s *SandboxObservabilityMetricSampleAttributes) init() SandboxObservabilityMetricSampleAttributes {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxObservabilityMetricsResponse
+type SandboxObservabilityMetricsResponse struct {
+	Samples    []SandboxObservabilityMetricSample `json:"samples"`
+	NextCursor OptString                          `json:"next_cursor"`
+	Watermark  OptString                          `json:"watermark"`
+}
+
+// GetSamples returns the value of Samples.
+func (s *SandboxObservabilityMetricsResponse) GetSamples() []SandboxObservabilityMetricSample {
+	return s.Samples
+}
+
+// GetNextCursor returns the value of NextCursor.
+func (s *SandboxObservabilityMetricsResponse) GetNextCursor() OptString {
+	return s.NextCursor
+}
+
+// GetWatermark returns the value of Watermark.
+func (s *SandboxObservabilityMetricsResponse) GetWatermark() OptString {
+	return s.Watermark
+}
+
+// SetSamples sets the value of Samples.
+func (s *SandboxObservabilityMetricsResponse) SetSamples(val []SandboxObservabilityMetricSample) {
+	s.Samples = val
+}
+
+// SetNextCursor sets the value of NextCursor.
+func (s *SandboxObservabilityMetricsResponse) SetNextCursor(val OptString) {
+	s.NextCursor = val
+}
+
+// SetWatermark sets the value of Watermark.
+func (s *SandboxObservabilityMetricsResponse) SetWatermark(val OptString) {
+	s.Watermark = val
+}
+
+// Ref: #/components/schemas/SandboxObservabilityOutcome
+type SandboxObservabilityOutcome string
+
+const (
+	SandboxObservabilityOutcomeCompleted SandboxObservabilityOutcome = "completed"
+	SandboxObservabilityOutcomeDenied    SandboxObservabilityOutcome = "denied"
+	SandboxObservabilityOutcomeError     SandboxObservabilityOutcome = "error"
+	SandboxObservabilityOutcomeSucceeded SandboxObservabilityOutcome = "succeeded"
+	SandboxObservabilityOutcomeFailed    SandboxObservabilityOutcome = "failed"
+)
+
+// AllValues returns all SandboxObservabilityOutcome values.
+func (SandboxObservabilityOutcome) AllValues() []SandboxObservabilityOutcome {
+	return []SandboxObservabilityOutcome{
+		SandboxObservabilityOutcomeCompleted,
+		SandboxObservabilityOutcomeDenied,
+		SandboxObservabilityOutcomeError,
+		SandboxObservabilityOutcomeSucceeded,
+		SandboxObservabilityOutcomeFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxObservabilityOutcome) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxObservabilityOutcomeCompleted:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeDenied:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeError:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeSucceeded:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxObservabilityOutcome) UnmarshalText(data []byte) error {
+	switch SandboxObservabilityOutcome(data) {
+	case SandboxObservabilityOutcomeCompleted:
+		*s = SandboxObservabilityOutcomeCompleted
+		return nil
+	case SandboxObservabilityOutcomeDenied:
+		*s = SandboxObservabilityOutcomeDenied
+		return nil
+	case SandboxObservabilityOutcomeError:
+		*s = SandboxObservabilityOutcomeError
+		return nil
+	case SandboxObservabilityOutcomeSucceeded:
+		*s = SandboxObservabilityOutcomeSucceeded
+		return nil
+	case SandboxObservabilityOutcomeFailed:
+		*s = SandboxObservabilityOutcomeFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/SandboxRefreshRequest
 type SandboxRefreshRequest struct {
 	// Duration to extend TTL in seconds (optional, defaults to original TTL).
@@ -15800,47 +16872,6 @@ func (SuccessContextResponseSuccess) AllValues() []SuccessContextResponseSuccess
 }
 
 // Merged schema.
-// Ref: #/components/schemas/SuccessContextStatsResponse
-type SuccessContextStatsResponse struct {
-	Success SuccessContextStatsResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptContextStatsResponse `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessContextStatsResponse) GetSuccess() SuccessContextStatsResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessContextStatsResponse) GetData() OptContextStatsResponse {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessContextStatsResponse) SetSuccess(val SuccessContextStatsResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessContextStatsResponse) SetData(val OptContextStatsResponse) {
-	s.Data = val
-}
-
-type SuccessContextStatsResponseSuccess bool
-
-const (
-	SuccessContextStatsResponseSuccessTrue SuccessContextStatsResponseSuccess = true
-)
-
-// AllValues returns all SuccessContextStatsResponseSuccess values.
-func (SuccessContextStatsResponseSuccess) AllValues() []SuccessContextStatsResponseSuccess {
-	return []SuccessContextStatsResponseSuccess{
-		SuccessContextStatsResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
 // Ref: #/components/schemas/SuccessCreateAPIKeyResponse
 type SuccessCreateAPIKeyResponse struct {
 	Success SuccessCreateAPIKeyResponseSuccess `json:"success"`
@@ -17350,6 +18381,136 @@ const (
 func (SuccessSandboxNetworkPolicyResponseSuccess) AllValues() []SuccessSandboxNetworkPolicyResponseSuccess {
 	return []SuccessSandboxNetworkPolicyResponseSuccess{
 		SuccessSandboxNetworkPolicyResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxObservabilityEventsResponse
+type SuccessSandboxObservabilityEventsResponse struct {
+	Success SuccessSandboxObservabilityEventsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxObservabilityEventsResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxObservabilityEventsResponse) GetSuccess() SuccessSandboxObservabilityEventsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxObservabilityEventsResponse) GetData() OptSandboxObservabilityEventsResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxObservabilityEventsResponse) SetSuccess(val SuccessSandboxObservabilityEventsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxObservabilityEventsResponse) SetData(val OptSandboxObservabilityEventsResponse) {
+	s.Data = val
+}
+
+func (*SuccessSandboxObservabilityEventsResponse) aPIV1SandboxesIDAuditEventsGetRes()         {}
+func (*SuccessSandboxObservabilityEventsResponse) aPIV1SandboxesIDObservabilityEventsGetRes() {}
+
+type SuccessSandboxObservabilityEventsResponseSuccess bool
+
+const (
+	SuccessSandboxObservabilityEventsResponseSuccessTrue SuccessSandboxObservabilityEventsResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxObservabilityEventsResponseSuccess values.
+func (SuccessSandboxObservabilityEventsResponseSuccess) AllValues() []SuccessSandboxObservabilityEventsResponseSuccess {
+	return []SuccessSandboxObservabilityEventsResponseSuccess{
+		SuccessSandboxObservabilityEventsResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxObservabilityLogsResponse
+type SuccessSandboxObservabilityLogsResponse struct {
+	Success SuccessSandboxObservabilityLogsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxObservabilityLogsResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxObservabilityLogsResponse) GetSuccess() SuccessSandboxObservabilityLogsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxObservabilityLogsResponse) GetData() OptSandboxObservabilityLogsResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxObservabilityLogsResponse) SetSuccess(val SuccessSandboxObservabilityLogsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxObservabilityLogsResponse) SetData(val OptSandboxObservabilityLogsResponse) {
+	s.Data = val
+}
+
+func (*SuccessSandboxObservabilityLogsResponse) aPIV1SandboxesIDObservabilityLogsGetRes() {}
+
+type SuccessSandboxObservabilityLogsResponseSuccess bool
+
+const (
+	SuccessSandboxObservabilityLogsResponseSuccessTrue SuccessSandboxObservabilityLogsResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxObservabilityLogsResponseSuccess values.
+func (SuccessSandboxObservabilityLogsResponseSuccess) AllValues() []SuccessSandboxObservabilityLogsResponseSuccess {
+	return []SuccessSandboxObservabilityLogsResponseSuccess{
+		SuccessSandboxObservabilityLogsResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxObservabilityMetricsResponse
+type SuccessSandboxObservabilityMetricsResponse struct {
+	Success SuccessSandboxObservabilityMetricsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxObservabilityMetricsResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxObservabilityMetricsResponse) GetSuccess() SuccessSandboxObservabilityMetricsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxObservabilityMetricsResponse) GetData() OptSandboxObservabilityMetricsResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxObservabilityMetricsResponse) SetSuccess(val SuccessSandboxObservabilityMetricsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxObservabilityMetricsResponse) SetData(val OptSandboxObservabilityMetricsResponse) {
+	s.Data = val
+}
+
+func (*SuccessSandboxObservabilityMetricsResponse) aPIV1SandboxesIDObservabilityMetricsGetRes() {}
+
+type SuccessSandboxObservabilityMetricsResponseSuccess bool
+
+const (
+	SuccessSandboxObservabilityMetricsResponseSuccessTrue SuccessSandboxObservabilityMetricsResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxObservabilityMetricsResponseSuccess values.
+func (SuccessSandboxObservabilityMetricsResponseSuccess) AllValues() []SuccessSandboxObservabilityMetricsResponseSuccess {
+	return []SuccessSandboxObservabilityMetricsResponseSuccess{
+		SuccessSandboxObservabilityMetricsResponseSuccessTrue,
 	}
 }
 

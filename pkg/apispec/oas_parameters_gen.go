@@ -56,6 +56,27 @@ type APIV1SandboxesGetParams struct {
 	Offset OptInt `json:",omitempty,omitzero"`
 }
 
+// APIV1SandboxesIDAuditEventsGetParams is parameters of GET /api/v1/sandboxes/{id}/audit/events operation.
+type APIV1SandboxesIDAuditEventsGetParams struct {
+	ID string
+	// Include events that occurred at or after this RFC3339 timestamp.
+	StartTime OptDateTime `json:",omitempty,omitzero"`
+	// Include events that occurred at or before this RFC3339 timestamp.
+	EndTime OptDateTime `json:",omitempty,omitzero"`
+	// Maximum number of events to return. Values above 1000 are capped.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
+	// resume cursor from an NDJSON watermark line.
+	Cursor OptString `json:",omitempty,omitzero"`
+	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
+	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
+	// request time.
+	Watch     OptBool                          `json:",omitempty,omitzero"`
+	Source    OptObservabilityEventSource      `json:",omitempty,omitzero"`
+	EventType OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
+	Outcome   OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
+}
+
 // APIV1SandboxesIDContextsCtxIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 type APIV1SandboxesIDContextsCtxIDDeleteParams struct {
 	ID    string
@@ -94,12 +115,6 @@ type APIV1SandboxesIDContextsCtxIDRestartPostParams struct {
 
 // APIV1SandboxesIDContextsCtxIDSignalPostParams is parameters of POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/signal operation.
 type APIV1SandboxesIDContextsCtxIDSignalPostParams struct {
-	ID    string
-	CtxID string
-}
-
-// APIV1SandboxesIDContextsCtxIDStatsGetParams is parameters of GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/stats operation.
-type APIV1SandboxesIDContextsCtxIDStatsGetParams struct {
 	ID    string
 	CtxID string
 }
@@ -177,26 +192,6 @@ type APIV1SandboxesIDGetParams struct {
 	ID string
 }
 
-// APIV1SandboxesIDLogsGetParams is parameters of GET /api/v1/sandboxes/{id}/logs operation.
-type APIV1SandboxesIDLogsGetParams struct {
-	ID string
-	// Pod container name. Defaults to the sandbox main container.
-	Container OptString `json:",omitempty,omitzero"`
-	// Maximum number of Kubernetes log lines read from the end of the log before procd service log
-	// filtering.
-	TailLines OptInt64 `json:",omitempty,omitzero"`
-	// Maximum response log payload bytes read from Kubernetes. Defaults only apply when follow is false.
-	LimitBytes OptInt64 `json:",omitempty,omitzero"`
-	// Stream logs as text/plain until the client disconnects. When false, return a text/plain snapshot.
-	Follow OptBool `json:",omitempty,omitzero"`
-	// Return logs for the previously terminated container instance.
-	Previous OptBool `json:",omitempty,omitzero"`
-	// Include Kubernetes log timestamps when available.
-	Timestamps OptBool `json:",omitempty,omitzero"`
-	// Only return logs newer than this many seconds.
-	SinceSeconds OptInt64 `json:",omitempty,omitzero"`
-}
-
 // APIV1SandboxesIDNetworkGetParams is parameters of GET /api/v1/sandboxes/{id}/network operation.
 type APIV1SandboxesIDNetworkGetParams struct {
 	ID string
@@ -205,6 +200,72 @@ type APIV1SandboxesIDNetworkGetParams struct {
 // APIV1SandboxesIDNetworkPutParams is parameters of PUT /api/v1/sandboxes/{id}/network operation.
 type APIV1SandboxesIDNetworkPutParams struct {
 	ID string
+}
+
+// APIV1SandboxesIDObservabilityEventsGetParams is parameters of GET /api/v1/sandboxes/{id}/observability/events operation.
+type APIV1SandboxesIDObservabilityEventsGetParams struct {
+	ID string
+	// Include events that occurred at or after this RFC3339 timestamp.
+	StartTime OptDateTime `json:",omitempty,omitzero"`
+	// Include events that occurred at or before this RFC3339 timestamp.
+	EndTime OptDateTime `json:",omitempty,omitzero"`
+	// Maximum number of events to return. Values above 1000 are capped.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
+	// resume cursor from an NDJSON watermark line.
+	Cursor OptString `json:",omitempty,omitzero"`
+	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
+	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
+	// request time.
+	Watch     OptBool                          `json:",omitempty,omitzero"`
+	Source    OptObservabilityEventSource      `json:",omitempty,omitzero"`
+	EventType OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
+	Outcome   OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDObservabilityLogsGetParams is parameters of GET /api/v1/sandboxes/{id}/observability/logs operation.
+type APIV1SandboxesIDObservabilityLogsGetParams struct {
+	ID string
+	// Include log entries that occurred at or after this RFC3339 timestamp.
+	StartTime OptDateTime `json:",omitempty,omitzero"`
+	// Include log entries that occurred at or before this RFC3339 timestamp.
+	EndTime OptDateTime `json:",omitempty,omitzero"`
+	// Maximum number of log entries to return. Values above 1000 are capped.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
+	// resume cursor from an NDJSON watermark line.
+	Cursor OptString `json:",omitempty,omitzero"`
+	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
+	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
+	// request time.
+	Watch OptBool `json:",omitempty,omitzero"`
+	// Restrict results to a sandbox process context.
+	ContextID OptString                        `json:",omitempty,omitzero"`
+	Stream    OptSandboxObservabilityLogStream `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDObservabilityMetricsGetParams is parameters of GET /api/v1/sandboxes/{id}/observability/metrics operation.
+type APIV1SandboxesIDObservabilityMetricsGetParams struct {
+	ID string
+	// Include samples that occurred at or after this RFC3339 timestamp.
+	StartTime OptDateTime `json:",omitempty,omitzero"`
+	// Include samples that occurred at or before this RFC3339 timestamp.
+	EndTime OptDateTime `json:",omitempty,omitzero"`
+	// Maximum number of samples to return. Values above 1000 are capped.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
+	// resume cursor from an NDJSON watermark line.
+	Cursor OptString `json:",omitempty,omitzero"`
+	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
+	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
+	// request time.
+	Watch OptBool `json:",omitempty,omitzero"`
+	// Restrict results to a sandbox process context.
+	ContextID OptString `json:",omitempty,omitzero"`
+	// Metric name filter. This parameter may be repeated.
+	Name []string `json:",omitempty"`
+	// Comma-separated metric name filter.
+	Names OptString `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDPausePostParams is parameters of POST /api/v1/sandboxes/{id}/pause operation.

@@ -172,6 +172,13 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes
 	APIV1SandboxesGet(ctx context.Context, params APIV1SandboxesGetParams, options ...RequestOption) (APIV1SandboxesGetRes, error)
+	// APIV1SandboxesIDAuditEventsGet invokes GET /api/v1/sandboxes/{id}/audit/events operation.
+	//
+	// Queries the audit-focused projection for a sandbox. Network audit events are
+	// included in scope; file audit is intentionally not included.
+	//
+	// GET /api/v1/sandboxes/{id}/audit/events
+	APIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, options ...RequestOption) (APIV1SandboxesIDAuditEventsGetRes, error)
 	// APIV1SandboxesIDContextsCtxIDDelete invokes DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 	//
 	// Delete context.
@@ -216,12 +223,6 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/signal
 	APIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, options ...RequestOption) (*SuccessSignaledResponse, error)
-	// APIV1SandboxesIDContextsCtxIDStatsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/stats operation.
-	//
-	// Get context stats.
-	//
-	// GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/stats
-	APIV1SandboxesIDContextsCtxIDStatsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDStatsGetParams, options ...RequestOption) (*SuccessContextStatsResponse, error)
 	// APIV1SandboxesIDContextsCtxIDWsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws operation.
 	//
 	// Upgrades to WebSocket for streaming I/O.
@@ -322,17 +323,6 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes/{id}
 	APIV1SandboxesIDGet(ctx context.Context, params APIV1SandboxesIDGetParams, options ...RequestOption) (APIV1SandboxesIDGetRes, error)
-	// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
-	//
-	// Returns sandbox process output mirrored through the sandbox main container.
-	// Procd service logs are filtered out and remain available through Kubernetes pod logs.
-	// When `follow=false`, the response is a bounded text/plain snapshot.
-	// When `follow=true`, the response is a text/plain stream until the client disconnects.
-	// Kubernetes log selection parameters such as `tail_lines` and `limit_bytes`
-	// are applied before procd service log filtering.
-	//
-	// GET /api/v1/sandboxes/{id}/logs
-	APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error)
 	// APIV1SandboxesIDNetworkGet invokes GET /api/v1/sandboxes/{id}/network operation.
 	//
 	// Get sandbox network policy.
@@ -345,6 +335,28 @@ type Invoker interface {
 	//
 	// PUT /api/v1/sandboxes/{id}/network
 	APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
+	// APIV1SandboxesIDObservabilityEventsGet invokes GET /api/v1/sandboxes/{id}/observability/events operation.
+	//
+	// Queries the asynchronous per-sandbox observability projection for lifecycle,
+	// network audit, and runtime stats events. This endpoint does not expose backend SQL
+	// and does not replace the metering usage truth stored in PostgreSQL.
+	//
+	// GET /api/v1/sandboxes/{id}/observability/events
+	APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error)
+	// APIV1SandboxesIDObservabilityLogsGet invokes GET /api/v1/sandboxes/{id}/observability/logs operation.
+	//
+	// Queries the asynchronous per-sandbox log projection. This endpoint is for
+	// historical log lookup and is separate from live log streaming.
+	//
+	// GET /api/v1/sandboxes/{id}/observability/logs
+	APIV1SandboxesIDObservabilityLogsGet(ctx context.Context, params APIV1SandboxesIDObservabilityLogsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityLogsGetRes, error)
+	// APIV1SandboxesIDObservabilityMetricsGet invokes GET /api/v1/sandboxes/{id}/observability/metrics operation.
+	//
+	// Queries the asynchronous per-sandbox metric sample projection. This endpoint is
+	// separate from platform service metrics and PostgreSQL metering usage truth.
+	//
+	// GET /api/v1/sandboxes/{id}/observability/metrics
+	APIV1SandboxesIDObservabilityMetricsGet(ctx context.Context, params APIV1SandboxesIDObservabilityMetricsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityMetricsGetRes, error)
 	// APIV1SandboxesIDPausePost invokes POST /api/v1/sandboxes/{id}/pause operation.
 	//
 	// Pause a sandbox.
@@ -2504,6 +2516,260 @@ func (c *Client) sendAPIV1SandboxesGet(ctx context.Context, params APIV1Sandboxe
 	return result, nil
 }
 
+// APIV1SandboxesIDAuditEventsGet invokes GET /api/v1/sandboxes/{id}/audit/events operation.
+//
+// Queries the audit-focused projection for a sandbox. Network audit events are
+// included in scope; file audit is intentionally not included.
+//
+// GET /api/v1/sandboxes/{id}/audit/events
+func (c *Client) APIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, options ...RequestOption) (APIV1SandboxesIDAuditEventsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDAuditEventsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDAuditEventsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/audit/events"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "start_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "start_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.StartTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "end_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "end_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EndTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "watch" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "watch",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Watch.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "source" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "source",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Source.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "event_type" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "event_type",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EventType.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "outcome" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "outcome",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Outcome.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDAuditEventsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDAuditEventsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1SandboxesIDContextsCtxIDDelete invokes DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 //
 // Delete context.
@@ -3440,139 +3706,6 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context
 	}
 
 	result, err := decodeAPIV1SandboxesIDContextsCtxIDSignalPostResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDContextsCtxIDStatsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/stats operation.
-//
-// Get context stats.
-//
-// GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/stats
-func (c *Client) APIV1SandboxesIDContextsCtxIDStatsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDStatsGetParams, options ...RequestOption) (*SuccessContextStatsResponse, error) {
-	res, err := c.sendAPIV1SandboxesIDContextsCtxIDStatsGet(ctx, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDStatsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDStatsGetParams, requestOptions ...RequestOption) (res *SuccessContextStatsResponse, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [5]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/contexts/"
-	{
-		// Encode "ctx_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "ctx_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.CtxID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[3] = encoded
-	}
-	pathParts[4] = "/stats"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDContextsCtxIDStatsGetOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDContextsCtxIDStatsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -5232,247 +5365,6 @@ func (c *Client) sendAPIV1SandboxesIDGet(ctx context.Context, params APIV1Sandbo
 	return result, nil
 }
 
-// APIV1SandboxesIDLogsGet invokes GET /api/v1/sandboxes/{id}/logs operation.
-//
-// Returns sandbox process output mirrored through the sandbox main container.
-// Procd service logs are filtered out and remain available through Kubernetes pod logs.
-// When `follow=false`, the response is a bounded text/plain snapshot.
-// When `follow=true`, the response is a text/plain stream until the client disconnects.
-// Kubernetes log selection parameters such as `tail_lines` and `limit_bytes`
-// are applied before procd service log filtering.
-//
-// GET /api/v1/sandboxes/{id}/logs
-func (c *Client) APIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, options ...RequestOption) (APIV1SandboxesIDLogsGetRes, error) {
-	res, err := c.sendAPIV1SandboxesIDLogsGet(ctx, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDLogsGet(ctx context.Context, params APIV1SandboxesIDLogsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDLogsGetRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/logs"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "container" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "container",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Container.Get(); ok {
-				return e.EncodeValue(conv.StringToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "tail_lines" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "tail_lines",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.TailLines.Get(); ok {
-				return e.EncodeValue(conv.Int64ToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "limit_bytes" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "limit_bytes",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.LimitBytes.Get(); ok {
-				return e.EncodeValue(conv.Int64ToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "follow" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "follow",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Follow.Get(); ok {
-				return e.EncodeValue(conv.BoolToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "previous" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "previous",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Previous.Get(); ok {
-				return e.EncodeValue(conv.BoolToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "timestamps" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "timestamps",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Timestamps.Get(); ok {
-				return e.EncodeValue(conv.BoolToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "since_seconds" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "since_seconds",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.SinceSeconds.Get(); ok {
-				return e.EncodeValue(conv.Int64ToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDLogsGetOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDLogsGetResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // APIV1SandboxesIDNetworkGet invokes GET /api/v1/sandboxes/{id}/network operation.
 //
 // Get sandbox network policy.
@@ -5697,6 +5589,761 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *Sa
 	}
 
 	result, err := decodeAPIV1SandboxesIDNetworkPutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDObservabilityEventsGet invokes GET /api/v1/sandboxes/{id}/observability/events operation.
+//
+// Queries the asynchronous per-sandbox observability projection for lifecycle,
+// network audit, and runtime stats events. This endpoint does not expose backend SQL
+// and does not replace the metering usage truth stored in PostgreSQL.
+//
+// GET /api/v1/sandboxes/{id}/observability/events
+func (c *Client) APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDObservabilityEventsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDObservabilityEventsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/observability/events"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "start_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "start_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.StartTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "end_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "end_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EndTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "watch" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "watch",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Watch.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "source" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "source",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Source.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "event_type" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "event_type",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EventType.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "outcome" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "outcome",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Outcome.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDObservabilityEventsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDObservabilityEventsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDObservabilityLogsGet invokes GET /api/v1/sandboxes/{id}/observability/logs operation.
+//
+// Queries the asynchronous per-sandbox log projection. This endpoint is for
+// historical log lookup and is separate from live log streaming.
+//
+// GET /api/v1/sandboxes/{id}/observability/logs
+func (c *Client) APIV1SandboxesIDObservabilityLogsGet(ctx context.Context, params APIV1SandboxesIDObservabilityLogsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityLogsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDObservabilityLogsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDObservabilityLogsGet(ctx context.Context, params APIV1SandboxesIDObservabilityLogsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDObservabilityLogsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/observability/logs"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "start_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "start_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.StartTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "end_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "end_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EndTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "watch" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "watch",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Watch.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "context_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "context_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ContextID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "stream" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "stream",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Stream.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDObservabilityLogsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDObservabilityLogsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDObservabilityMetricsGet invokes GET /api/v1/sandboxes/{id}/observability/metrics operation.
+//
+// Queries the asynchronous per-sandbox metric sample projection. This endpoint is
+// separate from platform service metrics and PostgreSQL metering usage truth.
+//
+// GET /api/v1/sandboxes/{id}/observability/metrics
+func (c *Client) APIV1SandboxesIDObservabilityMetricsGet(ctx context.Context, params APIV1SandboxesIDObservabilityMetricsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityMetricsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDObservabilityMetricsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDObservabilityMetricsGet(ctx context.Context, params APIV1SandboxesIDObservabilityMetricsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDObservabilityMetricsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/observability/metrics"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "start_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "start_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.StartTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "end_time" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "end_time",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EndTime.Get(); ok {
+				return e.EncodeValue(conv.DateTimeToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "watch" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "watch",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Watch.Get(); ok {
+				return e.EncodeValue(conv.BoolToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "context_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "context_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ContextID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "name" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "name",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if params.Name != nil {
+				return e.EncodeArray(func(e uri.Encoder) error {
+					for i, item := range params.Name {
+						if err := func() error {
+							return e.EncodeValue(conv.StringToString(item))
+						}(); err != nil {
+							return errors.Wrapf(err, "[%d]", i)
+						}
+					}
+					return nil
+				})
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "names" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "names",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Names.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDObservabilityMetricsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDObservabilityMetricsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

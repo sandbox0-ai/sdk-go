@@ -142,22 +142,6 @@ func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (
 	return resp, nil
 }
 
-// ContextStats returns resource usage for a context.
-func (s *Sandbox) ContextStats(ctx context.Context, contextID string) (*apispec.ContextStatsResponse, error) {
-	resp, err := s.client.api.APIV1SandboxesIDContextsCtxIDStatsGet(ctx, apispec.APIV1SandboxesIDContextsCtxIDStatsGetParams{
-		ID:    s.ID,
-		CtxID: contextID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return &data, nil
-}
-
 // ConnectWSContext opens a WebSocket stream for a context.
 func (s *Sandbox) ConnectWSContext(ctx context.Context, contextID string) (*websocket.Conn, *http.Response, error) {
 	wsURL, err := s.client.websocketURL("/api/v1/sandboxes/" + s.ID + "/contexts/" + contextID + "/ws")

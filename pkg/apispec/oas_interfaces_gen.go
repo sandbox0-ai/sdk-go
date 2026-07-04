@@ -53,6 +53,10 @@ type APIV1SandboxesGetRes interface {
 	aPIV1SandboxesGetRes()
 }
 
+type APIV1SandboxesIDAuditEventsGetRes interface {
+	aPIV1SandboxesIDAuditEventsGetRes()
+}
+
 type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
 }
@@ -73,12 +77,20 @@ type APIV1SandboxesIDGetRes interface {
 	aPIV1SandboxesIDGetRes()
 }
 
-type APIV1SandboxesIDLogsGetRes interface {
-	aPIV1SandboxesIDLogsGetRes()
-}
-
 type APIV1SandboxesIDNetworkGetRes interface {
 	aPIV1SandboxesIDNetworkGetRes()
+}
+
+type APIV1SandboxesIDObservabilityEventsGetRes interface {
+	aPIV1SandboxesIDObservabilityEventsGetRes()
+}
+
+type APIV1SandboxesIDObservabilityLogsGetRes interface {
+	aPIV1SandboxesIDObservabilityLogsGetRes()
+}
+
+type APIV1SandboxesIDObservabilityMetricsGetRes interface {
+	aPIV1SandboxesIDObservabilityMetricsGetRes()
 }
 
 type APIV1SandboxesIDPausePostRes interface {
