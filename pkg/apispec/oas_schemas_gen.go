@@ -1926,6 +1926,12 @@ func (s *CreateSandboxRootFSSnapshotRequest) SetExpiresAt(val OptDateTime) {
 type CreateSandboxVolumeRequest struct {
 	// Optional snapshot ID used to initialize the new volume from immutable snapshot state.
 	SnapshotID OptString `json:"snapshot_id"`
+	// Volume backend. Defaults to s0fs when omitted. If s3 is provided without backend, backend is
+	// inferred as s3.
+	Backend OptVolumeBackend `json:"backend"`
+	// S3-compatible backend configuration. Only valid with backend s3; s3 volumes do not support
+	// snapshot_id or RWX access mode.
+	S3 OptCreateSandboxVolumeS3Config `json:"s3"`
 	// Default POSIX UID used by external volume access paths that do not carry caller identity. Defaults
 	// to 0 when omitted on create.
 	DefaultPosixUID OptInt64 `json:"default_posix_uid"`
@@ -1939,6 +1945,16 @@ type CreateSandboxVolumeRequest struct {
 // GetSnapshotID returns the value of SnapshotID.
 func (s *CreateSandboxVolumeRequest) GetSnapshotID() OptString {
 	return s.SnapshotID
+}
+
+// GetBackend returns the value of Backend.
+func (s *CreateSandboxVolumeRequest) GetBackend() OptVolumeBackend {
+	return s.Backend
+}
+
+// GetS3 returns the value of S3.
+func (s *CreateSandboxVolumeRequest) GetS3() OptCreateSandboxVolumeS3Config {
+	return s.S3
 }
 
 // GetDefaultPosixUID returns the value of DefaultPosixUID.
@@ -1961,6 +1977,16 @@ func (s *CreateSandboxVolumeRequest) SetSnapshotID(val OptString) {
 	s.SnapshotID = val
 }
 
+// SetBackend sets the value of Backend.
+func (s *CreateSandboxVolumeRequest) SetBackend(val OptVolumeBackend) {
+	s.Backend = val
+}
+
+// SetS3 sets the value of S3.
+func (s *CreateSandboxVolumeRequest) SetS3(val OptCreateSandboxVolumeS3Config) {
+	s.S3 = val
+}
+
 // SetDefaultPosixUID sets the value of DefaultPosixUID.
 func (s *CreateSandboxVolumeRequest) SetDefaultPosixUID(val OptInt64) {
 	s.DefaultPosixUID = val
@@ -1974,6 +2000,154 @@ func (s *CreateSandboxVolumeRequest) SetDefaultPosixGid(val OptInt64) {
 // SetAccessMode sets the value of AccessMode.
 func (s *CreateSandboxVolumeRequest) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
+}
+
+// Ref: #/components/schemas/CreateSandboxVolumeS3Config
+type CreateSandboxVolumeS3Config struct {
+	// S3-compatible provider. ali is Aliyun OSS; r2 is Cloudflare R2.
+	Provider OptCreateSandboxVolumeS3ConfigProvider `json:"provider"`
+	Bucket   string                                 `json:"bucket"`
+	// Optional object key prefix to expose as the volume root.
+	Prefix OptString `json:"prefix"`
+	// Optional region override. Defaults to the storage-proxy S3 region when omitted.
+	Region OptString `json:"region"`
+	// Optional endpoint override. Required for ali and r2.
+	EndpointURL OptString `json:"endpoint_url"`
+	// Optional access key override. Must be provided together with secret_key.
+	AccessKey OptString `json:"access_key"`
+	// Optional secret key override. Must be provided together with access_key.
+	SecretKey OptString `json:"secret_key"`
+	// Optional temporary credential session token.
+	SessionToken OptString `json:"session_token"`
+}
+
+// GetProvider returns the value of Provider.
+func (s *CreateSandboxVolumeS3Config) GetProvider() OptCreateSandboxVolumeS3ConfigProvider {
+	return s.Provider
+}
+
+// GetBucket returns the value of Bucket.
+func (s *CreateSandboxVolumeS3Config) GetBucket() string {
+	return s.Bucket
+}
+
+// GetPrefix returns the value of Prefix.
+func (s *CreateSandboxVolumeS3Config) GetPrefix() OptString {
+	return s.Prefix
+}
+
+// GetRegion returns the value of Region.
+func (s *CreateSandboxVolumeS3Config) GetRegion() OptString {
+	return s.Region
+}
+
+// GetEndpointURL returns the value of EndpointURL.
+func (s *CreateSandboxVolumeS3Config) GetEndpointURL() OptString {
+	return s.EndpointURL
+}
+
+// GetAccessKey returns the value of AccessKey.
+func (s *CreateSandboxVolumeS3Config) GetAccessKey() OptString {
+	return s.AccessKey
+}
+
+// GetSecretKey returns the value of SecretKey.
+func (s *CreateSandboxVolumeS3Config) GetSecretKey() OptString {
+	return s.SecretKey
+}
+
+// GetSessionToken returns the value of SessionToken.
+func (s *CreateSandboxVolumeS3Config) GetSessionToken() OptString {
+	return s.SessionToken
+}
+
+// SetProvider sets the value of Provider.
+func (s *CreateSandboxVolumeS3Config) SetProvider(val OptCreateSandboxVolumeS3ConfigProvider) {
+	s.Provider = val
+}
+
+// SetBucket sets the value of Bucket.
+func (s *CreateSandboxVolumeS3Config) SetBucket(val string) {
+	s.Bucket = val
+}
+
+// SetPrefix sets the value of Prefix.
+func (s *CreateSandboxVolumeS3Config) SetPrefix(val OptString) {
+	s.Prefix = val
+}
+
+// SetRegion sets the value of Region.
+func (s *CreateSandboxVolumeS3Config) SetRegion(val OptString) {
+	s.Region = val
+}
+
+// SetEndpointURL sets the value of EndpointURL.
+func (s *CreateSandboxVolumeS3Config) SetEndpointURL(val OptString) {
+	s.EndpointURL = val
+}
+
+// SetAccessKey sets the value of AccessKey.
+func (s *CreateSandboxVolumeS3Config) SetAccessKey(val OptString) {
+	s.AccessKey = val
+}
+
+// SetSecretKey sets the value of SecretKey.
+func (s *CreateSandboxVolumeS3Config) SetSecretKey(val OptString) {
+	s.SecretKey = val
+}
+
+// SetSessionToken sets the value of SessionToken.
+func (s *CreateSandboxVolumeS3Config) SetSessionToken(val OptString) {
+	s.SessionToken = val
+}
+
+// S3-compatible provider. ali is Aliyun OSS; r2 is Cloudflare R2.
+type CreateSandboxVolumeS3ConfigProvider string
+
+const (
+	CreateSandboxVolumeS3ConfigProviderAWS CreateSandboxVolumeS3ConfigProvider = "aws"
+	CreateSandboxVolumeS3ConfigProviderAli CreateSandboxVolumeS3ConfigProvider = "ali"
+	CreateSandboxVolumeS3ConfigProviderR2  CreateSandboxVolumeS3ConfigProvider = "r2"
+)
+
+// AllValues returns all CreateSandboxVolumeS3ConfigProvider values.
+func (CreateSandboxVolumeS3ConfigProvider) AllValues() []CreateSandboxVolumeS3ConfigProvider {
+	return []CreateSandboxVolumeS3ConfigProvider{
+		CreateSandboxVolumeS3ConfigProviderAWS,
+		CreateSandboxVolumeS3ConfigProviderAli,
+		CreateSandboxVolumeS3ConfigProviderR2,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CreateSandboxVolumeS3ConfigProvider) MarshalText() ([]byte, error) {
+	switch s {
+	case CreateSandboxVolumeS3ConfigProviderAWS:
+		return []byte(s), nil
+	case CreateSandboxVolumeS3ConfigProviderAli:
+		return []byte(s), nil
+	case CreateSandboxVolumeS3ConfigProviderR2:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CreateSandboxVolumeS3ConfigProvider) UnmarshalText(data []byte) error {
+	switch CreateSandboxVolumeS3ConfigProvider(data) {
+	case CreateSandboxVolumeS3ConfigProviderAWS:
+		*s = CreateSandboxVolumeS3ConfigProviderAWS
+		return nil
+	case CreateSandboxVolumeS3ConfigProviderAli:
+		*s = CreateSandboxVolumeS3ConfigProviderAli
+		return nil
+	case CreateSandboxVolumeS3ConfigProviderR2:
+		*s = CreateSandboxVolumeS3ConfigProviderR2
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/CreateSnapshotRequest
@@ -5259,6 +5433,98 @@ func (o OptCreateSandboxRootFSSnapshotRequest) Get() (v CreateSandboxRootFSSnaps
 
 // Or returns value if set, or given parameter if does not.
 func (o OptCreateSandboxRootFSSnapshotRequest) Or(d CreateSandboxRootFSSnapshotRequest) CreateSandboxRootFSSnapshotRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCreateSandboxVolumeS3Config returns new OptCreateSandboxVolumeS3Config with value set to v.
+func NewOptCreateSandboxVolumeS3Config(v CreateSandboxVolumeS3Config) OptCreateSandboxVolumeS3Config {
+	return OptCreateSandboxVolumeS3Config{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateSandboxVolumeS3Config is optional CreateSandboxVolumeS3Config.
+type OptCreateSandboxVolumeS3Config struct {
+	Value CreateSandboxVolumeS3Config
+	Set   bool
+}
+
+// IsSet returns true if OptCreateSandboxVolumeS3Config was set.
+func (o OptCreateSandboxVolumeS3Config) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateSandboxVolumeS3Config) Reset() {
+	var v CreateSandboxVolumeS3Config
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateSandboxVolumeS3Config) SetTo(v CreateSandboxVolumeS3Config) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateSandboxVolumeS3Config) Get() (v CreateSandboxVolumeS3Config, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateSandboxVolumeS3Config) Or(d CreateSandboxVolumeS3Config) CreateSandboxVolumeS3Config {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptCreateSandboxVolumeS3ConfigProvider returns new OptCreateSandboxVolumeS3ConfigProvider with value set to v.
+func NewOptCreateSandboxVolumeS3ConfigProvider(v CreateSandboxVolumeS3ConfigProvider) OptCreateSandboxVolumeS3ConfigProvider {
+	return OptCreateSandboxVolumeS3ConfigProvider{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateSandboxVolumeS3ConfigProvider is optional CreateSandboxVolumeS3ConfigProvider.
+type OptCreateSandboxVolumeS3ConfigProvider struct {
+	Value CreateSandboxVolumeS3ConfigProvider
+	Set   bool
+}
+
+// IsSet returns true if OptCreateSandboxVolumeS3ConfigProvider was set.
+func (o OptCreateSandboxVolumeS3ConfigProvider) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateSandboxVolumeS3ConfigProvider) Reset() {
+	var v CreateSandboxVolumeS3ConfigProvider
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateSandboxVolumeS3ConfigProvider) SetTo(v CreateSandboxVolumeS3ConfigProvider) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateSandboxVolumeS3ConfigProvider) Get() (v CreateSandboxVolumeS3ConfigProvider, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateSandboxVolumeS3ConfigProvider) Or(d CreateSandboxVolumeS3ConfigProvider) CreateSandboxVolumeS3ConfigProvider {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9640,6 +9906,52 @@ func (o OptSandboxVolume) Or(d SandboxVolume) SandboxVolume {
 	return d
 }
 
+// NewOptSandboxVolumeS3Config returns new OptSandboxVolumeS3Config with value set to v.
+func NewOptSandboxVolumeS3Config(v SandboxVolumeS3Config) OptSandboxVolumeS3Config {
+	return OptSandboxVolumeS3Config{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxVolumeS3Config is optional SandboxVolumeS3Config.
+type OptSandboxVolumeS3Config struct {
+	Value SandboxVolumeS3Config
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxVolumeS3Config was set.
+func (o OptSandboxVolumeS3Config) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxVolumeS3Config) Reset() {
+	var v SandboxVolumeS3Config
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxVolumeS3Config) SetTo(v SandboxVolumeS3Config) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxVolumeS3Config) Get() (v SandboxVolumeS3Config, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxVolumeS3Config) Or(d SandboxVolumeS3Config) SandboxVolumeS3Config {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSeccompProfile returns new OptSeccompProfile with value set to v.
 func NewOptSeccompProfile(v SeccompProfile) OptSeccompProfile {
 	return OptSeccompProfile{
@@ -11382,6 +11694,52 @@ func (o OptVolumeAccessMode) Get() (v VolumeAccessMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptVolumeAccessMode) Or(d VolumeAccessMode) VolumeAccessMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptVolumeBackend returns new OptVolumeBackend with value set to v.
+func NewOptVolumeBackend(v VolumeBackend) OptVolumeBackend {
+	return OptVolumeBackend{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptVolumeBackend is optional VolumeBackend.
+type OptVolumeBackend struct {
+	Value VolumeBackend
+	Set   bool
+}
+
+// IsSet returns true if OptVolumeBackend was set.
+func (o OptVolumeBackend) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptVolumeBackend) Reset() {
+	var v VolumeBackend
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptVolumeBackend) SetTo(v VolumeBackend) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptVolumeBackend) Get() (v VolumeBackend, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptVolumeBackend) Or(d VolumeBackend) VolumeBackend {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -16095,8 +16453,12 @@ type SandboxVolume struct {
 	DefaultPosixGid OptNilInt64  `json:"default_posix_gid"`
 	// Configured access mode for the volume.
 	AccessMode OptVolumeAccessMode `json:"access_mode"`
-	CreatedAt  time.Time           `json:"created_at"`
-	UpdatedAt  time.Time           `json:"updated_at"`
+	// Configured storage backend for the volume.
+	Backend VolumeBackend `json:"backend"`
+	// Public S3-compatible backend metadata. Credentials are never returned.
+	S3        OptSandboxVolumeS3Config `json:"s3"`
+	CreatedAt time.Time                `json:"created_at"`
+	UpdatedAt time.Time                `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -16132,6 +16494,16 @@ func (s *SandboxVolume) GetDefaultPosixGid() OptNilInt64 {
 // GetAccessMode returns the value of AccessMode.
 func (s *SandboxVolume) GetAccessMode() OptVolumeAccessMode {
 	return s.AccessMode
+}
+
+// GetBackend returns the value of Backend.
+func (s *SandboxVolume) GetBackend() VolumeBackend {
+	return s.Backend
+}
+
+// GetS3 returns the value of S3.
+func (s *SandboxVolume) GetS3() OptSandboxVolumeS3Config {
+	return s.S3
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -16179,6 +16551,16 @@ func (s *SandboxVolume) SetAccessMode(val OptVolumeAccessMode) {
 	s.AccessMode = val
 }
 
+// SetBackend sets the value of Backend.
+func (s *SandboxVolume) SetBackend(val VolumeBackend) {
+	s.Backend = val
+}
+
+// SetS3 sets the value of S3.
+func (s *SandboxVolume) SetS3(val OptSandboxVolumeS3Config) {
+	s.S3 = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *SandboxVolume) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
@@ -16187,6 +16569,113 @@ func (s *SandboxVolume) SetCreatedAt(val time.Time) {
 // SetUpdatedAt sets the value of UpdatedAt.
 func (s *SandboxVolume) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
+}
+
+// Ref: #/components/schemas/SandboxVolumeS3Config
+type SandboxVolumeS3Config struct {
+	Provider    SandboxVolumeS3ConfigProvider `json:"provider"`
+	Bucket      string                        `json:"bucket"`
+	Prefix      OptString                     `json:"prefix"`
+	Region      OptString                     `json:"region"`
+	EndpointURL OptString                     `json:"endpoint_url"`
+}
+
+// GetProvider returns the value of Provider.
+func (s *SandboxVolumeS3Config) GetProvider() SandboxVolumeS3ConfigProvider {
+	return s.Provider
+}
+
+// GetBucket returns the value of Bucket.
+func (s *SandboxVolumeS3Config) GetBucket() string {
+	return s.Bucket
+}
+
+// GetPrefix returns the value of Prefix.
+func (s *SandboxVolumeS3Config) GetPrefix() OptString {
+	return s.Prefix
+}
+
+// GetRegion returns the value of Region.
+func (s *SandboxVolumeS3Config) GetRegion() OptString {
+	return s.Region
+}
+
+// GetEndpointURL returns the value of EndpointURL.
+func (s *SandboxVolumeS3Config) GetEndpointURL() OptString {
+	return s.EndpointURL
+}
+
+// SetProvider sets the value of Provider.
+func (s *SandboxVolumeS3Config) SetProvider(val SandboxVolumeS3ConfigProvider) {
+	s.Provider = val
+}
+
+// SetBucket sets the value of Bucket.
+func (s *SandboxVolumeS3Config) SetBucket(val string) {
+	s.Bucket = val
+}
+
+// SetPrefix sets the value of Prefix.
+func (s *SandboxVolumeS3Config) SetPrefix(val OptString) {
+	s.Prefix = val
+}
+
+// SetRegion sets the value of Region.
+func (s *SandboxVolumeS3Config) SetRegion(val OptString) {
+	s.Region = val
+}
+
+// SetEndpointURL sets the value of EndpointURL.
+func (s *SandboxVolumeS3Config) SetEndpointURL(val OptString) {
+	s.EndpointURL = val
+}
+
+type SandboxVolumeS3ConfigProvider string
+
+const (
+	SandboxVolumeS3ConfigProviderAWS SandboxVolumeS3ConfigProvider = "aws"
+	SandboxVolumeS3ConfigProviderAli SandboxVolumeS3ConfigProvider = "ali"
+	SandboxVolumeS3ConfigProviderR2  SandboxVolumeS3ConfigProvider = "r2"
+)
+
+// AllValues returns all SandboxVolumeS3ConfigProvider values.
+func (SandboxVolumeS3ConfigProvider) AllValues() []SandboxVolumeS3ConfigProvider {
+	return []SandboxVolumeS3ConfigProvider{
+		SandboxVolumeS3ConfigProviderAWS,
+		SandboxVolumeS3ConfigProviderAli,
+		SandboxVolumeS3ConfigProviderR2,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxVolumeS3ConfigProvider) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxVolumeS3ConfigProviderAWS:
+		return []byte(s), nil
+	case SandboxVolumeS3ConfigProviderAli:
+		return []byte(s), nil
+	case SandboxVolumeS3ConfigProviderR2:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxVolumeS3ConfigProvider) UnmarshalText(data []byte) error {
+	switch SandboxVolumeS3ConfigProvider(data) {
+	case SandboxVolumeS3ConfigProviderAWS:
+		*s = SandboxVolumeS3ConfigProviderAWS
+		return nil
+	case SandboxVolumeS3ConfigProviderAli:
+		*s = SandboxVolumeS3ConfigProviderAli
+		return nil
+	case SandboxVolumeS3ConfigProviderR2:
+		*s = SandboxVolumeS3ConfigProviderR2
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/SeccompProfile
@@ -20804,6 +21293,51 @@ func (s *VolumeAccessMode) UnmarshalText(data []byte) error {
 		return nil
 	case VolumeAccessModeRWX:
 		*s = VolumeAccessModeRWX
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Storage backend for a SandboxVolume. s0fs is the default durable Sandbox0 volume backend. s3
+// mounts an existing S3-compatible prefix through the volume portal and supports mount-s3-like
+// object projection.
+// Ref: #/components/schemas/VolumeBackend
+type VolumeBackend string
+
+const (
+	VolumeBackendS0fs VolumeBackend = "s0fs"
+	VolumeBackendS3   VolumeBackend = "s3"
+)
+
+// AllValues returns all VolumeBackend values.
+func (VolumeBackend) AllValues() []VolumeBackend {
+	return []VolumeBackend{
+		VolumeBackendS0fs,
+		VolumeBackendS3,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s VolumeBackend) MarshalText() ([]byte, error) {
+	switch s {
+	case VolumeBackendS0fs:
+		return []byte(s), nil
+	case VolumeBackendS3:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *VolumeBackend) UnmarshalText(data []byte) error {
+	switch VolumeBackend(data) {
+	case VolumeBackendS0fs:
+		*s = VolumeBackendS0fs
+		return nil
+	case VolumeBackendS3:
+		*s = VolumeBackendS3
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)

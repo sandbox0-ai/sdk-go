@@ -6589,6 +6589,18 @@ func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Backend.Set {
+			e.FieldStart("backend")
+			s.Backend.Encode(e)
+		}
+	}
+	{
+		if s.S3.Set {
+			e.FieldStart("s3")
+			s.S3.Encode(e)
+		}
+	}
+	{
 		if s.DefaultPosixUID.Set {
 			e.FieldStart("default_posix_uid")
 			s.DefaultPosixUID.Encode(e)
@@ -6608,11 +6620,13 @@ func (s *CreateSandboxVolumeRequest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateSandboxVolumeRequest = [4]string{
+var jsonFieldsNameOfCreateSandboxVolumeRequest = [6]string{
 	0: "snapshot_id",
-	1: "default_posix_uid",
-	2: "default_posix_gid",
-	3: "access_mode",
+	1: "backend",
+	2: "s3",
+	3: "default_posix_uid",
+	4: "default_posix_gid",
+	5: "access_mode",
 }
 
 // Decode decodes CreateSandboxVolumeRequest from json.
@@ -6633,6 +6647,26 @@ func (s *CreateSandboxVolumeRequest) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"snapshot_id\"")
+			}
+		case "backend":
+			if err := func() error {
+				s.Backend.Reset()
+				if err := s.Backend.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"backend\"")
+			}
+		case "s3":
+			if err := func() error {
+				s.S3.Reset()
+				if err := s.S3.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"s3\"")
 			}
 		case "default_posix_uid":
 			if err := func() error {
@@ -6684,6 +6718,264 @@ func (s *CreateSandboxVolumeRequest) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *CreateSandboxVolumeRequest) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *CreateSandboxVolumeS3Config) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *CreateSandboxVolumeS3Config) encodeFields(e *jx.Encoder) {
+	{
+		if s.Provider.Set {
+			e.FieldStart("provider")
+			s.Provider.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("bucket")
+		e.Str(s.Bucket)
+	}
+	{
+		if s.Prefix.Set {
+			e.FieldStart("prefix")
+			s.Prefix.Encode(e)
+		}
+	}
+	{
+		if s.Region.Set {
+			e.FieldStart("region")
+			s.Region.Encode(e)
+		}
+	}
+	{
+		if s.EndpointURL.Set {
+			e.FieldStart("endpoint_url")
+			s.EndpointURL.Encode(e)
+		}
+	}
+	{
+		if s.AccessKey.Set {
+			e.FieldStart("access_key")
+			s.AccessKey.Encode(e)
+		}
+	}
+	{
+		if s.SecretKey.Set {
+			e.FieldStart("secret_key")
+			s.SecretKey.Encode(e)
+		}
+	}
+	{
+		if s.SessionToken.Set {
+			e.FieldStart("session_token")
+			s.SessionToken.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfCreateSandboxVolumeS3Config = [8]string{
+	0: "provider",
+	1: "bucket",
+	2: "prefix",
+	3: "region",
+	4: "endpoint_url",
+	5: "access_key",
+	6: "secret_key",
+	7: "session_token",
+}
+
+// Decode decodes CreateSandboxVolumeS3Config from json.
+func (s *CreateSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode CreateSandboxVolumeS3Config to nil")
+	}
+	var requiredBitSet [1]uint8
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "provider":
+			if err := func() error {
+				s.Provider.Reset()
+				if err := s.Provider.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"provider\"")
+			}
+		case "bucket":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Bucket = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"bucket\"")
+			}
+		case "prefix":
+			if err := func() error {
+				s.Prefix.Reset()
+				if err := s.Prefix.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"prefix\"")
+			}
+		case "region":
+			if err := func() error {
+				s.Region.Reset()
+				if err := s.Region.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region\"")
+			}
+		case "endpoint_url":
+			if err := func() error {
+				s.EndpointURL.Reset()
+				if err := s.EndpointURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"endpoint_url\"")
+			}
+		case "access_key":
+			if err := func() error {
+				s.AccessKey.Reset()
+				if err := s.AccessKey.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"access_key\"")
+			}
+		case "secret_key":
+			if err := func() error {
+				s.SecretKey.Reset()
+				if err := s.SecretKey.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"secret_key\"")
+			}
+		case "session_token":
+			if err := func() error {
+				s.SessionToken.Reset()
+				if err := s.SessionToken.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"session_token\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode CreateSandboxVolumeS3Config")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000010,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfCreateSandboxVolumeS3Config) {
+					name = jsonFieldsNameOfCreateSandboxVolumeS3Config[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *CreateSandboxVolumeS3Config) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *CreateSandboxVolumeS3Config) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes CreateSandboxVolumeS3ConfigProvider as json.
+func (s CreateSandboxVolumeS3ConfigProvider) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes CreateSandboxVolumeS3ConfigProvider from json.
+func (s *CreateSandboxVolumeS3ConfigProvider) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode CreateSandboxVolumeS3ConfigProvider to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch CreateSandboxVolumeS3ConfigProvider(v) {
+	case CreateSandboxVolumeS3ConfigProviderAWS:
+		*s = CreateSandboxVolumeS3ConfigProviderAWS
+	case CreateSandboxVolumeS3ConfigProviderAli:
+		*s = CreateSandboxVolumeS3ConfigProviderAli
+	case CreateSandboxVolumeS3ConfigProviderR2:
+		*s = CreateSandboxVolumeS3ConfigProviderR2
+	default:
+		*s = CreateSandboxVolumeS3ConfigProvider(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s CreateSandboxVolumeS3ConfigProvider) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *CreateSandboxVolumeS3ConfigProvider) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -13632,6 +13924,72 @@ func (s *OptCreateSandboxRootFSSnapshotRequest) UnmarshalJSON(data []byte) error
 	return s.Decode(d)
 }
 
+// Encode encodes CreateSandboxVolumeS3Config as json.
+func (o OptCreateSandboxVolumeS3Config) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes CreateSandboxVolumeS3Config from json.
+func (o *OptCreateSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptCreateSandboxVolumeS3Config to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptCreateSandboxVolumeS3Config) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptCreateSandboxVolumeS3Config) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes CreateSandboxVolumeS3ConfigProvider as json.
+func (o OptCreateSandboxVolumeS3ConfigProvider) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes CreateSandboxVolumeS3ConfigProvider from json.
+func (o *OptCreateSandboxVolumeS3ConfigProvider) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptCreateSandboxVolumeS3ConfigProvider to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptCreateSandboxVolumeS3ConfigProvider) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptCreateSandboxVolumeS3ConfigProvider) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes CredentialSourceMetadata as json.
 func (o OptCredentialSourceMetadata) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -16807,6 +17165,39 @@ func (s *OptSandboxVolume) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes SandboxVolumeS3Config as json.
+func (o OptSandboxVolumeS3Config) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxVolumeS3Config from json.
+func (o *OptSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxVolumeS3Config to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxVolumeS3Config) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxVolumeS3Config) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes SeccompProfile as json.
 func (o OptSeccompProfile) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -18060,6 +18451,39 @@ func (s OptVolumeAccessMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptVolumeAccessMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes VolumeBackend as json.
+func (o OptVolumeBackend) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes VolumeBackend from json.
+func (o *OptVolumeBackend) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptVolumeBackend to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptVolumeBackend) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptVolumeBackend) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -29886,6 +30310,16 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("backend")
+		s.Backend.Encode(e)
+	}
+	{
+		if s.S3.Set {
+			e.FieldStart("s3")
+			s.S3.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
@@ -29895,16 +30329,18 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxVolume = [9]string{
-	0: "id",
-	1: "team_id",
-	2: "user_id",
-	3: "source_volume_id",
-	4: "default_posix_uid",
-	5: "default_posix_gid",
-	6: "access_mode",
-	7: "created_at",
-	8: "updated_at",
+var jsonFieldsNameOfSandboxVolume = [11]string{
+	0:  "id",
+	1:  "team_id",
+	2:  "user_id",
+	3:  "source_volume_id",
+	4:  "default_posix_uid",
+	5:  "default_posix_gid",
+	6:  "access_mode",
+	7:  "backend",
+	8:  "s3",
+	9:  "created_at",
+	10: "updated_at",
 }
 
 // Decode decodes SandboxVolume from json.
@@ -29992,8 +30428,28 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"access_mode\"")
 			}
-		case "created_at":
+		case "backend":
 			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				if err := s.Backend.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"backend\"")
+			}
+		case "s3":
+			if err := func() error {
+				s.S3.Reset()
+				if err := s.S3.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"s3\"")
+			}
+		case "created_at":
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -30005,7 +30461,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -30027,7 +30483,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b10000111,
-		0b00000001,
+		0b00000110,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -30069,6 +30525,210 @@ func (s *SandboxVolume) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *SandboxVolume) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *SandboxVolumeS3Config) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxVolumeS3Config) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("provider")
+		s.Provider.Encode(e)
+	}
+	{
+		e.FieldStart("bucket")
+		e.Str(s.Bucket)
+	}
+	{
+		if s.Prefix.Set {
+			e.FieldStart("prefix")
+			s.Prefix.Encode(e)
+		}
+	}
+	{
+		if s.Region.Set {
+			e.FieldStart("region")
+			s.Region.Encode(e)
+		}
+	}
+	{
+		if s.EndpointURL.Set {
+			e.FieldStart("endpoint_url")
+			s.EndpointURL.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxVolumeS3Config = [5]string{
+	0: "provider",
+	1: "bucket",
+	2: "prefix",
+	3: "region",
+	4: "endpoint_url",
+}
+
+// Decode decodes SandboxVolumeS3Config from json.
+func (s *SandboxVolumeS3Config) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxVolumeS3Config to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "provider":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Provider.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"provider\"")
+			}
+		case "bucket":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Bucket = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"bucket\"")
+			}
+		case "prefix":
+			if err := func() error {
+				s.Prefix.Reset()
+				if err := s.Prefix.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"prefix\"")
+			}
+		case "region":
+			if err := func() error {
+				s.Region.Reset()
+				if err := s.Region.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region\"")
+			}
+		case "endpoint_url":
+			if err := func() error {
+				s.EndpointURL.Reset()
+				if err := s.EndpointURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"endpoint_url\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxVolumeS3Config")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxVolumeS3Config) {
+					name = jsonFieldsNameOfSandboxVolumeS3Config[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxVolumeS3Config) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxVolumeS3Config) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxVolumeS3ConfigProvider as json.
+func (s SandboxVolumeS3ConfigProvider) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxVolumeS3ConfigProvider from json.
+func (s *SandboxVolumeS3ConfigProvider) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxVolumeS3ConfigProvider to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxVolumeS3ConfigProvider(v) {
+	case SandboxVolumeS3ConfigProviderAWS:
+		*s = SandboxVolumeS3ConfigProviderAWS
+	case SandboxVolumeS3ConfigProviderAli:
+		*s = SandboxVolumeS3ConfigProviderAli
+	case SandboxVolumeS3ConfigProviderR2:
+		*s = SandboxVolumeS3ConfigProviderR2
+	default:
+		*s = SandboxVolumeS3ConfigProvider(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxVolumeS3ConfigProvider) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxVolumeS3ConfigProvider) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -45401,6 +46061,46 @@ func (s VolumeAccessMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *VolumeAccessMode) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes VolumeBackend as json.
+func (s VolumeBackend) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes VolumeBackend from json.
+func (s *VolumeBackend) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode VolumeBackend to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch VolumeBackend(v) {
+	case VolumeBackendS0fs:
+		*s = VolumeBackendS0fs
+	case VolumeBackendS3:
+		*s = VolumeBackendS3
+	default:
+		*s = VolumeBackend(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s VolumeBackend) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *VolumeBackend) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
