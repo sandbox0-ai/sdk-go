@@ -1102,6 +1102,42 @@ func (s *CreateSandboxVolumeRequest) Validate() error {
 
 	var failures []validate.FieldError
 	if err := func() error {
+		if value, ok := s.Backend.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "backend",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.S3.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "s3",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if value, ok := s.DefaultPosixUID.Get(); ok {
 			if err := func() error {
 				if err := (validate.Int{
@@ -1179,6 +1215,49 @@ func (s *CreateSandboxVolumeRequest) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s *CreateSandboxVolumeS3Config) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Provider.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "provider",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s CreateSandboxVolumeS3ConfigProvider) Validate() error {
+	switch s {
+	case "aws":
+		return nil
+	case "ali":
+		return nil
+	case "r2":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *CredentialBinding) Validate() error {
@@ -3762,10 +3841,75 @@ func (s *SandboxVolume) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Backend.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "backend",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.S3.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "s3",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s *SandboxVolumeS3Config) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Provider.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "provider",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SandboxVolumeS3ConfigProvider) Validate() error {
+	switch s {
+	case "aws":
+		return nil
+	case "ali":
+		return nil
+	case "r2":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *SeccompProfile) Validate() error {
@@ -7344,6 +7488,17 @@ func (s VolumeAccessMode) Validate() error {
 	case "ROX":
 		return nil
 	case "RWX":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s VolumeBackend) Validate() error {
+	switch s {
+	case "s0fs":
+		return nil
+	case "s3":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
