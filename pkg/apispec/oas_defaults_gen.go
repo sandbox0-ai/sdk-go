@@ -15,6 +15,14 @@ func (s *CreateSandboxVolumeRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *CreateSandboxVolumeS3Config) setDefaults() {
+	{
+		val := CreateSandboxVolumeS3ConfigProvider("aws")
+		s.Provider.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxAppServiceRouteAuth) setDefaults() {
 	{
 		val := SandboxAppServiceRouteAuthMode("none")
