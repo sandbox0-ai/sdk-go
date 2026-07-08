@@ -434,11 +434,11 @@ type APIV1SandboxesIDSnapshotsPostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDSnapshotsPostNotFound) aPIV1SandboxesIDSnapshotsPostRes() {}
 
-type APIV1SandboxesPostBadRequest ErrorEnvelope
+type APIV1SandboxesPostServiceUnavailable ErrorEnvelopeHeaders
 
-func (*APIV1SandboxesPostBadRequest) aPIV1SandboxesPostRes() {}
+func (*APIV1SandboxesPostServiceUnavailable) aPIV1SandboxesPostRes() {}
 
-type APIV1SandboxesPostTooManyRequests ErrorEnvelope
+type APIV1SandboxesPostTooManyRequests ErrorEnvelopeHeaders
 
 func (*APIV1SandboxesPostTooManyRequests) aPIV1SandboxesPostRes() {}
 
@@ -1929,8 +1929,9 @@ type CreateSandboxVolumeRequest struct {
 	// Volume backend. Defaults to s0fs when omitted. If s3 is provided without backend, backend is
 	// inferred as s3.
 	Backend OptVolumeBackend `json:"backend"`
-	// S3-compatible backend configuration. Only valid with backend s3; s3 volumes do not support
-	// snapshot_id or RWX access mode.
+	// S3-compatible backend configuration. Only valid with backend s3; per-volume access_key and
+	// secret_key are required, stored encrypted, and omitted from API responses; s3 volumes do not
+	// support snapshot_id or RWX access mode.
 	S3 OptCreateSandboxVolumeS3Config `json:"s3"`
 	// Default POSIX UID used by external volume access paths that do not carry caller identity. Defaults
 	// to 0 when omitted on create.
@@ -2009,14 +2010,17 @@ type CreateSandboxVolumeS3Config struct {
 	Bucket   string                                 `json:"bucket"`
 	// Optional object key prefix to expose as the volume root.
 	Prefix OptString `json:"prefix"`
-	// Optional region override. Defaults to the storage-proxy S3 region when omitted.
+	// AWS region for the target bucket. Required for provider aws unless endpoint_url is provided.
 	Region OptString `json:"region"`
-	// Optional endpoint override. Required for ali and r2.
+	// Optional endpoint override. Required for ali and r2. For aws, endpoint_url can be used instead of
+	// region for S3-compatible endpoints.
 	EndpointURL OptString `json:"endpoint_url"`
-	// Optional access key override. Must be provided together with secret_key.
-	AccessKey OptString `json:"access_key"`
-	// Optional secret key override. Must be provided together with access_key.
-	SecretKey OptString `json:"secret_key"`
+	// Access key for this S3 backend volume. Required with secret_key. Stored encrypted and omitted from
+	// API responses.
+	AccessKey string `json:"access_key"`
+	// Secret key for this S3 backend volume. Required with access_key. Stored encrypted and omitted from
+	// API responses.
+	SecretKey string `json:"secret_key"`
 	// Optional temporary credential session token.
 	SessionToken OptString `json:"session_token"`
 }
@@ -2047,12 +2051,12 @@ func (s *CreateSandboxVolumeS3Config) GetEndpointURL() OptString {
 }
 
 // GetAccessKey returns the value of AccessKey.
-func (s *CreateSandboxVolumeS3Config) GetAccessKey() OptString {
+func (s *CreateSandboxVolumeS3Config) GetAccessKey() string {
 	return s.AccessKey
 }
 
 // GetSecretKey returns the value of SecretKey.
-func (s *CreateSandboxVolumeS3Config) GetSecretKey() OptString {
+func (s *CreateSandboxVolumeS3Config) GetSecretKey() string {
 	return s.SecretKey
 }
 
@@ -2087,12 +2091,12 @@ func (s *CreateSandboxVolumeS3Config) SetEndpointURL(val OptString) {
 }
 
 // SetAccessKey sets the value of AccessKey.
-func (s *CreateSandboxVolumeS3Config) SetAccessKey(val OptString) {
+func (s *CreateSandboxVolumeS3Config) SetAccessKey(val string) {
 	s.AccessKey = val
 }
 
 // SetSecretKey sets the value of SecretKey.
-func (s *CreateSandboxVolumeS3Config) SetSecretKey(val OptString) {
+func (s *CreateSandboxVolumeS3Config) SetSecretKey(val string) {
 	s.SecretKey = val
 }
 
@@ -3333,6 +3337,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
+func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
 func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
@@ -3350,6 +3355,32 @@ func (*ErrorEnvelope) teamsPostRes()                                   {}
 func (*ErrorEnvelope) usersMeGetRes()                                  {}
 func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
 func (*ErrorEnvelope) usersMeSSHKeysGetRes()                           {}
+
+// ErrorEnvelopeHeaders wraps ErrorEnvelope with response headers.
+type ErrorEnvelopeHeaders struct {
+	RetryAfter OptInt
+	Response   ErrorEnvelope
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *ErrorEnvelopeHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *ErrorEnvelopeHeaders) GetResponse() ErrorEnvelope {
+	return s.Response
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *ErrorEnvelopeHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *ErrorEnvelopeHeaders) SetResponse(val ErrorEnvelope) {
+	s.Response = val
+}
 
 type ErrorEnvelopeSuccess bool
 

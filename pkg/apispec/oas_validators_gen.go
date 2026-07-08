@@ -442,8 +442,8 @@ func (s *APIV1SandboxesIDSnapshotsPostNotFound) Validate() error {
 	return nil
 }
 
-func (s *APIV1SandboxesPostBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
+func (s *APIV1SandboxesPostServiceUnavailable) Validate() error {
+	alias := (*ErrorEnvelopeHeaders)(s)
 	if err := alias.Validate(); err != nil {
 		return err
 	}
@@ -451,7 +451,7 @@ func (s *APIV1SandboxesPostBadRequest) Validate() error {
 }
 
 func (s *APIV1SandboxesPostTooManyRequests) Validate() error {
-	alias := (*ErrorEnvelope)(s)
+	alias := (*ErrorEnvelopeHeaders)(s)
 	if err := alias.Validate(); err != nil {
 		return err
 	}
@@ -1635,6 +1635,29 @@ func (s *ErrorEnvelope) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "success",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *ErrorEnvelopeHeaders) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Response.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "Response",
 			Error: err,
 		})
 	}

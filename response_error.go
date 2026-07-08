@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -39,9 +40,10 @@ func handleErrorResponse(_ context.Context, resp *http.Response) error {
 
 func apiErrorFromHTTPResponse(resp *http.Response, body []byte, truncated bool) *APIError {
 	err := &APIError{
-		StatusCode: resp.StatusCode,
-		RequestID:  requestIDFromHeaders(resp.Header),
-		Body:       body,
+		StatusCode:        resp.StatusCode,
+		RequestID:         requestIDFromHeaders(resp.Header),
+		Body:              body,
+		RetryAfterSeconds: retryAfterSecondsFromHeaders(resp.Header),
 	}
 
 	if isJSONContentType(resp.Header.Get("Content-Type")) && len(body) > 0 {
@@ -84,6 +86,18 @@ func requestIDFromHeaders(headers http.Header) string {
 		}
 	}
 	return ""
+}
+
+func retryAfterSecondsFromHeaders(headers http.Header) int {
+	value := strings.TrimSpace(headers.Get("Retry-After"))
+	if value == "" {
+		return 0
+	}
+	seconds, err := strconv.Atoi(value)
+	if err != nil || seconds < 0 {
+		return 0
+	}
+	return seconds
 }
 
 func isJSONContentType(value string) bool {

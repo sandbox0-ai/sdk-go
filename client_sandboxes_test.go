@@ -3,6 +3,7 @@ package sandbox0
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -155,6 +156,44 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatalf("ClaimSandbox() error = %v", err)
+	}
+}
+
+func TestClaimSandboxReturnsClaimStartThrottledAPIError(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Retry-After", "2")
+		writeJSON(t, w, http.StatusTooManyRequests, map[string]any{
+			"success": false,
+			"error": map[string]any{
+				"code":    CodeClaimStartThrottled,
+				"message": "claim start admission throttled",
+			},
+		})
+	})
+	defer server.Close()
+
+	_, err := client.ClaimSandbox(context.Background(), "default")
+	if err == nil {
+		t.Fatal("ClaimSandbox() error = nil, want throttled error")
+	}
+	var apiErr *APIError
+	if !errors.As(err, &apiErr) {
+		t.Fatalf("error type = %T, want *APIError", err)
+	}
+	if apiErr.StatusCode != http.StatusTooManyRequests {
+		t.Fatalf("StatusCode = %d, want %d", apiErr.StatusCode, http.StatusTooManyRequests)
+	}
+	if apiErr.Code != CodeClaimStartThrottled {
+		t.Fatalf("Code = %q, want %q", apiErr.Code, CodeClaimStartThrottled)
+	}
+	if apiErr.RetryAfterSeconds != 2 {
+		t.Fatalf("RetryAfterSeconds = %d, want 2", apiErr.RetryAfterSeconds)
+	}
+	if !apiErr.IsClaimStartThrottled() {
+		t.Fatal("IsClaimStartThrottled() = false, want true")
+	}
+	if !IsClaimStartThrottled(err) {
+		t.Fatal("IsClaimStartThrottled(err) = false, want true")
 	}
 }
 
