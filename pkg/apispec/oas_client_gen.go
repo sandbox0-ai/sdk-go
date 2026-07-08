@@ -339,7 +339,7 @@ type Invoker interface {
 	//
 	// Queries the asynchronous per-sandbox observability projection for lifecycle,
 	// network audit, and runtime stats events. This endpoint does not expose backend SQL
-	// and does not replace the metering usage truth stored in PostgreSQL.
+	// and reads tables that are separate from the metering usage ledger.
 	//
 	// GET /api/v1/sandboxes/{id}/observability/events
 	APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error)
@@ -353,7 +353,7 @@ type Invoker interface {
 	// APIV1SandboxesIDObservabilityMetricsGet invokes GET /api/v1/sandboxes/{id}/observability/metrics operation.
 	//
 	// Queries the asynchronous per-sandbox metric sample projection. This endpoint is
-	// separate from platform service metrics and PostgreSQL metering usage truth.
+	// separate from platform service metrics and metering usage truth.
 	//
 	// GET /api/v1/sandboxes/{id}/observability/metrics
 	APIV1SandboxesIDObservabilityMetricsGet(ctx context.Context, params APIV1SandboxesIDObservabilityMetricsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityMetricsGetRes, error)
@@ -5600,7 +5600,7 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *Sa
 //
 // Queries the asynchronous per-sandbox observability projection for lifecycle,
 // network audit, and runtime stats events. This endpoint does not expose backend SQL
-// and does not replace the metering usage truth stored in PostgreSQL.
+// and reads tables that are separate from the metering usage ledger.
 //
 // GET /api/v1/sandboxes/{id}/observability/events
 func (c *Client) APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error) {
@@ -6091,7 +6091,7 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityLogsGet(ctx context.Context, p
 // APIV1SandboxesIDObservabilityMetricsGet invokes GET /api/v1/sandboxes/{id}/observability/metrics operation.
 //
 // Queries the asynchronous per-sandbox metric sample projection. This endpoint is
-// separate from platform service metrics and PostgreSQL metering usage truth.
+// separate from platform service metrics and metering usage truth.
 //
 // GET /api/v1/sandboxes/{id}/observability/metrics
 func (c *Client) APIV1SandboxesIDObservabilityMetricsGet(ctx context.Context, params APIV1SandboxesIDObservabilityMetricsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityMetricsGetRes, error) {

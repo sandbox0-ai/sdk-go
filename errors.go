@@ -1,6 +1,7 @@
 package sandbox0
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -9,14 +10,17 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
+const CodeClaimStartThrottled = "claim_start_throttled"
+
 // APIError represents a structured error returned by the Sandbox0 API.
 type APIError struct {
-	StatusCode int
-	Code       string
-	Message    string
-	RequestID  string
-	Details    any
-	Body       []byte
+	StatusCode        int
+	Code              string
+	Message           string
+	RequestID         string
+	Details           any
+	Body              []byte
+	RetryAfterSeconds int
 }
 
 func (e *APIError) Error() string {
@@ -29,27 +33,40 @@ func (e *APIError) Error() string {
 	return fmt.Sprintf("sandbox0 API error (%d): %s", e.StatusCode, e.Message)
 }
 
-func apiErrorFromEnvelope(statusCode int, envelope *apispec.ErrorEnvelope) *APIError {
+func (e *APIError) IsClaimStartThrottled() bool {
+	return e != nil &&
+		e.StatusCode == http.StatusTooManyRequests &&
+		e.Code == CodeClaimStartThrottled
+}
+
+func IsClaimStartThrottled(err error) bool {
+	var apiErr *APIError
+	return errors.As(err, &apiErr) && apiErr.IsClaimStartThrottled()
+}
+
+func apiErrorFromEnvelope(statusCode int, envelope *apispec.ErrorEnvelope, retryAfterSeconds int) *APIError {
 	if envelope == nil {
 		return &APIError{
-			StatusCode: statusCode,
-			Code:       "unknown_error",
-			Message:    "no error body received",
+			StatusCode:        statusCode,
+			Code:              "unknown_error",
+			Message:           "no error body received",
+			RetryAfterSeconds: retryAfterSeconds,
 		}
 	}
 	return &APIError{
-		StatusCode: statusCode,
-		Code:       envelope.Error.Code,
-		Message:    envelope.Error.Message,
-		Details:    envelope.Error.Details,
+		StatusCode:        statusCode,
+		Code:              envelope.Error.Code,
+		Message:           envelope.Error.Message,
+		Details:           envelope.Error.Details,
+		RetryAfterSeconds: retryAfterSeconds,
 	}
 }
 
 func apiErrorFromResponse(res any) *APIError {
 	status := errorStatusFromResponse(res)
-	envelope, ok := errorEnvelopeFromResponse(res)
+	envelope, retryAfterSeconds, ok := errorEnvelopeFromResponse(res)
 	if ok {
-		return apiErrorFromEnvelope(status, envelope)
+		return apiErrorFromEnvelope(status, envelope, retryAfterSeconds)
 	}
 	return &APIError{
 		StatusCode: status,
@@ -58,24 +75,58 @@ func apiErrorFromResponse(res any) *APIError {
 	}
 }
 
-func errorEnvelopeFromResponse(res any) (*apispec.ErrorEnvelope, bool) {
+func errorEnvelopeFromResponse(res any) (*apispec.ErrorEnvelope, int, bool) {
 	if res == nil {
-		return nil, false
+		return nil, 0, false
 	}
 	if envelope, ok := res.(*apispec.ErrorEnvelope); ok {
-		return envelope, true
+		return envelope, 0, true
 	}
 	value := reflect.ValueOf(res)
 	if value.Kind() != reflect.Pointer {
-		return nil, false
+		return nil, 0, false
+	}
+	if envelope, retryAfterSeconds, ok := errorEnvelopeHeadersFromValue(value); ok {
+		return envelope, retryAfterSeconds, true
 	}
 	target := reflect.TypeOf(&apispec.ErrorEnvelope{})
 	if !value.Type().ConvertibleTo(target) {
-		return nil, false
+		return nil, 0, false
 	}
 	converted := value.Convert(target)
 	envelope, ok := converted.Interface().(*apispec.ErrorEnvelope)
-	return envelope, ok
+	return envelope, 0, ok
+}
+
+func errorEnvelopeHeadersFromValue(value reflect.Value) (*apispec.ErrorEnvelope, int, bool) {
+	if value.Kind() != reflect.Pointer || value.IsNil() {
+		return nil, 0, false
+	}
+	target := reflect.TypeOf(&apispec.ErrorEnvelopeHeaders{})
+	if value.Type().ConvertibleTo(target) {
+		headers := value.Convert(target).Interface().(*apispec.ErrorEnvelopeHeaders)
+		return &headers.Response, headers.RetryAfter.Or(0), true
+	}
+	elem := value.Elem()
+	if elem.Kind() != reflect.Struct {
+		return nil, 0, false
+	}
+	responseField := elem.FieldByName("Response")
+	if !responseField.IsValid() || !responseField.CanInterface() {
+		return nil, 0, false
+	}
+	envelope, ok := responseField.Interface().(apispec.ErrorEnvelope)
+	if !ok {
+		return nil, 0, false
+	}
+	retryAfterSeconds := 0
+	retryAfterField := elem.FieldByName("RetryAfter")
+	if retryAfterField.IsValid() && retryAfterField.CanInterface() {
+		if retryAfter, ok := retryAfterField.Interface().(apispec.OptInt); ok {
+			retryAfterSeconds = retryAfter.Or(0)
+		}
+	}
+	return &envelope, retryAfterSeconds, true
 }
 
 func errorStatusFromResponse(res any) int {

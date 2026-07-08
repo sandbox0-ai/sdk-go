@@ -2196,82 +2196,6 @@ func (s *APIV1SandboxesIDSnapshotsPostNotFound) UnmarshalJSON(data []byte) error
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesPostBadRequest as json.
-func (s *APIV1SandboxesPostBadRequest) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesPostBadRequest from json.
-func (s *APIV1SandboxesPostBadRequest) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesPostBadRequest to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesPostBadRequest(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesPostBadRequest) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesPostBadRequest) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes APIV1SandboxesPostTooManyRequests as json.
-func (s *APIV1SandboxesPostTooManyRequests) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesPostTooManyRequests from json.
-func (s *APIV1SandboxesPostTooManyRequests) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesPostTooManyRequests to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesPostTooManyRequests(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesPostTooManyRequests) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesPostTooManyRequests) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode implements json.Marshaler.
 func (s *APIV1SandboxvolumesIDFilesGetOKApplicationJSON) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -6760,16 +6684,12 @@ func (s *CreateSandboxVolumeS3Config) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.AccessKey.Set {
-			e.FieldStart("access_key")
-			s.AccessKey.Encode(e)
-		}
+		e.FieldStart("access_key")
+		e.Str(s.AccessKey)
 	}
 	{
-		if s.SecretKey.Set {
-			e.FieldStart("secret_key")
-			s.SecretKey.Encode(e)
-		}
+		e.FieldStart("secret_key")
+		e.Str(s.SecretKey)
 	}
 	{
 		if s.SessionToken.Set {
@@ -6853,9 +6773,11 @@ func (s *CreateSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"endpoint_url\"")
 			}
 		case "access_key":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				s.AccessKey.Reset()
-				if err := s.AccessKey.Decode(d); err != nil {
+				v, err := d.Str()
+				s.AccessKey = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -6863,9 +6785,11 @@ func (s *CreateSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"access_key\"")
 			}
 		case "secret_key":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
-				s.SecretKey.Reset()
-				if err := s.SecretKey.Decode(d); err != nil {
+				v, err := d.Str()
+				s.SecretKey = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -6892,7 +6816,7 @@ func (s *CreateSandboxVolumeS3Config) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000010,
+		0b01100010,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
