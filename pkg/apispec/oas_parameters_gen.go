@@ -273,6 +273,54 @@ type APIV1SandboxesIDPausePostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDProcessesGetParams is parameters of GET /api/v1/sandboxes/{id}/processes operation.
+type APIV1SandboxesIDProcessesGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDProcessesPostParams is parameters of POST /api/v1/sandboxes/{id}/processes operation.
+type APIV1SandboxesIDProcessesPostParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutParams is parameters of PUT /api/v1/sandboxes/{id}/processes/{process_id}/channels/{channel}/pty-size operation.
+type APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutParams struct {
+	ID        string
+	ProcessID string
+	Channel   string
+}
+
+// APIV1SandboxesIDProcessesProcessIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/processes/{process_id} operation.
+type APIV1SandboxesIDProcessesProcessIDDeleteParams struct {
+	ID        string
+	ProcessID string
+}
+
+// APIV1SandboxesIDProcessesProcessIDEventsGetParams is parameters of GET /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+type APIV1SandboxesIDProcessesProcessIDEventsGetParams struct {
+	ID        string
+	ProcessID string
+	Cursor    OptInt64 `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDProcessesProcessIDEventsPostParams is parameters of POST /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+type APIV1SandboxesIDProcessesProcessIDEventsPostParams struct {
+	ID        string
+	ProcessID string
+}
+
+// APIV1SandboxesIDProcessesProcessIDGetParams is parameters of GET /api/v1/sandboxes/{id}/processes/{process_id} operation.
+type APIV1SandboxesIDProcessesProcessIDGetParams struct {
+	ID        string
+	ProcessID string
+}
+
+// APIV1SandboxesIDProcessesProcessIDSignalPostParams is parameters of POST /api/v1/sandboxes/{id}/processes/{process_id}/signal operation.
+type APIV1SandboxesIDProcessesProcessIDSignalPostParams struct {
+	ID        string
+	ProcessID string
+}
+
 // APIV1SandboxesIDPutParams is parameters of PUT /api/v1/sandboxes/{id} operation.
 type APIV1SandboxesIDPutParams struct {
 	ID string

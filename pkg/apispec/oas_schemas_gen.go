@@ -390,6 +390,21 @@ type APIV1SandboxesIDPausePostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostServiceUnavailable) aPIV1SandboxesIDPausePostRes() {}
 
+// SSE stream whose data field contains a ProcessEvent JSON object.
+type APIV1SandboxesIDProcessesProcessIDEventsGetOK struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxesIDProcessesProcessIDEventsGetOK) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -3323,38 +3338,39 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
-func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
-func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                  {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
-func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
-func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()    {}
-func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
-func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
-func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
-func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()               {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                    {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsPostRes()          {}
-func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
-func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
-func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()             {}
-func (*ErrorEnvelope) authProvidersGetRes()                            {}
-func (*ErrorEnvelope) healthzGetRes()                                  {}
-func (*ErrorEnvelope) readyzGetRes()                                   {}
-func (*ErrorEnvelope) regionsGetRes()                                  {}
-func (*ErrorEnvelope) teamsGetRes()                                    {}
-func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
-func (*ErrorEnvelope) teamsPostRes()                                   {}
-func (*ErrorEnvelope) usersMeGetRes()                                  {}
-func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
-func (*ErrorEnvelope) usersMeSSHKeysGetRes()                           {}
+func (*ErrorEnvelope) aPIKeysCurrentGetRes()                            {}
+func (*ErrorEnvelope) aPIKeysGetRes()                                   {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()                {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                   {}
+func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                      {}
+func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes()  {}
+func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()     {}
+func (*ErrorEnvelope) aPIV1SandboxesGetRes()                            {}
+func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                   {}
+func (*ErrorEnvelope) aPIV1SandboxesIDProcessesProcessIDEventsPostRes() {}
+func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                    {}
+func (*ErrorEnvelope) aPIV1SandboxesPostRes()                           {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDDeleteRes()                  {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDForkPostRes()                {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDGetRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsPostRes()           {}
+func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()  {}
+func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                          {}
+func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()              {}
+func (*ErrorEnvelope) authProvidersGetRes()                             {}
+func (*ErrorEnvelope) healthzGetRes()                                   {}
+func (*ErrorEnvelope) readyzGetRes()                                    {}
+func (*ErrorEnvelope) regionsGetRes()                                   {}
+func (*ErrorEnvelope) teamsGetRes()                                     {}
+func (*ErrorEnvelope) teamsIDMembersGetRes()                            {}
+func (*ErrorEnvelope) teamsPostRes()                                    {}
+func (*ErrorEnvelope) usersMeGetRes()                                   {}
+func (*ErrorEnvelope) usersMeIdentitiesGetRes()                         {}
+func (*ErrorEnvelope) usersMeSSHKeysGetRes()                            {}
 
 // ErrorEnvelopeHeaders wraps ErrorEnvelope with response headers.
 type ErrorEnvelopeHeaders struct {
@@ -3800,6 +3816,54 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/HTTPChannelSpec
+type HTTPChannelSpec struct {
+	BaseURL    string                    `json:"base_url"`
+	Headers    OptHTTPChannelSpecHeaders `json:"headers"`
+	TimeoutSec OptInt32                  `json:"timeout_sec"`
+}
+
+// GetBaseURL returns the value of BaseURL.
+func (s *HTTPChannelSpec) GetBaseURL() string {
+	return s.BaseURL
+}
+
+// GetHeaders returns the value of Headers.
+func (s *HTTPChannelSpec) GetHeaders() OptHTTPChannelSpecHeaders {
+	return s.Headers
+}
+
+// GetTimeoutSec returns the value of TimeoutSec.
+func (s *HTTPChannelSpec) GetTimeoutSec() OptInt32 {
+	return s.TimeoutSec
+}
+
+// SetBaseURL sets the value of BaseURL.
+func (s *HTTPChannelSpec) SetBaseURL(val string) {
+	s.BaseURL = val
+}
+
+// SetHeaders sets the value of Headers.
+func (s *HTTPChannelSpec) SetHeaders(val OptHTTPChannelSpecHeaders) {
+	s.Headers = val
+}
+
+// SetTimeoutSec sets the value of TimeoutSec.
+func (s *HTTPChannelSpec) SetTimeoutSec(val OptInt32) {
+	s.TimeoutSec = val
+}
+
+type HTTPChannelSpecHeaders map[string]string
+
+func (s *HTTPChannelSpecHeaders) init() HTTPChannelSpecHeaders {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
 }
 
 // Ref: #/components/schemas/HTTPHeadersProjection
@@ -6482,6 +6546,98 @@ func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
 	return d
 }
 
+// NewOptHTTPChannelSpec returns new OptHTTPChannelSpec with value set to v.
+func NewOptHTTPChannelSpec(v HTTPChannelSpec) OptHTTPChannelSpec {
+	return OptHTTPChannelSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPChannelSpec is optional HTTPChannelSpec.
+type OptHTTPChannelSpec struct {
+	Value HTTPChannelSpec
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPChannelSpec was set.
+func (o OptHTTPChannelSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPChannelSpec) Reset() {
+	var v HTTPChannelSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPChannelSpec) SetTo(v HTTPChannelSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPChannelSpec) Get() (v HTTPChannelSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPChannelSpec) Or(d HTTPChannelSpec) HTTPChannelSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptHTTPChannelSpecHeaders returns new OptHTTPChannelSpecHeaders with value set to v.
+func NewOptHTTPChannelSpecHeaders(v HTTPChannelSpecHeaders) OptHTTPChannelSpecHeaders {
+	return OptHTTPChannelSpecHeaders{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptHTTPChannelSpecHeaders is optional HTTPChannelSpecHeaders.
+type OptHTTPChannelSpecHeaders struct {
+	Value HTTPChannelSpecHeaders
+	Set   bool
+}
+
+// IsSet returns true if OptHTTPChannelSpecHeaders was set.
+func (o OptHTTPChannelSpecHeaders) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptHTTPChannelSpecHeaders) Reset() {
+	var v HTTPChannelSpecHeaders
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptHTTPChannelSpecHeaders) SetTo(v HTTPChannelSpecHeaders) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptHTTPChannelSpecHeaders) Get() (v HTTPChannelSpecHeaders, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptHTTPChannelSpecHeaders) Or(d HTTPChannelSpecHeaders) HTTPChannelSpecHeaders {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptHTTPHeadersProjection returns new OptHTTPHeadersProjection with value set to v.
 func NewOptHTTPHeadersProjection(v HTTPHeadersProjection) OptHTTPHeadersProjection {
 	return OptHTTPHeadersProjection{
@@ -7769,6 +7925,466 @@ func (o OptPoolStrategy) Get() (v PoolStrategy, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPoolStrategy) Or(d PoolStrategy) PoolStrategy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessChannelFraming returns new OptProcessChannelFraming with value set to v.
+func NewOptProcessChannelFraming(v ProcessChannelFraming) OptProcessChannelFraming {
+	return OptProcessChannelFraming{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessChannelFraming is optional ProcessChannelFraming.
+type OptProcessChannelFraming struct {
+	Value ProcessChannelFraming
+	Set   bool
+}
+
+// IsSet returns true if OptProcessChannelFraming was set.
+func (o OptProcessChannelFraming) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessChannelFraming) Reset() {
+	var v ProcessChannelFraming
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessChannelFraming) SetTo(v ProcessChannelFraming) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessChannelFraming) Get() (v ProcessChannelFraming, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessChannelFraming) Or(d ProcessChannelFraming) ProcessChannelFraming {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessCleanupSpec returns new OptProcessCleanupSpec with value set to v.
+func NewOptProcessCleanupSpec(v ProcessCleanupSpec) OptProcessCleanupSpec {
+	return OptProcessCleanupSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessCleanupSpec is optional ProcessCleanupSpec.
+type OptProcessCleanupSpec struct {
+	Value ProcessCleanupSpec
+	Set   bool
+}
+
+// IsSet returns true if OptProcessCleanupSpec was set.
+func (o OptProcessCleanupSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessCleanupSpec) Reset() {
+	var v ProcessCleanupSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessCleanupSpec) SetTo(v ProcessCleanupSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessCleanupSpec) Get() (v ProcessCleanupSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessCleanupSpec) Or(d ProcessCleanupSpec) ProcessCleanupSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessEvent returns new OptProcessEvent with value set to v.
+func NewOptProcessEvent(v ProcessEvent) OptProcessEvent {
+	return OptProcessEvent{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessEvent is optional ProcessEvent.
+type OptProcessEvent struct {
+	Value ProcessEvent
+	Set   bool
+}
+
+// IsSet returns true if OptProcessEvent was set.
+func (o OptProcessEvent) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessEvent) Reset() {
+	var v ProcessEvent
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessEvent) SetTo(v ProcessEvent) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessEvent) Get() (v ProcessEvent, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessEvent) Or(d ProcessEvent) ProcessEvent {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessEventPayload returns new OptProcessEventPayload with value set to v.
+func NewOptProcessEventPayload(v ProcessEventPayload) OptProcessEventPayload {
+	return OptProcessEventPayload{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessEventPayload is optional ProcessEventPayload.
+type OptProcessEventPayload struct {
+	Value ProcessEventPayload
+	Set   bool
+}
+
+// IsSet returns true if OptProcessEventPayload was set.
+func (o OptProcessEventPayload) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessEventPayload) Reset() {
+	var v ProcessEventPayload
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessEventPayload) SetTo(v ProcessEventPayload) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessEventPayload) Get() (v ProcessEventPayload, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessEventPayload) Or(d ProcessEventPayload) ProcessEventPayload {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessInputEventPayload returns new OptProcessInputEventPayload with value set to v.
+func NewOptProcessInputEventPayload(v ProcessInputEventPayload) OptProcessInputEventPayload {
+	return OptProcessInputEventPayload{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessInputEventPayload is optional ProcessInputEventPayload.
+type OptProcessInputEventPayload struct {
+	Value ProcessInputEventPayload
+	Set   bool
+}
+
+// IsSet returns true if OptProcessInputEventPayload was set.
+func (o OptProcessInputEventPayload) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessInputEventPayload) Reset() {
+	var v ProcessInputEventPayload
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessInputEventPayload) SetTo(v ProcessInputEventPayload) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessInputEventPayload) Get() (v ProcessInputEventPayload, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessInputEventPayload) Or(d ProcessInputEventPayload) ProcessInputEventPayload {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessRestartSpec returns new OptProcessRestartSpec with value set to v.
+func NewOptProcessRestartSpec(v ProcessRestartSpec) OptProcessRestartSpec {
+	return OptProcessRestartSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessRestartSpec is optional ProcessRestartSpec.
+type OptProcessRestartSpec struct {
+	Value ProcessRestartSpec
+	Set   bool
+}
+
+// IsSet returns true if OptProcessRestartSpec was set.
+func (o OptProcessRestartSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessRestartSpec) Reset() {
+	var v ProcessRestartSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessRestartSpec) SetTo(v ProcessRestartSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessRestartSpec) Get() (v ProcessRestartSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessRestartSpec) Or(d ProcessRestartSpec) ProcessRestartSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessRestartSpecPolicy returns new OptProcessRestartSpecPolicy with value set to v.
+func NewOptProcessRestartSpecPolicy(v ProcessRestartSpecPolicy) OptProcessRestartSpecPolicy {
+	return OptProcessRestartSpecPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessRestartSpecPolicy is optional ProcessRestartSpecPolicy.
+type OptProcessRestartSpecPolicy struct {
+	Value ProcessRestartSpecPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptProcessRestartSpecPolicy was set.
+func (o OptProcessRestartSpecPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessRestartSpecPolicy) Reset() {
+	var v ProcessRestartSpecPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessRestartSpecPolicy) SetTo(v ProcessRestartSpecPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessRestartSpecPolicy) Get() (v ProcessRestartSpecPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessRestartSpecPolicy) Or(d ProcessRestartSpecPolicy) ProcessRestartSpecPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessSession returns new OptProcessSession with value set to v.
+func NewOptProcessSession(v ProcessSession) OptProcessSession {
+	return OptProcessSession{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessSession is optional ProcessSession.
+type OptProcessSession struct {
+	Value ProcessSession
+	Set   bool
+}
+
+// IsSet returns true if OptProcessSession was set.
+func (o OptProcessSession) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessSession) Reset() {
+	var v ProcessSession
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessSession) SetTo(v ProcessSession) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessSession) Get() (v ProcessSession, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessSession) Or(d ProcessSession) ProcessSession {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessSessionEnvVars returns new OptProcessSessionEnvVars with value set to v.
+func NewOptProcessSessionEnvVars(v ProcessSessionEnvVars) OptProcessSessionEnvVars {
+	return OptProcessSessionEnvVars{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessSessionEnvVars is optional ProcessSessionEnvVars.
+type OptProcessSessionEnvVars struct {
+	Value ProcessSessionEnvVars
+	Set   bool
+}
+
+// IsSet returns true if OptProcessSessionEnvVars was set.
+func (o OptProcessSessionEnvVars) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessSessionEnvVars) Reset() {
+	var v ProcessSessionEnvVars
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessSessionEnvVars) SetTo(v ProcessSessionEnvVars) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessSessionEnvVars) Get() (v ProcessSessionEnvVars, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessSessionEnvVars) Or(d ProcessSessionEnvVars) ProcessSessionEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptProcessSpecEnvVars returns new OptProcessSpecEnvVars with value set to v.
+func NewOptProcessSpecEnvVars(v ProcessSpecEnvVars) OptProcessSpecEnvVars {
+	return OptProcessSpecEnvVars{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptProcessSpecEnvVars is optional ProcessSpecEnvVars.
+type OptProcessSpecEnvVars struct {
+	Value ProcessSpecEnvVars
+	Set   bool
+}
+
+// IsSet returns true if OptProcessSpecEnvVars was set.
+func (o OptProcessSpecEnvVars) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptProcessSpecEnvVars) Reset() {
+	var v ProcessSpecEnvVars
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptProcessSpecEnvVars) SetTo(v ProcessSpecEnvVars) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptProcessSpecEnvVars) Get() (v ProcessSpecEnvVars, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptProcessSpecEnvVars) Or(d ProcessSpecEnvVars) ProcessSpecEnvVars {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10903,6 +11519,144 @@ func (o OptSuccessMovedResponseData) Or(d SuccessMovedResponseData) SuccessMoved
 	return d
 }
 
+// NewOptSuccessProcessEventResponseData returns new OptSuccessProcessEventResponseData with value set to v.
+func NewOptSuccessProcessEventResponseData(v SuccessProcessEventResponseData) OptSuccessProcessEventResponseData {
+	return OptSuccessProcessEventResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessProcessEventResponseData is optional SuccessProcessEventResponseData.
+type OptSuccessProcessEventResponseData struct {
+	Value SuccessProcessEventResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessProcessEventResponseData was set.
+func (o OptSuccessProcessEventResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessProcessEventResponseData) Reset() {
+	var v SuccessProcessEventResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessProcessEventResponseData) SetTo(v SuccessProcessEventResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessProcessEventResponseData) Get() (v SuccessProcessEventResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessProcessEventResponseData) Or(d SuccessProcessEventResponseData) SuccessProcessEventResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessProcessSessionListResponseData returns new OptSuccessProcessSessionListResponseData with value set to v.
+func NewOptSuccessProcessSessionListResponseData(v SuccessProcessSessionListResponseData) OptSuccessProcessSessionListResponseData {
+	return OptSuccessProcessSessionListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessProcessSessionListResponseData is optional SuccessProcessSessionListResponseData.
+type OptSuccessProcessSessionListResponseData struct {
+	Value SuccessProcessSessionListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessProcessSessionListResponseData was set.
+func (o OptSuccessProcessSessionListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessProcessSessionListResponseData) Reset() {
+	var v SuccessProcessSessionListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessProcessSessionListResponseData) SetTo(v SuccessProcessSessionListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessProcessSessionListResponseData) Get() (v SuccessProcessSessionListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessProcessSessionListResponseData) Or(d SuccessProcessSessionListResponseData) SuccessProcessSessionListResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessProcessSessionResponseData returns new OptSuccessProcessSessionResponseData with value set to v.
+func NewOptSuccessProcessSessionResponseData(v SuccessProcessSessionResponseData) OptSuccessProcessSessionResponseData {
+	return OptSuccessProcessSessionResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessProcessSessionResponseData is optional SuccessProcessSessionResponseData.
+type OptSuccessProcessSessionResponseData struct {
+	Value SuccessProcessSessionResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessProcessSessionResponseData was set.
+func (o OptSuccessProcessSessionResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessProcessSessionResponseData) Reset() {
+	var v SuccessProcessSessionResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessProcessSessionResponseData) SetTo(v SuccessProcessSessionResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessProcessSessionResponseData) Get() (v SuccessProcessSessionResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessProcessSessionResponseData) Or(d SuccessProcessSessionResponseData) SuccessProcessSessionResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSuccessRegionListResponseData returns new OptSuccessRegionListResponseData with value set to v.
 func NewOptSuccessRegionListResponseData(v SuccessRegionListResponseData) OptSuccessRegionListResponseData {
 	return OptSuccessRegionListResponseData{
@@ -11823,6 +12577,98 @@ func (o OptVolumeFileArchiveImportResponse) Or(d VolumeFileArchiveImportResponse
 	return d
 }
 
+// NewOptWebSocketChannelSpec returns new OptWebSocketChannelSpec with value set to v.
+func NewOptWebSocketChannelSpec(v WebSocketChannelSpec) OptWebSocketChannelSpec {
+	return OptWebSocketChannelSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptWebSocketChannelSpec is optional WebSocketChannelSpec.
+type OptWebSocketChannelSpec struct {
+	Value WebSocketChannelSpec
+	Set   bool
+}
+
+// IsSet returns true if OptWebSocketChannelSpec was set.
+func (o OptWebSocketChannelSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptWebSocketChannelSpec) Reset() {
+	var v WebSocketChannelSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptWebSocketChannelSpec) SetTo(v WebSocketChannelSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptWebSocketChannelSpec) Get() (v WebSocketChannelSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptWebSocketChannelSpec) Or(d WebSocketChannelSpec) WebSocketChannelSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptWebSocketChannelSpecHeaders returns new OptWebSocketChannelSpecHeaders with value set to v.
+func NewOptWebSocketChannelSpecHeaders(v WebSocketChannelSpecHeaders) OptWebSocketChannelSpecHeaders {
+	return OptWebSocketChannelSpecHeaders{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptWebSocketChannelSpecHeaders is optional WebSocketChannelSpecHeaders.
+type OptWebSocketChannelSpecHeaders struct {
+	Value WebSocketChannelSpecHeaders
+	Set   bool
+}
+
+// IsSet returns true if OptWebSocketChannelSpecHeaders was set.
+func (o OptWebSocketChannelSpecHeaders) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptWebSocketChannelSpecHeaders) Reset() {
+	var v WebSocketChannelSpecHeaders
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptWebSocketChannelSpecHeaders) SetTo(v WebSocketChannelSpecHeaders) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptWebSocketChannelSpecHeaders) Get() (v WebSocketChannelSpecHeaders, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptWebSocketChannelSpecHeaders) Or(d WebSocketChannelSpecHeaders) WebSocketChannelSpecHeaders {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptWebhookConfig returns new OptWebhookConfig with value set to v.
 func NewOptWebhookConfig(v WebhookConfig) OptWebhookConfig {
 	return OptWebhookConfig{
@@ -12293,6 +13139,1029 @@ func (s *PreferredSchedulingTerm) SetWeight(val int32) {
 // SetPreference sets the value of Preference.
 func (s *PreferredSchedulingTerm) SetPreference(val NodeSelectorTerm) {
 	s.Preference = val
+}
+
+// Ref: #/components/schemas/ProcessChannelFraming
+type ProcessChannelFraming string
+
+const (
+	ProcessChannelFramingRaw     ProcessChannelFraming = "raw"
+	ProcessChannelFramingLine    ProcessChannelFraming = "line"
+	ProcessChannelFramingJsonl   ProcessChannelFraming = "jsonl"
+	ProcessChannelFramingJsonrpc ProcessChannelFraming = "jsonrpc"
+)
+
+// AllValues returns all ProcessChannelFraming values.
+func (ProcessChannelFraming) AllValues() []ProcessChannelFraming {
+	return []ProcessChannelFraming{
+		ProcessChannelFramingRaw,
+		ProcessChannelFramingLine,
+		ProcessChannelFramingJsonl,
+		ProcessChannelFramingJsonrpc,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProcessChannelFraming) MarshalText() ([]byte, error) {
+	switch s {
+	case ProcessChannelFramingRaw:
+		return []byte(s), nil
+	case ProcessChannelFramingLine:
+		return []byte(s), nil
+	case ProcessChannelFramingJsonl:
+		return []byte(s), nil
+	case ProcessChannelFramingJsonrpc:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProcessChannelFraming) UnmarshalText(data []byte) error {
+	switch ProcessChannelFraming(data) {
+	case ProcessChannelFramingRaw:
+		*s = ProcessChannelFramingRaw
+		return nil
+	case ProcessChannelFramingLine:
+		*s = ProcessChannelFramingLine
+		return nil
+	case ProcessChannelFramingJsonl:
+		*s = ProcessChannelFramingJsonl
+		return nil
+	case ProcessChannelFramingJsonrpc:
+		*s = ProcessChannelFramingJsonrpc
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ProcessChannelKind
+type ProcessChannelKind string
+
+const (
+	ProcessChannelKindStdio     ProcessChannelKind = "stdio"
+	ProcessChannelKindPty       ProcessChannelKind = "pty"
+	ProcessChannelKindHTTP      ProcessChannelKind = "http"
+	ProcessChannelKindWebsocket ProcessChannelKind = "websocket"
+)
+
+// AllValues returns all ProcessChannelKind values.
+func (ProcessChannelKind) AllValues() []ProcessChannelKind {
+	return []ProcessChannelKind{
+		ProcessChannelKindStdio,
+		ProcessChannelKindPty,
+		ProcessChannelKindHTTP,
+		ProcessChannelKindWebsocket,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProcessChannelKind) MarshalText() ([]byte, error) {
+	switch s {
+	case ProcessChannelKindStdio:
+		return []byte(s), nil
+	case ProcessChannelKindPty:
+		return []byte(s), nil
+	case ProcessChannelKindHTTP:
+		return []byte(s), nil
+	case ProcessChannelKindWebsocket:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProcessChannelKind) UnmarshalText(data []byte) error {
+	switch ProcessChannelKind(data) {
+	case ProcessChannelKindStdio:
+		*s = ProcessChannelKindStdio
+		return nil
+	case ProcessChannelKindPty:
+		*s = ProcessChannelKindPty
+		return nil
+	case ProcessChannelKindHTTP:
+		*s = ProcessChannelKindHTTP
+		return nil
+	case ProcessChannelKindWebsocket:
+		*s = ProcessChannelKindWebsocket
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ProcessChannelSpec
+type ProcessChannelSpec struct {
+	Name      string                   `json:"name"`
+	Kind      ProcessChannelKind       `json:"kind"`
+	Framing   OptProcessChannelFraming `json:"framing"`
+	Stdin     OptBool                  `json:"stdin"`
+	Stdout    OptBool                  `json:"stdout"`
+	Stderr    OptBool                  `json:"stderr"`
+	PtySize   OptPTYSize               `json:"pty_size"`
+	HTTP      OptHTTPChannelSpec       `json:"http"`
+	Websocket OptWebSocketChannelSpec  `json:"websocket"`
+}
+
+// GetName returns the value of Name.
+func (s *ProcessChannelSpec) GetName() string {
+	return s.Name
+}
+
+// GetKind returns the value of Kind.
+func (s *ProcessChannelSpec) GetKind() ProcessChannelKind {
+	return s.Kind
+}
+
+// GetFraming returns the value of Framing.
+func (s *ProcessChannelSpec) GetFraming() OptProcessChannelFraming {
+	return s.Framing
+}
+
+// GetStdin returns the value of Stdin.
+func (s *ProcessChannelSpec) GetStdin() OptBool {
+	return s.Stdin
+}
+
+// GetStdout returns the value of Stdout.
+func (s *ProcessChannelSpec) GetStdout() OptBool {
+	return s.Stdout
+}
+
+// GetStderr returns the value of Stderr.
+func (s *ProcessChannelSpec) GetStderr() OptBool {
+	return s.Stderr
+}
+
+// GetPtySize returns the value of PtySize.
+func (s *ProcessChannelSpec) GetPtySize() OptPTYSize {
+	return s.PtySize
+}
+
+// GetHTTP returns the value of HTTP.
+func (s *ProcessChannelSpec) GetHTTP() OptHTTPChannelSpec {
+	return s.HTTP
+}
+
+// GetWebsocket returns the value of Websocket.
+func (s *ProcessChannelSpec) GetWebsocket() OptWebSocketChannelSpec {
+	return s.Websocket
+}
+
+// SetName sets the value of Name.
+func (s *ProcessChannelSpec) SetName(val string) {
+	s.Name = val
+}
+
+// SetKind sets the value of Kind.
+func (s *ProcessChannelSpec) SetKind(val ProcessChannelKind) {
+	s.Kind = val
+}
+
+// SetFraming sets the value of Framing.
+func (s *ProcessChannelSpec) SetFraming(val OptProcessChannelFraming) {
+	s.Framing = val
+}
+
+// SetStdin sets the value of Stdin.
+func (s *ProcessChannelSpec) SetStdin(val OptBool) {
+	s.Stdin = val
+}
+
+// SetStdout sets the value of Stdout.
+func (s *ProcessChannelSpec) SetStdout(val OptBool) {
+	s.Stdout = val
+}
+
+// SetStderr sets the value of Stderr.
+func (s *ProcessChannelSpec) SetStderr(val OptBool) {
+	s.Stderr = val
+}
+
+// SetPtySize sets the value of PtySize.
+func (s *ProcessChannelSpec) SetPtySize(val OptPTYSize) {
+	s.PtySize = val
+}
+
+// SetHTTP sets the value of HTTP.
+func (s *ProcessChannelSpec) SetHTTP(val OptHTTPChannelSpec) {
+	s.HTTP = val
+}
+
+// SetWebsocket sets the value of Websocket.
+func (s *ProcessChannelSpec) SetWebsocket(val OptWebSocketChannelSpec) {
+	s.Websocket = val
+}
+
+// Ref: #/components/schemas/ProcessCleanupSpec
+type ProcessCleanupSpec struct {
+	IdleTimeoutSec OptInt32 `json:"idle_timeout_sec"`
+	TTLSec         OptInt32 `json:"ttl_sec"`
+}
+
+// GetIdleTimeoutSec returns the value of IdleTimeoutSec.
+func (s *ProcessCleanupSpec) GetIdleTimeoutSec() OptInt32 {
+	return s.IdleTimeoutSec
+}
+
+// GetTTLSec returns the value of TTLSec.
+func (s *ProcessCleanupSpec) GetTTLSec() OptInt32 {
+	return s.TTLSec
+}
+
+// SetIdleTimeoutSec sets the value of IdleTimeoutSec.
+func (s *ProcessCleanupSpec) SetIdleTimeoutSec(val OptInt32) {
+	s.IdleTimeoutSec = val
+}
+
+// SetTTLSec sets the value of TTLSec.
+func (s *ProcessCleanupSpec) SetTTLSec(val OptInt32) {
+	s.TTLSec = val
+}
+
+// Ref: #/components/schemas/ProcessEvent
+type ProcessEvent struct {
+	Seq       int64                  `json:"seq"`
+	EventID   OptString              `json:"event_id"`
+	ProcessID string                 `json:"process_id"`
+	Channel   OptString              `json:"channel"`
+	Type      ProcessEventType       `json:"type"`
+	Timestamp time.Time              `json:"timestamp"`
+	Payload   OptProcessEventPayload `json:"payload"`
+}
+
+// GetSeq returns the value of Seq.
+func (s *ProcessEvent) GetSeq() int64 {
+	return s.Seq
+}
+
+// GetEventID returns the value of EventID.
+func (s *ProcessEvent) GetEventID() OptString {
+	return s.EventID
+}
+
+// GetProcessID returns the value of ProcessID.
+func (s *ProcessEvent) GetProcessID() string {
+	return s.ProcessID
+}
+
+// GetChannel returns the value of Channel.
+func (s *ProcessEvent) GetChannel() OptString {
+	return s.Channel
+}
+
+// GetType returns the value of Type.
+func (s *ProcessEvent) GetType() ProcessEventType {
+	return s.Type
+}
+
+// GetTimestamp returns the value of Timestamp.
+func (s *ProcessEvent) GetTimestamp() time.Time {
+	return s.Timestamp
+}
+
+// GetPayload returns the value of Payload.
+func (s *ProcessEvent) GetPayload() OptProcessEventPayload {
+	return s.Payload
+}
+
+// SetSeq sets the value of Seq.
+func (s *ProcessEvent) SetSeq(val int64) {
+	s.Seq = val
+}
+
+// SetEventID sets the value of EventID.
+func (s *ProcessEvent) SetEventID(val OptString) {
+	s.EventID = val
+}
+
+// SetProcessID sets the value of ProcessID.
+func (s *ProcessEvent) SetProcessID(val string) {
+	s.ProcessID = val
+}
+
+// SetChannel sets the value of Channel.
+func (s *ProcessEvent) SetChannel(val OptString) {
+	s.Channel = val
+}
+
+// SetType sets the value of Type.
+func (s *ProcessEvent) SetType(val ProcessEventType) {
+	s.Type = val
+}
+
+// SetTimestamp sets the value of Timestamp.
+func (s *ProcessEvent) SetTimestamp(val time.Time) {
+	s.Timestamp = val
+}
+
+// SetPayload sets the value of Payload.
+func (s *ProcessEvent) SetPayload(val OptProcessEventPayload) {
+	s.Payload = val
+}
+
+// Ref: #/components/schemas/ProcessEventLogSnapshot
+type ProcessEventLogSnapshot struct {
+	NextSeq   int64 `json:"next_seq"`
+	OldestSeq int64 `json:"oldest_seq"`
+	Capacity  int32 `json:"capacity"`
+}
+
+// GetNextSeq returns the value of NextSeq.
+func (s *ProcessEventLogSnapshot) GetNextSeq() int64 {
+	return s.NextSeq
+}
+
+// GetOldestSeq returns the value of OldestSeq.
+func (s *ProcessEventLogSnapshot) GetOldestSeq() int64 {
+	return s.OldestSeq
+}
+
+// GetCapacity returns the value of Capacity.
+func (s *ProcessEventLogSnapshot) GetCapacity() int32 {
+	return s.Capacity
+}
+
+// SetNextSeq sets the value of NextSeq.
+func (s *ProcessEventLogSnapshot) SetNextSeq(val int64) {
+	s.NextSeq = val
+}
+
+// SetOldestSeq sets the value of OldestSeq.
+func (s *ProcessEventLogSnapshot) SetOldestSeq(val int64) {
+	s.OldestSeq = val
+}
+
+// SetCapacity sets the value of Capacity.
+func (s *ProcessEventLogSnapshot) SetCapacity(val int32) {
+	s.Capacity = val
+}
+
+type ProcessEventPayload map[string]jx.Raw
+
+func (s *ProcessEventPayload) init() ProcessEventPayload {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ProcessEventType
+type ProcessEventType string
+
+const (
+	ProcessEventTypeProcessStarted   ProcessEventType = "process.started"
+	ProcessEventTypeProcessExited    ProcessEventType = "process.exited"
+	ProcessEventTypeProcessCrashed   ProcessEventType = "process.crashed"
+	ProcessEventTypeProcessStopped   ProcessEventType = "process.stopped"
+	ProcessEventTypeStdinWrite       ProcessEventType = "stdin.write"
+	ProcessEventTypeStdoutChunk      ProcessEventType = "stdout.chunk"
+	ProcessEventTypeStdoutLine       ProcessEventType = "stdout.line"
+	ProcessEventTypeStderrChunk      ProcessEventType = "stderr.chunk"
+	ProcessEventTypeStderrLine       ProcessEventType = "stderr.line"
+	ProcessEventTypePtyInput         ProcessEventType = "pty.input"
+	ProcessEventTypePtyOutput        ProcessEventType = "pty.output"
+	ProcessEventTypeHTTPRequest      ProcessEventType = "http.request"
+	ProcessEventTypeHTTPResponse     ProcessEventType = "http.response"
+	ProcessEventTypeWebsocketOpen    ProcessEventType = "websocket.open"
+	ProcessEventTypeWebsocketMessage ProcessEventType = "websocket.message"
+	ProcessEventTypeWebsocketClose   ProcessEventType = "websocket.close"
+	ProcessEventTypeError            ProcessEventType = "error"
+	ProcessEventTypeCursorLost       ProcessEventType = "cursor_lost"
+)
+
+// AllValues returns all ProcessEventType values.
+func (ProcessEventType) AllValues() []ProcessEventType {
+	return []ProcessEventType{
+		ProcessEventTypeProcessStarted,
+		ProcessEventTypeProcessExited,
+		ProcessEventTypeProcessCrashed,
+		ProcessEventTypeProcessStopped,
+		ProcessEventTypeStdinWrite,
+		ProcessEventTypeStdoutChunk,
+		ProcessEventTypeStdoutLine,
+		ProcessEventTypeStderrChunk,
+		ProcessEventTypeStderrLine,
+		ProcessEventTypePtyInput,
+		ProcessEventTypePtyOutput,
+		ProcessEventTypeHTTPRequest,
+		ProcessEventTypeHTTPResponse,
+		ProcessEventTypeWebsocketOpen,
+		ProcessEventTypeWebsocketMessage,
+		ProcessEventTypeWebsocketClose,
+		ProcessEventTypeError,
+		ProcessEventTypeCursorLost,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProcessEventType) MarshalText() ([]byte, error) {
+	switch s {
+	case ProcessEventTypeProcessStarted:
+		return []byte(s), nil
+	case ProcessEventTypeProcessExited:
+		return []byte(s), nil
+	case ProcessEventTypeProcessCrashed:
+		return []byte(s), nil
+	case ProcessEventTypeProcessStopped:
+		return []byte(s), nil
+	case ProcessEventTypeStdinWrite:
+		return []byte(s), nil
+	case ProcessEventTypeStdoutChunk:
+		return []byte(s), nil
+	case ProcessEventTypeStdoutLine:
+		return []byte(s), nil
+	case ProcessEventTypeStderrChunk:
+		return []byte(s), nil
+	case ProcessEventTypeStderrLine:
+		return []byte(s), nil
+	case ProcessEventTypePtyInput:
+		return []byte(s), nil
+	case ProcessEventTypePtyOutput:
+		return []byte(s), nil
+	case ProcessEventTypeHTTPRequest:
+		return []byte(s), nil
+	case ProcessEventTypeHTTPResponse:
+		return []byte(s), nil
+	case ProcessEventTypeWebsocketOpen:
+		return []byte(s), nil
+	case ProcessEventTypeWebsocketMessage:
+		return []byte(s), nil
+	case ProcessEventTypeWebsocketClose:
+		return []byte(s), nil
+	case ProcessEventTypeError:
+		return []byte(s), nil
+	case ProcessEventTypeCursorLost:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProcessEventType) UnmarshalText(data []byte) error {
+	switch ProcessEventType(data) {
+	case ProcessEventTypeProcessStarted:
+		*s = ProcessEventTypeProcessStarted
+		return nil
+	case ProcessEventTypeProcessExited:
+		*s = ProcessEventTypeProcessExited
+		return nil
+	case ProcessEventTypeProcessCrashed:
+		*s = ProcessEventTypeProcessCrashed
+		return nil
+	case ProcessEventTypeProcessStopped:
+		*s = ProcessEventTypeProcessStopped
+		return nil
+	case ProcessEventTypeStdinWrite:
+		*s = ProcessEventTypeStdinWrite
+		return nil
+	case ProcessEventTypeStdoutChunk:
+		*s = ProcessEventTypeStdoutChunk
+		return nil
+	case ProcessEventTypeStdoutLine:
+		*s = ProcessEventTypeStdoutLine
+		return nil
+	case ProcessEventTypeStderrChunk:
+		*s = ProcessEventTypeStderrChunk
+		return nil
+	case ProcessEventTypeStderrLine:
+		*s = ProcessEventTypeStderrLine
+		return nil
+	case ProcessEventTypePtyInput:
+		*s = ProcessEventTypePtyInput
+		return nil
+	case ProcessEventTypePtyOutput:
+		*s = ProcessEventTypePtyOutput
+		return nil
+	case ProcessEventTypeHTTPRequest:
+		*s = ProcessEventTypeHTTPRequest
+		return nil
+	case ProcessEventTypeHTTPResponse:
+		*s = ProcessEventTypeHTTPResponse
+		return nil
+	case ProcessEventTypeWebsocketOpen:
+		*s = ProcessEventTypeWebsocketOpen
+		return nil
+	case ProcessEventTypeWebsocketMessage:
+		*s = ProcessEventTypeWebsocketMessage
+		return nil
+	case ProcessEventTypeWebsocketClose:
+		*s = ProcessEventTypeWebsocketClose
+		return nil
+	case ProcessEventTypeError:
+		*s = ProcessEventTypeError
+		return nil
+	case ProcessEventTypeCursorLost:
+		*s = ProcessEventTypeCursorLost
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ProcessInputEvent
+type ProcessInputEvent struct {
+	// Idempotency key for retries.
+	EventID string                      `json:"event_id"`
+	Channel string                      `json:"channel"`
+	Type    ProcessEventType            `json:"type"`
+	Payload OptProcessInputEventPayload `json:"payload"`
+}
+
+// GetEventID returns the value of EventID.
+func (s *ProcessInputEvent) GetEventID() string {
+	return s.EventID
+}
+
+// GetChannel returns the value of Channel.
+func (s *ProcessInputEvent) GetChannel() string {
+	return s.Channel
+}
+
+// GetType returns the value of Type.
+func (s *ProcessInputEvent) GetType() ProcessEventType {
+	return s.Type
+}
+
+// GetPayload returns the value of Payload.
+func (s *ProcessInputEvent) GetPayload() OptProcessInputEventPayload {
+	return s.Payload
+}
+
+// SetEventID sets the value of EventID.
+func (s *ProcessInputEvent) SetEventID(val string) {
+	s.EventID = val
+}
+
+// SetChannel sets the value of Channel.
+func (s *ProcessInputEvent) SetChannel(val string) {
+	s.Channel = val
+}
+
+// SetType sets the value of Type.
+func (s *ProcessInputEvent) SetType(val ProcessEventType) {
+	s.Type = val
+}
+
+// SetPayload sets the value of Payload.
+func (s *ProcessInputEvent) SetPayload(val OptProcessInputEventPayload) {
+	s.Payload = val
+}
+
+type ProcessInputEventPayload map[string]jx.Raw
+
+func (s *ProcessInputEventPayload) init() ProcessInputEventPayload {
+	m := *s
+	if m == nil {
+		m = map[string]jx.Raw{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ProcessRestartSpec
+type ProcessRestartSpec struct {
+	Policy      OptProcessRestartSpecPolicy `json:"policy"`
+	MaxRestarts OptInt32                    `json:"max_restarts"`
+}
+
+// GetPolicy returns the value of Policy.
+func (s *ProcessRestartSpec) GetPolicy() OptProcessRestartSpecPolicy {
+	return s.Policy
+}
+
+// GetMaxRestarts returns the value of MaxRestarts.
+func (s *ProcessRestartSpec) GetMaxRestarts() OptInt32 {
+	return s.MaxRestarts
+}
+
+// SetPolicy sets the value of Policy.
+func (s *ProcessRestartSpec) SetPolicy(val OptProcessRestartSpecPolicy) {
+	s.Policy = val
+}
+
+// SetMaxRestarts sets the value of MaxRestarts.
+func (s *ProcessRestartSpec) SetMaxRestarts(val OptInt32) {
+	s.MaxRestarts = val
+}
+
+type ProcessRestartSpecPolicy string
+
+const (
+	ProcessRestartSpecPolicyNever ProcessRestartSpecPolicy = "never"
+)
+
+// AllValues returns all ProcessRestartSpecPolicy values.
+func (ProcessRestartSpecPolicy) AllValues() []ProcessRestartSpecPolicy {
+	return []ProcessRestartSpecPolicy{
+		ProcessRestartSpecPolicyNever,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProcessRestartSpecPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case ProcessRestartSpecPolicyNever:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProcessRestartSpecPolicy) UnmarshalText(data []byte) error {
+	switch ProcessRestartSpecPolicy(data) {
+	case ProcessRestartSpecPolicyNever:
+		*s = ProcessRestartSpecPolicyNever
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ProcessSession
+type ProcessSession struct {
+	ID        string                   `json:"id"`
+	Alias     OptString                `json:"alias"`
+	Command   []string                 `json:"command"`
+	Cwd       OptString                `json:"cwd"`
+	EnvVars   OptProcessSessionEnvVars `json:"env_vars"`
+	State     ProcessSessionState      `json:"state"`
+	Pid       OptInt32                 `json:"pid"`
+	CreatedAt time.Time                `json:"created_at"`
+	StartedAt OptDateTime              `json:"started_at"`
+	ExitedAt  OptDateTime              `json:"exited_at"`
+	ExitCode  OptInt32                 `json:"exit_code"`
+	Channels  []ProcessChannelSpec     `json:"channels"`
+	EventLog  ProcessEventLogSnapshot  `json:"event_log"`
+	Cleanup   OptProcessCleanupSpec    `json:"cleanup"`
+	Restart   OptProcessRestartSpec    `json:"restart"`
+}
+
+// GetID returns the value of ID.
+func (s *ProcessSession) GetID() string {
+	return s.ID
+}
+
+// GetAlias returns the value of Alias.
+func (s *ProcessSession) GetAlias() OptString {
+	return s.Alias
+}
+
+// GetCommand returns the value of Command.
+func (s *ProcessSession) GetCommand() []string {
+	return s.Command
+}
+
+// GetCwd returns the value of Cwd.
+func (s *ProcessSession) GetCwd() OptString {
+	return s.Cwd
+}
+
+// GetEnvVars returns the value of EnvVars.
+func (s *ProcessSession) GetEnvVars() OptProcessSessionEnvVars {
+	return s.EnvVars
+}
+
+// GetState returns the value of State.
+func (s *ProcessSession) GetState() ProcessSessionState {
+	return s.State
+}
+
+// GetPid returns the value of Pid.
+func (s *ProcessSession) GetPid() OptInt32 {
+	return s.Pid
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *ProcessSession) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetStartedAt returns the value of StartedAt.
+func (s *ProcessSession) GetStartedAt() OptDateTime {
+	return s.StartedAt
+}
+
+// GetExitedAt returns the value of ExitedAt.
+func (s *ProcessSession) GetExitedAt() OptDateTime {
+	return s.ExitedAt
+}
+
+// GetExitCode returns the value of ExitCode.
+func (s *ProcessSession) GetExitCode() OptInt32 {
+	return s.ExitCode
+}
+
+// GetChannels returns the value of Channels.
+func (s *ProcessSession) GetChannels() []ProcessChannelSpec {
+	return s.Channels
+}
+
+// GetEventLog returns the value of EventLog.
+func (s *ProcessSession) GetEventLog() ProcessEventLogSnapshot {
+	return s.EventLog
+}
+
+// GetCleanup returns the value of Cleanup.
+func (s *ProcessSession) GetCleanup() OptProcessCleanupSpec {
+	return s.Cleanup
+}
+
+// GetRestart returns the value of Restart.
+func (s *ProcessSession) GetRestart() OptProcessRestartSpec {
+	return s.Restart
+}
+
+// SetID sets the value of ID.
+func (s *ProcessSession) SetID(val string) {
+	s.ID = val
+}
+
+// SetAlias sets the value of Alias.
+func (s *ProcessSession) SetAlias(val OptString) {
+	s.Alias = val
+}
+
+// SetCommand sets the value of Command.
+func (s *ProcessSession) SetCommand(val []string) {
+	s.Command = val
+}
+
+// SetCwd sets the value of Cwd.
+func (s *ProcessSession) SetCwd(val OptString) {
+	s.Cwd = val
+}
+
+// SetEnvVars sets the value of EnvVars.
+func (s *ProcessSession) SetEnvVars(val OptProcessSessionEnvVars) {
+	s.EnvVars = val
+}
+
+// SetState sets the value of State.
+func (s *ProcessSession) SetState(val ProcessSessionState) {
+	s.State = val
+}
+
+// SetPid sets the value of Pid.
+func (s *ProcessSession) SetPid(val OptInt32) {
+	s.Pid = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *ProcessSession) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetStartedAt sets the value of StartedAt.
+func (s *ProcessSession) SetStartedAt(val OptDateTime) {
+	s.StartedAt = val
+}
+
+// SetExitedAt sets the value of ExitedAt.
+func (s *ProcessSession) SetExitedAt(val OptDateTime) {
+	s.ExitedAt = val
+}
+
+// SetExitCode sets the value of ExitCode.
+func (s *ProcessSession) SetExitCode(val OptInt32) {
+	s.ExitCode = val
+}
+
+// SetChannels sets the value of Channels.
+func (s *ProcessSession) SetChannels(val []ProcessChannelSpec) {
+	s.Channels = val
+}
+
+// SetEventLog sets the value of EventLog.
+func (s *ProcessSession) SetEventLog(val ProcessEventLogSnapshot) {
+	s.EventLog = val
+}
+
+// SetCleanup sets the value of Cleanup.
+func (s *ProcessSession) SetCleanup(val OptProcessCleanupSpec) {
+	s.Cleanup = val
+}
+
+// SetRestart sets the value of Restart.
+func (s *ProcessSession) SetRestart(val OptProcessRestartSpec) {
+	s.Restart = val
+}
+
+type ProcessSessionEnvVars map[string]string
+
+func (s *ProcessSessionEnvVars) init() ProcessSessionEnvVars {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ProcessSessionState
+type ProcessSessionState string
+
+const (
+	ProcessSessionStateCreated  ProcessSessionState = "created"
+	ProcessSessionStateStarting ProcessSessionState = "starting"
+	ProcessSessionStateRunning  ProcessSessionState = "running"
+	ProcessSessionStatePaused   ProcessSessionState = "paused"
+	ProcessSessionStateStopping ProcessSessionState = "stopping"
+	ProcessSessionStateStopped  ProcessSessionState = "stopped"
+	ProcessSessionStateKilled   ProcessSessionState = "killed"
+	ProcessSessionStateCrashed  ProcessSessionState = "crashed"
+)
+
+// AllValues returns all ProcessSessionState values.
+func (ProcessSessionState) AllValues() []ProcessSessionState {
+	return []ProcessSessionState{
+		ProcessSessionStateCreated,
+		ProcessSessionStateStarting,
+		ProcessSessionStateRunning,
+		ProcessSessionStatePaused,
+		ProcessSessionStateStopping,
+		ProcessSessionStateStopped,
+		ProcessSessionStateKilled,
+		ProcessSessionStateCrashed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProcessSessionState) MarshalText() ([]byte, error) {
+	switch s {
+	case ProcessSessionStateCreated:
+		return []byte(s), nil
+	case ProcessSessionStateStarting:
+		return []byte(s), nil
+	case ProcessSessionStateRunning:
+		return []byte(s), nil
+	case ProcessSessionStatePaused:
+		return []byte(s), nil
+	case ProcessSessionStateStopping:
+		return []byte(s), nil
+	case ProcessSessionStateStopped:
+		return []byte(s), nil
+	case ProcessSessionStateKilled:
+		return []byte(s), nil
+	case ProcessSessionStateCrashed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProcessSessionState) UnmarshalText(data []byte) error {
+	switch ProcessSessionState(data) {
+	case ProcessSessionStateCreated:
+		*s = ProcessSessionStateCreated
+		return nil
+	case ProcessSessionStateStarting:
+		*s = ProcessSessionStateStarting
+		return nil
+	case ProcessSessionStateRunning:
+		*s = ProcessSessionStateRunning
+		return nil
+	case ProcessSessionStatePaused:
+		*s = ProcessSessionStatePaused
+		return nil
+	case ProcessSessionStateStopping:
+		*s = ProcessSessionStateStopping
+		return nil
+	case ProcessSessionStateStopped:
+		*s = ProcessSessionStateStopped
+		return nil
+	case ProcessSessionStateKilled:
+		*s = ProcessSessionStateKilled
+		return nil
+	case ProcessSessionStateCrashed:
+		*s = ProcessSessionStateCrashed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ProcessSpec
+type ProcessSpec struct {
+	Alias OptString `json:"alias"`
+	// Argv array. procd does not shell-expand command strings.
+	Command         []string              `json:"command"`
+	Cwd             OptString             `json:"cwd"`
+	EnvVars         OptProcessSpecEnvVars `json:"env_vars"`
+	Channels        []ProcessChannelSpec  `json:"channels"`
+	Cleanup         OptProcessCleanupSpec `json:"cleanup"`
+	Restart         OptProcessRestartSpec `json:"restart"`
+	EventBufferSize OptInt32              `json:"event_buffer_size"`
+	InputBufferSize OptInt32              `json:"input_buffer_size"`
+}
+
+// GetAlias returns the value of Alias.
+func (s *ProcessSpec) GetAlias() OptString {
+	return s.Alias
+}
+
+// GetCommand returns the value of Command.
+func (s *ProcessSpec) GetCommand() []string {
+	return s.Command
+}
+
+// GetCwd returns the value of Cwd.
+func (s *ProcessSpec) GetCwd() OptString {
+	return s.Cwd
+}
+
+// GetEnvVars returns the value of EnvVars.
+func (s *ProcessSpec) GetEnvVars() OptProcessSpecEnvVars {
+	return s.EnvVars
+}
+
+// GetChannels returns the value of Channels.
+func (s *ProcessSpec) GetChannels() []ProcessChannelSpec {
+	return s.Channels
+}
+
+// GetCleanup returns the value of Cleanup.
+func (s *ProcessSpec) GetCleanup() OptProcessCleanupSpec {
+	return s.Cleanup
+}
+
+// GetRestart returns the value of Restart.
+func (s *ProcessSpec) GetRestart() OptProcessRestartSpec {
+	return s.Restart
+}
+
+// GetEventBufferSize returns the value of EventBufferSize.
+func (s *ProcessSpec) GetEventBufferSize() OptInt32 {
+	return s.EventBufferSize
+}
+
+// GetInputBufferSize returns the value of InputBufferSize.
+func (s *ProcessSpec) GetInputBufferSize() OptInt32 {
+	return s.InputBufferSize
+}
+
+// SetAlias sets the value of Alias.
+func (s *ProcessSpec) SetAlias(val OptString) {
+	s.Alias = val
+}
+
+// SetCommand sets the value of Command.
+func (s *ProcessSpec) SetCommand(val []string) {
+	s.Command = val
+}
+
+// SetCwd sets the value of Cwd.
+func (s *ProcessSpec) SetCwd(val OptString) {
+	s.Cwd = val
+}
+
+// SetEnvVars sets the value of EnvVars.
+func (s *ProcessSpec) SetEnvVars(val OptProcessSpecEnvVars) {
+	s.EnvVars = val
+}
+
+// SetChannels sets the value of Channels.
+func (s *ProcessSpec) SetChannels(val []ProcessChannelSpec) {
+	s.Channels = val
+}
+
+// SetCleanup sets the value of Cleanup.
+func (s *ProcessSpec) SetCleanup(val OptProcessCleanupSpec) {
+	s.Cleanup = val
+}
+
+// SetRestart sets the value of Restart.
+func (s *ProcessSpec) SetRestart(val OptProcessRestartSpec) {
+	s.Restart = val
+}
+
+// SetEventBufferSize sets the value of EventBufferSize.
+func (s *ProcessSpec) SetEventBufferSize(val OptInt32) {
+	s.EventBufferSize = val
+}
+
+// SetInputBufferSize sets the value of InputBufferSize.
+func (s *ProcessSpec) SetInputBufferSize(val OptInt32) {
+	s.InputBufferSize = val
+}
+
+type ProcessSpecEnvVars map[string]string
+
+func (s *ProcessSpecEnvVars) init() ProcessSpecEnvVars {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
 }
 
 // Ref: #/components/schemas/ProcessType
@@ -18297,6 +20166,173 @@ func (SuccessPauseSandboxResponseSuccess) AllValues() []SuccessPauseSandboxRespo
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessProcessEventResponse
+type SuccessProcessEventResponse struct {
+	Success SuccessProcessEventResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessProcessEventResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessProcessEventResponse) GetSuccess() SuccessProcessEventResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessProcessEventResponse) GetData() OptSuccessProcessEventResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessProcessEventResponse) SetSuccess(val SuccessProcessEventResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessProcessEventResponse) SetData(val OptSuccessProcessEventResponseData) {
+	s.Data = val
+}
+
+func (*SuccessProcessEventResponse) aPIV1SandboxesIDProcessesProcessIDEventsPostRes() {}
+
+type SuccessProcessEventResponseData struct {
+	Event OptProcessEvent `json:"event"`
+}
+
+// GetEvent returns the value of Event.
+func (s *SuccessProcessEventResponseData) GetEvent() OptProcessEvent {
+	return s.Event
+}
+
+// SetEvent sets the value of Event.
+func (s *SuccessProcessEventResponseData) SetEvent(val OptProcessEvent) {
+	s.Event = val
+}
+
+type SuccessProcessEventResponseSuccess bool
+
+const (
+	SuccessProcessEventResponseSuccessTrue SuccessProcessEventResponseSuccess = true
+)
+
+// AllValues returns all SuccessProcessEventResponseSuccess values.
+func (SuccessProcessEventResponseSuccess) AllValues() []SuccessProcessEventResponseSuccess {
+	return []SuccessProcessEventResponseSuccess{
+		SuccessProcessEventResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessProcessSessionListResponse
+type SuccessProcessSessionListResponse struct {
+	Success SuccessProcessSessionListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessProcessSessionListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessProcessSessionListResponse) GetSuccess() SuccessProcessSessionListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessProcessSessionListResponse) GetData() OptSuccessProcessSessionListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessProcessSessionListResponse) SetSuccess(val SuccessProcessSessionListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessProcessSessionListResponse) SetData(val OptSuccessProcessSessionListResponseData) {
+	s.Data = val
+}
+
+type SuccessProcessSessionListResponseData struct {
+	Processes []ProcessSession `json:"processes"`
+}
+
+// GetProcesses returns the value of Processes.
+func (s *SuccessProcessSessionListResponseData) GetProcesses() []ProcessSession {
+	return s.Processes
+}
+
+// SetProcesses sets the value of Processes.
+func (s *SuccessProcessSessionListResponseData) SetProcesses(val []ProcessSession) {
+	s.Processes = val
+}
+
+type SuccessProcessSessionListResponseSuccess bool
+
+const (
+	SuccessProcessSessionListResponseSuccessTrue SuccessProcessSessionListResponseSuccess = true
+)
+
+// AllValues returns all SuccessProcessSessionListResponseSuccess values.
+func (SuccessProcessSessionListResponseSuccess) AllValues() []SuccessProcessSessionListResponseSuccess {
+	return []SuccessProcessSessionListResponseSuccess{
+		SuccessProcessSessionListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessProcessSessionResponse
+type SuccessProcessSessionResponse struct {
+	Success SuccessProcessSessionResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessProcessSessionResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessProcessSessionResponse) GetSuccess() SuccessProcessSessionResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessProcessSessionResponse) GetData() OptSuccessProcessSessionResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessProcessSessionResponse) SetSuccess(val SuccessProcessSessionResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessProcessSessionResponse) SetData(val OptSuccessProcessSessionResponseData) {
+	s.Data = val
+}
+
+type SuccessProcessSessionResponseData struct {
+	Process OptProcessSession `json:"process"`
+}
+
+// GetProcess returns the value of Process.
+func (s *SuccessProcessSessionResponseData) GetProcess() OptProcessSession {
+	return s.Process
+}
+
+// SetProcess sets the value of Process.
+func (s *SuccessProcessSessionResponseData) SetProcess(val OptProcessSession) {
+	s.Process = val
+}
+
+type SuccessProcessSessionResponseSuccess bool
+
+const (
+	SuccessProcessSessionResponseSuccessTrue SuccessProcessSessionResponseSuccess = true
+)
+
+// AllValues returns all SuccessProcessSessionResponseSuccess values.
+func (SuccessProcessSessionResponseSuccess) AllValues() []SuccessProcessSessionResponseSuccess {
+	return []SuccessProcessSessionResponseSuccess{
+		SuccessProcessSessionResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessRefreshResponse
 type SuccessRefreshResponse struct {
 	Success SuccessRefreshResponseSuccess `json:"success"`
@@ -21486,6 +23522,43 @@ func (s *WebLoginExchangeRequest) SetLoginCode(val string) {
 // SetReturnURL sets the value of ReturnURL.
 func (s *WebLoginExchangeRequest) SetReturnURL(val string) {
 	s.ReturnURL = val
+}
+
+// Ref: #/components/schemas/WebSocketChannelSpec
+type WebSocketChannelSpec struct {
+	URL     string                         `json:"url"`
+	Headers OptWebSocketChannelSpecHeaders `json:"headers"`
+}
+
+// GetURL returns the value of URL.
+func (s *WebSocketChannelSpec) GetURL() string {
+	return s.URL
+}
+
+// GetHeaders returns the value of Headers.
+func (s *WebSocketChannelSpec) GetHeaders() OptWebSocketChannelSpecHeaders {
+	return s.Headers
+}
+
+// SetURL sets the value of URL.
+func (s *WebSocketChannelSpec) SetURL(val string) {
+	s.URL = val
+}
+
+// SetHeaders sets the value of Headers.
+func (s *WebSocketChannelSpec) SetHeaders(val OptWebSocketChannelSpecHeaders) {
+	s.Headers = val
+}
+
+type WebSocketChannelSpecHeaders map[string]string
+
+func (s *WebSocketChannelSpecHeaders) init() WebSocketChannelSpecHeaders {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
 }
 
 // Per-sandbox webhook configuration. Sandbox0 delivers webhook events at least once and consumers

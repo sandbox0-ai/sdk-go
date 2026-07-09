@@ -363,6 +363,57 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/pause
 	APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	// APIV1SandboxesIDProcessesGet invokes GET /api/v1/sandboxes/{id}/processes operation.
+	//
+	// List process sessions.
+	//
+	// GET /api/v1/sandboxes/{id}/processes
+	APIV1SandboxesIDProcessesGet(ctx context.Context, params APIV1SandboxesIDProcessesGetParams, options ...RequestOption) (*SuccessProcessSessionListResponse, error)
+	// APIV1SandboxesIDProcessesPost invokes POST /api/v1/sandboxes/{id}/processes operation.
+	//
+	// Creates a broker-owned process session with declared protocol channels. Client disconnects from
+	// event subscriptions do not close child process descriptors.
+	//
+	// POST /api/v1/sandboxes/{id}/processes
+	APIV1SandboxesIDProcessesPost(ctx context.Context, request *ProcessSpec, params APIV1SandboxesIDProcessesPostParams, options ...RequestOption) (*SuccessProcessSessionResponse, error)
+	// APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut invokes PUT /api/v1/sandboxes/{id}/processes/{process_id}/channels/{channel}/pty-size operation.
+	//
+	// Resize process PTY channel.
+	//
+	// PUT /api/v1/sandboxes/{id}/processes/{process_id}/channels/{channel}/pty-size
+	APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutParams, options ...RequestOption) (*SuccessResizedResponse, error)
+	// APIV1SandboxesIDProcessesProcessIDDelete invokes DELETE /api/v1/sandboxes/{id}/processes/{process_id} operation.
+	//
+	// Stops the process session, closes broker-owned channels, and removes it from procd.
+	//
+	// DELETE /api/v1/sandboxes/{id}/processes/{process_id}
+	APIV1SandboxesIDProcessesProcessIDDelete(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	// APIV1SandboxesIDProcessesProcessIDEventsGet invokes GET /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+	//
+	// Streams replayed and live process events as Server-Sent Events. cursor is the last observed event
+	// seq; procd emits cursor_lost if the requested cursor is older than the retained log.
+	//
+	// GET /api/v1/sandboxes/{id}/processes/{process_id}/events
+	APIV1SandboxesIDProcessesProcessIDEventsGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDEventsGetParams, options ...RequestOption) (APIV1SandboxesIDProcessesProcessIDEventsGetOK, error)
+	// APIV1SandboxesIDProcessesProcessIDEventsPost invokes POST /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+	//
+	// Sends an idempotent input event to one process channel. event_id is required and repeated
+	// identical events return the original accepted event.
+	//
+	// POST /api/v1/sandboxes/{id}/processes/{process_id}/events
+	APIV1SandboxesIDProcessesProcessIDEventsPost(ctx context.Context, request *ProcessInputEvent, params APIV1SandboxesIDProcessesProcessIDEventsPostParams, options ...RequestOption) (APIV1SandboxesIDProcessesProcessIDEventsPostRes, error)
+	// APIV1SandboxesIDProcessesProcessIDGet invokes GET /api/v1/sandboxes/{id}/processes/{process_id} operation.
+	//
+	// Get process session.
+	//
+	// GET /api/v1/sandboxes/{id}/processes/{process_id}
+	APIV1SandboxesIDProcessesProcessIDGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDGetParams, options ...RequestOption) (*SuccessProcessSessionResponse, error)
+	// APIV1SandboxesIDProcessesProcessIDSignalPost invokes POST /api/v1/sandboxes/{id}/processes/{process_id}/signal operation.
+	//
+	// Send signal to process session.
+	//
+	// POST /api/v1/sandboxes/{id}/processes/{process_id}/signal
+	APIV1SandboxesIDProcessesProcessIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDProcessesProcessIDSignalPostParams, options ...RequestOption) (*SuccessSignaledResponse, error)
 	// APIV1SandboxesIDPut invokes PUT /api/v1/sandboxes/{id} operation.
 	//
 	// Update sandbox configuration.
@@ -6458,6 +6509,1084 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1
 	}
 
 	result, err := decodeAPIV1SandboxesIDPausePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesGet invokes GET /api/v1/sandboxes/{id}/processes operation.
+//
+// List process sessions.
+//
+// GET /api/v1/sandboxes/{id}/processes
+func (c *Client) APIV1SandboxesIDProcessesGet(ctx context.Context, params APIV1SandboxesIDProcessesGetParams, options ...RequestOption) (*SuccessProcessSessionListResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesGet(ctx context.Context, params APIV1SandboxesIDProcessesGetParams, requestOptions ...RequestOption) (res *SuccessProcessSessionListResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesPost invokes POST /api/v1/sandboxes/{id}/processes operation.
+//
+// Creates a broker-owned process session with declared protocol channels. Client disconnects from
+// event subscriptions do not close child process descriptors.
+//
+// POST /api/v1/sandboxes/{id}/processes
+func (c *Client) APIV1SandboxesIDProcessesPost(ctx context.Context, request *ProcessSpec, params APIV1SandboxesIDProcessesPostParams, options ...RequestOption) (*SuccessProcessSessionResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesPost(ctx context.Context, request *ProcessSpec, params APIV1SandboxesIDProcessesPostParams, requestOptions ...RequestOption) (res *SuccessProcessSessionResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDProcessesPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut invokes PUT /api/v1/sandboxes/{id}/processes/{process_id}/channels/{channel}/pty-size operation.
+//
+// Resize process PTY channel.
+//
+// PUT /api/v1/sandboxes/{id}/processes/{process_id}/channels/{channel}/pty-size
+func (c *Client) APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutParams, options ...RequestOption) (*SuccessResizedResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePut(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutParams, requestOptions ...RequestOption) (res *SuccessResizedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [7]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/channels/"
+	{
+		// Encode "channel" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "channel",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Channel))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	pathParts[6] = "/pty-size"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDChannelsChannelPtySizePutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDDelete invokes DELETE /api/v1/sandboxes/{id}/processes/{process_id} operation.
+//
+// Stops the process session, closes broker-owned channels, and removes it from procd.
+//
+// DELETE /api/v1/sandboxes/{id}/processes/{process_id}
+func (c *Client) APIV1SandboxesIDProcessesProcessIDDelete(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDDelete(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDEventsGet invokes GET /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+//
+// Streams replayed and live process events as Server-Sent Events. cursor is the last observed event
+// seq; procd emits cursor_lost if the requested cursor is older than the retained log.
+//
+// GET /api/v1/sandboxes/{id}/processes/{process_id}/events
+func (c *Client) APIV1SandboxesIDProcessesProcessIDEventsGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDEventsGetParams, options ...RequestOption) (APIV1SandboxesIDProcessesProcessIDEventsGetOK, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDEventsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDEventsGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDEventsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDProcessesProcessIDEventsGetOK, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/events"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDEventsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDEventsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDEventsPost invokes POST /api/v1/sandboxes/{id}/processes/{process_id}/events operation.
+//
+// Sends an idempotent input event to one process channel. event_id is required and repeated
+// identical events return the original accepted event.
+//
+// POST /api/v1/sandboxes/{id}/processes/{process_id}/events
+func (c *Client) APIV1SandboxesIDProcessesProcessIDEventsPost(ctx context.Context, request *ProcessInputEvent, params APIV1SandboxesIDProcessesProcessIDEventsPostParams, options ...RequestOption) (APIV1SandboxesIDProcessesProcessIDEventsPostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDEventsPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDEventsPost(ctx context.Context, request *ProcessInputEvent, params APIV1SandboxesIDProcessesProcessIDEventsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDProcessesProcessIDEventsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/events"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDProcessesProcessIDEventsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDEventsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDEventsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDGet invokes GET /api/v1/sandboxes/{id}/processes/{process_id} operation.
+//
+// Get process session.
+//
+// GET /api/v1/sandboxes/{id}/processes/{process_id}
+func (c *Client) APIV1SandboxesIDProcessesProcessIDGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDGetParams, options ...RequestOption) (*SuccessProcessSessionResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDGet(ctx context.Context, params APIV1SandboxesIDProcessesProcessIDGetParams, requestOptions ...RequestOption) (res *SuccessProcessSessionResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDProcessesProcessIDSignalPost invokes POST /api/v1/sandboxes/{id}/processes/{process_id}/signal operation.
+//
+// Send signal to process session.
+//
+// POST /api/v1/sandboxes/{id}/processes/{process_id}/signal
+func (c *Client) APIV1SandboxesIDProcessesProcessIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDProcessesProcessIDSignalPostParams, options ...RequestOption) (*SuccessSignaledResponse, error) {
+	res, err := c.sendAPIV1SandboxesIDProcessesProcessIDSignalPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDProcessesProcessIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDProcessesProcessIDSignalPostParams, requestOptions ...RequestOption) (res *SuccessSignaledResponse, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/processes/"
+	{
+		// Encode "process_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "process_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ProcessID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/signal"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDProcessesProcessIDSignalPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDProcessesProcessIDSignalPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDProcessesProcessIDSignalPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

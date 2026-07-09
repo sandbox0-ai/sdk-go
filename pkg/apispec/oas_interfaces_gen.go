@@ -97,6 +97,10 @@ type APIV1SandboxesIDPausePostRes interface {
 	aPIV1SandboxesIDPausePostRes()
 }
 
+type APIV1SandboxesIDProcessesProcessIDEventsPostRes interface {
+	aPIV1SandboxesIDProcessesProcessIDEventsPostRes()
+}
+
 type APIV1SandboxesIDPutRes interface {
 	aPIV1SandboxesIDPutRes()
 }
