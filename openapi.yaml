@@ -1614,13 +1614,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
-  /api/v1/sandboxes/{id}/observability/metrics:
+  /api/v1/sandboxes/{id}/metrics:
     get:
+      operationId: getSandboxRuntimeMetrics
       tags: [observability]
-      summary: Query historical sandbox metric samples
+      summary: Query chart-ready sandbox runtime metrics
       description: |
-        Queries the asynchronous per-sandbox metric sample projection. This endpoint is
-        separate from platform service metrics and metering usage truth.
+        Returns bounded, downsampled sandbox-wide runtime series. When timestamps are
+        omitted, the query covers the hour ending now. The maximum range is 30 days.
+        Counter rates never cross a runtime reset boundary. Missing data is reported
+        as gaps and is never synthesized as zero. This endpoint is separate from
+        platform service metrics and metering usage truth.
       security:
         - bearerAuth: []
       x-upstream-service: cluster-gateway
@@ -1628,64 +1632,48 @@ paths:
         - $ref: "#/components/parameters/SandboxID"
         - name: start_time
           in: query
-          description: Include samples that occurred at or after this RFC3339 timestamp.
+          description: Query observations at or after this RFC3339 timestamp. Defaults to one hour before end_time.
           schema:
             type: string
             format: date-time
         - name: end_time
           in: query
-          description: Include samples that occurred at or before this RFC3339 timestamp.
+          description: Query observations at or before this RFC3339 timestamp. Defaults to the current time.
           schema:
             type: string
             format: date-time
-        - name: limit
+        - name: metrics
           in: query
-          description: Maximum number of samples to return. Values above 1000 are capped.
+          description: Comma-separated canonical metric names. Defaults to CPU utilization, memory utilization, and network I/O.
+          schema:
+            type: string
+        - name: step_seconds
+          in: query
+          description: Requested bucket width in seconds. The effective step is at least 15 seconds and may be increased to honor max_points.
           schema:
             type: integer
-            default: 100
+            minimum: 1
+            maximum: 86400
+        - name: statistic
+          in: query
+          description: Aggregation applied within each output bucket. Auto uses average for gauges and rate for counters.
+          schema:
+            $ref: "#/components/schemas/SandboxRuntimeMetricStatistic"
+        - name: max_points
+          in: query
+          description: Maximum points per returned series. The server may increase step_seconds to honor this bound.
+          schema:
+            type: integer
+            default: 240
             minimum: 1
             maximum: 1000
-        - name: cursor
-          in: query
-          description: Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch resume cursor from an NDJSON watermark line.
-          schema:
-            type: string
-        - name: watch
-          in: query
-          description: Stream matching records as application/x-ndjson in ingestion order until the client disconnects. When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at request time.
-          schema:
-            type: boolean
-            default: false
-        - name: context_id
-          in: query
-          description: Restrict results to a sandbox process context.
-          schema:
-            type: string
-        - name: name
-          in: query
-          description: Metric name filter. This parameter may be repeated.
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-        - name: names
-          in: query
-          description: Comma-separated metric name filter.
-          schema:
-            type: string
       responses:
         "200":
-          description: Historical sandbox metric samples
+          description: Chart-ready sandbox runtime metric series
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SuccessSandboxObservabilityMetricsResponse"
-            application/x-ndjson:
-              schema:
-                $ref: "#/components/schemas/SandboxObservabilityWatchLine"
+                $ref: "#/components/schemas/SuccessSandboxRuntimeMetricsResponse"
         "400":
           description: Invalid query parameters
           content:
@@ -1700,6 +1688,30 @@ paths:
                 $ref: "#/components/schemas/ErrorEnvelope"
         "503":
           description: Historical observability backend disabled or unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /api/v1/sandboxes/{id}/metrics/catalog:
+    get:
+      operationId: getSandboxRuntimeMetricsCatalog
+      tags: [observability]
+      summary: Get the sandbox runtime metric catalog
+      description: Returns the bounded canonical metric names, kinds, units, and dimensions supported by the runtime metrics API.
+      security:
+        - bearerAuth: []
+      x-upstream-service: cluster-gateway
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+      responses:
+        "200":
+          description: Sandbox runtime metric catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessSandboxRuntimeMetricsCatalogResponse"
+        "403":
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -2330,6 +2342,338 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SandboxID"
         - $ref: "#/components/parameters/ContextID"
+      responses:
+        "101":
+          description: Switching Protocols
+  /api/v1/sandboxes/{id}/sessions:
+    get:
+      tags: [sessions]
+      summary: List execution sessions
+      description: Lists durable process-backed sessions in the sandbox.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+      responses:
+        "200":
+          description: Execution session list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionListResponse"
+    post:
+      tags: [sessions]
+      summary: Create an execution session
+      description: Creates a durable process-backed session. The client connection does not own the session lifecycle.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Optional key for retrying creation without creating a duplicate session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionSpec"
+      responses:
+        "201":
+          description: Execution session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+        "200":
+          description: Existing execution session returned for an idempotent retry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}:
+    get:
+      tags: [sessions]
+      summary: Get an execution session
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      responses:
+        "200":
+          description: Execution session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+    put:
+      tags: [sessions]
+      summary: Replace an execution session specification
+      description: Replaces the specification. Changes to command, environment, I/O, or readiness create a new process attempt when the desired state is running.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionSpec"
+      responses:
+        "200":
+          description: Execution session updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+    delete:
+      tags: [sessions]
+      summary: Delete an execution session
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      responses:
+        "200":
+          description: Execution session deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessDeletedResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/desired-state:
+    put:
+      tags: [sessions]
+      summary: Set execution session desired state
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/desired-state
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionDesiredStateRequest"
+      responses:
+        "200":
+          description: Desired state updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/attempts:
+    post:
+      tags: [sessions]
+      summary: Create a new execution session attempt
+      description: Starts a new process attempt. Set replace_current to stop and replace a running attempt.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/attempts
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExecutionSessionAttemptRequest"
+      responses:
+        "201":
+          description: Attempt created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/inputs:
+    post:
+      tags: [sessions]
+      summary: Append execution session input
+      description: Writes binary-safe input to the current attempt. Once an input receipt is recorded, retrying the same input_id and content is deduplicated. A transport failure before the receipt is durable can make delivery ambiguous, so consumers must tolerate replay.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/inputs
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionInputRequest"
+      responses:
+        "202":
+          description: Input accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionInputResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/signals:
+    post:
+      tags: [sessions]
+      summary: Send a signal to an execution session attempt
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/signals
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionSignalRequest"
+      responses:
+        "202":
+          description: Signal accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessAcceptedResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/terminal:
+    put:
+      tags: [sessions]
+      summary: Resize an execution session terminal
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/terminal
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecutionSessionTerminalResizeRequest"
+      responses:
+        "200":
+          description: Terminal resized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResizedResponse"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/events:
+    get:
+      tags: [sessions]
+      summary: List execution session events
+      description: Returns retained events after the supplied sequence. Delivery is cursor-based and at least once.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/events
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+            default: 1000
+      responses:
+        "200":
+          description: Execution session events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessExecutionSessionEventPageResponse"
+        "410":
+          description: The requested cursor is older than retained history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /api/v1/sandboxes/{id}/sessions/{session_id}/events/stream:
+    get:
+      tags: [sessions]
+      summary: Stream execution session events
+      description: Streams retained and live events using SSE. Reconnect with Last-Event-ID or the after query parameter.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/events/stream
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: Last-Event-ID
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Server-sent event stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+  /api/v1/sandboxes/{id}/sessions/{session_id}/ws:
+    get:
+      tags: [sessions]
+      summary: Attach to an execution session with WebSocket
+      description: A WebSocket is an ephemeral attachment. Closing it does not stop the session or close process input.
+      security:
+        - bearerAuth: []
+      x-upstream-service: procd
+      x-upstream-path: /api/v1/sessions/{session_id}/ws
+      x-websocket:
+        inbound:
+          $ref: "#/components/schemas/ExecutionSessionWebSocketRequest"
+        outbound:
+          $ref: "#/components/schemas/ExecutionSessionWebSocketResponse"
+      parameters:
+        - $ref: "#/components/parameters/SandboxID"
+        - $ref: "#/components/parameters/SessionID"
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
       responses:
         "101":
           description: Switching Protocols
@@ -3219,6 +3563,12 @@ components:
         type: string
     ContextID:
       name: ctx_id
+      in: path
+      required: true
+      schema:
+        type: string
+    SessionID:
+      name: session_id
       in: path
       required: true
       schema:
@@ -5044,70 +5394,169 @@ components:
         watermark:
           type: string
       required: [logs]
-    SandboxObservabilityMetricSample:
+    SandboxRuntimeMetricName:
+      type: string
+      enum:
+        - sandbox.cpu.utilization
+        - sandbox.cpu.usage
+        - sandbox.cpu.time
+        - sandbox.cpu.limit
+        - sandbox.memory.usage
+        - sandbox.memory.working_set
+        - sandbox.memory.available
+        - sandbox.memory.limit
+        - sandbox.memory.utilization
+        - sandbox.network.io
+        - sandbox.network.errors
+        - sandbox.process.count
+        - sandbox.rootfs.writable.usage
+        - sandbox.rootfs.writable.inodes
+    SandboxRuntimeMetricKind:
+      type: string
+      enum: [gauge, counter]
+    SandboxRuntimeMetricUnit:
+      type: string
+      enum: [ratio, cores, seconds, bytes, count, bytes_per_second, count_per_second]
+    SandboxRuntimeMetricStatistic:
+      type: string
+      enum: [auto, average, minimum, maximum, last, rate]
+    SandboxRuntimeMetricGapReason:
+      type: string
+      enum: [unavailable, unsupported, collection_error, no_data, series_reset]
+    SandboxRuntimeMetricFreshnessStatus:
+      type: string
+      enum: [fresh, stale, missing]
+    SandboxRuntimeMetricDescriptor:
       type: object
       properties:
-        team_id:
-          type: string
-        sandbox_id:
-          type: string
-        region_id:
-          type: string
-        cluster_id:
-          type: string
-        context_id:
-          type: string
-        occurred_at:
-          type: string
-          format: date-time
-        ingested_at:
-          type: string
-          format: date-time
         name:
-          type: string
+          $ref: "#/components/schemas/SandboxRuntimeMetricName"
+        kind:
+          $ref: "#/components/schemas/SandboxRuntimeMetricKind"
         unit:
+          $ref: "#/components/schemas/SandboxRuntimeMetricUnit"
+        dimensions:
+          type: array
+          items:
+            type: string
+        description:
           type: string
+      required: [name, kind, unit, dimensions, description]
+    SandboxRuntimeMetricsCatalogResponse:
+      type: object
+      properties:
+        metrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/SandboxRuntimeMetricDescriptor"
+      required: [metrics]
+    SandboxRuntimeMetricPoint:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
         value:
           type: number
           format: double
-        cursor:
-          type: string
-        attributes:
-          type: object
-          additionalProperties: true
-      required:
-        - team_id
-        - sandbox_id
-        - region_id
-        - cluster_id
-        - occurred_at
-        - ingested_at
-        - name
-        - value
-        - cursor
-    SandboxObservabilityMetricsResponse:
+      required: [time, value]
+    SandboxRuntimeMetricSegment:
       type: object
+      description: A continuous series segment. Runtime restarts and collector counter resets start a new segment without exposing internal topology identifiers.
       properties:
-        samples:
+        points:
           type: array
           items:
-            $ref: "#/components/schemas/SandboxObservabilityMetricSample"
-        next_cursor:
+            $ref: "#/components/schemas/SandboxRuntimeMetricPoint"
+      required: [points]
+    SandboxRuntimeMetricSeries:
+      type: object
+      properties:
+        metric:
+          $ref: "#/components/schemas/SandboxRuntimeMetricName"
+        kind:
+          $ref: "#/components/schemas/SandboxRuntimeMetricKind"
+        unit:
+          $ref: "#/components/schemas/SandboxRuntimeMetricUnit"
+        statistic:
+          $ref: "#/components/schemas/SandboxRuntimeMetricStatistic"
+        dimensions:
+          type: object
+          additionalProperties:
+            type: string
+        segments:
+          type: array
+          items:
+            $ref: "#/components/schemas/SandboxRuntimeMetricSegment"
+      required: [metric, kind, unit, statistic, segments]
+    SandboxRuntimeMetricGap:
+      type: object
+      properties:
+        metric:
+          $ref: "#/components/schemas/SandboxRuntimeMetricName"
+        dimensions:
+          type: object
+          additionalProperties:
+            type: string
+        start_time:
           type: string
-        watermark:
+          format: date-time
+        end_time:
           type: string
-      required: [samples]
+          format: date-time
+        reason:
+          $ref: "#/components/schemas/SandboxRuntimeMetricGapReason"
+      required: [metric, start_time, end_time, reason]
+    SandboxRuntimeMetricFreshness:
+      type: object
+      description: Freshness is measured relative to the requested end_time, including for historical queries.
+      properties:
+        newest_observed_at:
+          type: string
+          format: date-time
+        age_seconds:
+          type: number
+          format: double
+          minimum: 0
+        status:
+          $ref: "#/components/schemas/SandboxRuntimeMetricFreshnessStatus"
+      required: [status]
+    SandboxRuntimeMetricsResponse:
+      type: object
+      properties:
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        step_seconds:
+          type: integer
+          format: int64
+          minimum: 15
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/SandboxRuntimeMetricSeries"
+        freshness:
+          $ref: "#/components/schemas/SandboxRuntimeMetricFreshness"
+        gaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/SandboxRuntimeMetricGap"
+        partial:
+          type: boolean
+      required: [start_time, end_time, step_seconds, series, freshness, gaps, partial]
     SandboxObservabilityWatchLine:
       type: object
       properties:
         type:
           type: string
-          enum: [event, log, metric_sample, watermark, heartbeat, error]
+          enum: [event, log, watermark, heartbeat, error]
         data:
           oneOf:
             - $ref: "#/components/schemas/SandboxObservabilityEvent"
             - $ref: "#/components/schemas/SandboxObservabilityLogEntry"
-            - $ref: "#/components/schemas/SandboxObservabilityMetricSample"
         cursor:
           type: string
           description: Watch resume cursor. Present on watermark lines.
@@ -5136,13 +5585,20 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/SandboxObservabilityLogsResponse"
-    SuccessSandboxObservabilityMetricsResponse:
+    SuccessSandboxRuntimeMetricsResponse:
       allOf:
         - $ref: "#/components/schemas/SuccessEnvelope"
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/SandboxObservabilityMetricsResponse"
+              $ref: "#/components/schemas/SandboxRuntimeMetricsResponse"
+    SuccessSandboxRuntimeMetricsCatalogResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/SandboxRuntimeMetricsCatalogResponse"
     PauseSandboxResponse:
       type: object
       properties:
@@ -5212,6 +5668,451 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/RefreshResponse"
+    ExecutionSessionIOMode:
+      type: string
+      enum: [pipes, pty]
+      x-enum-varnames: [ExecutionSessionIOModePipes, ExecutionSessionIOModePTY]
+      default: pipes
+    ExecutionSessionDesiredState:
+      type: string
+      enum: [running, stopped]
+      x-enum-varnames: [ExecutionSessionDesiredStateRunning, ExecutionSessionDesiredStateStopped]
+      default: running
+    ExecutionSessionPhase:
+      type: string
+      enum: [pending, starting, running, paused, stopping, stopped, exited, backoff, failed, suspended]
+      x-enum-varnames: [ExecutionSessionPhasePending, ExecutionSessionPhaseStarting, ExecutionSessionPhaseRunning, ExecutionSessionPhasePaused, ExecutionSessionPhaseStopping, ExecutionSessionPhaseStopped, ExecutionSessionPhaseExited, ExecutionSessionPhaseBackoff, ExecutionSessionPhaseFailed, ExecutionSessionPhaseSuspended]
+    ExecutionSessionRestartPolicy:
+      type: string
+      enum: [never, on_failure, always]
+      x-enum-varnames: [ExecutionSessionRestartPolicyNever, ExecutionSessionRestartPolicyOnFailure, ExecutionSessionRestartPolicyAlways]
+      default: never
+    ExecutionSessionRuntimeRecoveryPolicy:
+      type: string
+      enum: [restart, stop]
+      x-enum-varnames: [ExecutionSessionRuntimeRecoveryRestart, ExecutionSessionRuntimeRecoveryStop]
+      default: restart
+    ExecutionSessionReadinessType:
+      type: string
+      enum: [process, delay, output]
+      x-enum-varnames: [ExecutionSessionReadinessProcess, ExecutionSessionReadinessDelay, ExecutionSessionReadinessOutput]
+      default: process
+    ExecutionSessionTerminalSpec:
+      type: object
+      properties:
+        rows:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 65535
+          default: 24
+        cols:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 65535
+          default: 80
+        term:
+          type: string
+          default: xterm-256color
+    ExecutionSessionIOSpec:
+      type: object
+      properties:
+        mode:
+          $ref: "#/components/schemas/ExecutionSessionIOMode"
+        terminal:
+          $ref: "#/components/schemas/ExecutionSessionTerminalSpec"
+    ExecutionSessionRestartSpec:
+      type: object
+      properties:
+        policy:
+          $ref: "#/components/schemas/ExecutionSessionRestartPolicy"
+        max_restarts:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 5
+        window_seconds:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 60
+        initial_backoff_ms:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 250
+        max_backoff_ms:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 5000
+    ExecutionSessionLifecycleSpec:
+      type: object
+      properties:
+        desired_state:
+          $ref: "#/components/schemas/ExecutionSessionDesiredState"
+        restart:
+          $ref: "#/components/schemas/ExecutionSessionRestartSpec"
+        runtime_recovery:
+          $ref: "#/components/schemas/ExecutionSessionRuntimeRecoveryPolicy"
+        idle_timeout_seconds:
+          type: integer
+          format: int64
+          minimum: 0
+        max_lifetime_seconds:
+          type: integer
+          format: int64
+          minimum: 0
+        stop_grace_period_seconds:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 10
+    ExecutionSessionReadinessSpec:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ExecutionSessionReadinessType"
+        delay_ms:
+          type: integer
+          format: int32
+          minimum: 0
+        output:
+          type: string
+          description: Byte sequence whose appearance in process output marks the attempt ready when type is output.
+        timeout_ms:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 30000
+    ExecutionSessionEventRetentionSpec:
+      type: object
+      properties:
+        max_bytes:
+          type: integer
+          format: int64
+          minimum: 0
+          default: 67108864
+        max_age_seconds:
+          type: integer
+          format: int64
+          minimum: 0
+          default: 86400
+    ExecutionSessionSpec:
+      type: object
+      description: Generic process-backed session specification. The supervisor does not interpret application protocols.
+      properties:
+        name:
+          type: string
+        command:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        cwd:
+          type: string
+        env:
+          type: object
+          additionalProperties:
+            type: string
+        io:
+          $ref: "#/components/schemas/ExecutionSessionIOSpec"
+        lifecycle:
+          $ref: "#/components/schemas/ExecutionSessionLifecycleSpec"
+        readiness:
+          $ref: "#/components/schemas/ExecutionSessionReadinessSpec"
+        event_retention:
+          $ref: "#/components/schemas/ExecutionSessionEventRetentionSpec"
+      required: [command]
+    ExecutionSessionAttempt:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: integer
+          format: int64
+        runtime_generation:
+          type: integer
+          format: int64
+        pid:
+          type: integer
+          format: int32
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+        exit_code:
+          type: integer
+          format: int32
+        reason:
+          type: string
+      required: [id, number, runtime_generation]
+    ExecutionSessionEventCursor:
+      type: object
+      properties:
+        earliest:
+          type: integer
+          format: int64
+        latest:
+          type: integer
+          format: int64
+      required: [earliest, latest]
+    ExecutionSession:
+      type: object
+      properties:
+        id:
+          type: string
+        spec:
+          $ref: "#/components/schemas/ExecutionSessionSpec"
+        spec_version:
+          type: integer
+          format: int64
+        phase:
+          $ref: "#/components/schemas/ExecutionSessionPhase"
+        runtime_generation:
+          type: integer
+          format: int64
+        attempt:
+          $ref: "#/components/schemas/ExecutionSessionAttempt"
+        restart_count:
+          type: integer
+          format: int32
+        cursor:
+          $ref: "#/components/schemas/ExecutionSessionEventCursor"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_activity_at:
+          type: string
+          format: date-time
+      required: [id, spec, spec_version, phase, runtime_generation, restart_count, cursor, created_at, updated_at, last_activity_at]
+    ExecutionSessionDesiredStateRequest:
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/ExecutionSessionDesiredState"
+      required: [state]
+    CreateExecutionSessionAttemptRequest:
+      type: object
+      properties:
+        replace_current:
+          type: boolean
+          default: false
+    ExecutionSessionInputRequest:
+      type: object
+      properties:
+        input_id:
+          type: string
+          description: Client-generated operation identifier used to deduplicate recorded retries.
+        expected_attempt_id:
+          type: string
+        data_base64:
+          type: string
+          description: Base64-encoded input bytes accepted into the current attempt input queue. WebSocket closure never implies EOF.
+        eof:
+          type: boolean
+          default: false
+      required: [input_id]
+    ExecutionSessionInputResponse:
+      type: object
+      properties:
+        input_id:
+          type: string
+        attempt_id:
+          type: string
+        accepted:
+          type: boolean
+        duplicate:
+          type: boolean
+      required: [input_id, attempt_id, accepted, duplicate]
+    ExecutionSessionSignalRequest:
+      type: object
+      properties:
+        signal:
+          type: string
+        expected_attempt_id:
+          type: string
+      required: [signal]
+    ExecutionSessionTerminalResizeRequest:
+      type: object
+      properties:
+        rows:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 65535
+        cols:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 65535
+        expected_attempt_id:
+          type: string
+      required: [rows, cols]
+    ExecutionSessionEvent:
+      type: object
+      properties:
+        seq:
+          type: integer
+          format: int64
+        session_id:
+          type: string
+        runtime_generation:
+          type: integer
+          format: int64
+        attempt_id:
+          type: string
+        type:
+          type: string
+        stream:
+          type: string
+          enum: [stdout, stderr, pty]
+        data_base64:
+          type: string
+          description: Base64-encoded event bytes.
+        exit_code:
+          type: integer
+          format: int32
+        reason:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+      required: [seq, session_id, runtime_generation, type, occurred_at]
+    ExecutionSessionEventPage:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExecutionSessionEvent"
+        cursor:
+          $ref: "#/components/schemas/ExecutionSessionEventCursor"
+      required: [events, cursor]
+    SuccessExecutionSessionResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ExecutionSession"
+    SuccessExecutionSessionListResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                sessions:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ExecutionSession"
+              required: [sessions]
+    SuccessExecutionSessionInputResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ExecutionSessionInputResponse"
+    SuccessExecutionSessionEventPageResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ExecutionSessionEventPage"
+    SuccessAcceptedResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                accepted:
+                  type: boolean
+              required: [accepted]
+    ExecutionSessionWebSocketRequest:
+      oneOf:
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketInput"
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketSignal"
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketResize"
+    ExecutionSessionWebSocketInput:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionSessionInputRequest"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [input]
+            request_id:
+              type: string
+          required: [type]
+    ExecutionSessionWebSocketSignal:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionSessionSignalRequest"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [signal]
+            request_id:
+              type: string
+          required: [type]
+    ExecutionSessionWebSocketResize:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionSessionTerminalResizeRequest"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [resize]
+            request_id:
+              type: string
+          required: [type]
+    ExecutionSessionWebSocketResponse:
+      oneOf:
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketEvent"
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketAck"
+        - $ref: "#/components/schemas/ExecutionSessionWebSocketError"
+    ExecutionSessionWebSocketEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [event]
+        event:
+          $ref: "#/components/schemas/ExecutionSessionEvent"
+      required: [type, event]
+    ExecutionSessionWebSocketAck:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ack]
+        request_id:
+          type: string
+      required: [type]
+    ExecutionSessionWebSocketError:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [error]
+        request_id:
+          type: string
+        error:
+          type: string
+      required: [type, error]
     ProcessType:
       type: string
       enum: [repl, cmd]

@@ -36,9 +36,12 @@ type SandboxObservabilityLogOptions struct {
 }
 
 type SandboxObservabilityMetricOptions struct {
-	SandboxObservabilityQueryOptions
-	ContextID string
-	Names     []string
+	StartTime   *time.Time
+	EndTime     *time.Time
+	Metrics     []apispec.SandboxRuntimeMetricName
+	StepSeconds int
+	Statistic   apispec.SandboxRuntimeMetricStatistic
+	MaxPoints   int
 }
 
 type SandboxObservabilityWatchLine struct {
@@ -106,14 +109,14 @@ func (c *Client) ListSandboxObservabilityLogs(ctx context.Context, sandboxID str
 	return nil, apiErrorFromResponse(resp)
 }
 
-func (c *Client) ListSandboxObservabilityMetrics(ctx context.Context, sandboxID string, opts *SandboxObservabilityMetricOptions) (*apispec.SandboxObservabilityMetricsResponse, error) {
-	params := apispec.APIV1SandboxesIDObservabilityMetricsGetParams{ID: sandboxID}
-	applyMetricObservabilityOptions(&params, opts, false)
-	resp, err := c.api.APIV1SandboxesIDObservabilityMetricsGet(ctx, params)
+func (c *Client) GetSandboxRuntimeMetrics(ctx context.Context, sandboxID string, opts *SandboxObservabilityMetricOptions) (*apispec.SandboxRuntimeMetricsResponse, error) {
+	params := apispec.GetSandboxRuntimeMetricsParams{ID: sandboxID}
+	applyRuntimeMetricOptions(&params, opts)
+	resp, err := c.api.GetSandboxRuntimeMetrics(ctx, params)
 	if err != nil {
 		return nil, err
 	}
-	if response, ok := resp.(*apispec.SuccessSandboxObservabilityMetricsResponse); ok {
+	if response, ok := resp.(*apispec.SuccessSandboxRuntimeMetricsResponse); ok {
 		data, ok := response.Data.Get()
 		if !ok {
 			return nil, unexpectedResponseError(resp)
@@ -121,6 +124,27 @@ func (c *Client) ListSandboxObservabilityMetrics(ctx context.Context, sandboxID 
 		return &data, nil
 	}
 	return nil, apiErrorFromResponse(resp)
+}
+
+// GetSandboxRuntimeMetricsCatalog returns the canonical runtime metric catalog.
+func (c *Client) GetSandboxRuntimeMetricsCatalog(ctx context.Context, sandboxID string) (*apispec.SandboxRuntimeMetricsCatalogResponse, error) {
+	resp, err := c.api.GetSandboxRuntimeMetricsCatalog(ctx, apispec.GetSandboxRuntimeMetricsCatalogParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	if response, ok := resp.(*apispec.SuccessSandboxRuntimeMetricsCatalogResponse); ok {
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(resp)
+		}
+		return &data, nil
+	}
+	return nil, apiErrorFromResponse(resp)
+}
+
+// ListSandboxObservabilityMetrics is retained as an alias for the chart-ready runtime metrics API.
+func (c *Client) ListSandboxObservabilityMetrics(ctx context.Context, sandboxID string, opts *SandboxObservabilityMetricOptions) (*apispec.SandboxRuntimeMetricsResponse, error) {
+	return c.GetSandboxRuntimeMetrics(ctx, sandboxID, opts)
 }
 
 func (c *Client) WatchSandboxObservabilityEvents(ctx context.Context, sandboxID string, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
@@ -135,12 +159,6 @@ func (c *Client) WatchSandboxObservabilityLogs(ctx context.Context, sandboxID st
 	return c.watchSandboxObservability(ctx, sandboxID, "/observability/logs", values)
 }
 
-func (c *Client) WatchSandboxObservabilityMetrics(ctx context.Context, sandboxID string, opts *SandboxObservabilityMetricOptions) (*SandboxObservabilityStream, error) {
-	values := make(url.Values)
-	applyMetricObservabilityValues(values, opts)
-	return c.watchSandboxObservability(ctx, sandboxID, "/observability/metrics", values)
-}
-
 func (s *Sandbox) ListObservabilityEvents(ctx context.Context, opts *SandboxObservabilityEventOptions) (*apispec.SandboxObservabilityEventsResponse, error) {
 	return s.client.ListSandboxObservabilityEvents(ctx, s.ID, opts)
 }
@@ -149,8 +167,13 @@ func (s *Sandbox) ListLogs(ctx context.Context, opts *SandboxObservabilityLogOpt
 	return s.client.ListSandboxObservabilityLogs(ctx, s.ID, opts)
 }
 
-func (s *Sandbox) ListMetrics(ctx context.Context, opts *SandboxObservabilityMetricOptions) (*apispec.SandboxObservabilityMetricsResponse, error) {
-	return s.client.ListSandboxObservabilityMetrics(ctx, s.ID, opts)
+func (s *Sandbox) ListMetrics(ctx context.Context, opts *SandboxObservabilityMetricOptions) (*apispec.SandboxRuntimeMetricsResponse, error) {
+	return s.client.GetSandboxRuntimeMetrics(ctx, s.ID, opts)
+}
+
+// GetMetricsCatalog returns the canonical runtime metric catalog.
+func (s *Sandbox) GetMetricsCatalog(ctx context.Context) (*apispec.SandboxRuntimeMetricsCatalogResponse, error) {
+	return s.client.GetSandboxRuntimeMetricsCatalog(ctx, s.ID)
 }
 
 func (s *Sandbox) WatchObservabilityEvents(ctx context.Context, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
@@ -159,10 +182,6 @@ func (s *Sandbox) WatchObservabilityEvents(ctx context.Context, opts *SandboxObs
 
 func (s *Sandbox) WatchLogs(ctx context.Context, opts *SandboxObservabilityLogOptions) (*SandboxObservabilityStream, error) {
 	return s.client.WatchSandboxObservabilityLogs(ctx, s.ID, opts)
-}
-
-func (s *Sandbox) WatchMetrics(ctx context.Context, opts *SandboxObservabilityMetricOptions) (*SandboxObservabilityStream, error) {
-	return s.client.WatchSandboxObservabilityMetrics(ctx, s.ID, opts)
 }
 
 func (c *Client) watchSandboxObservability(ctx context.Context, sandboxID, suffix string, values url.Values) (*SandboxObservabilityStream, error) {
@@ -254,19 +273,31 @@ func applyLogObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilityL
 	}
 }
 
-func applyMetricObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilityMetricsGetParams, opts *SandboxObservabilityMetricOptions, watch bool) {
+func applyRuntimeMetricOptions(params *apispec.GetSandboxRuntimeMetricsParams, opts *SandboxObservabilityMetricOptions) {
 	if opts == nil {
-		if watch {
-			params.Watch = apispec.NewOptBool(true)
-		}
 		return
 	}
-	applyCommonObservabilityOptions(&params.StartTime, &params.EndTime, &params.Limit, &params.Cursor, &params.Watch, opts.SandboxObservabilityQueryOptions, watch)
-	if opts.ContextID != "" {
-		params.ContextID = apispec.NewOptString(opts.ContextID)
+	if opts.StartTime != nil {
+		params.StartTime = apispec.NewOptDateTime(*opts.StartTime)
 	}
-	if len(opts.Names) > 0 {
-		params.Name = opts.Names
+	if opts.EndTime != nil {
+		params.EndTime = apispec.NewOptDateTime(*opts.EndTime)
+	}
+	if len(opts.Metrics) > 0 {
+		values := make([]string, 0, len(opts.Metrics))
+		for _, metric := range opts.Metrics {
+			values = append(values, string(metric))
+		}
+		params.Metrics = apispec.NewOptString(strings.Join(values, ","))
+	}
+	if opts.StepSeconds > 0 {
+		params.StepSeconds = apispec.NewOptInt(opts.StepSeconds)
+	}
+	if opts.Statistic != "" {
+		params.Statistic = apispec.NewOptSandboxRuntimeMetricStatistic(opts.Statistic)
+	}
+	if opts.MaxPoints > 0 {
+		params.MaxPoints = apispec.NewOptInt(opts.MaxPoints)
 	}
 }
 
@@ -314,21 +345,6 @@ func applyLogObservabilityValues(values url.Values, opts *SandboxObservabilityLo
 	}
 	if opts.Stream != "" {
 		values.Set("stream", string(opts.Stream))
-	}
-}
-
-func applyMetricObservabilityValues(values url.Values, opts *SandboxObservabilityMetricOptions) {
-	if opts == nil {
-		return
-	}
-	applyCommonObservabilityValues(values, opts.SandboxObservabilityQueryOptions)
-	if opts.ContextID != "" {
-		values.Set("context_id", opts.ContextID)
-	}
-	for _, name := range opts.Names {
-		if name != "" {
-			values.Add("name", name)
-		}
 	}
 }
 
