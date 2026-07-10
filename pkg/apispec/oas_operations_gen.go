@@ -21,7 +21,6 @@ const (
 	APIV1SandboxRootfsSnapshotsSnapshotIDDeleteOperation         OperationName = "APIV1SandboxRootfsSnapshotsSnapshotIDDelete"
 	APIV1SandboxRootfsSnapshotsSnapshotIDGetOperation            OperationName = "APIV1SandboxRootfsSnapshotsSnapshotIDGet"
 	APIV1SandboxesGetOperation                                   OperationName = "APIV1SandboxesGet"
-	APIV1SandboxesIDAuditEventsGetOperation                      OperationName = "APIV1SandboxesIDAuditEventsGet"
 	APIV1SandboxesIDContextsCtxIDDeleteOperation                 OperationName = "APIV1SandboxesIDContextsCtxIDDelete"
 	APIV1SandboxesIDContextsCtxIDExecPostOperation               OperationName = "APIV1SandboxesIDContextsCtxIDExecPost"
 	APIV1SandboxesIDContextsCtxIDGetOperation                    OperationName = "APIV1SandboxesIDContextsCtxIDGet"

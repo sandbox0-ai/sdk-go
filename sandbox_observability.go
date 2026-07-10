@@ -89,23 +89,6 @@ func (c *Client) ListSandboxObservabilityEvents(ctx context.Context, sandboxID s
 	return nil, apiErrorFromResponse(resp)
 }
 
-func (c *Client) ListSandboxAuditEvents(ctx context.Context, sandboxID string, opts *SandboxObservabilityEventOptions) (*apispec.SandboxObservabilityEventsResponse, error) {
-	params := apispec.APIV1SandboxesIDAuditEventsGetParams{ID: sandboxID}
-	applyAuditObservabilityOptions(&params, opts, false)
-	resp, err := c.api.APIV1SandboxesIDAuditEventsGet(ctx, params)
-	if err != nil {
-		return nil, err
-	}
-	if response, ok := resp.(*apispec.SuccessSandboxObservabilityEventsResponse); ok {
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
-		return &data, nil
-	}
-	return nil, apiErrorFromResponse(resp)
-}
-
 func (c *Client) ListSandboxObservabilityLogs(ctx context.Context, sandboxID string, opts *SandboxObservabilityLogOptions) (*apispec.SandboxObservabilityLogsResponse, error) {
 	params := apispec.APIV1SandboxesIDObservabilityLogsGetParams{ID: sandboxID}
 	applyLogObservabilityOptions(&params, opts, false)
@@ -146,12 +129,6 @@ func (c *Client) WatchSandboxObservabilityEvents(ctx context.Context, sandboxID 
 	return c.watchSandboxObservability(ctx, sandboxID, "/observability/events", values)
 }
 
-func (c *Client) WatchSandboxAuditEvents(ctx context.Context, sandboxID string, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
-	values := make(url.Values)
-	applyEventObservabilityValues(values, opts)
-	return c.watchSandboxObservability(ctx, sandboxID, "/audit/events", values)
-}
-
 func (c *Client) WatchSandboxObservabilityLogs(ctx context.Context, sandboxID string, opts *SandboxObservabilityLogOptions) (*SandboxObservabilityStream, error) {
 	values := make(url.Values)
 	applyLogObservabilityValues(values, opts)
@@ -168,10 +145,6 @@ func (s *Sandbox) ListObservabilityEvents(ctx context.Context, opts *SandboxObse
 	return s.client.ListSandboxObservabilityEvents(ctx, s.ID, opts)
 }
 
-func (s *Sandbox) ListAuditEvents(ctx context.Context, opts *SandboxObservabilityEventOptions) (*apispec.SandboxObservabilityEventsResponse, error) {
-	return s.client.ListSandboxAuditEvents(ctx, s.ID, opts)
-}
-
 func (s *Sandbox) ListLogs(ctx context.Context, opts *SandboxObservabilityLogOptions) (*apispec.SandboxObservabilityLogsResponse, error) {
 	return s.client.ListSandboxObservabilityLogs(ctx, s.ID, opts)
 }
@@ -182,10 +155,6 @@ func (s *Sandbox) ListMetrics(ctx context.Context, opts *SandboxObservabilityMet
 
 func (s *Sandbox) WatchObservabilityEvents(ctx context.Context, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
 	return s.client.WatchSandboxObservabilityEvents(ctx, s.ID, opts)
-}
-
-func (s *Sandbox) WatchAuditEvents(ctx context.Context, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
-	return s.client.WatchSandboxAuditEvents(ctx, s.ID, opts)
 }
 
 func (s *Sandbox) WatchLogs(ctx context.Context, opts *SandboxObservabilityLogOptions) (*SandboxObservabilityStream, error) {
@@ -251,25 +220,6 @@ func (c *Client) sandboxObservabilityURL(sandboxID, suffix string, values url.Va
 }
 
 func applyEventObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilityEventsGetParams, opts *SandboxObservabilityEventOptions, watch bool) {
-	if opts == nil {
-		if watch {
-			params.Watch = apispec.NewOptBool(true)
-		}
-		return
-	}
-	applyCommonObservabilityOptions(&params.StartTime, &params.EndTime, &params.Limit, &params.Cursor, &params.Watch, opts.SandboxObservabilityQueryOptions, watch)
-	if opts.Source != "" {
-		params.Source = apispec.NewOptObservabilityEventSource(opts.Source)
-	}
-	if opts.EventType != "" {
-		params.EventType = apispec.NewOptSandboxObservabilityEventType(opts.EventType)
-	}
-	if opts.Outcome != "" {
-		params.Outcome = apispec.NewOptSandboxObservabilityOutcome(opts.Outcome)
-	}
-}
-
-func applyAuditObservabilityOptions(params *apispec.APIV1SandboxesIDAuditEventsGetParams, opts *SandboxObservabilityEventOptions, watch bool) {
 	if opts == nil {
 		if watch {
 			params.Watch = apispec.NewOptBool(true)

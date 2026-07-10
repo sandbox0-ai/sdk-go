@@ -56,27 +56,6 @@ type APIV1SandboxesGetParams struct {
 	Offset OptInt `json:",omitempty,omitzero"`
 }
 
-// APIV1SandboxesIDAuditEventsGetParams is parameters of GET /api/v1/sandboxes/{id}/audit/events operation.
-type APIV1SandboxesIDAuditEventsGetParams struct {
-	ID string
-	// Include events that occurred at or after this RFC3339 timestamp.
-	StartTime OptDateTime `json:",omitempty,omitzero"`
-	// Include events that occurred at or before this RFC3339 timestamp.
-	EndTime OptDateTime `json:",omitempty,omitzero"`
-	// Maximum number of events to return. Values above 1000 are capped.
-	Limit OptInt `json:",omitempty,omitzero"`
-	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
-	// resume cursor from an NDJSON watermark line.
-	Cursor OptString `json:",omitempty,omitzero"`
-	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
-	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
-	// request time.
-	Watch     OptBool                          `json:",omitempty,omitzero"`
-	Source    OptObservabilityEventSource      `json:",omitempty,omitzero"`
-	EventType OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
-	Outcome   OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
-}
-
 // APIV1SandboxesIDContextsCtxIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 type APIV1SandboxesIDContextsCtxIDDeleteParams struct {
 	ID    string

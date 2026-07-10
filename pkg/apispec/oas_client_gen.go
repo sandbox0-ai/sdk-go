@@ -172,13 +172,6 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes
 	APIV1SandboxesGet(ctx context.Context, params APIV1SandboxesGetParams, options ...RequestOption) (APIV1SandboxesGetRes, error)
-	// APIV1SandboxesIDAuditEventsGet invokes GET /api/v1/sandboxes/{id}/audit/events operation.
-	//
-	// Queries the audit-focused projection for a sandbox. Network audit events are
-	// included in scope; file audit is intentionally not included.
-	//
-	// GET /api/v1/sandboxes/{id}/audit/events
-	APIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, options ...RequestOption) (APIV1SandboxesIDAuditEventsGetRes, error)
 	// APIV1SandboxesIDContextsCtxIDDelete invokes DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 	//
 	// Delete context.
@@ -313,7 +306,10 @@ type Invoker interface {
 	APIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, options ...RequestOption) error
 	// APIV1SandboxesIDForkPost invokes POST /api/v1/sandboxes/{id}/fork operation.
 	//
-	// Fork sandbox from paused rootfs.
+	// Forks the source sandbox writable rootfs into a new paused sandbox. A paused
+	// source is forked from its current rootfs head. A running source is briefly
+	// barriered and checkpointed first; the source sandbox remains running after
+	// the fork operation completes.
 	//
 	// POST /api/v1/sandboxes/{id}/fork
 	APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error)
@@ -407,7 +403,10 @@ type Invoker interface {
 	APIV1SandboxesIDSnapshotsGet(ctx context.Context, params APIV1SandboxesIDSnapshotsGetParams, options ...RequestOption) (APIV1SandboxesIDSnapshotsGetRes, error)
 	// APIV1SandboxesIDSnapshotsPost invokes POST /api/v1/sandboxes/{id}/snapshots operation.
 	//
-	// Create sandbox rootfs snapshot.
+	// Creates an immutable snapshot record from the source sandbox writable
+	// rootfs. A paused source is snapshotted from its current rootfs head. A
+	// running source is briefly barriered and checkpointed first; the source
+	// sandbox remains running after the snapshot operation completes.
 	//
 	// POST /api/v1/sandboxes/{id}/snapshots
 	APIV1SandboxesIDSnapshotsPost(ctx context.Context, request OptCreateSandboxRootFSSnapshotRequest, params APIV1SandboxesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxesIDSnapshotsPostRes, error)
@@ -2509,260 +2508,6 @@ func (c *Client) sendAPIV1SandboxesGet(ctx context.Context, params APIV1Sandboxe
 	}
 
 	result, err := decodeAPIV1SandboxesGetResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// APIV1SandboxesIDAuditEventsGet invokes GET /api/v1/sandboxes/{id}/audit/events operation.
-//
-// Queries the audit-focused projection for a sandbox. Network audit events are
-// included in scope; file audit is intentionally not included.
-//
-// GET /api/v1/sandboxes/{id}/audit/events
-func (c *Client) APIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, options ...RequestOption) (APIV1SandboxesIDAuditEventsGetRes, error) {
-	res, err := c.sendAPIV1SandboxesIDAuditEventsGet(ctx, params, options...)
-	return res, err
-}
-
-func (c *Client) sendAPIV1SandboxesIDAuditEventsGet(ctx context.Context, params APIV1SandboxesIDAuditEventsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDAuditEventsGetRes, err error) {
-
-	var reqCfg requestConfig
-	reqCfg.setDefaults(c.baseClient)
-	for _, o := range requestOptions {
-		o(&reqCfg)
-	}
-
-	u := c.serverURL
-	if override := reqCfg.ServerURL; override != nil {
-		u = override
-	}
-	u = uri.Clone(u)
-	var pathParts [3]string
-	pathParts[0] = "/api/v1/sandboxes/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/audit/events"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "start_time" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "start_time",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.StartTime.Get(); ok {
-				return e.EncodeValue(conv.DateTimeToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "end_time" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "end_time",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.EndTime.Get(); ok {
-				return e.EncodeValue(conv.DateTimeToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "limit" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "limit",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Limit.Get(); ok {
-				return e.EncodeValue(conv.IntToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "cursor" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "cursor",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Cursor.Get(); ok {
-				return e.EncodeValue(conv.StringToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "watch" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "watch",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Watch.Get(); ok {
-				return e.EncodeValue(conv.BoolToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "source" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "source",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Source.Get(); ok {
-				return e.EncodeValue(conv.StringToString(string(val)))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "event_type" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "event_type",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.EventType.Get(); ok {
-				return e.EncodeValue(conv.StringToString(string(val)))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "outcome" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "outcome",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Outcome.Get(); ok {
-				return e.EncodeValue(conv.StringToString(string(val)))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-
-			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDAuditEventsGetOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	if err := c.onRequest(ctx, r); err != nil {
-		return res, errors.Wrap(err, "client edit request")
-	}
-
-	if err := reqCfg.onRequest(r); err != nil {
-		return res, errors.Wrap(err, "edit request")
-	}
-
-	resp, err := reqCfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	if err := c.onResponse(ctx, resp); err != nil {
-		return res, errors.Wrap(err, "client edit response")
-	}
-
-	if err := reqCfg.onResponse(resp); err != nil {
-		return res, errors.Wrap(err, "edit response")
-	}
-
-	result, err := decodeAPIV1SandboxesIDAuditEventsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -5137,7 +4882,10 @@ func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params A
 
 // APIV1SandboxesIDForkPost invokes POST /api/v1/sandboxes/{id}/fork operation.
 //
-// Fork sandbox from paused rootfs.
+// Forks the source sandbox writable rootfs into a new paused sandbox. A paused
+// source is forked from its current rootfs head. A running source is briefly
+// barriered and checkpointed first; the source sandbox remains running after
+// the fork operation completes.
 //
 // POST /api/v1/sandboxes/{id}/fork
 func (c *Client) APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error) {
@@ -7276,7 +7024,10 @@ func (c *Client) sendAPIV1SandboxesIDSnapshotsGet(ctx context.Context, params AP
 
 // APIV1SandboxesIDSnapshotsPost invokes POST /api/v1/sandboxes/{id}/snapshots operation.
 //
-// Create sandbox rootfs snapshot.
+// Creates an immutable snapshot record from the source sandbox writable
+// rootfs. A paused source is snapshotted from its current rootfs head. A
+// running source is briefly barriered and checkpointed first; the source
+// sandbox remains running after the snapshot operation completes.
 //
 // POST /api/v1/sandboxes/{id}/snapshots
 func (c *Client) APIV1SandboxesIDSnapshotsPost(ctx context.Context, request OptCreateSandboxRootFSSnapshotRequest, params APIV1SandboxesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxesIDSnapshotsPostRes, error) {

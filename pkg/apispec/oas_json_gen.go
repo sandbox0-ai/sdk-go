@@ -799,120 +799,6 @@ func (s *APIV1RegistryCredentialsPostUnauthorized) UnmarshalJSON(data []byte) er
 	return s.Decode(d)
 }
 
-// Encode encodes APIV1SandboxesIDAuditEventsGetBadRequest as json.
-func (s *APIV1SandboxesIDAuditEventsGetBadRequest) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesIDAuditEventsGetBadRequest from json.
-func (s *APIV1SandboxesIDAuditEventsGetBadRequest) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetBadRequest to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesIDAuditEventsGetBadRequest(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDAuditEventsGetBadRequest) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDAuditEventsGetBadRequest) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes APIV1SandboxesIDAuditEventsGetForbidden as json.
-func (s *APIV1SandboxesIDAuditEventsGetForbidden) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesIDAuditEventsGetForbidden from json.
-func (s *APIV1SandboxesIDAuditEventsGetForbidden) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetForbidden to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesIDAuditEventsGetForbidden(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDAuditEventsGetForbidden) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDAuditEventsGetForbidden) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes APIV1SandboxesIDAuditEventsGetServiceUnavailable as json.
-func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) Encode(e *jx.Encoder) {
-	unwrapped := (*ErrorEnvelope)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes APIV1SandboxesIDAuditEventsGetServiceUnavailable from json.
-func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode APIV1SandboxesIDAuditEventsGetServiceUnavailable to nil")
-	}
-	var unwrapped ErrorEnvelope
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = APIV1SandboxesIDAuditEventsGetServiceUnavailable(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes APIV1SandboxesIDDeleteForbidden as json.
 func (s *APIV1SandboxesIDDeleteForbidden) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -1204,6 +1090,44 @@ func (s *APIV1SandboxesIDForkPostNotFound) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *APIV1SandboxesIDForkPostNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDForkPostServiceUnavailable as json.
+func (s *APIV1SandboxesIDForkPostServiceUnavailable) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDForkPostServiceUnavailable from json.
+func (s *APIV1SandboxesIDForkPostServiceUnavailable) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDForkPostServiceUnavailable to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDForkPostServiceUnavailable(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDForkPostServiceUnavailable) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDForkPostServiceUnavailable) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2192,6 +2116,44 @@ func (s *APIV1SandboxesIDSnapshotsPostNotFound) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *APIV1SandboxesIDSnapshotsPostNotFound) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1SandboxesIDSnapshotsPostServiceUnavailable as json.
+func (s *APIV1SandboxesIDSnapshotsPostServiceUnavailable) Encode(e *jx.Encoder) {
+	unwrapped := (*ErrorEnvelope)(s)
+
+	unwrapped.Encode(e)
+}
+
+// Decode decodes APIV1SandboxesIDSnapshotsPostServiceUnavailable from json.
+func (s *APIV1SandboxesIDSnapshotsPostServiceUnavailable) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1SandboxesIDSnapshotsPostServiceUnavailable to nil")
+	}
+	var unwrapped ErrorEnvelope
+	if err := func() error {
+		if err := unwrapped.Decode(d); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = APIV1SandboxesIDSnapshotsPostServiceUnavailable(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1SandboxesIDSnapshotsPostServiceUnavailable) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1SandboxesIDSnapshotsPostServiceUnavailable) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -15266,39 +15228,6 @@ func (s *OptNodeSelector) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes ObservabilityEventSource as json.
-func (o OptObservabilityEventSource) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	e.Str(string(o.Value))
-}
-
-// Decode decodes ObservabilityEventSource from json.
-func (o *OptObservabilityEventSource) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptObservabilityEventSource to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptObservabilityEventSource) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptObservabilityEventSource) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes PTYSize as json.
 func (o OptPTYSize) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -16421,39 +16350,6 @@ func (s OptSandboxObservabilityEventAttributes) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandboxObservabilityEventAttributes) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes SandboxObservabilityEventType as json.
-func (o OptSandboxObservabilityEventType) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	e.Str(string(o.Value))
-}
-
-// Decode decodes SandboxObservabilityEventType from json.
-func (o *OptSandboxObservabilityEventType) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptSandboxObservabilityEventType to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptSandboxObservabilityEventType) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptSandboxObservabilityEventType) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

@@ -53,10 +53,6 @@ type APIV1SandboxesGetRes interface {
 	aPIV1SandboxesGetRes()
 }
 
-type APIV1SandboxesIDAuditEventsGetRes interface {
-	aPIV1SandboxesIDAuditEventsGetRes()
-}
-
 type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
 }
