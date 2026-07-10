@@ -128,30 +128,6 @@ func (s *APIV1RegistryCredentialsPostUnauthorized) Validate() error {
 	return nil
 }
 
-func (s *APIV1SandboxesIDAuditEventsGetBadRequest) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *APIV1SandboxesIDAuditEventsGetForbidden) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *APIV1SandboxesIDAuditEventsGetServiceUnavailable) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *APIV1SandboxesIDDeleteForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -227,6 +203,14 @@ func (s *APIV1SandboxesIDForkPostConflict) Validate() error {
 }
 
 func (s *APIV1SandboxesIDForkPostNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDForkPostServiceUnavailable) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -435,6 +419,14 @@ func (s *APIV1SandboxesIDSnapshotsPostConflict) Validate() error {
 }
 
 func (s *APIV1SandboxesIDSnapshotsPostNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDSnapshotsPostServiceUnavailable) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err

@@ -218,18 +218,6 @@ type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
 
-type APIV1SandboxesIDAuditEventsGetBadRequest ErrorEnvelope
-
-func (*APIV1SandboxesIDAuditEventsGetBadRequest) aPIV1SandboxesIDAuditEventsGetRes() {}
-
-type APIV1SandboxesIDAuditEventsGetForbidden ErrorEnvelope
-
-func (*APIV1SandboxesIDAuditEventsGetForbidden) aPIV1SandboxesIDAuditEventsGetRes() {}
-
-type APIV1SandboxesIDAuditEventsGetServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDAuditEventsGetServiceUnavailable) aPIV1SandboxesIDAuditEventsGetRes() {}
-
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
 
@@ -323,6 +311,10 @@ func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
 type APIV1SandboxesIDForkPostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostNotFound) aPIV1SandboxesIDForkPostRes() {}
+
+type APIV1SandboxesIDForkPostServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDForkPostServiceUnavailable) aPIV1SandboxesIDForkPostRes() {}
 
 type APIV1SandboxesIDGetForbidden ErrorEnvelope
 
@@ -433,6 +425,10 @@ func (*APIV1SandboxesIDSnapshotsPostConflict) aPIV1SandboxesIDSnapshotsPostRes()
 type APIV1SandboxesIDSnapshotsPostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDSnapshotsPostNotFound) aPIV1SandboxesIDSnapshotsPostRes() {}
+
+type APIV1SandboxesIDSnapshotsPostServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsPostServiceUnavailable) aPIV1SandboxesIDSnapshotsPostRes() {}
 
 type APIV1SandboxesPostServiceUnavailable ErrorEnvelopeHeaders
 
@@ -1884,6 +1880,8 @@ func (s *CreateSSHPublicKeyRequest) SetPublicKey(val string) {
 	s.PublicKey = val
 }
 
+// Optional snapshot metadata. The source sandbox may be running or paused;
+// running sources are checkpointed before the snapshot record is created.
 // Ref: #/components/schemas/CreateSandboxRootFSSnapshotRequest
 type CreateSandboxRootFSSnapshotRequest struct {
 	Name        OptString `json:"name"`
@@ -3652,6 +3650,8 @@ func (s *ForkSandboxConfig) SetHardTTL(val OptInt32) {
 }
 
 // Optional fork overrides. Omit config to inherit the source sandbox configuration.
+// The source sandbox may be running or paused; running sources are checkpointed
+// before the paused child sandbox is created.
 // Ref: #/components/schemas/ForkSandboxRequest
 type ForkSandboxRequest struct {
 	Config OptForkSandboxConfig `json:"config"`
@@ -18932,7 +18932,6 @@ func (s *SuccessSandboxObservabilityEventsResponse) SetData(val OptSandboxObserv
 	s.Data = val
 }
 
-func (*SuccessSandboxObservabilityEventsResponse) aPIV1SandboxesIDAuditEventsGetRes()         {}
 func (*SuccessSandboxObservabilityEventsResponse) aPIV1SandboxesIDObservabilityEventsGetRes() {}
 
 type SuccessSandboxObservabilityEventsResponseSuccess bool
