@@ -3,6 +3,14 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *CreateExecutionSessionAttemptRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.ReplaceCurrent.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *CreateSandboxVolumeRequest) setDefaults() {
 	{
 		val := int64(0)
@@ -19,6 +27,110 @@ func (s *CreateSandboxVolumeS3Config) setDefaults() {
 	{
 		val := CreateSandboxVolumeS3ConfigProvider("aws")
 		s.Provider.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionDesiredStateRequest) setDefaults() {
+	{
+		val := ExecutionSessionDesiredState("running")
+		s.State = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionEventRetentionSpec) setDefaults() {
+	{
+		val := int64(67108864)
+		s.MaxBytes.SetTo(val)
+	}
+	{
+		val := int64(86400)
+		s.MaxAgeSeconds.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionIOSpec) setDefaults() {
+	{
+		val := ExecutionSessionIOMode("pipes")
+		s.Mode.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionInputRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.EOF.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionLifecycleSpec) setDefaults() {
+	{
+		val := ExecutionSessionDesiredState("running")
+		s.DesiredState.SetTo(val)
+	}
+	{
+		val := ExecutionSessionRuntimeRecoveryPolicy("restart")
+		s.RuntimeRecovery.SetTo(val)
+	}
+	{
+		val := int32(10)
+		s.StopGracePeriodSeconds.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionReadinessSpec) setDefaults() {
+	{
+		val := ExecutionSessionReadinessType("process")
+		s.Type.SetTo(val)
+	}
+	{
+		val := int32(30000)
+		s.TimeoutMs.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionRestartSpec) setDefaults() {
+	{
+		val := ExecutionSessionRestartPolicy("never")
+		s.Policy.SetTo(val)
+	}
+	{
+		val := int32(5)
+		s.MaxRestarts.SetTo(val)
+	}
+	{
+		val := int32(60)
+		s.WindowSeconds.SetTo(val)
+	}
+	{
+		val := int32(250)
+		s.InitialBackoffMs.SetTo(val)
+	}
+	{
+		val := int32(5000)
+		s.MaxBackoffMs.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *ExecutionSessionTerminalSpec) setDefaults() {
+	{
+		val := int32(24)
+		s.Rows.SetTo(val)
+	}
+	{
+		val := int32(80)
+		s.Cols.SetTo(val)
+	}
+	{
+		val := string("xterm-256color")
+		s.Term.SetTo(val)
 	}
 }
 

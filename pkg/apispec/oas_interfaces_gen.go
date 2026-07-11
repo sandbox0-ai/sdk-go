@@ -85,10 +85,6 @@ type APIV1SandboxesIDObservabilityLogsGetRes interface {
 	aPIV1SandboxesIDObservabilityLogsGetRes()
 }
 
-type APIV1SandboxesIDObservabilityMetricsGetRes interface {
-	aPIV1SandboxesIDObservabilityMetricsGetRes()
-}
-
 type APIV1SandboxesIDPausePostRes interface {
 	aPIV1SandboxesIDPausePostRes()
 }
@@ -115,6 +111,14 @@ type APIV1SandboxesIDServicesGetRes interface {
 
 type APIV1SandboxesIDServicesPutRes interface {
 	aPIV1SandboxesIDServicesPutRes()
+}
+
+type APIV1SandboxesIDSessionsPostRes interface {
+	aPIV1SandboxesIDSessionsPostRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDEventsGetRes interface {
+	aPIV1SandboxesIDSessionsSessionIDEventsGetRes()
 }
 
 type APIV1SandboxesIDSnapshotsGetRes interface {
@@ -203,6 +207,14 @@ type AuthRegisterPostRes interface {
 
 type AuthWebLoginExchangePostRes interface {
 	authWebLoginExchangePostRes()
+}
+
+type GetSandboxRuntimeMetricsCatalogRes interface {
+	getSandboxRuntimeMetricsCatalogRes()
+}
+
+type GetSandboxRuntimeMetricsRes interface {
+	getSandboxRuntimeMetricsRes()
 }
 
 type HealthzGetRes interface {

@@ -223,30 +223,6 @@ type APIV1SandboxesIDObservabilityLogsGetParams struct {
 	Stream    OptSandboxObservabilityLogStream `json:",omitempty,omitzero"`
 }
 
-// APIV1SandboxesIDObservabilityMetricsGetParams is parameters of GET /api/v1/sandboxes/{id}/observability/metrics operation.
-type APIV1SandboxesIDObservabilityMetricsGetParams struct {
-	ID string
-	// Include samples that occurred at or after this RFC3339 timestamp.
-	StartTime OptDateTime `json:",omitempty,omitzero"`
-	// Include samples that occurred at or before this RFC3339 timestamp.
-	EndTime OptDateTime `json:",omitempty,omitzero"`
-	// Maximum number of samples to return. Values above 1000 are capped.
-	Limit OptInt `json:",omitempty,omitzero"`
-	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
-	// resume cursor from an NDJSON watermark line.
-	Cursor OptString `json:",omitempty,omitzero"`
-	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
-	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
-	// request time.
-	Watch OptBool `json:",omitempty,omitzero"`
-	// Restrict results to a sandbox process context.
-	ContextID OptString `json:",omitempty,omitzero"`
-	// Metric name filter. This parameter may be repeated.
-	Name []string `json:",omitempty"`
-	// Comma-separated metric name filter.
-	Names OptString `json:",omitempty,omitzero"`
-}
-
 // APIV1SandboxesIDPausePostParams is parameters of POST /api/v1/sandboxes/{id}/pause operation.
 type APIV1SandboxesIDPausePostParams struct {
 	ID string
@@ -280,6 +256,89 @@ type APIV1SandboxesIDServicesGetParams struct {
 // APIV1SandboxesIDServicesPutParams is parameters of PUT /api/v1/sandboxes/{id}/services operation.
 type APIV1SandboxesIDServicesPutParams struct {
 	ID string
+}
+
+// APIV1SandboxesIDSessionsGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions operation.
+type APIV1SandboxesIDSessionsGetParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDSessionsPostParams is parameters of POST /api/v1/sandboxes/{id}/sessions operation.
+type APIV1SandboxesIDSessionsPostParams struct {
+	ID string
+	// Optional key for retrying creation without creating a duplicate session.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDSessionsSessionIDAttemptsPostParams is parameters of POST /api/v1/sandboxes/{id}/sessions/{session_id}/attempts operation.
+type APIV1SandboxesIDSessionsSessionIDAttemptsPostParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/sessions/{session_id} operation.
+type APIV1SandboxesIDSessionsSessionIDDeleteParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams is parameters of PUT /api/v1/sandboxes/{id}/sessions/{session_id}/desired-state operation.
+type APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDEventsGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/{session_id}/events operation.
+type APIV1SandboxesIDSessionsSessionIDEventsGetParams struct {
+	ID        string
+	SessionID string
+	After     OptInt64 `json:",omitempty,omitzero"`
+	Limit     OptInt   `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/{session_id}/events/stream operation.
+type APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams struct {
+	ID          string
+	SessionID   string
+	After       OptInt64  `json:",omitempty,omitzero"`
+	LastEventID OptString `json:",omitempty,omitzero"`
+}
+
+// APIV1SandboxesIDSessionsSessionIDGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/{session_id} operation.
+type APIV1SandboxesIDSessionsSessionIDGetParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDInputsPostParams is parameters of POST /api/v1/sandboxes/{id}/sessions/{session_id}/inputs operation.
+type APIV1SandboxesIDSessionsSessionIDInputsPostParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDPutParams is parameters of PUT /api/v1/sandboxes/{id}/sessions/{session_id} operation.
+type APIV1SandboxesIDSessionsSessionIDPutParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDSignalsPostParams is parameters of POST /api/v1/sandboxes/{id}/sessions/{session_id}/signals operation.
+type APIV1SandboxesIDSessionsSessionIDSignalsPostParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDTerminalPutParams is parameters of PUT /api/v1/sandboxes/{id}/sessions/{session_id}/terminal operation.
+type APIV1SandboxesIDSessionsSessionIDTerminalPutParams struct {
+	ID        string
+	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDWsGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/{session_id}/ws operation.
+type APIV1SandboxesIDSessionsSessionIDWsGetParams struct {
+	ID        string
+	SessionID string
+	After     OptInt64 `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDSnapshotsGetParams is parameters of GET /api/v1/sandboxes/{id}/snapshots operation.
@@ -429,6 +488,30 @@ type AuthOidcProviderLoginGetParams struct {
 	// When true, the OIDC callback redirects to return_url with a short-lived login_code for server-side
 	// exchange.
 	WebLogin OptBool `json:",omitempty,omitzero"`
+}
+
+// GetSandboxRuntimeMetricsParams is parameters of getSandboxRuntimeMetrics operation.
+type GetSandboxRuntimeMetricsParams struct {
+	ID string
+	// Query observations at or after this RFC3339 timestamp. Defaults to one hour before end_time.
+	StartTime OptDateTime `json:",omitempty,omitzero"`
+	// Query observations at or before this RFC3339 timestamp. Defaults to the current time.
+	EndTime OptDateTime `json:",omitempty,omitzero"`
+	// Comma-separated canonical metric names. Defaults to CPU utilization, memory utilization, and
+	// network I/O.
+	Metrics OptString `json:",omitempty,omitzero"`
+	// Requested bucket width in seconds. The effective step is at least 15 seconds and may be increased
+	// to honor max_points.
+	StepSeconds OptInt `json:",omitempty,omitzero"`
+	// Aggregation applied within each output bucket. Auto uses average for gauges and rate for counters.
+	Statistic OptSandboxRuntimeMetricStatistic `json:",omitempty,omitzero"`
+	// Maximum points per returned series. The server may increase step_seconds to honor this bound.
+	MaxPoints OptInt `json:",omitempty,omitzero"`
+}
+
+// GetSandboxRuntimeMetricsCatalogParams is parameters of getSandboxRuntimeMetricsCatalog operation.
+type GetSandboxRuntimeMetricsCatalogParams struct {
+	ID string
 }
 
 // RegionsIDDeleteParams is parameters of DELETE /regions/{id} operation.

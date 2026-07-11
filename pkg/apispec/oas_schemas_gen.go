@@ -351,21 +351,6 @@ type APIV1SandboxesIDObservabilityLogsGetServiceUnavailable ErrorEnvelope
 func (*APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) aPIV1SandboxesIDObservabilityLogsGetRes() {
 }
 
-type APIV1SandboxesIDObservabilityMetricsGetBadRequest ErrorEnvelope
-
-func (*APIV1SandboxesIDObservabilityMetricsGetBadRequest) aPIV1SandboxesIDObservabilityMetricsGetRes() {
-}
-
-type APIV1SandboxesIDObservabilityMetricsGetForbidden ErrorEnvelope
-
-func (*APIV1SandboxesIDObservabilityMetricsGetForbidden) aPIV1SandboxesIDObservabilityMetricsGetRes() {
-}
-
-type APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDObservabilityMetricsGetServiceUnavailable) aPIV1SandboxesIDObservabilityMetricsGetRes() {
-}
-
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostConflict) aPIV1SandboxesIDPausePostRes() {}
@@ -417,6 +402,31 @@ func (*APIV1SandboxesIDRootfsRestorePostConflict) aPIV1SandboxesIDRootfsRestoreP
 type APIV1SandboxesIDRootfsRestorePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRestorePostNotFound) aPIV1SandboxesIDRootfsRestorePostRes() {}
+
+type APIV1SandboxesIDSessionsPostCreated SuccessExecutionSessionResponse
+
+func (*APIV1SandboxesIDSessionsPostCreated) aPIV1SandboxesIDSessionsPostRes() {}
+
+type APIV1SandboxesIDSessionsPostOK SuccessExecutionSessionResponse
+
+func (*APIV1SandboxesIDSessionsPostOK) aPIV1SandboxesIDSessionsPostRes() {}
+
+type APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+// APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols is response for APIV1SandboxesIDSessionsSessionIDWsGet operation.
+type APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols struct{}
 
 type APIV1SandboxesIDSnapshotsPostConflict ErrorEnvelope
 
@@ -1755,6 +1765,21 @@ func (s *CreateContextRequestEnvVars) init() CreateContextRequestEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/CreateExecutionSessionAttemptRequest
+type CreateExecutionSessionAttemptRequest struct {
+	ReplaceCurrent OptBool `json:"replace_current"`
+}
+
+// GetReplaceCurrent returns the value of ReplaceCurrent.
+func (s *CreateExecutionSessionAttemptRequest) GetReplaceCurrent() OptBool {
+	return s.ReplaceCurrent
+}
+
+// SetReplaceCurrent sets the value of ReplaceCurrent.
+func (s *CreateExecutionSessionAttemptRequest) SetReplaceCurrent(val OptBool) {
+	s.ReplaceCurrent = val
 }
 
 // Ref: #/components/schemas/CreateREPLContextRequest
@@ -3333,6 +3358,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDEventsGetRes()  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
 func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
@@ -3344,6 +3370,7 @@ func (*ErrorEnvelope) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes() {}
 func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
 func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()             {}
 func (*ErrorEnvelope) authProvidersGetRes()                            {}
+func (*ErrorEnvelope) getSandboxRuntimeMetricsCatalogRes()             {}
 func (*ErrorEnvelope) healthzGetRes()                                  {}
 func (*ErrorEnvelope) readyzGetRes()                                   {}
 func (*ErrorEnvelope) regionsGetRes()                                  {}
@@ -3417,6 +3444,1309 @@ func (s *ExecCandidate) SetName(val string) {
 // SetArgs sets the value of Args.
 func (s *ExecCandidate) SetArgs(val []string) {
 	s.Args = val
+}
+
+// Ref: #/components/schemas/ExecutionSession
+type ExecutionSession struct {
+	ID                string                      `json:"id"`
+	Spec              ExecutionSessionSpec        `json:"spec"`
+	SpecVersion       int64                       `json:"spec_version"`
+	Phase             ExecutionSessionPhase       `json:"phase"`
+	RuntimeGeneration int64                       `json:"runtime_generation"`
+	Attempt           OptExecutionSessionAttempt  `json:"attempt"`
+	RestartCount      int32                       `json:"restart_count"`
+	Cursor            ExecutionSessionEventCursor `json:"cursor"`
+	CreatedAt         time.Time                   `json:"created_at"`
+	UpdatedAt         time.Time                   `json:"updated_at"`
+	LastActivityAt    time.Time                   `json:"last_activity_at"`
+}
+
+// GetID returns the value of ID.
+func (s *ExecutionSession) GetID() string {
+	return s.ID
+}
+
+// GetSpec returns the value of Spec.
+func (s *ExecutionSession) GetSpec() ExecutionSessionSpec {
+	return s.Spec
+}
+
+// GetSpecVersion returns the value of SpecVersion.
+func (s *ExecutionSession) GetSpecVersion() int64 {
+	return s.SpecVersion
+}
+
+// GetPhase returns the value of Phase.
+func (s *ExecutionSession) GetPhase() ExecutionSessionPhase {
+	return s.Phase
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ExecutionSession) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetAttempt returns the value of Attempt.
+func (s *ExecutionSession) GetAttempt() OptExecutionSessionAttempt {
+	return s.Attempt
+}
+
+// GetRestartCount returns the value of RestartCount.
+func (s *ExecutionSession) GetRestartCount() int32 {
+	return s.RestartCount
+}
+
+// GetCursor returns the value of Cursor.
+func (s *ExecutionSession) GetCursor() ExecutionSessionEventCursor {
+	return s.Cursor
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *ExecutionSession) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *ExecutionSession) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetLastActivityAt returns the value of LastActivityAt.
+func (s *ExecutionSession) GetLastActivityAt() time.Time {
+	return s.LastActivityAt
+}
+
+// SetID sets the value of ID.
+func (s *ExecutionSession) SetID(val string) {
+	s.ID = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *ExecutionSession) SetSpec(val ExecutionSessionSpec) {
+	s.Spec = val
+}
+
+// SetSpecVersion sets the value of SpecVersion.
+func (s *ExecutionSession) SetSpecVersion(val int64) {
+	s.SpecVersion = val
+}
+
+// SetPhase sets the value of Phase.
+func (s *ExecutionSession) SetPhase(val ExecutionSessionPhase) {
+	s.Phase = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ExecutionSession) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetAttempt sets the value of Attempt.
+func (s *ExecutionSession) SetAttempt(val OptExecutionSessionAttempt) {
+	s.Attempt = val
+}
+
+// SetRestartCount sets the value of RestartCount.
+func (s *ExecutionSession) SetRestartCount(val int32) {
+	s.RestartCount = val
+}
+
+// SetCursor sets the value of Cursor.
+func (s *ExecutionSession) SetCursor(val ExecutionSessionEventCursor) {
+	s.Cursor = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *ExecutionSession) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *ExecutionSession) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetLastActivityAt sets the value of LastActivityAt.
+func (s *ExecutionSession) SetLastActivityAt(val time.Time) {
+	s.LastActivityAt = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionAttempt
+type ExecutionSessionAttempt struct {
+	ID                string      `json:"id"`
+	Number            int64       `json:"number"`
+	RuntimeGeneration int64       `json:"runtime_generation"`
+	Pid               OptInt32    `json:"pid"`
+	StartedAt         OptDateTime `json:"started_at"`
+	FinishedAt        OptDateTime `json:"finished_at"`
+	ExitCode          OptInt32    `json:"exit_code"`
+	Reason            OptString   `json:"reason"`
+}
+
+// GetID returns the value of ID.
+func (s *ExecutionSessionAttempt) GetID() string {
+	return s.ID
+}
+
+// GetNumber returns the value of Number.
+func (s *ExecutionSessionAttempt) GetNumber() int64 {
+	return s.Number
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ExecutionSessionAttempt) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetPid returns the value of Pid.
+func (s *ExecutionSessionAttempt) GetPid() OptInt32 {
+	return s.Pid
+}
+
+// GetStartedAt returns the value of StartedAt.
+func (s *ExecutionSessionAttempt) GetStartedAt() OptDateTime {
+	return s.StartedAt
+}
+
+// GetFinishedAt returns the value of FinishedAt.
+func (s *ExecutionSessionAttempt) GetFinishedAt() OptDateTime {
+	return s.FinishedAt
+}
+
+// GetExitCode returns the value of ExitCode.
+func (s *ExecutionSessionAttempt) GetExitCode() OptInt32 {
+	return s.ExitCode
+}
+
+// GetReason returns the value of Reason.
+func (s *ExecutionSessionAttempt) GetReason() OptString {
+	return s.Reason
+}
+
+// SetID sets the value of ID.
+func (s *ExecutionSessionAttempt) SetID(val string) {
+	s.ID = val
+}
+
+// SetNumber sets the value of Number.
+func (s *ExecutionSessionAttempt) SetNumber(val int64) {
+	s.Number = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ExecutionSessionAttempt) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetPid sets the value of Pid.
+func (s *ExecutionSessionAttempt) SetPid(val OptInt32) {
+	s.Pid = val
+}
+
+// SetStartedAt sets the value of StartedAt.
+func (s *ExecutionSessionAttempt) SetStartedAt(val OptDateTime) {
+	s.StartedAt = val
+}
+
+// SetFinishedAt sets the value of FinishedAt.
+func (s *ExecutionSessionAttempt) SetFinishedAt(val OptDateTime) {
+	s.FinishedAt = val
+}
+
+// SetExitCode sets the value of ExitCode.
+func (s *ExecutionSessionAttempt) SetExitCode(val OptInt32) {
+	s.ExitCode = val
+}
+
+// SetReason sets the value of Reason.
+func (s *ExecutionSessionAttempt) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionDesiredState
+type ExecutionSessionDesiredState string
+
+const (
+	ExecutionSessionDesiredStateRunning ExecutionSessionDesiredState = "running"
+	ExecutionSessionDesiredStateStopped ExecutionSessionDesiredState = "stopped"
+)
+
+// AllValues returns all ExecutionSessionDesiredState values.
+func (ExecutionSessionDesiredState) AllValues() []ExecutionSessionDesiredState {
+	return []ExecutionSessionDesiredState{
+		ExecutionSessionDesiredStateRunning,
+		ExecutionSessionDesiredStateStopped,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionDesiredState) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionDesiredStateRunning:
+		return []byte(s), nil
+	case ExecutionSessionDesiredStateStopped:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionDesiredState) UnmarshalText(data []byte) error {
+	switch ExecutionSessionDesiredState(data) {
+	case ExecutionSessionDesiredStateRunning:
+		*s = ExecutionSessionDesiredStateRunning
+		return nil
+	case ExecutionSessionDesiredStateStopped:
+		*s = ExecutionSessionDesiredStateStopped
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionDesiredStateRequest
+type ExecutionSessionDesiredStateRequest struct {
+	State ExecutionSessionDesiredState `json:"state"`
+}
+
+// GetState returns the value of State.
+func (s *ExecutionSessionDesiredStateRequest) GetState() ExecutionSessionDesiredState {
+	return s.State
+}
+
+// SetState sets the value of State.
+func (s *ExecutionSessionDesiredStateRequest) SetState(val ExecutionSessionDesiredState) {
+	s.State = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionEvent
+type ExecutionSessionEvent struct {
+	Seq               int64                          `json:"seq"`
+	SessionID         string                         `json:"session_id"`
+	RuntimeGeneration int64                          `json:"runtime_generation"`
+	AttemptID         OptString                      `json:"attempt_id"`
+	Type              string                         `json:"type"`
+	Stream            OptExecutionSessionEventStream `json:"stream"`
+	// Base64-encoded event bytes.
+	DataBase64 OptString `json:"data_base64"`
+	ExitCode   OptInt32  `json:"exit_code"`
+	Reason     OptString `json:"reason"`
+	OccurredAt time.Time `json:"occurred_at"`
+}
+
+// GetSeq returns the value of Seq.
+func (s *ExecutionSessionEvent) GetSeq() int64 {
+	return s.Seq
+}
+
+// GetSessionID returns the value of SessionID.
+func (s *ExecutionSessionEvent) GetSessionID() string {
+	return s.SessionID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ExecutionSessionEvent) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetAttemptID returns the value of AttemptID.
+func (s *ExecutionSessionEvent) GetAttemptID() OptString {
+	return s.AttemptID
+}
+
+// GetType returns the value of Type.
+func (s *ExecutionSessionEvent) GetType() string {
+	return s.Type
+}
+
+// GetStream returns the value of Stream.
+func (s *ExecutionSessionEvent) GetStream() OptExecutionSessionEventStream {
+	return s.Stream
+}
+
+// GetDataBase64 returns the value of DataBase64.
+func (s *ExecutionSessionEvent) GetDataBase64() OptString {
+	return s.DataBase64
+}
+
+// GetExitCode returns the value of ExitCode.
+func (s *ExecutionSessionEvent) GetExitCode() OptInt32 {
+	return s.ExitCode
+}
+
+// GetReason returns the value of Reason.
+func (s *ExecutionSessionEvent) GetReason() OptString {
+	return s.Reason
+}
+
+// GetOccurredAt returns the value of OccurredAt.
+func (s *ExecutionSessionEvent) GetOccurredAt() time.Time {
+	return s.OccurredAt
+}
+
+// SetSeq sets the value of Seq.
+func (s *ExecutionSessionEvent) SetSeq(val int64) {
+	s.Seq = val
+}
+
+// SetSessionID sets the value of SessionID.
+func (s *ExecutionSessionEvent) SetSessionID(val string) {
+	s.SessionID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ExecutionSessionEvent) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetAttemptID sets the value of AttemptID.
+func (s *ExecutionSessionEvent) SetAttemptID(val OptString) {
+	s.AttemptID = val
+}
+
+// SetType sets the value of Type.
+func (s *ExecutionSessionEvent) SetType(val string) {
+	s.Type = val
+}
+
+// SetStream sets the value of Stream.
+func (s *ExecutionSessionEvent) SetStream(val OptExecutionSessionEventStream) {
+	s.Stream = val
+}
+
+// SetDataBase64 sets the value of DataBase64.
+func (s *ExecutionSessionEvent) SetDataBase64(val OptString) {
+	s.DataBase64 = val
+}
+
+// SetExitCode sets the value of ExitCode.
+func (s *ExecutionSessionEvent) SetExitCode(val OptInt32) {
+	s.ExitCode = val
+}
+
+// SetReason sets the value of Reason.
+func (s *ExecutionSessionEvent) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// SetOccurredAt sets the value of OccurredAt.
+func (s *ExecutionSessionEvent) SetOccurredAt(val time.Time) {
+	s.OccurredAt = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionEventCursor
+type ExecutionSessionEventCursor struct {
+	Earliest int64 `json:"earliest"`
+	Latest   int64 `json:"latest"`
+}
+
+// GetEarliest returns the value of Earliest.
+func (s *ExecutionSessionEventCursor) GetEarliest() int64 {
+	return s.Earliest
+}
+
+// GetLatest returns the value of Latest.
+func (s *ExecutionSessionEventCursor) GetLatest() int64 {
+	return s.Latest
+}
+
+// SetEarliest sets the value of Earliest.
+func (s *ExecutionSessionEventCursor) SetEarliest(val int64) {
+	s.Earliest = val
+}
+
+// SetLatest sets the value of Latest.
+func (s *ExecutionSessionEventCursor) SetLatest(val int64) {
+	s.Latest = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionEventPage
+type ExecutionSessionEventPage struct {
+	Events []ExecutionSessionEvent     `json:"events"`
+	Cursor ExecutionSessionEventCursor `json:"cursor"`
+}
+
+// GetEvents returns the value of Events.
+func (s *ExecutionSessionEventPage) GetEvents() []ExecutionSessionEvent {
+	return s.Events
+}
+
+// GetCursor returns the value of Cursor.
+func (s *ExecutionSessionEventPage) GetCursor() ExecutionSessionEventCursor {
+	return s.Cursor
+}
+
+// SetEvents sets the value of Events.
+func (s *ExecutionSessionEventPage) SetEvents(val []ExecutionSessionEvent) {
+	s.Events = val
+}
+
+// SetCursor sets the value of Cursor.
+func (s *ExecutionSessionEventPage) SetCursor(val ExecutionSessionEventCursor) {
+	s.Cursor = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionEventRetentionSpec
+type ExecutionSessionEventRetentionSpec struct {
+	MaxBytes      OptInt64 `json:"max_bytes"`
+	MaxAgeSeconds OptInt64 `json:"max_age_seconds"`
+}
+
+// GetMaxBytes returns the value of MaxBytes.
+func (s *ExecutionSessionEventRetentionSpec) GetMaxBytes() OptInt64 {
+	return s.MaxBytes
+}
+
+// GetMaxAgeSeconds returns the value of MaxAgeSeconds.
+func (s *ExecutionSessionEventRetentionSpec) GetMaxAgeSeconds() OptInt64 {
+	return s.MaxAgeSeconds
+}
+
+// SetMaxBytes sets the value of MaxBytes.
+func (s *ExecutionSessionEventRetentionSpec) SetMaxBytes(val OptInt64) {
+	s.MaxBytes = val
+}
+
+// SetMaxAgeSeconds sets the value of MaxAgeSeconds.
+func (s *ExecutionSessionEventRetentionSpec) SetMaxAgeSeconds(val OptInt64) {
+	s.MaxAgeSeconds = val
+}
+
+type ExecutionSessionEventStream string
+
+const (
+	ExecutionSessionEventStreamStdout ExecutionSessionEventStream = "stdout"
+	ExecutionSessionEventStreamStderr ExecutionSessionEventStream = "stderr"
+	ExecutionSessionEventStreamPty    ExecutionSessionEventStream = "pty"
+)
+
+// AllValues returns all ExecutionSessionEventStream values.
+func (ExecutionSessionEventStream) AllValues() []ExecutionSessionEventStream {
+	return []ExecutionSessionEventStream{
+		ExecutionSessionEventStreamStdout,
+		ExecutionSessionEventStreamStderr,
+		ExecutionSessionEventStreamPty,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionEventStream) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionEventStreamStdout:
+		return []byte(s), nil
+	case ExecutionSessionEventStreamStderr:
+		return []byte(s), nil
+	case ExecutionSessionEventStreamPty:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionEventStream) UnmarshalText(data []byte) error {
+	switch ExecutionSessionEventStream(data) {
+	case ExecutionSessionEventStreamStdout:
+		*s = ExecutionSessionEventStreamStdout
+		return nil
+	case ExecutionSessionEventStreamStderr:
+		*s = ExecutionSessionEventStreamStderr
+		return nil
+	case ExecutionSessionEventStreamPty:
+		*s = ExecutionSessionEventStreamPty
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionIOMode
+type ExecutionSessionIOMode string
+
+const (
+	ExecutionSessionIOModePipes ExecutionSessionIOMode = "pipes"
+	ExecutionSessionIOModePty   ExecutionSessionIOMode = "pty"
+)
+
+// AllValues returns all ExecutionSessionIOMode values.
+func (ExecutionSessionIOMode) AllValues() []ExecutionSessionIOMode {
+	return []ExecutionSessionIOMode{
+		ExecutionSessionIOModePipes,
+		ExecutionSessionIOModePty,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionIOMode) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionIOModePipes:
+		return []byte(s), nil
+	case ExecutionSessionIOModePty:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionIOMode) UnmarshalText(data []byte) error {
+	switch ExecutionSessionIOMode(data) {
+	case ExecutionSessionIOModePipes:
+		*s = ExecutionSessionIOModePipes
+		return nil
+	case ExecutionSessionIOModePty:
+		*s = ExecutionSessionIOModePty
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionIOSpec
+type ExecutionSessionIOSpec struct {
+	Mode     OptExecutionSessionIOMode       `json:"mode"`
+	Terminal OptExecutionSessionTerminalSpec `json:"terminal"`
+}
+
+// GetMode returns the value of Mode.
+func (s *ExecutionSessionIOSpec) GetMode() OptExecutionSessionIOMode {
+	return s.Mode
+}
+
+// GetTerminal returns the value of Terminal.
+func (s *ExecutionSessionIOSpec) GetTerminal() OptExecutionSessionTerminalSpec {
+	return s.Terminal
+}
+
+// SetMode sets the value of Mode.
+func (s *ExecutionSessionIOSpec) SetMode(val OptExecutionSessionIOMode) {
+	s.Mode = val
+}
+
+// SetTerminal sets the value of Terminal.
+func (s *ExecutionSessionIOSpec) SetTerminal(val OptExecutionSessionTerminalSpec) {
+	s.Terminal = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionInputRequest
+type ExecutionSessionInputRequest struct {
+	// Client-generated operation identifier used to deduplicate recorded retries.
+	InputID           string    `json:"input_id"`
+	ExpectedAttemptID OptString `json:"expected_attempt_id"`
+	// Base64-encoded input bytes accepted into the current attempt input queue. WebSocket closure never
+	// implies EOF.
+	DataBase64 OptString `json:"data_base64"`
+	EOF        OptBool   `json:"eof"`
+}
+
+// GetInputID returns the value of InputID.
+func (s *ExecutionSessionInputRequest) GetInputID() string {
+	return s.InputID
+}
+
+// GetExpectedAttemptID returns the value of ExpectedAttemptID.
+func (s *ExecutionSessionInputRequest) GetExpectedAttemptID() OptString {
+	return s.ExpectedAttemptID
+}
+
+// GetDataBase64 returns the value of DataBase64.
+func (s *ExecutionSessionInputRequest) GetDataBase64() OptString {
+	return s.DataBase64
+}
+
+// GetEOF returns the value of EOF.
+func (s *ExecutionSessionInputRequest) GetEOF() OptBool {
+	return s.EOF
+}
+
+// SetInputID sets the value of InputID.
+func (s *ExecutionSessionInputRequest) SetInputID(val string) {
+	s.InputID = val
+}
+
+// SetExpectedAttemptID sets the value of ExpectedAttemptID.
+func (s *ExecutionSessionInputRequest) SetExpectedAttemptID(val OptString) {
+	s.ExpectedAttemptID = val
+}
+
+// SetDataBase64 sets the value of DataBase64.
+func (s *ExecutionSessionInputRequest) SetDataBase64(val OptString) {
+	s.DataBase64 = val
+}
+
+// SetEOF sets the value of EOF.
+func (s *ExecutionSessionInputRequest) SetEOF(val OptBool) {
+	s.EOF = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionInputResponse
+type ExecutionSessionInputResponse struct {
+	InputID   string `json:"input_id"`
+	AttemptID string `json:"attempt_id"`
+	Accepted  bool   `json:"accepted"`
+	Duplicate bool   `json:"duplicate"`
+}
+
+// GetInputID returns the value of InputID.
+func (s *ExecutionSessionInputResponse) GetInputID() string {
+	return s.InputID
+}
+
+// GetAttemptID returns the value of AttemptID.
+func (s *ExecutionSessionInputResponse) GetAttemptID() string {
+	return s.AttemptID
+}
+
+// GetAccepted returns the value of Accepted.
+func (s *ExecutionSessionInputResponse) GetAccepted() bool {
+	return s.Accepted
+}
+
+// GetDuplicate returns the value of Duplicate.
+func (s *ExecutionSessionInputResponse) GetDuplicate() bool {
+	return s.Duplicate
+}
+
+// SetInputID sets the value of InputID.
+func (s *ExecutionSessionInputResponse) SetInputID(val string) {
+	s.InputID = val
+}
+
+// SetAttemptID sets the value of AttemptID.
+func (s *ExecutionSessionInputResponse) SetAttemptID(val string) {
+	s.AttemptID = val
+}
+
+// SetAccepted sets the value of Accepted.
+func (s *ExecutionSessionInputResponse) SetAccepted(val bool) {
+	s.Accepted = val
+}
+
+// SetDuplicate sets the value of Duplicate.
+func (s *ExecutionSessionInputResponse) SetDuplicate(val bool) {
+	s.Duplicate = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionLifecycleSpec
+type ExecutionSessionLifecycleSpec struct {
+	DesiredState           OptExecutionSessionDesiredState          `json:"desired_state"`
+	Restart                OptExecutionSessionRestartSpec           `json:"restart"`
+	RuntimeRecovery        OptExecutionSessionRuntimeRecoveryPolicy `json:"runtime_recovery"`
+	IdleTimeoutSeconds     OptInt64                                 `json:"idle_timeout_seconds"`
+	MaxLifetimeSeconds     OptInt64                                 `json:"max_lifetime_seconds"`
+	StopGracePeriodSeconds OptInt32                                 `json:"stop_grace_period_seconds"`
+}
+
+// GetDesiredState returns the value of DesiredState.
+func (s *ExecutionSessionLifecycleSpec) GetDesiredState() OptExecutionSessionDesiredState {
+	return s.DesiredState
+}
+
+// GetRestart returns the value of Restart.
+func (s *ExecutionSessionLifecycleSpec) GetRestart() OptExecutionSessionRestartSpec {
+	return s.Restart
+}
+
+// GetRuntimeRecovery returns the value of RuntimeRecovery.
+func (s *ExecutionSessionLifecycleSpec) GetRuntimeRecovery() OptExecutionSessionRuntimeRecoveryPolicy {
+	return s.RuntimeRecovery
+}
+
+// GetIdleTimeoutSeconds returns the value of IdleTimeoutSeconds.
+func (s *ExecutionSessionLifecycleSpec) GetIdleTimeoutSeconds() OptInt64 {
+	return s.IdleTimeoutSeconds
+}
+
+// GetMaxLifetimeSeconds returns the value of MaxLifetimeSeconds.
+func (s *ExecutionSessionLifecycleSpec) GetMaxLifetimeSeconds() OptInt64 {
+	return s.MaxLifetimeSeconds
+}
+
+// GetStopGracePeriodSeconds returns the value of StopGracePeriodSeconds.
+func (s *ExecutionSessionLifecycleSpec) GetStopGracePeriodSeconds() OptInt32 {
+	return s.StopGracePeriodSeconds
+}
+
+// SetDesiredState sets the value of DesiredState.
+func (s *ExecutionSessionLifecycleSpec) SetDesiredState(val OptExecutionSessionDesiredState) {
+	s.DesiredState = val
+}
+
+// SetRestart sets the value of Restart.
+func (s *ExecutionSessionLifecycleSpec) SetRestart(val OptExecutionSessionRestartSpec) {
+	s.Restart = val
+}
+
+// SetRuntimeRecovery sets the value of RuntimeRecovery.
+func (s *ExecutionSessionLifecycleSpec) SetRuntimeRecovery(val OptExecutionSessionRuntimeRecoveryPolicy) {
+	s.RuntimeRecovery = val
+}
+
+// SetIdleTimeoutSeconds sets the value of IdleTimeoutSeconds.
+func (s *ExecutionSessionLifecycleSpec) SetIdleTimeoutSeconds(val OptInt64) {
+	s.IdleTimeoutSeconds = val
+}
+
+// SetMaxLifetimeSeconds sets the value of MaxLifetimeSeconds.
+func (s *ExecutionSessionLifecycleSpec) SetMaxLifetimeSeconds(val OptInt64) {
+	s.MaxLifetimeSeconds = val
+}
+
+// SetStopGracePeriodSeconds sets the value of StopGracePeriodSeconds.
+func (s *ExecutionSessionLifecycleSpec) SetStopGracePeriodSeconds(val OptInt32) {
+	s.StopGracePeriodSeconds = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionPhase
+type ExecutionSessionPhase string
+
+const (
+	ExecutionSessionPhasePending   ExecutionSessionPhase = "pending"
+	ExecutionSessionPhaseStarting  ExecutionSessionPhase = "starting"
+	ExecutionSessionPhaseRunning   ExecutionSessionPhase = "running"
+	ExecutionSessionPhasePaused    ExecutionSessionPhase = "paused"
+	ExecutionSessionPhaseStopping  ExecutionSessionPhase = "stopping"
+	ExecutionSessionPhaseStopped   ExecutionSessionPhase = "stopped"
+	ExecutionSessionPhaseExited    ExecutionSessionPhase = "exited"
+	ExecutionSessionPhaseBackoff   ExecutionSessionPhase = "backoff"
+	ExecutionSessionPhaseFailed    ExecutionSessionPhase = "failed"
+	ExecutionSessionPhaseSuspended ExecutionSessionPhase = "suspended"
+)
+
+// AllValues returns all ExecutionSessionPhase values.
+func (ExecutionSessionPhase) AllValues() []ExecutionSessionPhase {
+	return []ExecutionSessionPhase{
+		ExecutionSessionPhasePending,
+		ExecutionSessionPhaseStarting,
+		ExecutionSessionPhaseRunning,
+		ExecutionSessionPhasePaused,
+		ExecutionSessionPhaseStopping,
+		ExecutionSessionPhaseStopped,
+		ExecutionSessionPhaseExited,
+		ExecutionSessionPhaseBackoff,
+		ExecutionSessionPhaseFailed,
+		ExecutionSessionPhaseSuspended,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionPhase) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionPhasePending:
+		return []byte(s), nil
+	case ExecutionSessionPhaseStarting:
+		return []byte(s), nil
+	case ExecutionSessionPhaseRunning:
+		return []byte(s), nil
+	case ExecutionSessionPhasePaused:
+		return []byte(s), nil
+	case ExecutionSessionPhaseStopping:
+		return []byte(s), nil
+	case ExecutionSessionPhaseStopped:
+		return []byte(s), nil
+	case ExecutionSessionPhaseExited:
+		return []byte(s), nil
+	case ExecutionSessionPhaseBackoff:
+		return []byte(s), nil
+	case ExecutionSessionPhaseFailed:
+		return []byte(s), nil
+	case ExecutionSessionPhaseSuspended:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionPhase) UnmarshalText(data []byte) error {
+	switch ExecutionSessionPhase(data) {
+	case ExecutionSessionPhasePending:
+		*s = ExecutionSessionPhasePending
+		return nil
+	case ExecutionSessionPhaseStarting:
+		*s = ExecutionSessionPhaseStarting
+		return nil
+	case ExecutionSessionPhaseRunning:
+		*s = ExecutionSessionPhaseRunning
+		return nil
+	case ExecutionSessionPhasePaused:
+		*s = ExecutionSessionPhasePaused
+		return nil
+	case ExecutionSessionPhaseStopping:
+		*s = ExecutionSessionPhaseStopping
+		return nil
+	case ExecutionSessionPhaseStopped:
+		*s = ExecutionSessionPhaseStopped
+		return nil
+	case ExecutionSessionPhaseExited:
+		*s = ExecutionSessionPhaseExited
+		return nil
+	case ExecutionSessionPhaseBackoff:
+		*s = ExecutionSessionPhaseBackoff
+		return nil
+	case ExecutionSessionPhaseFailed:
+		*s = ExecutionSessionPhaseFailed
+		return nil
+	case ExecutionSessionPhaseSuspended:
+		*s = ExecutionSessionPhaseSuspended
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionReadinessSpec
+type ExecutionSessionReadinessSpec struct {
+	Type    OptExecutionSessionReadinessType `json:"type"`
+	DelayMs OptInt32                         `json:"delay_ms"`
+	// Byte sequence whose appearance in process output marks the attempt ready when type is output.
+	Output    OptString `json:"output"`
+	TimeoutMs OptInt32  `json:"timeout_ms"`
+}
+
+// GetType returns the value of Type.
+func (s *ExecutionSessionReadinessSpec) GetType() OptExecutionSessionReadinessType {
+	return s.Type
+}
+
+// GetDelayMs returns the value of DelayMs.
+func (s *ExecutionSessionReadinessSpec) GetDelayMs() OptInt32 {
+	return s.DelayMs
+}
+
+// GetOutput returns the value of Output.
+func (s *ExecutionSessionReadinessSpec) GetOutput() OptString {
+	return s.Output
+}
+
+// GetTimeoutMs returns the value of TimeoutMs.
+func (s *ExecutionSessionReadinessSpec) GetTimeoutMs() OptInt32 {
+	return s.TimeoutMs
+}
+
+// SetType sets the value of Type.
+func (s *ExecutionSessionReadinessSpec) SetType(val OptExecutionSessionReadinessType) {
+	s.Type = val
+}
+
+// SetDelayMs sets the value of DelayMs.
+func (s *ExecutionSessionReadinessSpec) SetDelayMs(val OptInt32) {
+	s.DelayMs = val
+}
+
+// SetOutput sets the value of Output.
+func (s *ExecutionSessionReadinessSpec) SetOutput(val OptString) {
+	s.Output = val
+}
+
+// SetTimeoutMs sets the value of TimeoutMs.
+func (s *ExecutionSessionReadinessSpec) SetTimeoutMs(val OptInt32) {
+	s.TimeoutMs = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionReadinessType
+type ExecutionSessionReadinessType string
+
+const (
+	ExecutionSessionReadinessTypeProcess ExecutionSessionReadinessType = "process"
+	ExecutionSessionReadinessTypeDelay   ExecutionSessionReadinessType = "delay"
+	ExecutionSessionReadinessTypeOutput  ExecutionSessionReadinessType = "output"
+)
+
+// AllValues returns all ExecutionSessionReadinessType values.
+func (ExecutionSessionReadinessType) AllValues() []ExecutionSessionReadinessType {
+	return []ExecutionSessionReadinessType{
+		ExecutionSessionReadinessTypeProcess,
+		ExecutionSessionReadinessTypeDelay,
+		ExecutionSessionReadinessTypeOutput,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionReadinessType) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionReadinessTypeProcess:
+		return []byte(s), nil
+	case ExecutionSessionReadinessTypeDelay:
+		return []byte(s), nil
+	case ExecutionSessionReadinessTypeOutput:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionReadinessType) UnmarshalText(data []byte) error {
+	switch ExecutionSessionReadinessType(data) {
+	case ExecutionSessionReadinessTypeProcess:
+		*s = ExecutionSessionReadinessTypeProcess
+		return nil
+	case ExecutionSessionReadinessTypeDelay:
+		*s = ExecutionSessionReadinessTypeDelay
+		return nil
+	case ExecutionSessionReadinessTypeOutput:
+		*s = ExecutionSessionReadinessTypeOutput
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionRestartPolicy
+type ExecutionSessionRestartPolicy string
+
+const (
+	ExecutionSessionRestartPolicyNever     ExecutionSessionRestartPolicy = "never"
+	ExecutionSessionRestartPolicyOnFailure ExecutionSessionRestartPolicy = "on_failure"
+	ExecutionSessionRestartPolicyAlways    ExecutionSessionRestartPolicy = "always"
+)
+
+// AllValues returns all ExecutionSessionRestartPolicy values.
+func (ExecutionSessionRestartPolicy) AllValues() []ExecutionSessionRestartPolicy {
+	return []ExecutionSessionRestartPolicy{
+		ExecutionSessionRestartPolicyNever,
+		ExecutionSessionRestartPolicyOnFailure,
+		ExecutionSessionRestartPolicyAlways,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionRestartPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionRestartPolicyNever:
+		return []byte(s), nil
+	case ExecutionSessionRestartPolicyOnFailure:
+		return []byte(s), nil
+	case ExecutionSessionRestartPolicyAlways:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionRestartPolicy) UnmarshalText(data []byte) error {
+	switch ExecutionSessionRestartPolicy(data) {
+	case ExecutionSessionRestartPolicyNever:
+		*s = ExecutionSessionRestartPolicyNever
+		return nil
+	case ExecutionSessionRestartPolicyOnFailure:
+		*s = ExecutionSessionRestartPolicyOnFailure
+		return nil
+	case ExecutionSessionRestartPolicyAlways:
+		*s = ExecutionSessionRestartPolicyAlways
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionRestartSpec
+type ExecutionSessionRestartSpec struct {
+	Policy           OptExecutionSessionRestartPolicy `json:"policy"`
+	MaxRestarts      OptInt32                         `json:"max_restarts"`
+	WindowSeconds    OptInt32                         `json:"window_seconds"`
+	InitialBackoffMs OptInt32                         `json:"initial_backoff_ms"`
+	MaxBackoffMs     OptInt32                         `json:"max_backoff_ms"`
+}
+
+// GetPolicy returns the value of Policy.
+func (s *ExecutionSessionRestartSpec) GetPolicy() OptExecutionSessionRestartPolicy {
+	return s.Policy
+}
+
+// GetMaxRestarts returns the value of MaxRestarts.
+func (s *ExecutionSessionRestartSpec) GetMaxRestarts() OptInt32 {
+	return s.MaxRestarts
+}
+
+// GetWindowSeconds returns the value of WindowSeconds.
+func (s *ExecutionSessionRestartSpec) GetWindowSeconds() OptInt32 {
+	return s.WindowSeconds
+}
+
+// GetInitialBackoffMs returns the value of InitialBackoffMs.
+func (s *ExecutionSessionRestartSpec) GetInitialBackoffMs() OptInt32 {
+	return s.InitialBackoffMs
+}
+
+// GetMaxBackoffMs returns the value of MaxBackoffMs.
+func (s *ExecutionSessionRestartSpec) GetMaxBackoffMs() OptInt32 {
+	return s.MaxBackoffMs
+}
+
+// SetPolicy sets the value of Policy.
+func (s *ExecutionSessionRestartSpec) SetPolicy(val OptExecutionSessionRestartPolicy) {
+	s.Policy = val
+}
+
+// SetMaxRestarts sets the value of MaxRestarts.
+func (s *ExecutionSessionRestartSpec) SetMaxRestarts(val OptInt32) {
+	s.MaxRestarts = val
+}
+
+// SetWindowSeconds sets the value of WindowSeconds.
+func (s *ExecutionSessionRestartSpec) SetWindowSeconds(val OptInt32) {
+	s.WindowSeconds = val
+}
+
+// SetInitialBackoffMs sets the value of InitialBackoffMs.
+func (s *ExecutionSessionRestartSpec) SetInitialBackoffMs(val OptInt32) {
+	s.InitialBackoffMs = val
+}
+
+// SetMaxBackoffMs sets the value of MaxBackoffMs.
+func (s *ExecutionSessionRestartSpec) SetMaxBackoffMs(val OptInt32) {
+	s.MaxBackoffMs = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionRuntimeRecoveryPolicy
+type ExecutionSessionRuntimeRecoveryPolicy string
+
+const (
+	ExecutionSessionRuntimeRecoveryPolicyRestart ExecutionSessionRuntimeRecoveryPolicy = "restart"
+	ExecutionSessionRuntimeRecoveryPolicyStop    ExecutionSessionRuntimeRecoveryPolicy = "stop"
+)
+
+// AllValues returns all ExecutionSessionRuntimeRecoveryPolicy values.
+func (ExecutionSessionRuntimeRecoveryPolicy) AllValues() []ExecutionSessionRuntimeRecoveryPolicy {
+	return []ExecutionSessionRuntimeRecoveryPolicy{
+		ExecutionSessionRuntimeRecoveryPolicyRestart,
+		ExecutionSessionRuntimeRecoveryPolicyStop,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExecutionSessionRuntimeRecoveryPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case ExecutionSessionRuntimeRecoveryPolicyRestart:
+		return []byte(s), nil
+	case ExecutionSessionRuntimeRecoveryPolicyStop:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExecutionSessionRuntimeRecoveryPolicy) UnmarshalText(data []byte) error {
+	switch ExecutionSessionRuntimeRecoveryPolicy(data) {
+	case ExecutionSessionRuntimeRecoveryPolicyRestart:
+		*s = ExecutionSessionRuntimeRecoveryPolicyRestart
+		return nil
+	case ExecutionSessionRuntimeRecoveryPolicyStop:
+		*s = ExecutionSessionRuntimeRecoveryPolicyStop
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/ExecutionSessionSignalRequest
+type ExecutionSessionSignalRequest struct {
+	Signal            string    `json:"signal"`
+	ExpectedAttemptID OptString `json:"expected_attempt_id"`
+}
+
+// GetSignal returns the value of Signal.
+func (s *ExecutionSessionSignalRequest) GetSignal() string {
+	return s.Signal
+}
+
+// GetExpectedAttemptID returns the value of ExpectedAttemptID.
+func (s *ExecutionSessionSignalRequest) GetExpectedAttemptID() OptString {
+	return s.ExpectedAttemptID
+}
+
+// SetSignal sets the value of Signal.
+func (s *ExecutionSessionSignalRequest) SetSignal(val string) {
+	s.Signal = val
+}
+
+// SetExpectedAttemptID sets the value of ExpectedAttemptID.
+func (s *ExecutionSessionSignalRequest) SetExpectedAttemptID(val OptString) {
+	s.ExpectedAttemptID = val
+}
+
+// Generic process-backed session specification. The supervisor does not interpret application
+// protocols.
+// Ref: #/components/schemas/ExecutionSessionSpec
+type ExecutionSessionSpec struct {
+	Name           OptString                             `json:"name"`
+	Command        []string                              `json:"command"`
+	Cwd            OptString                             `json:"cwd"`
+	Env            OptExecutionSessionSpecEnv            `json:"env"`
+	Io             OptExecutionSessionIOSpec             `json:"io"`
+	Lifecycle      OptExecutionSessionLifecycleSpec      `json:"lifecycle"`
+	Readiness      OptExecutionSessionReadinessSpec      `json:"readiness"`
+	EventRetention OptExecutionSessionEventRetentionSpec `json:"event_retention"`
+}
+
+// GetName returns the value of Name.
+func (s *ExecutionSessionSpec) GetName() OptString {
+	return s.Name
+}
+
+// GetCommand returns the value of Command.
+func (s *ExecutionSessionSpec) GetCommand() []string {
+	return s.Command
+}
+
+// GetCwd returns the value of Cwd.
+func (s *ExecutionSessionSpec) GetCwd() OptString {
+	return s.Cwd
+}
+
+// GetEnv returns the value of Env.
+func (s *ExecutionSessionSpec) GetEnv() OptExecutionSessionSpecEnv {
+	return s.Env
+}
+
+// GetIo returns the value of Io.
+func (s *ExecutionSessionSpec) GetIo() OptExecutionSessionIOSpec {
+	return s.Io
+}
+
+// GetLifecycle returns the value of Lifecycle.
+func (s *ExecutionSessionSpec) GetLifecycle() OptExecutionSessionLifecycleSpec {
+	return s.Lifecycle
+}
+
+// GetReadiness returns the value of Readiness.
+func (s *ExecutionSessionSpec) GetReadiness() OptExecutionSessionReadinessSpec {
+	return s.Readiness
+}
+
+// GetEventRetention returns the value of EventRetention.
+func (s *ExecutionSessionSpec) GetEventRetention() OptExecutionSessionEventRetentionSpec {
+	return s.EventRetention
+}
+
+// SetName sets the value of Name.
+func (s *ExecutionSessionSpec) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetCommand sets the value of Command.
+func (s *ExecutionSessionSpec) SetCommand(val []string) {
+	s.Command = val
+}
+
+// SetCwd sets the value of Cwd.
+func (s *ExecutionSessionSpec) SetCwd(val OptString) {
+	s.Cwd = val
+}
+
+// SetEnv sets the value of Env.
+func (s *ExecutionSessionSpec) SetEnv(val OptExecutionSessionSpecEnv) {
+	s.Env = val
+}
+
+// SetIo sets the value of Io.
+func (s *ExecutionSessionSpec) SetIo(val OptExecutionSessionIOSpec) {
+	s.Io = val
+}
+
+// SetLifecycle sets the value of Lifecycle.
+func (s *ExecutionSessionSpec) SetLifecycle(val OptExecutionSessionLifecycleSpec) {
+	s.Lifecycle = val
+}
+
+// SetReadiness sets the value of Readiness.
+func (s *ExecutionSessionSpec) SetReadiness(val OptExecutionSessionReadinessSpec) {
+	s.Readiness = val
+}
+
+// SetEventRetention sets the value of EventRetention.
+func (s *ExecutionSessionSpec) SetEventRetention(val OptExecutionSessionEventRetentionSpec) {
+	s.EventRetention = val
+}
+
+type ExecutionSessionSpecEnv map[string]string
+
+func (s *ExecutionSessionSpecEnv) init() ExecutionSessionSpecEnv {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/ExecutionSessionTerminalResizeRequest
+type ExecutionSessionTerminalResizeRequest struct {
+	Rows              int32     `json:"rows"`
+	Cols              int32     `json:"cols"`
+	ExpectedAttemptID OptString `json:"expected_attempt_id"`
+}
+
+// GetRows returns the value of Rows.
+func (s *ExecutionSessionTerminalResizeRequest) GetRows() int32 {
+	return s.Rows
+}
+
+// GetCols returns the value of Cols.
+func (s *ExecutionSessionTerminalResizeRequest) GetCols() int32 {
+	return s.Cols
+}
+
+// GetExpectedAttemptID returns the value of ExpectedAttemptID.
+func (s *ExecutionSessionTerminalResizeRequest) GetExpectedAttemptID() OptString {
+	return s.ExpectedAttemptID
+}
+
+// SetRows sets the value of Rows.
+func (s *ExecutionSessionTerminalResizeRequest) SetRows(val int32) {
+	s.Rows = val
+}
+
+// SetCols sets the value of Cols.
+func (s *ExecutionSessionTerminalResizeRequest) SetCols(val int32) {
+	s.Cols = val
+}
+
+// SetExpectedAttemptID sets the value of ExpectedAttemptID.
+func (s *ExecutionSessionTerminalResizeRequest) SetExpectedAttemptID(val OptString) {
+	s.ExpectedAttemptID = val
+}
+
+// Ref: #/components/schemas/ExecutionSessionTerminalSpec
+type ExecutionSessionTerminalSpec struct {
+	Rows OptInt32  `json:"rows"`
+	Cols OptInt32  `json:"cols"`
+	Term OptString `json:"term"`
+}
+
+// GetRows returns the value of Rows.
+func (s *ExecutionSessionTerminalSpec) GetRows() OptInt32 {
+	return s.Rows
+}
+
+// GetCols returns the value of Cols.
+func (s *ExecutionSessionTerminalSpec) GetCols() OptInt32 {
+	return s.Cols
+}
+
+// GetTerm returns the value of Term.
+func (s *ExecutionSessionTerminalSpec) GetTerm() OptString {
+	return s.Term
+}
+
+// SetRows sets the value of Rows.
+func (s *ExecutionSessionTerminalSpec) SetRows(val OptInt32) {
+	s.Rows = val
+}
+
+// SetCols sets the value of Cols.
+func (s *ExecutionSessionTerminalSpec) SetCols(val OptInt32) {
+	s.Cols = val
+}
+
+// SetTerm sets the value of Term.
+func (s *ExecutionSessionTerminalSpec) SetTerm(val OptString) {
+	s.Term = val
 }
 
 // Ref: #/components/schemas/FileContentResponse
@@ -3801,6 +5131,18 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 		return errors.Errorf("invalid value: %q", data)
 	}
 }
+
+type GetSandboxRuntimeMetricsBadRequest ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsBadRequest) getSandboxRuntimeMetricsRes() {}
+
+type GetSandboxRuntimeMetricsForbidden ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsForbidden) getSandboxRuntimeMetricsRes() {}
+
+type GetSandboxRuntimeMetricsServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsServiceUnavailable) getSandboxRuntimeMetricsRes() {}
 
 // Ref: #/components/schemas/HTTPHeadersProjection
 type HTTPHeadersProjection struct {
@@ -5378,6 +6720,52 @@ func (o OptCreateContextRequestEnvVars) Or(d CreateContextRequestEnvVars) Create
 	return d
 }
 
+// NewOptCreateExecutionSessionAttemptRequest returns new OptCreateExecutionSessionAttemptRequest with value set to v.
+func NewOptCreateExecutionSessionAttemptRequest(v CreateExecutionSessionAttemptRequest) OptCreateExecutionSessionAttemptRequest {
+	return OptCreateExecutionSessionAttemptRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptCreateExecutionSessionAttemptRequest is optional CreateExecutionSessionAttemptRequest.
+type OptCreateExecutionSessionAttemptRequest struct {
+	Value CreateExecutionSessionAttemptRequest
+	Set   bool
+}
+
+// IsSet returns true if OptCreateExecutionSessionAttemptRequest was set.
+func (o OptCreateExecutionSessionAttemptRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptCreateExecutionSessionAttemptRequest) Reset() {
+	var v CreateExecutionSessionAttemptRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptCreateExecutionSessionAttemptRequest) SetTo(v CreateExecutionSessionAttemptRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptCreateExecutionSessionAttemptRequest) Get() (v CreateExecutionSessionAttemptRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptCreateExecutionSessionAttemptRequest) Or(d CreateExecutionSessionAttemptRequest) CreateExecutionSessionAttemptRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptCreateREPLContextRequest returns new OptCreateREPLContextRequest with value set to v.
 func NewOptCreateREPLContextRequest(v CreateREPLContextRequest) OptCreateREPLContextRequest {
 	return OptCreateREPLContextRequest{
@@ -6016,6 +7404,788 @@ func (o OptEgressTLSMode) Get() (v EgressTLSMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSession returns new OptExecutionSession with value set to v.
+func NewOptExecutionSession(v ExecutionSession) OptExecutionSession {
+	return OptExecutionSession{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSession is optional ExecutionSession.
+type OptExecutionSession struct {
+	Value ExecutionSession
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSession was set.
+func (o OptExecutionSession) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSession) Reset() {
+	var v ExecutionSession
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSession) SetTo(v ExecutionSession) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSession) Get() (v ExecutionSession, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSession) Or(d ExecutionSession) ExecutionSession {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionAttempt returns new OptExecutionSessionAttempt with value set to v.
+func NewOptExecutionSessionAttempt(v ExecutionSessionAttempt) OptExecutionSessionAttempt {
+	return OptExecutionSessionAttempt{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionAttempt is optional ExecutionSessionAttempt.
+type OptExecutionSessionAttempt struct {
+	Value ExecutionSessionAttempt
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionAttempt was set.
+func (o OptExecutionSessionAttempt) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionAttempt) Reset() {
+	var v ExecutionSessionAttempt
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionAttempt) SetTo(v ExecutionSessionAttempt) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionAttempt) Get() (v ExecutionSessionAttempt, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionAttempt) Or(d ExecutionSessionAttempt) ExecutionSessionAttempt {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionDesiredState returns new OptExecutionSessionDesiredState with value set to v.
+func NewOptExecutionSessionDesiredState(v ExecutionSessionDesiredState) OptExecutionSessionDesiredState {
+	return OptExecutionSessionDesiredState{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionDesiredState is optional ExecutionSessionDesiredState.
+type OptExecutionSessionDesiredState struct {
+	Value ExecutionSessionDesiredState
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionDesiredState was set.
+func (o OptExecutionSessionDesiredState) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionDesiredState) Reset() {
+	var v ExecutionSessionDesiredState
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionDesiredState) SetTo(v ExecutionSessionDesiredState) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionDesiredState) Get() (v ExecutionSessionDesiredState, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionDesiredState) Or(d ExecutionSessionDesiredState) ExecutionSessionDesiredState {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionEventPage returns new OptExecutionSessionEventPage with value set to v.
+func NewOptExecutionSessionEventPage(v ExecutionSessionEventPage) OptExecutionSessionEventPage {
+	return OptExecutionSessionEventPage{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionEventPage is optional ExecutionSessionEventPage.
+type OptExecutionSessionEventPage struct {
+	Value ExecutionSessionEventPage
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionEventPage was set.
+func (o OptExecutionSessionEventPage) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionEventPage) Reset() {
+	var v ExecutionSessionEventPage
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionEventPage) SetTo(v ExecutionSessionEventPage) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionEventPage) Get() (v ExecutionSessionEventPage, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionEventPage) Or(d ExecutionSessionEventPage) ExecutionSessionEventPage {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionEventRetentionSpec returns new OptExecutionSessionEventRetentionSpec with value set to v.
+func NewOptExecutionSessionEventRetentionSpec(v ExecutionSessionEventRetentionSpec) OptExecutionSessionEventRetentionSpec {
+	return OptExecutionSessionEventRetentionSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionEventRetentionSpec is optional ExecutionSessionEventRetentionSpec.
+type OptExecutionSessionEventRetentionSpec struct {
+	Value ExecutionSessionEventRetentionSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionEventRetentionSpec was set.
+func (o OptExecutionSessionEventRetentionSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionEventRetentionSpec) Reset() {
+	var v ExecutionSessionEventRetentionSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionEventRetentionSpec) SetTo(v ExecutionSessionEventRetentionSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionEventRetentionSpec) Get() (v ExecutionSessionEventRetentionSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionEventRetentionSpec) Or(d ExecutionSessionEventRetentionSpec) ExecutionSessionEventRetentionSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionEventStream returns new OptExecutionSessionEventStream with value set to v.
+func NewOptExecutionSessionEventStream(v ExecutionSessionEventStream) OptExecutionSessionEventStream {
+	return OptExecutionSessionEventStream{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionEventStream is optional ExecutionSessionEventStream.
+type OptExecutionSessionEventStream struct {
+	Value ExecutionSessionEventStream
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionEventStream was set.
+func (o OptExecutionSessionEventStream) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionEventStream) Reset() {
+	var v ExecutionSessionEventStream
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionEventStream) SetTo(v ExecutionSessionEventStream) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionEventStream) Get() (v ExecutionSessionEventStream, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionEventStream) Or(d ExecutionSessionEventStream) ExecutionSessionEventStream {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionIOMode returns new OptExecutionSessionIOMode with value set to v.
+func NewOptExecutionSessionIOMode(v ExecutionSessionIOMode) OptExecutionSessionIOMode {
+	return OptExecutionSessionIOMode{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionIOMode is optional ExecutionSessionIOMode.
+type OptExecutionSessionIOMode struct {
+	Value ExecutionSessionIOMode
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionIOMode was set.
+func (o OptExecutionSessionIOMode) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionIOMode) Reset() {
+	var v ExecutionSessionIOMode
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionIOMode) SetTo(v ExecutionSessionIOMode) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionIOMode) Get() (v ExecutionSessionIOMode, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionIOMode) Or(d ExecutionSessionIOMode) ExecutionSessionIOMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionIOSpec returns new OptExecutionSessionIOSpec with value set to v.
+func NewOptExecutionSessionIOSpec(v ExecutionSessionIOSpec) OptExecutionSessionIOSpec {
+	return OptExecutionSessionIOSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionIOSpec is optional ExecutionSessionIOSpec.
+type OptExecutionSessionIOSpec struct {
+	Value ExecutionSessionIOSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionIOSpec was set.
+func (o OptExecutionSessionIOSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionIOSpec) Reset() {
+	var v ExecutionSessionIOSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionIOSpec) SetTo(v ExecutionSessionIOSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionIOSpec) Get() (v ExecutionSessionIOSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionIOSpec) Or(d ExecutionSessionIOSpec) ExecutionSessionIOSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionInputResponse returns new OptExecutionSessionInputResponse with value set to v.
+func NewOptExecutionSessionInputResponse(v ExecutionSessionInputResponse) OptExecutionSessionInputResponse {
+	return OptExecutionSessionInputResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionInputResponse is optional ExecutionSessionInputResponse.
+type OptExecutionSessionInputResponse struct {
+	Value ExecutionSessionInputResponse
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionInputResponse was set.
+func (o OptExecutionSessionInputResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionInputResponse) Reset() {
+	var v ExecutionSessionInputResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionInputResponse) SetTo(v ExecutionSessionInputResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionInputResponse) Get() (v ExecutionSessionInputResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionInputResponse) Or(d ExecutionSessionInputResponse) ExecutionSessionInputResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionLifecycleSpec returns new OptExecutionSessionLifecycleSpec with value set to v.
+func NewOptExecutionSessionLifecycleSpec(v ExecutionSessionLifecycleSpec) OptExecutionSessionLifecycleSpec {
+	return OptExecutionSessionLifecycleSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionLifecycleSpec is optional ExecutionSessionLifecycleSpec.
+type OptExecutionSessionLifecycleSpec struct {
+	Value ExecutionSessionLifecycleSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionLifecycleSpec was set.
+func (o OptExecutionSessionLifecycleSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionLifecycleSpec) Reset() {
+	var v ExecutionSessionLifecycleSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionLifecycleSpec) SetTo(v ExecutionSessionLifecycleSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionLifecycleSpec) Get() (v ExecutionSessionLifecycleSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionLifecycleSpec) Or(d ExecutionSessionLifecycleSpec) ExecutionSessionLifecycleSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionReadinessSpec returns new OptExecutionSessionReadinessSpec with value set to v.
+func NewOptExecutionSessionReadinessSpec(v ExecutionSessionReadinessSpec) OptExecutionSessionReadinessSpec {
+	return OptExecutionSessionReadinessSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionReadinessSpec is optional ExecutionSessionReadinessSpec.
+type OptExecutionSessionReadinessSpec struct {
+	Value ExecutionSessionReadinessSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionReadinessSpec was set.
+func (o OptExecutionSessionReadinessSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionReadinessSpec) Reset() {
+	var v ExecutionSessionReadinessSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionReadinessSpec) SetTo(v ExecutionSessionReadinessSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionReadinessSpec) Get() (v ExecutionSessionReadinessSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionReadinessSpec) Or(d ExecutionSessionReadinessSpec) ExecutionSessionReadinessSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionReadinessType returns new OptExecutionSessionReadinessType with value set to v.
+func NewOptExecutionSessionReadinessType(v ExecutionSessionReadinessType) OptExecutionSessionReadinessType {
+	return OptExecutionSessionReadinessType{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionReadinessType is optional ExecutionSessionReadinessType.
+type OptExecutionSessionReadinessType struct {
+	Value ExecutionSessionReadinessType
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionReadinessType was set.
+func (o OptExecutionSessionReadinessType) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionReadinessType) Reset() {
+	var v ExecutionSessionReadinessType
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionReadinessType) SetTo(v ExecutionSessionReadinessType) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionReadinessType) Get() (v ExecutionSessionReadinessType, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionReadinessType) Or(d ExecutionSessionReadinessType) ExecutionSessionReadinessType {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionRestartPolicy returns new OptExecutionSessionRestartPolicy with value set to v.
+func NewOptExecutionSessionRestartPolicy(v ExecutionSessionRestartPolicy) OptExecutionSessionRestartPolicy {
+	return OptExecutionSessionRestartPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionRestartPolicy is optional ExecutionSessionRestartPolicy.
+type OptExecutionSessionRestartPolicy struct {
+	Value ExecutionSessionRestartPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionRestartPolicy was set.
+func (o OptExecutionSessionRestartPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionRestartPolicy) Reset() {
+	var v ExecutionSessionRestartPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionRestartPolicy) SetTo(v ExecutionSessionRestartPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionRestartPolicy) Get() (v ExecutionSessionRestartPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionRestartPolicy) Or(d ExecutionSessionRestartPolicy) ExecutionSessionRestartPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionRestartSpec returns new OptExecutionSessionRestartSpec with value set to v.
+func NewOptExecutionSessionRestartSpec(v ExecutionSessionRestartSpec) OptExecutionSessionRestartSpec {
+	return OptExecutionSessionRestartSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionRestartSpec is optional ExecutionSessionRestartSpec.
+type OptExecutionSessionRestartSpec struct {
+	Value ExecutionSessionRestartSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionRestartSpec was set.
+func (o OptExecutionSessionRestartSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionRestartSpec) Reset() {
+	var v ExecutionSessionRestartSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionRestartSpec) SetTo(v ExecutionSessionRestartSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionRestartSpec) Get() (v ExecutionSessionRestartSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionRestartSpec) Or(d ExecutionSessionRestartSpec) ExecutionSessionRestartSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionRuntimeRecoveryPolicy returns new OptExecutionSessionRuntimeRecoveryPolicy with value set to v.
+func NewOptExecutionSessionRuntimeRecoveryPolicy(v ExecutionSessionRuntimeRecoveryPolicy) OptExecutionSessionRuntimeRecoveryPolicy {
+	return OptExecutionSessionRuntimeRecoveryPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionRuntimeRecoveryPolicy is optional ExecutionSessionRuntimeRecoveryPolicy.
+type OptExecutionSessionRuntimeRecoveryPolicy struct {
+	Value ExecutionSessionRuntimeRecoveryPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionRuntimeRecoveryPolicy was set.
+func (o OptExecutionSessionRuntimeRecoveryPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionRuntimeRecoveryPolicy) Reset() {
+	var v ExecutionSessionRuntimeRecoveryPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionRuntimeRecoveryPolicy) SetTo(v ExecutionSessionRuntimeRecoveryPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionRuntimeRecoveryPolicy) Get() (v ExecutionSessionRuntimeRecoveryPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionRuntimeRecoveryPolicy) Or(d ExecutionSessionRuntimeRecoveryPolicy) ExecutionSessionRuntimeRecoveryPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionSpecEnv returns new OptExecutionSessionSpecEnv with value set to v.
+func NewOptExecutionSessionSpecEnv(v ExecutionSessionSpecEnv) OptExecutionSessionSpecEnv {
+	return OptExecutionSessionSpecEnv{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionSpecEnv is optional ExecutionSessionSpecEnv.
+type OptExecutionSessionSpecEnv struct {
+	Value ExecutionSessionSpecEnv
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionSpecEnv was set.
+func (o OptExecutionSessionSpecEnv) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionSpecEnv) Reset() {
+	var v ExecutionSessionSpecEnv
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionSpecEnv) SetTo(v ExecutionSessionSpecEnv) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionSpecEnv) Get() (v ExecutionSessionSpecEnv, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionSpecEnv) Or(d ExecutionSessionSpecEnv) ExecutionSessionSpecEnv {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExecutionSessionTerminalSpec returns new OptExecutionSessionTerminalSpec with value set to v.
+func NewOptExecutionSessionTerminalSpec(v ExecutionSessionTerminalSpec) OptExecutionSessionTerminalSpec {
+	return OptExecutionSessionTerminalSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExecutionSessionTerminalSpec is optional ExecutionSessionTerminalSpec.
+type OptExecutionSessionTerminalSpec struct {
+	Value ExecutionSessionTerminalSpec
+	Set   bool
+}
+
+// IsSet returns true if OptExecutionSessionTerminalSpec was set.
+func (o OptExecutionSessionTerminalSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExecutionSessionTerminalSpec) Reset() {
+	var v ExecutionSessionTerminalSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExecutionSessionTerminalSpec) SetTo(v ExecutionSessionTerminalSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExecutionSessionTerminalSpec) Get() (v ExecutionSessionTerminalSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExecutionSessionTerminalSpec) Or(d ExecutionSessionTerminalSpec) ExecutionSessionTerminalSpec {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9247,98 +11417,6 @@ func (o OptSandboxObservabilityLogsResponse) Or(d SandboxObservabilityLogsRespon
 	return d
 }
 
-// NewOptSandboxObservabilityMetricSampleAttributes returns new OptSandboxObservabilityMetricSampleAttributes with value set to v.
-func NewOptSandboxObservabilityMetricSampleAttributes(v SandboxObservabilityMetricSampleAttributes) OptSandboxObservabilityMetricSampleAttributes {
-	return OptSandboxObservabilityMetricSampleAttributes{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxObservabilityMetricSampleAttributes is optional SandboxObservabilityMetricSampleAttributes.
-type OptSandboxObservabilityMetricSampleAttributes struct {
-	Value SandboxObservabilityMetricSampleAttributes
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxObservabilityMetricSampleAttributes was set.
-func (o OptSandboxObservabilityMetricSampleAttributes) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxObservabilityMetricSampleAttributes) Reset() {
-	var v SandboxObservabilityMetricSampleAttributes
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxObservabilityMetricSampleAttributes) SetTo(v SandboxObservabilityMetricSampleAttributes) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxObservabilityMetricSampleAttributes) Get() (v SandboxObservabilityMetricSampleAttributes, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxObservabilityMetricSampleAttributes) Or(d SandboxObservabilityMetricSampleAttributes) SandboxObservabilityMetricSampleAttributes {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxObservabilityMetricsResponse returns new OptSandboxObservabilityMetricsResponse with value set to v.
-func NewOptSandboxObservabilityMetricsResponse(v SandboxObservabilityMetricsResponse) OptSandboxObservabilityMetricsResponse {
-	return OptSandboxObservabilityMetricsResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxObservabilityMetricsResponse is optional SandboxObservabilityMetricsResponse.
-type OptSandboxObservabilityMetricsResponse struct {
-	Value SandboxObservabilityMetricsResponse
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxObservabilityMetricsResponse was set.
-func (o OptSandboxObservabilityMetricsResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxObservabilityMetricsResponse) Reset() {
-	var v SandboxObservabilityMetricsResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxObservabilityMetricsResponse) SetTo(v SandboxObservabilityMetricsResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxObservabilityMetricsResponse) Get() (v SandboxObservabilityMetricsResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxObservabilityMetricsResponse) Or(d SandboxObservabilityMetricsResponse) SandboxObservabilityMetricsResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxObservabilityOutcome returns new OptSandboxObservabilityOutcome with value set to v.
 func NewOptSandboxObservabilityOutcome(v SandboxObservabilityOutcome) OptSandboxObservabilityOutcome {
 	return OptSandboxObservabilityOutcome{
@@ -9609,6 +11687,236 @@ func (o OptSandboxRootFSSnapshotList) Get() (v SandboxRootFSSnapshotList, ok boo
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxRootFSSnapshotList) Or(d SandboxRootFSSnapshotList) SandboxRootFSSnapshotList {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRuntimeMetricGapDimensions returns new OptSandboxRuntimeMetricGapDimensions with value set to v.
+func NewOptSandboxRuntimeMetricGapDimensions(v SandboxRuntimeMetricGapDimensions) OptSandboxRuntimeMetricGapDimensions {
+	return OptSandboxRuntimeMetricGapDimensions{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRuntimeMetricGapDimensions is optional SandboxRuntimeMetricGapDimensions.
+type OptSandboxRuntimeMetricGapDimensions struct {
+	Value SandboxRuntimeMetricGapDimensions
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRuntimeMetricGapDimensions was set.
+func (o OptSandboxRuntimeMetricGapDimensions) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRuntimeMetricGapDimensions) Reset() {
+	var v SandboxRuntimeMetricGapDimensions
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRuntimeMetricGapDimensions) SetTo(v SandboxRuntimeMetricGapDimensions) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRuntimeMetricGapDimensions) Get() (v SandboxRuntimeMetricGapDimensions, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRuntimeMetricGapDimensions) Or(d SandboxRuntimeMetricGapDimensions) SandboxRuntimeMetricGapDimensions {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRuntimeMetricSeriesDimensions returns new OptSandboxRuntimeMetricSeriesDimensions with value set to v.
+func NewOptSandboxRuntimeMetricSeriesDimensions(v SandboxRuntimeMetricSeriesDimensions) OptSandboxRuntimeMetricSeriesDimensions {
+	return OptSandboxRuntimeMetricSeriesDimensions{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRuntimeMetricSeriesDimensions is optional SandboxRuntimeMetricSeriesDimensions.
+type OptSandboxRuntimeMetricSeriesDimensions struct {
+	Value SandboxRuntimeMetricSeriesDimensions
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRuntimeMetricSeriesDimensions was set.
+func (o OptSandboxRuntimeMetricSeriesDimensions) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRuntimeMetricSeriesDimensions) Reset() {
+	var v SandboxRuntimeMetricSeriesDimensions
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRuntimeMetricSeriesDimensions) SetTo(v SandboxRuntimeMetricSeriesDimensions) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRuntimeMetricSeriesDimensions) Get() (v SandboxRuntimeMetricSeriesDimensions, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRuntimeMetricSeriesDimensions) Or(d SandboxRuntimeMetricSeriesDimensions) SandboxRuntimeMetricSeriesDimensions {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRuntimeMetricStatistic returns new OptSandboxRuntimeMetricStatistic with value set to v.
+func NewOptSandboxRuntimeMetricStatistic(v SandboxRuntimeMetricStatistic) OptSandboxRuntimeMetricStatistic {
+	return OptSandboxRuntimeMetricStatistic{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRuntimeMetricStatistic is optional SandboxRuntimeMetricStatistic.
+type OptSandboxRuntimeMetricStatistic struct {
+	Value SandboxRuntimeMetricStatistic
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRuntimeMetricStatistic was set.
+func (o OptSandboxRuntimeMetricStatistic) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRuntimeMetricStatistic) Reset() {
+	var v SandboxRuntimeMetricStatistic
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRuntimeMetricStatistic) SetTo(v SandboxRuntimeMetricStatistic) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRuntimeMetricStatistic) Get() (v SandboxRuntimeMetricStatistic, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRuntimeMetricStatistic) Or(d SandboxRuntimeMetricStatistic) SandboxRuntimeMetricStatistic {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRuntimeMetricsCatalogResponse returns new OptSandboxRuntimeMetricsCatalogResponse with value set to v.
+func NewOptSandboxRuntimeMetricsCatalogResponse(v SandboxRuntimeMetricsCatalogResponse) OptSandboxRuntimeMetricsCatalogResponse {
+	return OptSandboxRuntimeMetricsCatalogResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRuntimeMetricsCatalogResponse is optional SandboxRuntimeMetricsCatalogResponse.
+type OptSandboxRuntimeMetricsCatalogResponse struct {
+	Value SandboxRuntimeMetricsCatalogResponse
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRuntimeMetricsCatalogResponse was set.
+func (o OptSandboxRuntimeMetricsCatalogResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRuntimeMetricsCatalogResponse) Reset() {
+	var v SandboxRuntimeMetricsCatalogResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRuntimeMetricsCatalogResponse) SetTo(v SandboxRuntimeMetricsCatalogResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRuntimeMetricsCatalogResponse) Get() (v SandboxRuntimeMetricsCatalogResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRuntimeMetricsCatalogResponse) Or(d SandboxRuntimeMetricsCatalogResponse) SandboxRuntimeMetricsCatalogResponse {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRuntimeMetricsResponse returns new OptSandboxRuntimeMetricsResponse with value set to v.
+func NewOptSandboxRuntimeMetricsResponse(v SandboxRuntimeMetricsResponse) OptSandboxRuntimeMetricsResponse {
+	return OptSandboxRuntimeMetricsResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRuntimeMetricsResponse is optional SandboxRuntimeMetricsResponse.
+type OptSandboxRuntimeMetricsResponse struct {
+	Value SandboxRuntimeMetricsResponse
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRuntimeMetricsResponse was set.
+func (o OptSandboxRuntimeMetricsResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRuntimeMetricsResponse) Reset() {
+	var v SandboxRuntimeMetricsResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRuntimeMetricsResponse) SetTo(v SandboxRuntimeMetricsResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRuntimeMetricsResponse) Get() (v SandboxRuntimeMetricsResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRuntimeMetricsResponse) Or(d SandboxRuntimeMetricsResponse) SandboxRuntimeMetricsResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10443,6 +12751,52 @@ func (o OptSuccessAPIKeyListResponseData) Or(d SuccessAPIKeyListResponseData) Su
 	return d
 }
 
+// NewOptSuccessAcceptedResponseData returns new OptSuccessAcceptedResponseData with value set to v.
+func NewOptSuccessAcceptedResponseData(v SuccessAcceptedResponseData) OptSuccessAcceptedResponseData {
+	return OptSuccessAcceptedResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessAcceptedResponseData is optional SuccessAcceptedResponseData.
+type OptSuccessAcceptedResponseData struct {
+	Value SuccessAcceptedResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessAcceptedResponseData was set.
+func (o OptSuccessAcceptedResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessAcceptedResponseData) Reset() {
+	var v SuccessAcceptedResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessAcceptedResponseData) SetTo(v SuccessAcceptedResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessAcceptedResponseData) Get() (v SuccessAcceptedResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessAcceptedResponseData) Or(d SuccessAcceptedResponseData) SuccessAcceptedResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSuccessAuthProvidersResponseData returns new OptSuccessAuthProvidersResponseData with value set to v.
 func NewOptSuccessAuthProvidersResponseData(v SuccessAuthProvidersResponseData) OptSuccessAuthProvidersResponseData {
 	return OptSuccessAuthProvidersResponseData{
@@ -10667,6 +13021,52 @@ func (o OptSuccessDeletedResponseData) Get() (v SuccessDeletedResponseData, ok b
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSuccessDeletedResponseData) Or(d SuccessDeletedResponseData) SuccessDeletedResponseData {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSuccessExecutionSessionListResponseData returns new OptSuccessExecutionSessionListResponseData with value set to v.
+func NewOptSuccessExecutionSessionListResponseData(v SuccessExecutionSessionListResponseData) OptSuccessExecutionSessionListResponseData {
+	return OptSuccessExecutionSessionListResponseData{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSuccessExecutionSessionListResponseData is optional SuccessExecutionSessionListResponseData.
+type OptSuccessExecutionSessionListResponseData struct {
+	Value SuccessExecutionSessionListResponseData
+	Set   bool
+}
+
+// IsSet returns true if OptSuccessExecutionSessionListResponseData was set.
+func (o OptSuccessExecutionSessionListResponseData) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSuccessExecutionSessionListResponseData) Reset() {
+	var v SuccessExecutionSessionListResponseData
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSuccessExecutionSessionListResponseData) SetTo(v SuccessExecutionSessionListResponseData) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSuccessExecutionSessionListResponseData) Get() (v SuccessExecutionSessionListResponseData, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSuccessExecutionSessionListResponseData) Or(d SuccessExecutionSessionListResponseData) SuccessExecutionSessionListResponseData {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -15311,190 +17711,6 @@ func (s *SandboxObservabilityLogsResponse) SetWatermark(val OptString) {
 	s.Watermark = val
 }
 
-// Ref: #/components/schemas/SandboxObservabilityMetricSample
-type SandboxObservabilityMetricSample struct {
-	TeamID     string                                        `json:"team_id"`
-	SandboxID  string                                        `json:"sandbox_id"`
-	RegionID   string                                        `json:"region_id"`
-	ClusterID  string                                        `json:"cluster_id"`
-	ContextID  OptString                                     `json:"context_id"`
-	OccurredAt time.Time                                     `json:"occurred_at"`
-	IngestedAt time.Time                                     `json:"ingested_at"`
-	Name       string                                        `json:"name"`
-	Unit       OptString                                     `json:"unit"`
-	Value      float64                                       `json:"value"`
-	Cursor     string                                        `json:"cursor"`
-	Attributes OptSandboxObservabilityMetricSampleAttributes `json:"attributes"`
-}
-
-// GetTeamID returns the value of TeamID.
-func (s *SandboxObservabilityMetricSample) GetTeamID() string {
-	return s.TeamID
-}
-
-// GetSandboxID returns the value of SandboxID.
-func (s *SandboxObservabilityMetricSample) GetSandboxID() string {
-	return s.SandboxID
-}
-
-// GetRegionID returns the value of RegionID.
-func (s *SandboxObservabilityMetricSample) GetRegionID() string {
-	return s.RegionID
-}
-
-// GetClusterID returns the value of ClusterID.
-func (s *SandboxObservabilityMetricSample) GetClusterID() string {
-	return s.ClusterID
-}
-
-// GetContextID returns the value of ContextID.
-func (s *SandboxObservabilityMetricSample) GetContextID() OptString {
-	return s.ContextID
-}
-
-// GetOccurredAt returns the value of OccurredAt.
-func (s *SandboxObservabilityMetricSample) GetOccurredAt() time.Time {
-	return s.OccurredAt
-}
-
-// GetIngestedAt returns the value of IngestedAt.
-func (s *SandboxObservabilityMetricSample) GetIngestedAt() time.Time {
-	return s.IngestedAt
-}
-
-// GetName returns the value of Name.
-func (s *SandboxObservabilityMetricSample) GetName() string {
-	return s.Name
-}
-
-// GetUnit returns the value of Unit.
-func (s *SandboxObservabilityMetricSample) GetUnit() OptString {
-	return s.Unit
-}
-
-// GetValue returns the value of Value.
-func (s *SandboxObservabilityMetricSample) GetValue() float64 {
-	return s.Value
-}
-
-// GetCursor returns the value of Cursor.
-func (s *SandboxObservabilityMetricSample) GetCursor() string {
-	return s.Cursor
-}
-
-// GetAttributes returns the value of Attributes.
-func (s *SandboxObservabilityMetricSample) GetAttributes() OptSandboxObservabilityMetricSampleAttributes {
-	return s.Attributes
-}
-
-// SetTeamID sets the value of TeamID.
-func (s *SandboxObservabilityMetricSample) SetTeamID(val string) {
-	s.TeamID = val
-}
-
-// SetSandboxID sets the value of SandboxID.
-func (s *SandboxObservabilityMetricSample) SetSandboxID(val string) {
-	s.SandboxID = val
-}
-
-// SetRegionID sets the value of RegionID.
-func (s *SandboxObservabilityMetricSample) SetRegionID(val string) {
-	s.RegionID = val
-}
-
-// SetClusterID sets the value of ClusterID.
-func (s *SandboxObservabilityMetricSample) SetClusterID(val string) {
-	s.ClusterID = val
-}
-
-// SetContextID sets the value of ContextID.
-func (s *SandboxObservabilityMetricSample) SetContextID(val OptString) {
-	s.ContextID = val
-}
-
-// SetOccurredAt sets the value of OccurredAt.
-func (s *SandboxObservabilityMetricSample) SetOccurredAt(val time.Time) {
-	s.OccurredAt = val
-}
-
-// SetIngestedAt sets the value of IngestedAt.
-func (s *SandboxObservabilityMetricSample) SetIngestedAt(val time.Time) {
-	s.IngestedAt = val
-}
-
-// SetName sets the value of Name.
-func (s *SandboxObservabilityMetricSample) SetName(val string) {
-	s.Name = val
-}
-
-// SetUnit sets the value of Unit.
-func (s *SandboxObservabilityMetricSample) SetUnit(val OptString) {
-	s.Unit = val
-}
-
-// SetValue sets the value of Value.
-func (s *SandboxObservabilityMetricSample) SetValue(val float64) {
-	s.Value = val
-}
-
-// SetCursor sets the value of Cursor.
-func (s *SandboxObservabilityMetricSample) SetCursor(val string) {
-	s.Cursor = val
-}
-
-// SetAttributes sets the value of Attributes.
-func (s *SandboxObservabilityMetricSample) SetAttributes(val OptSandboxObservabilityMetricSampleAttributes) {
-	s.Attributes = val
-}
-
-type SandboxObservabilityMetricSampleAttributes map[string]jx.Raw
-
-func (s *SandboxObservabilityMetricSampleAttributes) init() SandboxObservabilityMetricSampleAttributes {
-	m := *s
-	if m == nil {
-		m = map[string]jx.Raw{}
-		*s = m
-	}
-	return m
-}
-
-// Ref: #/components/schemas/SandboxObservabilityMetricsResponse
-type SandboxObservabilityMetricsResponse struct {
-	Samples    []SandboxObservabilityMetricSample `json:"samples"`
-	NextCursor OptString                          `json:"next_cursor"`
-	Watermark  OptString                          `json:"watermark"`
-}
-
-// GetSamples returns the value of Samples.
-func (s *SandboxObservabilityMetricsResponse) GetSamples() []SandboxObservabilityMetricSample {
-	return s.Samples
-}
-
-// GetNextCursor returns the value of NextCursor.
-func (s *SandboxObservabilityMetricsResponse) GetNextCursor() OptString {
-	return s.NextCursor
-}
-
-// GetWatermark returns the value of Watermark.
-func (s *SandboxObservabilityMetricsResponse) GetWatermark() OptString {
-	return s.Watermark
-}
-
-// SetSamples sets the value of Samples.
-func (s *SandboxObservabilityMetricsResponse) SetSamples(val []SandboxObservabilityMetricSample) {
-	s.Samples = val
-}
-
-// SetNextCursor sets the value of NextCursor.
-func (s *SandboxObservabilityMetricsResponse) SetNextCursor(val OptString) {
-	s.NextCursor = val
-}
-
-// SetWatermark sets the value of Watermark.
-func (s *SandboxObservabilityMetricsResponse) SetWatermark(val OptString) {
-	s.Watermark = val
-}
-
 // Ref: #/components/schemas/SandboxObservabilityOutcome
 type SandboxObservabilityOutcome string
 
@@ -15835,6 +18051,820 @@ func (s *SandboxRootFSSnapshotList) SetSnapshots(val []SandboxRootFSSnapshot) {
 // SetCount sets the value of Count.
 func (s *SandboxRootFSSnapshotList) SetCount(val int) {
 	s.Count = val
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricDescriptor
+type SandboxRuntimeMetricDescriptor struct {
+	Name        SandboxRuntimeMetricName `json:"name"`
+	Kind        SandboxRuntimeMetricKind `json:"kind"`
+	Unit        SandboxRuntimeMetricUnit `json:"unit"`
+	Dimensions  []string                 `json:"dimensions"`
+	Description string                   `json:"description"`
+}
+
+// GetName returns the value of Name.
+func (s *SandboxRuntimeMetricDescriptor) GetName() SandboxRuntimeMetricName {
+	return s.Name
+}
+
+// GetKind returns the value of Kind.
+func (s *SandboxRuntimeMetricDescriptor) GetKind() SandboxRuntimeMetricKind {
+	return s.Kind
+}
+
+// GetUnit returns the value of Unit.
+func (s *SandboxRuntimeMetricDescriptor) GetUnit() SandboxRuntimeMetricUnit {
+	return s.Unit
+}
+
+// GetDimensions returns the value of Dimensions.
+func (s *SandboxRuntimeMetricDescriptor) GetDimensions() []string {
+	return s.Dimensions
+}
+
+// GetDescription returns the value of Description.
+func (s *SandboxRuntimeMetricDescriptor) GetDescription() string {
+	return s.Description
+}
+
+// SetName sets the value of Name.
+func (s *SandboxRuntimeMetricDescriptor) SetName(val SandboxRuntimeMetricName) {
+	s.Name = val
+}
+
+// SetKind sets the value of Kind.
+func (s *SandboxRuntimeMetricDescriptor) SetKind(val SandboxRuntimeMetricKind) {
+	s.Kind = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *SandboxRuntimeMetricDescriptor) SetUnit(val SandboxRuntimeMetricUnit) {
+	s.Unit = val
+}
+
+// SetDimensions sets the value of Dimensions.
+func (s *SandboxRuntimeMetricDescriptor) SetDimensions(val []string) {
+	s.Dimensions = val
+}
+
+// SetDescription sets the value of Description.
+func (s *SandboxRuntimeMetricDescriptor) SetDescription(val string) {
+	s.Description = val
+}
+
+// Freshness is measured relative to the requested end_time, including for historical queries.
+// Ref: #/components/schemas/SandboxRuntimeMetricFreshness
+type SandboxRuntimeMetricFreshness struct {
+	NewestObservedAt OptDateTime                         `json:"newest_observed_at"`
+	AgeSeconds       OptFloat64                          `json:"age_seconds"`
+	Status           SandboxRuntimeMetricFreshnessStatus `json:"status"`
+}
+
+// GetNewestObservedAt returns the value of NewestObservedAt.
+func (s *SandboxRuntimeMetricFreshness) GetNewestObservedAt() OptDateTime {
+	return s.NewestObservedAt
+}
+
+// GetAgeSeconds returns the value of AgeSeconds.
+func (s *SandboxRuntimeMetricFreshness) GetAgeSeconds() OptFloat64 {
+	return s.AgeSeconds
+}
+
+// GetStatus returns the value of Status.
+func (s *SandboxRuntimeMetricFreshness) GetStatus() SandboxRuntimeMetricFreshnessStatus {
+	return s.Status
+}
+
+// SetNewestObservedAt sets the value of NewestObservedAt.
+func (s *SandboxRuntimeMetricFreshness) SetNewestObservedAt(val OptDateTime) {
+	s.NewestObservedAt = val
+}
+
+// SetAgeSeconds sets the value of AgeSeconds.
+func (s *SandboxRuntimeMetricFreshness) SetAgeSeconds(val OptFloat64) {
+	s.AgeSeconds = val
+}
+
+// SetStatus sets the value of Status.
+func (s *SandboxRuntimeMetricFreshness) SetStatus(val SandboxRuntimeMetricFreshnessStatus) {
+	s.Status = val
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricFreshnessStatus
+type SandboxRuntimeMetricFreshnessStatus string
+
+const (
+	SandboxRuntimeMetricFreshnessStatusFresh   SandboxRuntimeMetricFreshnessStatus = "fresh"
+	SandboxRuntimeMetricFreshnessStatusStale   SandboxRuntimeMetricFreshnessStatus = "stale"
+	SandboxRuntimeMetricFreshnessStatusMissing SandboxRuntimeMetricFreshnessStatus = "missing"
+)
+
+// AllValues returns all SandboxRuntimeMetricFreshnessStatus values.
+func (SandboxRuntimeMetricFreshnessStatus) AllValues() []SandboxRuntimeMetricFreshnessStatus {
+	return []SandboxRuntimeMetricFreshnessStatus{
+		SandboxRuntimeMetricFreshnessStatusFresh,
+		SandboxRuntimeMetricFreshnessStatusStale,
+		SandboxRuntimeMetricFreshnessStatusMissing,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricFreshnessStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricFreshnessStatusFresh:
+		return []byte(s), nil
+	case SandboxRuntimeMetricFreshnessStatusStale:
+		return []byte(s), nil
+	case SandboxRuntimeMetricFreshnessStatusMissing:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricFreshnessStatus) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricFreshnessStatus(data) {
+	case SandboxRuntimeMetricFreshnessStatusFresh:
+		*s = SandboxRuntimeMetricFreshnessStatusFresh
+		return nil
+	case SandboxRuntimeMetricFreshnessStatusStale:
+		*s = SandboxRuntimeMetricFreshnessStatusStale
+		return nil
+	case SandboxRuntimeMetricFreshnessStatusMissing:
+		*s = SandboxRuntimeMetricFreshnessStatusMissing
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricGap
+type SandboxRuntimeMetricGap struct {
+	Metric     SandboxRuntimeMetricName             `json:"metric"`
+	Dimensions OptSandboxRuntimeMetricGapDimensions `json:"dimensions"`
+	StartTime  time.Time                            `json:"start_time"`
+	EndTime    time.Time                            `json:"end_time"`
+	Reason     SandboxRuntimeMetricGapReason        `json:"reason"`
+}
+
+// GetMetric returns the value of Metric.
+func (s *SandboxRuntimeMetricGap) GetMetric() SandboxRuntimeMetricName {
+	return s.Metric
+}
+
+// GetDimensions returns the value of Dimensions.
+func (s *SandboxRuntimeMetricGap) GetDimensions() OptSandboxRuntimeMetricGapDimensions {
+	return s.Dimensions
+}
+
+// GetStartTime returns the value of StartTime.
+func (s *SandboxRuntimeMetricGap) GetStartTime() time.Time {
+	return s.StartTime
+}
+
+// GetEndTime returns the value of EndTime.
+func (s *SandboxRuntimeMetricGap) GetEndTime() time.Time {
+	return s.EndTime
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxRuntimeMetricGap) GetReason() SandboxRuntimeMetricGapReason {
+	return s.Reason
+}
+
+// SetMetric sets the value of Metric.
+func (s *SandboxRuntimeMetricGap) SetMetric(val SandboxRuntimeMetricName) {
+	s.Metric = val
+}
+
+// SetDimensions sets the value of Dimensions.
+func (s *SandboxRuntimeMetricGap) SetDimensions(val OptSandboxRuntimeMetricGapDimensions) {
+	s.Dimensions = val
+}
+
+// SetStartTime sets the value of StartTime.
+func (s *SandboxRuntimeMetricGap) SetStartTime(val time.Time) {
+	s.StartTime = val
+}
+
+// SetEndTime sets the value of EndTime.
+func (s *SandboxRuntimeMetricGap) SetEndTime(val time.Time) {
+	s.EndTime = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxRuntimeMetricGap) SetReason(val SandboxRuntimeMetricGapReason) {
+	s.Reason = val
+}
+
+type SandboxRuntimeMetricGapDimensions map[string]string
+
+func (s *SandboxRuntimeMetricGapDimensions) init() SandboxRuntimeMetricGapDimensions {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricGapReason
+type SandboxRuntimeMetricGapReason string
+
+const (
+	SandboxRuntimeMetricGapReasonUnavailable     SandboxRuntimeMetricGapReason = "unavailable"
+	SandboxRuntimeMetricGapReasonUnsupported     SandboxRuntimeMetricGapReason = "unsupported"
+	SandboxRuntimeMetricGapReasonCollectionError SandboxRuntimeMetricGapReason = "collection_error"
+	SandboxRuntimeMetricGapReasonNoData          SandboxRuntimeMetricGapReason = "no_data"
+	SandboxRuntimeMetricGapReasonSeriesReset     SandboxRuntimeMetricGapReason = "series_reset"
+)
+
+// AllValues returns all SandboxRuntimeMetricGapReason values.
+func (SandboxRuntimeMetricGapReason) AllValues() []SandboxRuntimeMetricGapReason {
+	return []SandboxRuntimeMetricGapReason{
+		SandboxRuntimeMetricGapReasonUnavailable,
+		SandboxRuntimeMetricGapReasonUnsupported,
+		SandboxRuntimeMetricGapReasonCollectionError,
+		SandboxRuntimeMetricGapReasonNoData,
+		SandboxRuntimeMetricGapReasonSeriesReset,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricGapReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricGapReasonUnavailable:
+		return []byte(s), nil
+	case SandboxRuntimeMetricGapReasonUnsupported:
+		return []byte(s), nil
+	case SandboxRuntimeMetricGapReasonCollectionError:
+		return []byte(s), nil
+	case SandboxRuntimeMetricGapReasonNoData:
+		return []byte(s), nil
+	case SandboxRuntimeMetricGapReasonSeriesReset:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricGapReason) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricGapReason(data) {
+	case SandboxRuntimeMetricGapReasonUnavailable:
+		*s = SandboxRuntimeMetricGapReasonUnavailable
+		return nil
+	case SandboxRuntimeMetricGapReasonUnsupported:
+		*s = SandboxRuntimeMetricGapReasonUnsupported
+		return nil
+	case SandboxRuntimeMetricGapReasonCollectionError:
+		*s = SandboxRuntimeMetricGapReasonCollectionError
+		return nil
+	case SandboxRuntimeMetricGapReasonNoData:
+		*s = SandboxRuntimeMetricGapReasonNoData
+		return nil
+	case SandboxRuntimeMetricGapReasonSeriesReset:
+		*s = SandboxRuntimeMetricGapReasonSeriesReset
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricKind
+type SandboxRuntimeMetricKind string
+
+const (
+	SandboxRuntimeMetricKindGauge   SandboxRuntimeMetricKind = "gauge"
+	SandboxRuntimeMetricKindCounter SandboxRuntimeMetricKind = "counter"
+)
+
+// AllValues returns all SandboxRuntimeMetricKind values.
+func (SandboxRuntimeMetricKind) AllValues() []SandboxRuntimeMetricKind {
+	return []SandboxRuntimeMetricKind{
+		SandboxRuntimeMetricKindGauge,
+		SandboxRuntimeMetricKindCounter,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricKind) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricKindGauge:
+		return []byte(s), nil
+	case SandboxRuntimeMetricKindCounter:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricKind) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricKind(data) {
+	case SandboxRuntimeMetricKindGauge:
+		*s = SandboxRuntimeMetricKindGauge
+		return nil
+	case SandboxRuntimeMetricKindCounter:
+		*s = SandboxRuntimeMetricKindCounter
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricName
+type SandboxRuntimeMetricName string
+
+const (
+	SandboxRuntimeMetricNameSandboxCPUUtilization       SandboxRuntimeMetricName = "sandbox.cpu.utilization"
+	SandboxRuntimeMetricNameSandboxCPUUsage             SandboxRuntimeMetricName = "sandbox.cpu.usage"
+	SandboxRuntimeMetricNameSandboxCPUTime              SandboxRuntimeMetricName = "sandbox.cpu.time"
+	SandboxRuntimeMetricNameSandboxCPULimit             SandboxRuntimeMetricName = "sandbox.cpu.limit"
+	SandboxRuntimeMetricNameSandboxMemoryUsage          SandboxRuntimeMetricName = "sandbox.memory.usage"
+	SandboxRuntimeMetricNameSandboxMemoryWorkingSet     SandboxRuntimeMetricName = "sandbox.memory.working_set"
+	SandboxRuntimeMetricNameSandboxMemoryAvailable      SandboxRuntimeMetricName = "sandbox.memory.available"
+	SandboxRuntimeMetricNameSandboxMemoryLimit          SandboxRuntimeMetricName = "sandbox.memory.limit"
+	SandboxRuntimeMetricNameSandboxMemoryUtilization    SandboxRuntimeMetricName = "sandbox.memory.utilization"
+	SandboxRuntimeMetricNameSandboxNetworkIo            SandboxRuntimeMetricName = "sandbox.network.io"
+	SandboxRuntimeMetricNameSandboxNetworkErrors        SandboxRuntimeMetricName = "sandbox.network.errors"
+	SandboxRuntimeMetricNameSandboxProcessCount         SandboxRuntimeMetricName = "sandbox.process.count"
+	SandboxRuntimeMetricNameSandboxRootfsWritableUsage  SandboxRuntimeMetricName = "sandbox.rootfs.writable.usage"
+	SandboxRuntimeMetricNameSandboxRootfsWritableInodes SandboxRuntimeMetricName = "sandbox.rootfs.writable.inodes"
+)
+
+// AllValues returns all SandboxRuntimeMetricName values.
+func (SandboxRuntimeMetricName) AllValues() []SandboxRuntimeMetricName {
+	return []SandboxRuntimeMetricName{
+		SandboxRuntimeMetricNameSandboxCPUUtilization,
+		SandboxRuntimeMetricNameSandboxCPUUsage,
+		SandboxRuntimeMetricNameSandboxCPUTime,
+		SandboxRuntimeMetricNameSandboxCPULimit,
+		SandboxRuntimeMetricNameSandboxMemoryUsage,
+		SandboxRuntimeMetricNameSandboxMemoryWorkingSet,
+		SandboxRuntimeMetricNameSandboxMemoryAvailable,
+		SandboxRuntimeMetricNameSandboxMemoryLimit,
+		SandboxRuntimeMetricNameSandboxMemoryUtilization,
+		SandboxRuntimeMetricNameSandboxNetworkIo,
+		SandboxRuntimeMetricNameSandboxNetworkErrors,
+		SandboxRuntimeMetricNameSandboxProcessCount,
+		SandboxRuntimeMetricNameSandboxRootfsWritableUsage,
+		SandboxRuntimeMetricNameSandboxRootfsWritableInodes,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricName) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricNameSandboxCPUUtilization:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxCPUUsage:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxCPUTime:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxCPULimit:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxMemoryUsage:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxMemoryWorkingSet:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxMemoryAvailable:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxMemoryLimit:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxMemoryUtilization:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxNetworkIo:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxNetworkErrors:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxProcessCount:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxRootfsWritableUsage:
+		return []byte(s), nil
+	case SandboxRuntimeMetricNameSandboxRootfsWritableInodes:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricName) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricName(data) {
+	case SandboxRuntimeMetricNameSandboxCPUUtilization:
+		*s = SandboxRuntimeMetricNameSandboxCPUUtilization
+		return nil
+	case SandboxRuntimeMetricNameSandboxCPUUsage:
+		*s = SandboxRuntimeMetricNameSandboxCPUUsage
+		return nil
+	case SandboxRuntimeMetricNameSandboxCPUTime:
+		*s = SandboxRuntimeMetricNameSandboxCPUTime
+		return nil
+	case SandboxRuntimeMetricNameSandboxCPULimit:
+		*s = SandboxRuntimeMetricNameSandboxCPULimit
+		return nil
+	case SandboxRuntimeMetricNameSandboxMemoryUsage:
+		*s = SandboxRuntimeMetricNameSandboxMemoryUsage
+		return nil
+	case SandboxRuntimeMetricNameSandboxMemoryWorkingSet:
+		*s = SandboxRuntimeMetricNameSandboxMemoryWorkingSet
+		return nil
+	case SandboxRuntimeMetricNameSandboxMemoryAvailable:
+		*s = SandboxRuntimeMetricNameSandboxMemoryAvailable
+		return nil
+	case SandboxRuntimeMetricNameSandboxMemoryLimit:
+		*s = SandboxRuntimeMetricNameSandboxMemoryLimit
+		return nil
+	case SandboxRuntimeMetricNameSandboxMemoryUtilization:
+		*s = SandboxRuntimeMetricNameSandboxMemoryUtilization
+		return nil
+	case SandboxRuntimeMetricNameSandboxNetworkIo:
+		*s = SandboxRuntimeMetricNameSandboxNetworkIo
+		return nil
+	case SandboxRuntimeMetricNameSandboxNetworkErrors:
+		*s = SandboxRuntimeMetricNameSandboxNetworkErrors
+		return nil
+	case SandboxRuntimeMetricNameSandboxProcessCount:
+		*s = SandboxRuntimeMetricNameSandboxProcessCount
+		return nil
+	case SandboxRuntimeMetricNameSandboxRootfsWritableUsage:
+		*s = SandboxRuntimeMetricNameSandboxRootfsWritableUsage
+		return nil
+	case SandboxRuntimeMetricNameSandboxRootfsWritableInodes:
+		*s = SandboxRuntimeMetricNameSandboxRootfsWritableInodes
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricPoint
+type SandboxRuntimeMetricPoint struct {
+	Time  time.Time `json:"time"`
+	Value float64   `json:"value"`
+}
+
+// GetTime returns the value of Time.
+func (s *SandboxRuntimeMetricPoint) GetTime() time.Time {
+	return s.Time
+}
+
+// GetValue returns the value of Value.
+func (s *SandboxRuntimeMetricPoint) GetValue() float64 {
+	return s.Value
+}
+
+// SetTime sets the value of Time.
+func (s *SandboxRuntimeMetricPoint) SetTime(val time.Time) {
+	s.Time = val
+}
+
+// SetValue sets the value of Value.
+func (s *SandboxRuntimeMetricPoint) SetValue(val float64) {
+	s.Value = val
+}
+
+// A continuous series segment. Runtime restarts and collector counter resets start a new segment
+// without exposing internal topology identifiers.
+// Ref: #/components/schemas/SandboxRuntimeMetricSegment
+type SandboxRuntimeMetricSegment struct {
+	Points []SandboxRuntimeMetricPoint `json:"points"`
+}
+
+// GetPoints returns the value of Points.
+func (s *SandboxRuntimeMetricSegment) GetPoints() []SandboxRuntimeMetricPoint {
+	return s.Points
+}
+
+// SetPoints sets the value of Points.
+func (s *SandboxRuntimeMetricSegment) SetPoints(val []SandboxRuntimeMetricPoint) {
+	s.Points = val
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricSeries
+type SandboxRuntimeMetricSeries struct {
+	Metric     SandboxRuntimeMetricName                `json:"metric"`
+	Kind       SandboxRuntimeMetricKind                `json:"kind"`
+	Unit       SandboxRuntimeMetricUnit                `json:"unit"`
+	Statistic  SandboxRuntimeMetricStatistic           `json:"statistic"`
+	Dimensions OptSandboxRuntimeMetricSeriesDimensions `json:"dimensions"`
+	Segments   []SandboxRuntimeMetricSegment           `json:"segments"`
+}
+
+// GetMetric returns the value of Metric.
+func (s *SandboxRuntimeMetricSeries) GetMetric() SandboxRuntimeMetricName {
+	return s.Metric
+}
+
+// GetKind returns the value of Kind.
+func (s *SandboxRuntimeMetricSeries) GetKind() SandboxRuntimeMetricKind {
+	return s.Kind
+}
+
+// GetUnit returns the value of Unit.
+func (s *SandboxRuntimeMetricSeries) GetUnit() SandboxRuntimeMetricUnit {
+	return s.Unit
+}
+
+// GetStatistic returns the value of Statistic.
+func (s *SandboxRuntimeMetricSeries) GetStatistic() SandboxRuntimeMetricStatistic {
+	return s.Statistic
+}
+
+// GetDimensions returns the value of Dimensions.
+func (s *SandboxRuntimeMetricSeries) GetDimensions() OptSandboxRuntimeMetricSeriesDimensions {
+	return s.Dimensions
+}
+
+// GetSegments returns the value of Segments.
+func (s *SandboxRuntimeMetricSeries) GetSegments() []SandboxRuntimeMetricSegment {
+	return s.Segments
+}
+
+// SetMetric sets the value of Metric.
+func (s *SandboxRuntimeMetricSeries) SetMetric(val SandboxRuntimeMetricName) {
+	s.Metric = val
+}
+
+// SetKind sets the value of Kind.
+func (s *SandboxRuntimeMetricSeries) SetKind(val SandboxRuntimeMetricKind) {
+	s.Kind = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *SandboxRuntimeMetricSeries) SetUnit(val SandboxRuntimeMetricUnit) {
+	s.Unit = val
+}
+
+// SetStatistic sets the value of Statistic.
+func (s *SandboxRuntimeMetricSeries) SetStatistic(val SandboxRuntimeMetricStatistic) {
+	s.Statistic = val
+}
+
+// SetDimensions sets the value of Dimensions.
+func (s *SandboxRuntimeMetricSeries) SetDimensions(val OptSandboxRuntimeMetricSeriesDimensions) {
+	s.Dimensions = val
+}
+
+// SetSegments sets the value of Segments.
+func (s *SandboxRuntimeMetricSeries) SetSegments(val []SandboxRuntimeMetricSegment) {
+	s.Segments = val
+}
+
+type SandboxRuntimeMetricSeriesDimensions map[string]string
+
+func (s *SandboxRuntimeMetricSeriesDimensions) init() SandboxRuntimeMetricSeriesDimensions {
+	m := *s
+	if m == nil {
+		m = map[string]string{}
+		*s = m
+	}
+	return m
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricStatistic
+type SandboxRuntimeMetricStatistic string
+
+const (
+	SandboxRuntimeMetricStatisticAuto    SandboxRuntimeMetricStatistic = "auto"
+	SandboxRuntimeMetricStatisticAverage SandboxRuntimeMetricStatistic = "average"
+	SandboxRuntimeMetricStatisticMinimum SandboxRuntimeMetricStatistic = "minimum"
+	SandboxRuntimeMetricStatisticMaximum SandboxRuntimeMetricStatistic = "maximum"
+	SandboxRuntimeMetricStatisticLast    SandboxRuntimeMetricStatistic = "last"
+	SandboxRuntimeMetricStatisticRate    SandboxRuntimeMetricStatistic = "rate"
+)
+
+// AllValues returns all SandboxRuntimeMetricStatistic values.
+func (SandboxRuntimeMetricStatistic) AllValues() []SandboxRuntimeMetricStatistic {
+	return []SandboxRuntimeMetricStatistic{
+		SandboxRuntimeMetricStatisticAuto,
+		SandboxRuntimeMetricStatisticAverage,
+		SandboxRuntimeMetricStatisticMinimum,
+		SandboxRuntimeMetricStatisticMaximum,
+		SandboxRuntimeMetricStatisticLast,
+		SandboxRuntimeMetricStatisticRate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricStatistic) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricStatisticAuto:
+		return []byte(s), nil
+	case SandboxRuntimeMetricStatisticAverage:
+		return []byte(s), nil
+	case SandboxRuntimeMetricStatisticMinimum:
+		return []byte(s), nil
+	case SandboxRuntimeMetricStatisticMaximum:
+		return []byte(s), nil
+	case SandboxRuntimeMetricStatisticLast:
+		return []byte(s), nil
+	case SandboxRuntimeMetricStatisticRate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricStatistic) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricStatistic(data) {
+	case SandboxRuntimeMetricStatisticAuto:
+		*s = SandboxRuntimeMetricStatisticAuto
+		return nil
+	case SandboxRuntimeMetricStatisticAverage:
+		*s = SandboxRuntimeMetricStatisticAverage
+		return nil
+	case SandboxRuntimeMetricStatisticMinimum:
+		*s = SandboxRuntimeMetricStatisticMinimum
+		return nil
+	case SandboxRuntimeMetricStatisticMaximum:
+		*s = SandboxRuntimeMetricStatisticMaximum
+		return nil
+	case SandboxRuntimeMetricStatisticLast:
+		*s = SandboxRuntimeMetricStatisticLast
+		return nil
+	case SandboxRuntimeMetricStatisticRate:
+		*s = SandboxRuntimeMetricStatisticRate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricUnit
+type SandboxRuntimeMetricUnit string
+
+const (
+	SandboxRuntimeMetricUnitRatio          SandboxRuntimeMetricUnit = "ratio"
+	SandboxRuntimeMetricUnitCores          SandboxRuntimeMetricUnit = "cores"
+	SandboxRuntimeMetricUnitSeconds        SandboxRuntimeMetricUnit = "seconds"
+	SandboxRuntimeMetricUnitBytes          SandboxRuntimeMetricUnit = "bytes"
+	SandboxRuntimeMetricUnitCount          SandboxRuntimeMetricUnit = "count"
+	SandboxRuntimeMetricUnitBytesPerSecond SandboxRuntimeMetricUnit = "bytes_per_second"
+	SandboxRuntimeMetricUnitCountPerSecond SandboxRuntimeMetricUnit = "count_per_second"
+)
+
+// AllValues returns all SandboxRuntimeMetricUnit values.
+func (SandboxRuntimeMetricUnit) AllValues() []SandboxRuntimeMetricUnit {
+	return []SandboxRuntimeMetricUnit{
+		SandboxRuntimeMetricUnitRatio,
+		SandboxRuntimeMetricUnitCores,
+		SandboxRuntimeMetricUnitSeconds,
+		SandboxRuntimeMetricUnitBytes,
+		SandboxRuntimeMetricUnitCount,
+		SandboxRuntimeMetricUnitBytesPerSecond,
+		SandboxRuntimeMetricUnitCountPerSecond,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRuntimeMetricUnit) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRuntimeMetricUnitRatio:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitCores:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitSeconds:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitBytes:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitCount:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitBytesPerSecond:
+		return []byte(s), nil
+	case SandboxRuntimeMetricUnitCountPerSecond:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRuntimeMetricUnit) UnmarshalText(data []byte) error {
+	switch SandboxRuntimeMetricUnit(data) {
+	case SandboxRuntimeMetricUnitRatio:
+		*s = SandboxRuntimeMetricUnitRatio
+		return nil
+	case SandboxRuntimeMetricUnitCores:
+		*s = SandboxRuntimeMetricUnitCores
+		return nil
+	case SandboxRuntimeMetricUnitSeconds:
+		*s = SandboxRuntimeMetricUnitSeconds
+		return nil
+	case SandboxRuntimeMetricUnitBytes:
+		*s = SandboxRuntimeMetricUnitBytes
+		return nil
+	case SandboxRuntimeMetricUnitCount:
+		*s = SandboxRuntimeMetricUnitCount
+		return nil
+	case SandboxRuntimeMetricUnitBytesPerSecond:
+		*s = SandboxRuntimeMetricUnitBytesPerSecond
+		return nil
+	case SandboxRuntimeMetricUnitCountPerSecond:
+		*s = SandboxRuntimeMetricUnitCountPerSecond
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricsCatalogResponse
+type SandboxRuntimeMetricsCatalogResponse struct {
+	Metrics []SandboxRuntimeMetricDescriptor `json:"metrics"`
+}
+
+// GetMetrics returns the value of Metrics.
+func (s *SandboxRuntimeMetricsCatalogResponse) GetMetrics() []SandboxRuntimeMetricDescriptor {
+	return s.Metrics
+}
+
+// SetMetrics sets the value of Metrics.
+func (s *SandboxRuntimeMetricsCatalogResponse) SetMetrics(val []SandboxRuntimeMetricDescriptor) {
+	s.Metrics = val
+}
+
+// Ref: #/components/schemas/SandboxRuntimeMetricsResponse
+type SandboxRuntimeMetricsResponse struct {
+	StartTime   time.Time                     `json:"start_time"`
+	EndTime     time.Time                     `json:"end_time"`
+	StepSeconds int64                         `json:"step_seconds"`
+	Series      []SandboxRuntimeMetricSeries  `json:"series"`
+	Freshness   SandboxRuntimeMetricFreshness `json:"freshness"`
+	Gaps        []SandboxRuntimeMetricGap     `json:"gaps"`
+	Partial     bool                          `json:"partial"`
+}
+
+// GetStartTime returns the value of StartTime.
+func (s *SandboxRuntimeMetricsResponse) GetStartTime() time.Time {
+	return s.StartTime
+}
+
+// GetEndTime returns the value of EndTime.
+func (s *SandboxRuntimeMetricsResponse) GetEndTime() time.Time {
+	return s.EndTime
+}
+
+// GetStepSeconds returns the value of StepSeconds.
+func (s *SandboxRuntimeMetricsResponse) GetStepSeconds() int64 {
+	return s.StepSeconds
+}
+
+// GetSeries returns the value of Series.
+func (s *SandboxRuntimeMetricsResponse) GetSeries() []SandboxRuntimeMetricSeries {
+	return s.Series
+}
+
+// GetFreshness returns the value of Freshness.
+func (s *SandboxRuntimeMetricsResponse) GetFreshness() SandboxRuntimeMetricFreshness {
+	return s.Freshness
+}
+
+// GetGaps returns the value of Gaps.
+func (s *SandboxRuntimeMetricsResponse) GetGaps() []SandboxRuntimeMetricGap {
+	return s.Gaps
+}
+
+// GetPartial returns the value of Partial.
+func (s *SandboxRuntimeMetricsResponse) GetPartial() bool {
+	return s.Partial
+}
+
+// SetStartTime sets the value of StartTime.
+func (s *SandboxRuntimeMetricsResponse) SetStartTime(val time.Time) {
+	s.StartTime = val
+}
+
+// SetEndTime sets the value of EndTime.
+func (s *SandboxRuntimeMetricsResponse) SetEndTime(val time.Time) {
+	s.EndTime = val
+}
+
+// SetStepSeconds sets the value of StepSeconds.
+func (s *SandboxRuntimeMetricsResponse) SetStepSeconds(val int64) {
+	s.StepSeconds = val
+}
+
+// SetSeries sets the value of Series.
+func (s *SandboxRuntimeMetricsResponse) SetSeries(val []SandboxRuntimeMetricSeries) {
+	s.Series = val
+}
+
+// SetFreshness sets the value of Freshness.
+func (s *SandboxRuntimeMetricsResponse) SetFreshness(val SandboxRuntimeMetricFreshness) {
+	s.Freshness = val
+}
+
+// SetGaps sets the value of Gaps.
+func (s *SandboxRuntimeMetricsResponse) SetGaps(val []SandboxRuntimeMetricGap) {
+	s.Gaps = val
+}
+
+// SetPartial sets the value of Partial.
+func (s *SandboxRuntimeMetricsResponse) SetPartial(val bool) {
+	s.Partial = val
 }
 
 // Ref: #/components/schemas/SandboxSSHConnection
@@ -17155,6 +20185,61 @@ func (SuccessAPIKeyListResponseSuccess) AllValues() []SuccessAPIKeyListResponseS
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessAcceptedResponse
+type SuccessAcceptedResponse struct {
+	Success SuccessAcceptedResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessAcceptedResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessAcceptedResponse) GetSuccess() SuccessAcceptedResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessAcceptedResponse) GetData() OptSuccessAcceptedResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessAcceptedResponse) SetSuccess(val SuccessAcceptedResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessAcceptedResponse) SetData(val OptSuccessAcceptedResponseData) {
+	s.Data = val
+}
+
+type SuccessAcceptedResponseData struct {
+	Accepted bool `json:"accepted"`
+}
+
+// GetAccepted returns the value of Accepted.
+func (s *SuccessAcceptedResponseData) GetAccepted() bool {
+	return s.Accepted
+}
+
+// SetAccepted sets the value of Accepted.
+func (s *SuccessAcceptedResponseData) SetAccepted(val bool) {
+	s.Accepted = val
+}
+
+type SuccessAcceptedResponseSuccess bool
+
+const (
+	SuccessAcceptedResponseSuccessTrue SuccessAcceptedResponseSuccess = true
+)
+
+// AllValues returns all SuccessAcceptedResponseSuccess values.
+func (SuccessAcceptedResponseSuccess) AllValues() []SuccessAcceptedResponseSuccess {
+	return []SuccessAcceptedResponseSuccess{
+		SuccessAcceptedResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessAuthProvidersResponse
 type SuccessAuthProvidersResponse struct {
 	Success SuccessAuthProvidersResponseSuccess `json:"success"`
@@ -17776,6 +20861,186 @@ const (
 func (SuccessDeviceLoginStartResponseSuccess) AllValues() []SuccessDeviceLoginStartResponseSuccess {
 	return []SuccessDeviceLoginStartResponseSuccess{
 		SuccessDeviceLoginStartResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessExecutionSessionEventPageResponse
+type SuccessExecutionSessionEventPageResponse struct {
+	Success SuccessExecutionSessionEventPageResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptExecutionSessionEventPage `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessExecutionSessionEventPageResponse) GetSuccess() SuccessExecutionSessionEventPageResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessExecutionSessionEventPageResponse) GetData() OptExecutionSessionEventPage {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessExecutionSessionEventPageResponse) SetSuccess(val SuccessExecutionSessionEventPageResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessExecutionSessionEventPageResponse) SetData(val OptExecutionSessionEventPage) {
+	s.Data = val
+}
+
+func (*SuccessExecutionSessionEventPageResponse) aPIV1SandboxesIDSessionsSessionIDEventsGetRes() {}
+
+type SuccessExecutionSessionEventPageResponseSuccess bool
+
+const (
+	SuccessExecutionSessionEventPageResponseSuccessTrue SuccessExecutionSessionEventPageResponseSuccess = true
+)
+
+// AllValues returns all SuccessExecutionSessionEventPageResponseSuccess values.
+func (SuccessExecutionSessionEventPageResponseSuccess) AllValues() []SuccessExecutionSessionEventPageResponseSuccess {
+	return []SuccessExecutionSessionEventPageResponseSuccess{
+		SuccessExecutionSessionEventPageResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessExecutionSessionInputResponse
+type SuccessExecutionSessionInputResponse struct {
+	Success SuccessExecutionSessionInputResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptExecutionSessionInputResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessExecutionSessionInputResponse) GetSuccess() SuccessExecutionSessionInputResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessExecutionSessionInputResponse) GetData() OptExecutionSessionInputResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessExecutionSessionInputResponse) SetSuccess(val SuccessExecutionSessionInputResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessExecutionSessionInputResponse) SetData(val OptExecutionSessionInputResponse) {
+	s.Data = val
+}
+
+type SuccessExecutionSessionInputResponseSuccess bool
+
+const (
+	SuccessExecutionSessionInputResponseSuccessTrue SuccessExecutionSessionInputResponseSuccess = true
+)
+
+// AllValues returns all SuccessExecutionSessionInputResponseSuccess values.
+func (SuccessExecutionSessionInputResponseSuccess) AllValues() []SuccessExecutionSessionInputResponseSuccess {
+	return []SuccessExecutionSessionInputResponseSuccess{
+		SuccessExecutionSessionInputResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessExecutionSessionListResponse
+type SuccessExecutionSessionListResponse struct {
+	Success SuccessExecutionSessionListResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSuccessExecutionSessionListResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessExecutionSessionListResponse) GetSuccess() SuccessExecutionSessionListResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessExecutionSessionListResponse) GetData() OptSuccessExecutionSessionListResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessExecutionSessionListResponse) SetSuccess(val SuccessExecutionSessionListResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessExecutionSessionListResponse) SetData(val OptSuccessExecutionSessionListResponseData) {
+	s.Data = val
+}
+
+type SuccessExecutionSessionListResponseData struct {
+	Sessions []ExecutionSession `json:"sessions"`
+}
+
+// GetSessions returns the value of Sessions.
+func (s *SuccessExecutionSessionListResponseData) GetSessions() []ExecutionSession {
+	return s.Sessions
+}
+
+// SetSessions sets the value of Sessions.
+func (s *SuccessExecutionSessionListResponseData) SetSessions(val []ExecutionSession) {
+	s.Sessions = val
+}
+
+type SuccessExecutionSessionListResponseSuccess bool
+
+const (
+	SuccessExecutionSessionListResponseSuccessTrue SuccessExecutionSessionListResponseSuccess = true
+)
+
+// AllValues returns all SuccessExecutionSessionListResponseSuccess values.
+func (SuccessExecutionSessionListResponseSuccess) AllValues() []SuccessExecutionSessionListResponseSuccess {
+	return []SuccessExecutionSessionListResponseSuccess{
+		SuccessExecutionSessionListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessExecutionSessionResponse
+type SuccessExecutionSessionResponse struct {
+	Success SuccessExecutionSessionResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptExecutionSession `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessExecutionSessionResponse) GetSuccess() SuccessExecutionSessionResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessExecutionSessionResponse) GetData() OptExecutionSession {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessExecutionSessionResponse) SetSuccess(val SuccessExecutionSessionResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessExecutionSessionResponse) SetData(val OptExecutionSession) {
+	s.Data = val
+}
+
+type SuccessExecutionSessionResponseSuccess bool
+
+const (
+	SuccessExecutionSessionResponseSuccessTrue SuccessExecutionSessionResponseSuccess = true
+)
+
+// AllValues returns all SuccessExecutionSessionResponseSuccess values.
+func (SuccessExecutionSessionResponseSuccess) AllValues() []SuccessExecutionSessionResponseSuccess {
+	return []SuccessExecutionSessionResponseSuccess{
+		SuccessExecutionSessionResponseSuccessTrue,
 	}
 }
 
@@ -18991,49 +22256,6 @@ func (SuccessSandboxObservabilityLogsResponseSuccess) AllValues() []SuccessSandb
 }
 
 // Merged schema.
-// Ref: #/components/schemas/SuccessSandboxObservabilityMetricsResponse
-type SuccessSandboxObservabilityMetricsResponse struct {
-	Success SuccessSandboxObservabilityMetricsResponseSuccess `json:"success"`
-	// Merged property.
-	Data OptSandboxObservabilityMetricsResponse `json:"data"`
-}
-
-// GetSuccess returns the value of Success.
-func (s *SuccessSandboxObservabilityMetricsResponse) GetSuccess() SuccessSandboxObservabilityMetricsResponseSuccess {
-	return s.Success
-}
-
-// GetData returns the value of Data.
-func (s *SuccessSandboxObservabilityMetricsResponse) GetData() OptSandboxObservabilityMetricsResponse {
-	return s.Data
-}
-
-// SetSuccess sets the value of Success.
-func (s *SuccessSandboxObservabilityMetricsResponse) SetSuccess(val SuccessSandboxObservabilityMetricsResponseSuccess) {
-	s.Success = val
-}
-
-// SetData sets the value of Data.
-func (s *SuccessSandboxObservabilityMetricsResponse) SetData(val OptSandboxObservabilityMetricsResponse) {
-	s.Data = val
-}
-
-func (*SuccessSandboxObservabilityMetricsResponse) aPIV1SandboxesIDObservabilityMetricsGetRes() {}
-
-type SuccessSandboxObservabilityMetricsResponseSuccess bool
-
-const (
-	SuccessSandboxObservabilityMetricsResponseSuccessTrue SuccessSandboxObservabilityMetricsResponseSuccess = true
-)
-
-// AllValues returns all SuccessSandboxObservabilityMetricsResponseSuccess values.
-func (SuccessSandboxObservabilityMetricsResponseSuccess) AllValues() []SuccessSandboxObservabilityMetricsResponseSuccess {
-	return []SuccessSandboxObservabilityMetricsResponseSuccess{
-		SuccessSandboxObservabilityMetricsResponseSuccessTrue,
-	}
-}
-
-// Merged schema.
 // Ref: #/components/schemas/SuccessSandboxResponse
 type SuccessSandboxResponse struct {
 	Success SuccessSandboxResponseSuccess `json:"success"`
@@ -19161,6 +22383,92 @@ const (
 func (SuccessSandboxRootFSSnapshotResponseSuccess) AllValues() []SuccessSandboxRootFSSnapshotResponseSuccess {
 	return []SuccessSandboxRootFSSnapshotResponseSuccess{
 		SuccessSandboxRootFSSnapshotResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRuntimeMetricsCatalogResponse
+type SuccessSandboxRuntimeMetricsCatalogResponse struct {
+	Success SuccessSandboxRuntimeMetricsCatalogResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxRuntimeMetricsCatalogResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) GetSuccess() SuccessSandboxRuntimeMetricsCatalogResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) GetData() OptSandboxRuntimeMetricsCatalogResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) SetSuccess(val SuccessSandboxRuntimeMetricsCatalogResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) SetData(val OptSandboxRuntimeMetricsCatalogResponse) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRuntimeMetricsCatalogResponse) getSandboxRuntimeMetricsCatalogRes() {}
+
+type SuccessSandboxRuntimeMetricsCatalogResponseSuccess bool
+
+const (
+	SuccessSandboxRuntimeMetricsCatalogResponseSuccessTrue SuccessSandboxRuntimeMetricsCatalogResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRuntimeMetricsCatalogResponseSuccess values.
+func (SuccessSandboxRuntimeMetricsCatalogResponseSuccess) AllValues() []SuccessSandboxRuntimeMetricsCatalogResponseSuccess {
+	return []SuccessSandboxRuntimeMetricsCatalogResponseSuccess{
+		SuccessSandboxRuntimeMetricsCatalogResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRuntimeMetricsResponse
+type SuccessSandboxRuntimeMetricsResponse struct {
+	Success SuccessSandboxRuntimeMetricsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxRuntimeMetricsResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRuntimeMetricsResponse) GetSuccess() SuccessSandboxRuntimeMetricsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRuntimeMetricsResponse) GetData() OptSandboxRuntimeMetricsResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRuntimeMetricsResponse) SetSuccess(val SuccessSandboxRuntimeMetricsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRuntimeMetricsResponse) SetData(val OptSandboxRuntimeMetricsResponse) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRuntimeMetricsResponse) getSandboxRuntimeMetricsRes() {}
+
+type SuccessSandboxRuntimeMetricsResponseSuccess bool
+
+const (
+	SuccessSandboxRuntimeMetricsResponseSuccessTrue SuccessSandboxRuntimeMetricsResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRuntimeMetricsResponseSuccess values.
+func (SuccessSandboxRuntimeMetricsResponseSuccess) AllValues() []SuccessSandboxRuntimeMetricsResponseSuccess {
+	return []SuccessSandboxRuntimeMetricsResponseSuccess{
+		SuccessSandboxRuntimeMetricsResponseSuccessTrue,
 	}
 }
 
