@@ -333,9 +333,10 @@ type Invoker interface {
 	APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
 	// APIV1SandboxesIDObservabilityEventsGet invokes GET /api/v1/sandboxes/{id}/observability/events operation.
 	//
-	// Queries the asynchronous per-sandbox observability projection for lifecycle,
-	// network audit, and runtime stats events. This endpoint does not expose backend SQL
-	// and reads tables that are separate from the metering usage ledger.
+	// Queries canonical signed per-sandbox audit facts from ClickHouse. Every returned
+	// event includes an inline signature verification status, while event-ID payload
+	// conflicts are reported independently. Access requires the enterprise sandbox_audit
+	// feature and the sandboxaudit:read permission.
 	//
 	// GET /api/v1/sandboxes/{id}/observability/events
 	APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error)
@@ -5439,9 +5440,10 @@ func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *Sa
 
 // APIV1SandboxesIDObservabilityEventsGet invokes GET /api/v1/sandboxes/{id}/observability/events operation.
 //
-// Queries the asynchronous per-sandbox observability projection for lifecycle,
-// network audit, and runtime stats events. This endpoint does not expose backend SQL
-// and reads tables that are separate from the metering usage ledger.
+// Queries canonical signed per-sandbox audit facts from ClickHouse. Every returned
+// event includes an inline signature verification status, while event-ID payload
+// conflicts are reported independently. Access requires the enterprise sandbox_audit
+// feature and the sandboxaudit:read permission.
 //
 // GET /api/v1/sandboxes/{id}/observability/events
 func (c *Client) APIV1SandboxesIDObservabilityEventsGet(ctx context.Context, params APIV1SandboxesIDObservabilityEventsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityEventsGetRes, error) {
@@ -5616,6 +5618,108 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityEventsGet(ctx context.Context,
 		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
 			if val, ok := params.Outcome.Get(); ok {
 				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "actor_kind" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "actor_kind",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ActorKind.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "actor_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "actor_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ActorID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "action" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "action",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Action.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "resource_type" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "resource_type",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ResourceType.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "operation_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "operation_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.OperationID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "event_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "event_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.EventID.Get(); ok {
+				return e.EncodeValue(conv.UUIDToString(val))
 			}
 			return nil
 		}); err != nil {

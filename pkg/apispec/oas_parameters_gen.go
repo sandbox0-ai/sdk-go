@@ -188,7 +188,8 @@ type APIV1SandboxesIDObservabilityEventsGetParams struct {
 	StartTime OptDateTime `json:",omitempty,omitzero"`
 	// Include events that occurred at or before this RFC3339 timestamp.
 	EndTime OptDateTime `json:",omitempty,omitzero"`
-	// Maximum number of events to return. Values above 1000 are capped.
+	// Maximum number of events to return. Values above 1000 are capped. Exact event_id mode ignores this
+	// value and returns at most two payload variants.
 	Limit OptInt `json:",omitempty,omitzero"`
 	// Opaque pagination cursor returned by a previous response. When watch is true, this must be a watch
 	// resume cursor from an NDJSON watermark line.
@@ -196,10 +197,18 @@ type APIV1SandboxesIDObservabilityEventsGetParams struct {
 	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
 	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
 	// request time.
-	Watch     OptBool                          `json:",omitempty,omitzero"`
-	Source    OptObservabilityEventSource      `json:",omitempty,omitzero"`
-	EventType OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
-	Outcome   OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
+	Watch        OptBool                          `json:",omitempty,omitzero"`
+	Source       OptObservabilityEventSource      `json:",omitempty,omitzero"`
+	EventType    OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
+	Outcome      OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
+	ActorKind    OptSandboxAuditActorKind         `json:",omitempty,omitzero"`
+	ActorID      OptString                        `json:",omitempty,omitzero"`
+	Action       OptString                        `json:",omitempty,omitzero"`
+	ResourceType OptString                        `json:",omitempty,omitzero"`
+	OperationID  OptString                        `json:",omitempty,omitzero"`
+	// Exact lookup mode for one stable audit event ID. It cannot be combined with time, cursor, watch,
+	// or other event filters and returns one canonical row or two conflicting payload variants.
+	EventID OptUUID `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDObservabilityLogsGetParams is parameters of GET /api/v1/sandboxes/{id}/observability/logs operation.

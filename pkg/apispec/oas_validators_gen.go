@@ -3057,11 +3057,17 @@ func (s *NetworkEgressPolicy) Validate() error {
 
 func (s ObservabilityEventSource) Validate() error {
 	switch s {
+	case "cluster_gateway":
+		return nil
 	case "manager":
 		return nil
 	case "netd":
 		return nil
 	case "procd":
+		return nil
+	case "ctld":
+		return nil
+	case "storage_proxy":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
@@ -3931,6 +3937,245 @@ func (s *SandboxAppServiceView) Validate() error {
 	return nil
 }
 
+func (s *SandboxAuditActor) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Kind.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "kind",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SandboxAuditActorKind) Validate() error {
+	switch s {
+	case "human":
+		return nil
+	case "api_key":
+		return nil
+	case "service":
+		return nil
+	case "sandbox_workload":
+		return nil
+	case "ssh_user":
+		return nil
+	case "exposure_credential":
+		return nil
+	case "anonymous":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s SandboxAuditEventPhase) Validate() error {
+	switch s {
+	case "attempt":
+		return nil
+	case "result":
+		return nil
+	case "effect":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SandboxAuditIntegrity) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Algorithm.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "algorithm",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.String{
+			MinLength:     0,
+			MinLengthSet:  false,
+			MaxLength:     0,
+			MaxLengthSet:  false,
+			Email:         false,
+			Hostname:      false,
+			Regex:         regexMap["^[0-9a-f]{64}$"],
+			MinNumeric:    0,
+			MinNumericSet: false,
+			MaxNumeric:    0,
+			MaxNumericSet: false,
+		}).Validate(string(s.PayloadHash)); err != nil {
+			return errors.Wrap(err, "string")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "payload_hash",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.String{
+			MinLength:     0,
+			MinLengthSet:  false,
+			MaxLength:     0,
+			MaxLengthSet:  false,
+			Email:         false,
+			Hostname:      false,
+			Regex:         regexMap["^[0-9a-f]{64}$"],
+			MinNumeric:    0,
+			MinNumericSet: false,
+			MaxNumeric:    0,
+			MaxNumericSet: false,
+		}).Validate(string(s.SigningKeyID)); err != nil {
+			return errors.Wrap(err, "string")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "signing_key_id",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.SignatureStatus.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "signature_status",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SandboxAuditIntegrityAlgorithm) Validate() error {
+	switch s {
+	case "ed25519-sha256-v1":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s SandboxAuditIntegritySignatureStatus) Validate() error {
+	switch s {
+	case "verified":
+		return nil
+	case "invalid":
+		return nil
+	case "unavailable":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SandboxAuditProducer) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Sequence.Get(); ok {
+			if err := func() error {
+				if err := (validate.Int{
+					MinSet:        true,
+					Min:           0,
+					MaxSet:        false,
+					Max:           0,
+					MinExclusive:  false,
+					MaxExclusive:  false,
+					MultipleOfSet: false,
+					MultipleOf:    0,
+					Pattern:       nil,
+				}).Validate(int64(value)); err != nil {
+					return errors.Wrap(err, "int")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "sequence",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *SandboxAuditRequest) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.StatusCode.Get(); ok {
+			if err := func() error {
+				if err := (validate.Int{
+					MinSet:        true,
+					Min:           0,
+					MaxSet:        true,
+					Max:           65535,
+					MinExclusive:  false,
+					MaxExclusive:  false,
+					MultipleOfSet: false,
+					MultipleOf:    0,
+					Pattern:       nil,
+				}).Validate(int64(value)); err != nil {
+					return errors.Wrap(err, "int")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "status_code",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *SandboxConfig) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -4190,6 +4435,17 @@ func (s *SandboxObservabilityEvent) Validate() error {
 
 	var failures []validate.FieldError
 	if err := func() error {
+		if err := s.SchemaVersion.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "schema_version",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if err := s.Source.Validate(); err != nil {
 			return err
 		}
@@ -4212,7 +4468,51 @@ func (s *SandboxObservabilityEvent) Validate() error {
 		})
 	}
 	if err := func() error {
-		if value, ok := s.Outcome.Get(); ok {
+		if err := s.Phase.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "phase",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Outcome.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "outcome",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Actor.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "actor",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Producer.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "producer",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Request.Get(); ok {
 			if err := func() error {
 				if err := value.Validate(); err != nil {
 					return err
@@ -4225,7 +4525,18 @@ func (s *SandboxObservabilityEvent) Validate() error {
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "outcome",
+			Name:  "request",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Integrity.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "integrity",
 			Error: err,
 		})
 	}
@@ -4235,6 +4546,15 @@ func (s *SandboxObservabilityEvent) Validate() error {
 	return nil
 }
 
+func (s SandboxObservabilityEventSchemaVersion) Validate() error {
+	switch s {
+	case 2:
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s SandboxObservabilityEventType) Validate() error {
 	switch s {
 	case "lifecycle":
@@ -4242,6 +4562,12 @@ func (s SandboxObservabilityEventType) Validate() error {
 	case "network_audit":
 		return nil
 	case "runtime_stats":
+		return nil
+	case "api_access":
+		return nil
+	case "process":
+		return nil
+	case "file":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
@@ -4382,6 +4708,10 @@ func (s SandboxObservabilityOutcome) Validate() error {
 	case "succeeded":
 		return nil
 	case "failed":
+		return nil
+	case "accepted":
+		return nil
+	case "unknown":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)

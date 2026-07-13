@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
+	"github.com/google/uuid"
 )
 
 // Ref: #/components/schemas/APIKey
@@ -6077,28 +6078,40 @@ func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
 type ObservabilityEventSource string
 
 const (
-	ObservabilityEventSourceManager ObservabilityEventSource = "manager"
-	ObservabilityEventSourceNetd    ObservabilityEventSource = "netd"
-	ObservabilityEventSourceProcd   ObservabilityEventSource = "procd"
+	ObservabilityEventSourceClusterGateway ObservabilityEventSource = "cluster_gateway"
+	ObservabilityEventSourceManager        ObservabilityEventSource = "manager"
+	ObservabilityEventSourceNetd           ObservabilityEventSource = "netd"
+	ObservabilityEventSourceProcd          ObservabilityEventSource = "procd"
+	ObservabilityEventSourceCtld           ObservabilityEventSource = "ctld"
+	ObservabilityEventSourceStorageProxy   ObservabilityEventSource = "storage_proxy"
 )
 
 // AllValues returns all ObservabilityEventSource values.
 func (ObservabilityEventSource) AllValues() []ObservabilityEventSource {
 	return []ObservabilityEventSource{
+		ObservabilityEventSourceClusterGateway,
 		ObservabilityEventSourceManager,
 		ObservabilityEventSourceNetd,
 		ObservabilityEventSourceProcd,
+		ObservabilityEventSourceCtld,
+		ObservabilityEventSourceStorageProxy,
 	}
 }
 
 // MarshalText implements encoding.TextMarshaler.
 func (s ObservabilityEventSource) MarshalText() ([]byte, error) {
 	switch s {
+	case ObservabilityEventSourceClusterGateway:
+		return []byte(s), nil
 	case ObservabilityEventSourceManager:
 		return []byte(s), nil
 	case ObservabilityEventSourceNetd:
 		return []byte(s), nil
 	case ObservabilityEventSourceProcd:
+		return []byte(s), nil
+	case ObservabilityEventSourceCtld:
+		return []byte(s), nil
+	case ObservabilityEventSourceStorageProxy:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -6108,6 +6121,9 @@ func (s ObservabilityEventSource) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
 	switch ObservabilityEventSource(data) {
+	case ObservabilityEventSourceClusterGateway:
+		*s = ObservabilityEventSourceClusterGateway
+		return nil
 	case ObservabilityEventSourceManager:
 		*s = ObservabilityEventSourceManager
 		return nil
@@ -6116,6 +6132,12 @@ func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
 		return nil
 	case ObservabilityEventSourceProcd:
 		*s = ObservabilityEventSourceProcd
+		return nil
+	case ObservabilityEventSourceCtld:
+		*s = ObservabilityEventSourceCtld
+		return nil
+	case ObservabilityEventSourceStorageProxy:
+		*s = ObservabilityEventSourceStorageProxy
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -10911,6 +10933,98 @@ func (o OptSandboxAppServiceRuntimeEnvVars) Or(d SandboxAppServiceRuntimeEnvVars
 	return d
 }
 
+// NewOptSandboxAuditActorKind returns new OptSandboxAuditActorKind with value set to v.
+func NewOptSandboxAuditActorKind(v SandboxAuditActorKind) OptSandboxAuditActorKind {
+	return OptSandboxAuditActorKind{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxAuditActorKind is optional SandboxAuditActorKind.
+type OptSandboxAuditActorKind struct {
+	Value SandboxAuditActorKind
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxAuditActorKind was set.
+func (o OptSandboxAuditActorKind) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxAuditActorKind) Reset() {
+	var v SandboxAuditActorKind
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxAuditActorKind) SetTo(v SandboxAuditActorKind) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxAuditActorKind) Get() (v SandboxAuditActorKind, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxAuditActorKind) Or(d SandboxAuditActorKind) SandboxAuditActorKind {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxAuditRequest returns new OptSandboxAuditRequest with value set to v.
+func NewOptSandboxAuditRequest(v SandboxAuditRequest) OptSandboxAuditRequest {
+	return OptSandboxAuditRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxAuditRequest is optional SandboxAuditRequest.
+type OptSandboxAuditRequest struct {
+	Value SandboxAuditRequest
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxAuditRequest was set.
+func (o OptSandboxAuditRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxAuditRequest) Reset() {
+	var v SandboxAuditRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxAuditRequest) SetTo(v SandboxAuditRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxAuditRequest) Get() (v SandboxAuditRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxAuditRequest) Or(d SandboxAuditRequest) SandboxAuditRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxConfig returns new OptSandboxConfig with value set to v.
 func NewOptSandboxConfig(v SandboxConfig) OptSandboxConfig {
 	return OptSandboxConfig{
@@ -14039,6 +14153,52 @@ func (o OptTemplate) Or(d Template) Template {
 	return d
 }
 
+// NewOptUUID returns new OptUUID with value set to v.
+func NewOptUUID(v uuid.UUID) OptUUID {
+	return OptUUID{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUUID is optional uuid.UUID.
+type OptUUID struct {
+	Value uuid.UUID
+	Set   bool
+}
+
+// IsSet returns true if OptUUID was set.
+func (o OptUUID) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUUID) Reset() {
+	var v uuid.UUID
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUUID) SetTo(v uuid.UUID) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUUID) Get() (v uuid.UUID, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUUID) Or(d uuid.UUID) uuid.UUID {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptUser returns new OptUser with value set to v.
 func NewOptUser(v User) OptUser {
 	return OptUser{
@@ -16842,6 +17002,499 @@ func (s *SandboxAppServiceView) SetPublicURL(val OptString) {
 	s.PublicURL = val
 }
 
+// Ref: #/components/schemas/SandboxAuditActor
+type SandboxAuditActor struct {
+	Kind       SandboxAuditActorKind `json:"kind"`
+	ID         OptString             `json:"id"`
+	UserID     OptString             `json:"user_id"`
+	APIKeyID   OptString             `json:"api_key_id"`
+	AuthMethod OptString             `json:"auth_method"`
+}
+
+// GetKind returns the value of Kind.
+func (s *SandboxAuditActor) GetKind() SandboxAuditActorKind {
+	return s.Kind
+}
+
+// GetID returns the value of ID.
+func (s *SandboxAuditActor) GetID() OptString {
+	return s.ID
+}
+
+// GetUserID returns the value of UserID.
+func (s *SandboxAuditActor) GetUserID() OptString {
+	return s.UserID
+}
+
+// GetAPIKeyID returns the value of APIKeyID.
+func (s *SandboxAuditActor) GetAPIKeyID() OptString {
+	return s.APIKeyID
+}
+
+// GetAuthMethod returns the value of AuthMethod.
+func (s *SandboxAuditActor) GetAuthMethod() OptString {
+	return s.AuthMethod
+}
+
+// SetKind sets the value of Kind.
+func (s *SandboxAuditActor) SetKind(val SandboxAuditActorKind) {
+	s.Kind = val
+}
+
+// SetID sets the value of ID.
+func (s *SandboxAuditActor) SetID(val OptString) {
+	s.ID = val
+}
+
+// SetUserID sets the value of UserID.
+func (s *SandboxAuditActor) SetUserID(val OptString) {
+	s.UserID = val
+}
+
+// SetAPIKeyID sets the value of APIKeyID.
+func (s *SandboxAuditActor) SetAPIKeyID(val OptString) {
+	s.APIKeyID = val
+}
+
+// SetAuthMethod sets the value of AuthMethod.
+func (s *SandboxAuditActor) SetAuthMethod(val OptString) {
+	s.AuthMethod = val
+}
+
+// Ref: #/components/schemas/SandboxAuditActorKind
+type SandboxAuditActorKind string
+
+const (
+	SandboxAuditActorKindHuman              SandboxAuditActorKind = "human"
+	SandboxAuditActorKindAPIKey             SandboxAuditActorKind = "api_key"
+	SandboxAuditActorKindService            SandboxAuditActorKind = "service"
+	SandboxAuditActorKindSandboxWorkload    SandboxAuditActorKind = "sandbox_workload"
+	SandboxAuditActorKindSSHUser            SandboxAuditActorKind = "ssh_user"
+	SandboxAuditActorKindExposureCredential SandboxAuditActorKind = "exposure_credential"
+	SandboxAuditActorKindAnonymous          SandboxAuditActorKind = "anonymous"
+)
+
+// AllValues returns all SandboxAuditActorKind values.
+func (SandboxAuditActorKind) AllValues() []SandboxAuditActorKind {
+	return []SandboxAuditActorKind{
+		SandboxAuditActorKindHuman,
+		SandboxAuditActorKindAPIKey,
+		SandboxAuditActorKindService,
+		SandboxAuditActorKindSandboxWorkload,
+		SandboxAuditActorKindSSHUser,
+		SandboxAuditActorKindExposureCredential,
+		SandboxAuditActorKindAnonymous,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxAuditActorKind) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxAuditActorKindHuman:
+		return []byte(s), nil
+	case SandboxAuditActorKindAPIKey:
+		return []byte(s), nil
+	case SandboxAuditActorKindService:
+		return []byte(s), nil
+	case SandboxAuditActorKindSandboxWorkload:
+		return []byte(s), nil
+	case SandboxAuditActorKindSSHUser:
+		return []byte(s), nil
+	case SandboxAuditActorKindExposureCredential:
+		return []byte(s), nil
+	case SandboxAuditActorKindAnonymous:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxAuditActorKind) UnmarshalText(data []byte) error {
+	switch SandboxAuditActorKind(data) {
+	case SandboxAuditActorKindHuman:
+		*s = SandboxAuditActorKindHuman
+		return nil
+	case SandboxAuditActorKindAPIKey:
+		*s = SandboxAuditActorKindAPIKey
+		return nil
+	case SandboxAuditActorKindService:
+		*s = SandboxAuditActorKindService
+		return nil
+	case SandboxAuditActorKindSandboxWorkload:
+		*s = SandboxAuditActorKindSandboxWorkload
+		return nil
+	case SandboxAuditActorKindSSHUser:
+		*s = SandboxAuditActorKindSSHUser
+		return nil
+	case SandboxAuditActorKindExposureCredential:
+		*s = SandboxAuditActorKindExposureCredential
+		return nil
+	case SandboxAuditActorKindAnonymous:
+		*s = SandboxAuditActorKindAnonymous
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxAuditEventPhase
+type SandboxAuditEventPhase string
+
+const (
+	SandboxAuditEventPhaseAttempt SandboxAuditEventPhase = "attempt"
+	SandboxAuditEventPhaseResult  SandboxAuditEventPhase = "result"
+	SandboxAuditEventPhaseEffect  SandboxAuditEventPhase = "effect"
+)
+
+// AllValues returns all SandboxAuditEventPhase values.
+func (SandboxAuditEventPhase) AllValues() []SandboxAuditEventPhase {
+	return []SandboxAuditEventPhase{
+		SandboxAuditEventPhaseAttempt,
+		SandboxAuditEventPhaseResult,
+		SandboxAuditEventPhaseEffect,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxAuditEventPhase) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxAuditEventPhaseAttempt:
+		return []byte(s), nil
+	case SandboxAuditEventPhaseResult:
+		return []byte(s), nil
+	case SandboxAuditEventPhaseEffect:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxAuditEventPhase) UnmarshalText(data []byte) error {
+	switch SandboxAuditEventPhase(data) {
+	case SandboxAuditEventPhaseAttempt:
+		*s = SandboxAuditEventPhaseAttempt
+		return nil
+	case SandboxAuditEventPhaseResult:
+		*s = SandboxAuditEventPhaseResult
+		return nil
+	case SandboxAuditEventPhaseEffect:
+		*s = SandboxAuditEventPhaseEffect
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxAuditIntegrity
+type SandboxAuditIntegrity struct {
+	Algorithm       SandboxAuditIntegrityAlgorithm       `json:"algorithm"`
+	PayloadHash     string                               `json:"payload_hash"`
+	Signature       string                               `json:"signature"`
+	SigningKeyID    string                               `json:"signing_key_id"`
+	SignatureStatus SandboxAuditIntegritySignatureStatus `json:"signature_status"`
+	// True when the query observed the same event ID with a different canonical payload hash.
+	EventIDConflict OptBool `json:"event_id_conflict"`
+}
+
+// GetAlgorithm returns the value of Algorithm.
+func (s *SandboxAuditIntegrity) GetAlgorithm() SandboxAuditIntegrityAlgorithm {
+	return s.Algorithm
+}
+
+// GetPayloadHash returns the value of PayloadHash.
+func (s *SandboxAuditIntegrity) GetPayloadHash() string {
+	return s.PayloadHash
+}
+
+// GetSignature returns the value of Signature.
+func (s *SandboxAuditIntegrity) GetSignature() string {
+	return s.Signature
+}
+
+// GetSigningKeyID returns the value of SigningKeyID.
+func (s *SandboxAuditIntegrity) GetSigningKeyID() string {
+	return s.SigningKeyID
+}
+
+// GetSignatureStatus returns the value of SignatureStatus.
+func (s *SandboxAuditIntegrity) GetSignatureStatus() SandboxAuditIntegritySignatureStatus {
+	return s.SignatureStatus
+}
+
+// GetEventIDConflict returns the value of EventIDConflict.
+func (s *SandboxAuditIntegrity) GetEventIDConflict() OptBool {
+	return s.EventIDConflict
+}
+
+// SetAlgorithm sets the value of Algorithm.
+func (s *SandboxAuditIntegrity) SetAlgorithm(val SandboxAuditIntegrityAlgorithm) {
+	s.Algorithm = val
+}
+
+// SetPayloadHash sets the value of PayloadHash.
+func (s *SandboxAuditIntegrity) SetPayloadHash(val string) {
+	s.PayloadHash = val
+}
+
+// SetSignature sets the value of Signature.
+func (s *SandboxAuditIntegrity) SetSignature(val string) {
+	s.Signature = val
+}
+
+// SetSigningKeyID sets the value of SigningKeyID.
+func (s *SandboxAuditIntegrity) SetSigningKeyID(val string) {
+	s.SigningKeyID = val
+}
+
+// SetSignatureStatus sets the value of SignatureStatus.
+func (s *SandboxAuditIntegrity) SetSignatureStatus(val SandboxAuditIntegritySignatureStatus) {
+	s.SignatureStatus = val
+}
+
+// SetEventIDConflict sets the value of EventIDConflict.
+func (s *SandboxAuditIntegrity) SetEventIDConflict(val OptBool) {
+	s.EventIDConflict = val
+}
+
+type SandboxAuditIntegrityAlgorithm string
+
+const (
+	SandboxAuditIntegrityAlgorithmEd25519SHA256V1 SandboxAuditIntegrityAlgorithm = "ed25519-sha256-v1"
+)
+
+// AllValues returns all SandboxAuditIntegrityAlgorithm values.
+func (SandboxAuditIntegrityAlgorithm) AllValues() []SandboxAuditIntegrityAlgorithm {
+	return []SandboxAuditIntegrityAlgorithm{
+		SandboxAuditIntegrityAlgorithmEd25519SHA256V1,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxAuditIntegrityAlgorithm) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxAuditIntegrityAlgorithmEd25519SHA256V1:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxAuditIntegrityAlgorithm) UnmarshalText(data []byte) error {
+	switch SandboxAuditIntegrityAlgorithm(data) {
+	case SandboxAuditIntegrityAlgorithmEd25519SHA256V1:
+		*s = SandboxAuditIntegrityAlgorithmEd25519SHA256V1
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxAuditIntegritySignatureStatus string
+
+const (
+	SandboxAuditIntegritySignatureStatusVerified    SandboxAuditIntegritySignatureStatus = "verified"
+	SandboxAuditIntegritySignatureStatusInvalid     SandboxAuditIntegritySignatureStatus = "invalid"
+	SandboxAuditIntegritySignatureStatusUnavailable SandboxAuditIntegritySignatureStatus = "unavailable"
+)
+
+// AllValues returns all SandboxAuditIntegritySignatureStatus values.
+func (SandboxAuditIntegritySignatureStatus) AllValues() []SandboxAuditIntegritySignatureStatus {
+	return []SandboxAuditIntegritySignatureStatus{
+		SandboxAuditIntegritySignatureStatusVerified,
+		SandboxAuditIntegritySignatureStatusInvalid,
+		SandboxAuditIntegritySignatureStatusUnavailable,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxAuditIntegritySignatureStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxAuditIntegritySignatureStatusVerified:
+		return []byte(s), nil
+	case SandboxAuditIntegritySignatureStatusInvalid:
+		return []byte(s), nil
+	case SandboxAuditIntegritySignatureStatusUnavailable:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxAuditIntegritySignatureStatus) UnmarshalText(data []byte) error {
+	switch SandboxAuditIntegritySignatureStatus(data) {
+	case SandboxAuditIntegritySignatureStatusVerified:
+		*s = SandboxAuditIntegritySignatureStatusVerified
+		return nil
+	case SandboxAuditIntegritySignatureStatusInvalid:
+		*s = SandboxAuditIntegritySignatureStatusInvalid
+		return nil
+	case SandboxAuditIntegritySignatureStatusUnavailable:
+		*s = SandboxAuditIntegritySignatureStatusUnavailable
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxAuditProducer
+type SandboxAuditProducer struct {
+	Service  string    `json:"service"`
+	Instance OptString `json:"instance"`
+	Sequence OptInt64  `json:"sequence"`
+}
+
+// GetService returns the value of Service.
+func (s *SandboxAuditProducer) GetService() string {
+	return s.Service
+}
+
+// GetInstance returns the value of Instance.
+func (s *SandboxAuditProducer) GetInstance() OptString {
+	return s.Instance
+}
+
+// GetSequence returns the value of Sequence.
+func (s *SandboxAuditProducer) GetSequence() OptInt64 {
+	return s.Sequence
+}
+
+// SetService sets the value of Service.
+func (s *SandboxAuditProducer) SetService(val string) {
+	s.Service = val
+}
+
+// SetInstance sets the value of Instance.
+func (s *SandboxAuditProducer) SetInstance(val OptString) {
+	s.Instance = val
+}
+
+// SetSequence sets the value of Sequence.
+func (s *SandboxAuditProducer) SetSequence(val OptInt64) {
+	s.Sequence = val
+}
+
+// Ref: #/components/schemas/SandboxAuditRequest
+type SandboxAuditRequest struct {
+	RequestID  OptString `json:"request_id"`
+	TraceID    OptString `json:"trace_id"`
+	SourceIP   OptString `json:"source_ip"`
+	UserAgent  OptString `json:"user_agent"`
+	HTTPMethod OptString `json:"http_method"`
+	Route      OptString `json:"route"`
+	StatusCode OptInt    `json:"status_code"`
+}
+
+// GetRequestID returns the value of RequestID.
+func (s *SandboxAuditRequest) GetRequestID() OptString {
+	return s.RequestID
+}
+
+// GetTraceID returns the value of TraceID.
+func (s *SandboxAuditRequest) GetTraceID() OptString {
+	return s.TraceID
+}
+
+// GetSourceIP returns the value of SourceIP.
+func (s *SandboxAuditRequest) GetSourceIP() OptString {
+	return s.SourceIP
+}
+
+// GetUserAgent returns the value of UserAgent.
+func (s *SandboxAuditRequest) GetUserAgent() OptString {
+	return s.UserAgent
+}
+
+// GetHTTPMethod returns the value of HTTPMethod.
+func (s *SandboxAuditRequest) GetHTTPMethod() OptString {
+	return s.HTTPMethod
+}
+
+// GetRoute returns the value of Route.
+func (s *SandboxAuditRequest) GetRoute() OptString {
+	return s.Route
+}
+
+// GetStatusCode returns the value of StatusCode.
+func (s *SandboxAuditRequest) GetStatusCode() OptInt {
+	return s.StatusCode
+}
+
+// SetRequestID sets the value of RequestID.
+func (s *SandboxAuditRequest) SetRequestID(val OptString) {
+	s.RequestID = val
+}
+
+// SetTraceID sets the value of TraceID.
+func (s *SandboxAuditRequest) SetTraceID(val OptString) {
+	s.TraceID = val
+}
+
+// SetSourceIP sets the value of SourceIP.
+func (s *SandboxAuditRequest) SetSourceIP(val OptString) {
+	s.SourceIP = val
+}
+
+// SetUserAgent sets the value of UserAgent.
+func (s *SandboxAuditRequest) SetUserAgent(val OptString) {
+	s.UserAgent = val
+}
+
+// SetHTTPMethod sets the value of HTTPMethod.
+func (s *SandboxAuditRequest) SetHTTPMethod(val OptString) {
+	s.HTTPMethod = val
+}
+
+// SetRoute sets the value of Route.
+func (s *SandboxAuditRequest) SetRoute(val OptString) {
+	s.Route = val
+}
+
+// SetStatusCode sets the value of StatusCode.
+func (s *SandboxAuditRequest) SetStatusCode(val OptInt) {
+	s.StatusCode = val
+}
+
+// Ref: #/components/schemas/SandboxAuditResource
+type SandboxAuditResource struct {
+	Type        string    `json:"type"`
+	ID          string    `json:"id"`
+	Subresource OptString `json:"subresource"`
+}
+
+// GetType returns the value of Type.
+func (s *SandboxAuditResource) GetType() string {
+	return s.Type
+}
+
+// GetID returns the value of ID.
+func (s *SandboxAuditResource) GetID() string {
+	return s.ID
+}
+
+// GetSubresource returns the value of Subresource.
+func (s *SandboxAuditResource) GetSubresource() OptString {
+	return s.Subresource
+}
+
+// SetType sets the value of Type.
+func (s *SandboxAuditResource) SetType(val string) {
+	s.Type = val
+}
+
+// SetID sets the value of ID.
+func (s *SandboxAuditResource) SetID(val string) {
+	s.ID = val
+}
+
+// SetSubresource sets the value of Subresource.
+func (s *SandboxAuditResource) SetSubresource(val OptString) {
+	s.Subresource = val
+}
+
 // Ref: #/components/schemas/SandboxConfig
 type SandboxConfig struct {
 	EnvVars   OptSandboxConfigEnvVars  `json:"env_vars"`
@@ -17247,18 +17900,37 @@ func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/SandboxObservabilityEvent
 type SandboxObservabilityEvent struct {
-	TeamID     string                                 `json:"team_id"`
-	SandboxID  string                                 `json:"sandbox_id"`
-	RegionID   string                                 `json:"region_id"`
-	ClusterID  string                                 `json:"cluster_id"`
-	OccurredAt time.Time                              `json:"occurred_at"`
-	IngestedAt time.Time                              `json:"ingested_at"`
-	Source     ObservabilityEventSource               `json:"source"`
-	EventType  SandboxObservabilityEventType          `json:"event_type"`
-	Outcome    OptSandboxObservabilityOutcome         `json:"outcome"`
-	Cursor     string                                 `json:"cursor"`
-	Watermark  string                                 `json:"watermark"`
-	Attributes OptSandboxObservabilityEventAttributes `json:"attributes"`
+	EventID       uuid.UUID                              `json:"event_id"`
+	SchemaVersion SandboxObservabilityEventSchemaVersion `json:"schema_version"`
+	TeamID        string                                 `json:"team_id"`
+	SandboxID     string                                 `json:"sandbox_id"`
+	RegionID      string                                 `json:"region_id"`
+	ClusterID     string                                 `json:"cluster_id"`
+	OccurredAt    time.Time                              `json:"occurred_at"`
+	IngestedAt    time.Time                              `json:"ingested_at"`
+	Source        ObservabilityEventSource               `json:"source"`
+	EventType     SandboxObservabilityEventType          `json:"event_type"`
+	Phase         SandboxAuditEventPhase                 `json:"phase"`
+	Outcome       SandboxObservabilityOutcome            `json:"outcome"`
+	Actor         SandboxAuditActor                      `json:"actor"`
+	Action        string                                 `json:"action"`
+	Resource      SandboxAuditResource                   `json:"resource"`
+	OperationID   string                                 `json:"operation_id"`
+	ParentEventID OptUUID                                `json:"parent_event_id"`
+	Producer      SandboxAuditProducer                   `json:"producer"`
+	Request       OptSandboxAuditRequest                 `json:"request"`
+	Integrity     SandboxAuditIntegrity                  `json:"integrity"`
+	Attributes    OptSandboxObservabilityEventAttributes `json:"attributes"`
+}
+
+// GetEventID returns the value of EventID.
+func (s *SandboxObservabilityEvent) GetEventID() uuid.UUID {
+	return s.EventID
+}
+
+// GetSchemaVersion returns the value of SchemaVersion.
+func (s *SandboxObservabilityEvent) GetSchemaVersion() SandboxObservabilityEventSchemaVersion {
+	return s.SchemaVersion
 }
 
 // GetTeamID returns the value of TeamID.
@@ -17301,24 +17973,69 @@ func (s *SandboxObservabilityEvent) GetEventType() SandboxObservabilityEventType
 	return s.EventType
 }
 
+// GetPhase returns the value of Phase.
+func (s *SandboxObservabilityEvent) GetPhase() SandboxAuditEventPhase {
+	return s.Phase
+}
+
 // GetOutcome returns the value of Outcome.
-func (s *SandboxObservabilityEvent) GetOutcome() OptSandboxObservabilityOutcome {
+func (s *SandboxObservabilityEvent) GetOutcome() SandboxObservabilityOutcome {
 	return s.Outcome
 }
 
-// GetCursor returns the value of Cursor.
-func (s *SandboxObservabilityEvent) GetCursor() string {
-	return s.Cursor
+// GetActor returns the value of Actor.
+func (s *SandboxObservabilityEvent) GetActor() SandboxAuditActor {
+	return s.Actor
 }
 
-// GetWatermark returns the value of Watermark.
-func (s *SandboxObservabilityEvent) GetWatermark() string {
-	return s.Watermark
+// GetAction returns the value of Action.
+func (s *SandboxObservabilityEvent) GetAction() string {
+	return s.Action
+}
+
+// GetResource returns the value of Resource.
+func (s *SandboxObservabilityEvent) GetResource() SandboxAuditResource {
+	return s.Resource
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxObservabilityEvent) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetParentEventID returns the value of ParentEventID.
+func (s *SandboxObservabilityEvent) GetParentEventID() OptUUID {
+	return s.ParentEventID
+}
+
+// GetProducer returns the value of Producer.
+func (s *SandboxObservabilityEvent) GetProducer() SandboxAuditProducer {
+	return s.Producer
+}
+
+// GetRequest returns the value of Request.
+func (s *SandboxObservabilityEvent) GetRequest() OptSandboxAuditRequest {
+	return s.Request
+}
+
+// GetIntegrity returns the value of Integrity.
+func (s *SandboxObservabilityEvent) GetIntegrity() SandboxAuditIntegrity {
+	return s.Integrity
 }
 
 // GetAttributes returns the value of Attributes.
 func (s *SandboxObservabilityEvent) GetAttributes() OptSandboxObservabilityEventAttributes {
 	return s.Attributes
+}
+
+// SetEventID sets the value of EventID.
+func (s *SandboxObservabilityEvent) SetEventID(val uuid.UUID) {
+	s.EventID = val
+}
+
+// SetSchemaVersion sets the value of SchemaVersion.
+func (s *SandboxObservabilityEvent) SetSchemaVersion(val SandboxObservabilityEventSchemaVersion) {
+	s.SchemaVersion = val
 }
 
 // SetTeamID sets the value of TeamID.
@@ -17361,19 +18078,54 @@ func (s *SandboxObservabilityEvent) SetEventType(val SandboxObservabilityEventTy
 	s.EventType = val
 }
 
+// SetPhase sets the value of Phase.
+func (s *SandboxObservabilityEvent) SetPhase(val SandboxAuditEventPhase) {
+	s.Phase = val
+}
+
 // SetOutcome sets the value of Outcome.
-func (s *SandboxObservabilityEvent) SetOutcome(val OptSandboxObservabilityOutcome) {
+func (s *SandboxObservabilityEvent) SetOutcome(val SandboxObservabilityOutcome) {
 	s.Outcome = val
 }
 
-// SetCursor sets the value of Cursor.
-func (s *SandboxObservabilityEvent) SetCursor(val string) {
-	s.Cursor = val
+// SetActor sets the value of Actor.
+func (s *SandboxObservabilityEvent) SetActor(val SandboxAuditActor) {
+	s.Actor = val
 }
 
-// SetWatermark sets the value of Watermark.
-func (s *SandboxObservabilityEvent) SetWatermark(val string) {
-	s.Watermark = val
+// SetAction sets the value of Action.
+func (s *SandboxObservabilityEvent) SetAction(val string) {
+	s.Action = val
+}
+
+// SetResource sets the value of Resource.
+func (s *SandboxObservabilityEvent) SetResource(val SandboxAuditResource) {
+	s.Resource = val
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxObservabilityEvent) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetParentEventID sets the value of ParentEventID.
+func (s *SandboxObservabilityEvent) SetParentEventID(val OptUUID) {
+	s.ParentEventID = val
+}
+
+// SetProducer sets the value of Producer.
+func (s *SandboxObservabilityEvent) SetProducer(val SandboxAuditProducer) {
+	s.Producer = val
+}
+
+// SetRequest sets the value of Request.
+func (s *SandboxObservabilityEvent) SetRequest(val OptSandboxAuditRequest) {
+	s.Request = val
+}
+
+// SetIntegrity sets the value of Integrity.
+func (s *SandboxObservabilityEvent) SetIntegrity(val SandboxAuditIntegrity) {
+	s.Integrity = val
 }
 
 // SetAttributes sets the value of Attributes.
@@ -17392,6 +18144,19 @@ func (s *SandboxObservabilityEventAttributes) init() SandboxObservabilityEventAt
 	return m
 }
 
+type SandboxObservabilityEventSchemaVersion int
+
+const (
+	SandboxObservabilityEventSchemaVersion2 SandboxObservabilityEventSchemaVersion = 2
+)
+
+// AllValues returns all SandboxObservabilityEventSchemaVersion values.
+func (SandboxObservabilityEventSchemaVersion) AllValues() []SandboxObservabilityEventSchemaVersion {
+	return []SandboxObservabilityEventSchemaVersion{
+		SandboxObservabilityEventSchemaVersion2,
+	}
+}
+
 // Ref: #/components/schemas/SandboxObservabilityEventType
 type SandboxObservabilityEventType string
 
@@ -17399,6 +18164,9 @@ const (
 	SandboxObservabilityEventTypeLifecycle    SandboxObservabilityEventType = "lifecycle"
 	SandboxObservabilityEventTypeNetworkAudit SandboxObservabilityEventType = "network_audit"
 	SandboxObservabilityEventTypeRuntimeStats SandboxObservabilityEventType = "runtime_stats"
+	SandboxObservabilityEventTypeAPIAccess    SandboxObservabilityEventType = "api_access"
+	SandboxObservabilityEventTypeProcess      SandboxObservabilityEventType = "process"
+	SandboxObservabilityEventTypeFile         SandboxObservabilityEventType = "file"
 )
 
 // AllValues returns all SandboxObservabilityEventType values.
@@ -17407,6 +18175,9 @@ func (SandboxObservabilityEventType) AllValues() []SandboxObservabilityEventType
 		SandboxObservabilityEventTypeLifecycle,
 		SandboxObservabilityEventTypeNetworkAudit,
 		SandboxObservabilityEventTypeRuntimeStats,
+		SandboxObservabilityEventTypeAPIAccess,
+		SandboxObservabilityEventTypeProcess,
+		SandboxObservabilityEventTypeFile,
 	}
 }
 
@@ -17418,6 +18189,12 @@ func (s SandboxObservabilityEventType) MarshalText() ([]byte, error) {
 	case SandboxObservabilityEventTypeNetworkAudit:
 		return []byte(s), nil
 	case SandboxObservabilityEventTypeRuntimeStats:
+		return []byte(s), nil
+	case SandboxObservabilityEventTypeAPIAccess:
+		return []byte(s), nil
+	case SandboxObservabilityEventTypeProcess:
+		return []byte(s), nil
+	case SandboxObservabilityEventTypeFile:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -17435,6 +18212,15 @@ func (s *SandboxObservabilityEventType) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxObservabilityEventTypeRuntimeStats:
 		*s = SandboxObservabilityEventTypeRuntimeStats
+		return nil
+	case SandboxObservabilityEventTypeAPIAccess:
+		*s = SandboxObservabilityEventTypeAPIAccess
+		return nil
+	case SandboxObservabilityEventTypeProcess:
+		*s = SandboxObservabilityEventTypeProcess
+		return nil
+	case SandboxObservabilityEventTypeFile:
+		*s = SandboxObservabilityEventTypeFile
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -17720,6 +18506,8 @@ const (
 	SandboxObservabilityOutcomeError     SandboxObservabilityOutcome = "error"
 	SandboxObservabilityOutcomeSucceeded SandboxObservabilityOutcome = "succeeded"
 	SandboxObservabilityOutcomeFailed    SandboxObservabilityOutcome = "failed"
+	SandboxObservabilityOutcomeAccepted  SandboxObservabilityOutcome = "accepted"
+	SandboxObservabilityOutcomeUnknown   SandboxObservabilityOutcome = "unknown"
 )
 
 // AllValues returns all SandboxObservabilityOutcome values.
@@ -17730,6 +18518,8 @@ func (SandboxObservabilityOutcome) AllValues() []SandboxObservabilityOutcome {
 		SandboxObservabilityOutcomeError,
 		SandboxObservabilityOutcomeSucceeded,
 		SandboxObservabilityOutcomeFailed,
+		SandboxObservabilityOutcomeAccepted,
+		SandboxObservabilityOutcomeUnknown,
 	}
 }
 
@@ -17745,6 +18535,10 @@ func (s SandboxObservabilityOutcome) MarshalText() ([]byte, error) {
 	case SandboxObservabilityOutcomeSucceeded:
 		return []byte(s), nil
 	case SandboxObservabilityOutcomeFailed:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeAccepted:
+		return []byte(s), nil
+	case SandboxObservabilityOutcomeUnknown:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -17768,6 +18562,12 @@ func (s *SandboxObservabilityOutcome) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxObservabilityOutcomeFailed:
 		*s = SandboxObservabilityOutcomeFailed
+		return nil
+	case SandboxObservabilityOutcomeAccepted:
+		*s = SandboxObservabilityOutcomeAccepted
+		return nil
+	case SandboxObservabilityOutcomeUnknown:
+		*s = SandboxObservabilityOutcomeUnknown
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
