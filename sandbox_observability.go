@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
@@ -24,9 +25,15 @@ type SandboxObservabilityQueryOptions struct {
 
 type SandboxObservabilityEventOptions struct {
 	SandboxObservabilityQueryOptions
-	Source    apispec.ObservabilityEventSource
-	EventType apispec.SandboxObservabilityEventType
-	Outcome   apispec.SandboxObservabilityOutcome
+	Source       apispec.ObservabilityEventSource
+	EventType    apispec.SandboxObservabilityEventType
+	Outcome      apispec.SandboxObservabilityOutcome
+	ActorKind    apispec.SandboxAuditActorKind
+	ActorID      string
+	Action       string
+	ResourceType string
+	OperationID  string
+	EventID      uuid.UUID
 }
 
 type SandboxObservabilityLogOptions struct {
@@ -255,6 +262,24 @@ func applyEventObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilit
 	if opts.Outcome != "" {
 		params.Outcome = apispec.NewOptSandboxObservabilityOutcome(opts.Outcome)
 	}
+	if opts.ActorKind != "" {
+		params.ActorKind = apispec.NewOptSandboxAuditActorKind(opts.ActorKind)
+	}
+	if opts.ActorID != "" {
+		params.ActorID = apispec.NewOptString(opts.ActorID)
+	}
+	if opts.Action != "" {
+		params.Action = apispec.NewOptString(opts.Action)
+	}
+	if opts.ResourceType != "" {
+		params.ResourceType = apispec.NewOptString(opts.ResourceType)
+	}
+	if opts.OperationID != "" {
+		params.OperationID = apispec.NewOptString(opts.OperationID)
+	}
+	if opts.EventID != uuid.Nil {
+		params.EventID = apispec.NewOptUUID(opts.EventID)
+	}
 }
 
 func applyLogObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilityLogsGetParams, opts *SandboxObservabilityLogOptions, watch bool) {
@@ -332,6 +357,24 @@ func applyEventObservabilityValues(values url.Values, opts *SandboxObservability
 	}
 	if opts.Outcome != "" {
 		values.Set("outcome", string(opts.Outcome))
+	}
+	if opts.ActorKind != "" {
+		values.Set("actor_kind", string(opts.ActorKind))
+	}
+	if opts.ActorID != "" {
+		values.Set("actor_id", opts.ActorID)
+	}
+	if opts.Action != "" {
+		values.Set("action", opts.Action)
+	}
+	if opts.ResourceType != "" {
+		values.Set("resource_type", opts.ResourceType)
+	}
+	if opts.OperationID != "" {
+		values.Set("operation_id", opts.OperationID)
+	}
+	if opts.EventID != uuid.Nil {
+		values.Set("event_id", opts.EventID.String())
 	}
 }
 

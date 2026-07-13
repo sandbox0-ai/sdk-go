@@ -6,6 +6,7 @@ require (
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.2.0
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.1
 	github.com/ogen-go/ogen v1.18.0
 )
@@ -15,7 +16,6 @@ require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
