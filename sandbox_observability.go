@@ -25,15 +25,20 @@ type SandboxObservabilityQueryOptions struct {
 
 type SandboxObservabilityEventOptions struct {
 	SandboxObservabilityQueryOptions
-	Source       apispec.ObservabilityEventSource
-	EventType    apispec.SandboxObservabilityEventType
-	Outcome      apispec.SandboxObservabilityOutcome
-	ActorKind    apispec.SandboxAuditActorKind
-	ActorID      string
-	Action       string
-	ResourceType string
-	OperationID  string
-	EventID      uuid.UUID
+	Source                    apispec.ObservabilityEventSource
+	EventType                 apispec.SandboxObservabilityEventType
+	Outcome                   apispec.SandboxObservabilityOutcome
+	ActorKind                 apispec.SandboxAuditActorKind
+	ActorID                   string
+	ExecutionScopeNamespace   string
+	ExecutionScopeKind        string
+	ExecutionScopeID          string
+	ExecutionScopeAttribution apispec.SandboxAuditExecutionScopeAttribution
+	Action                    string
+	ResourceType              string
+	OperationID               string
+	EventID                   uuid.UUID
+	MaxSchemaVersion          int
 }
 
 type SandboxObservabilityLogOptions struct {
@@ -52,12 +57,13 @@ type SandboxObservabilityMetricOptions struct {
 }
 
 type SandboxObservabilityWatchLine struct {
-	Type      string          `json:"type"`
-	Data      json.RawMessage `json:"data,omitempty"`
-	Cursor    string          `json:"cursor,omitempty"`
-	Watermark string          `json:"watermark,omitempty"`
-	Time      string          `json:"time,omitempty"`
-	Error     string          `json:"error,omitempty"`
+	Type           string                                           `json:"type"`
+	Data           json.RawMessage                                  `json:"data,omitempty"`
+	EffectiveQuery *apispec.SandboxObservabilityEffectiveEventQuery `json:"effective_query,omitempty"`
+	Cursor         string                                           `json:"cursor,omitempty"`
+	Watermark      string                                           `json:"watermark,omitempty"`
+	Time           string                                           `json:"time,omitempty"`
+	Error          string                                           `json:"error,omitempty"`
 }
 
 type SandboxObservabilityStream struct {
@@ -83,8 +89,12 @@ func (s *SandboxObservabilityStream) Recv() (*SandboxObservabilityWatchLine, err
 }
 
 func (c *Client) ListSandboxObservabilityEvents(ctx context.Context, sandboxID string, opts *SandboxObservabilityEventOptions) (*apispec.SandboxObservabilityEventsResponse, error) {
+	normalizedOpts, err := normalizeSandboxObservabilityEventOptions(opts)
+	if err != nil {
+		return nil, err
+	}
 	params := apispec.APIV1SandboxesIDObservabilityEventsGetParams{ID: sandboxID}
-	applyEventObservabilityOptions(&params, opts, false)
+	applyEventObservabilityOptions(&params, normalizedOpts, false)
 	resp, err := c.api.APIV1SandboxesIDObservabilityEventsGet(ctx, params)
 	if err != nil {
 		return nil, err
@@ -155,12 +165,29 @@ func (c *Client) ListSandboxObservabilityMetrics(ctx context.Context, sandboxID 
 }
 
 func (c *Client) WatchSandboxObservabilityEvents(ctx context.Context, sandboxID string, opts *SandboxObservabilityEventOptions) (*SandboxObservabilityStream, error) {
+	if opts != nil {
+		if err := validateObservabilityWatchQueryOptions(opts.SandboxObservabilityQueryOptions); err != nil {
+			return nil, err
+		}
+		if opts.EventID != uuid.Nil {
+			return nil, fmt.Errorf("sandbox observability event watch does not support event_id")
+		}
+	}
+	normalizedOpts, err := normalizeSandboxObservabilityEventOptions(opts)
+	if err != nil {
+		return nil, err
+	}
 	values := make(url.Values)
-	applyEventObservabilityValues(values, opts)
+	applyEventObservabilityValues(values, normalizedOpts)
 	return c.watchSandboxObservability(ctx, sandboxID, "/observability/events", values)
 }
 
 func (c *Client) WatchSandboxObservabilityLogs(ctx context.Context, sandboxID string, opts *SandboxObservabilityLogOptions) (*SandboxObservabilityStream, error) {
+	if opts != nil {
+		if err := validateObservabilityWatchQueryOptions(opts.SandboxObservabilityQueryOptions); err != nil {
+			return nil, err
+		}
+	}
 	values := make(url.Values)
 	applyLogObservabilityValues(values, opts)
 	return c.watchSandboxObservability(ctx, sandboxID, "/observability/logs", values)
@@ -268,6 +295,18 @@ func applyEventObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilit
 	if opts.ActorID != "" {
 		params.ActorID = apispec.NewOptString(opts.ActorID)
 	}
+	if opts.ExecutionScopeNamespace != "" {
+		params.ExecutionScopeNamespace = apispec.NewOptString(opts.ExecutionScopeNamespace)
+	}
+	if opts.ExecutionScopeKind != "" {
+		params.ExecutionScopeKind = apispec.NewOptString(opts.ExecutionScopeKind)
+	}
+	if opts.ExecutionScopeID != "" {
+		params.ExecutionScopeID = apispec.NewOptString(opts.ExecutionScopeID)
+	}
+	if opts.ExecutionScopeAttribution != "" {
+		params.ExecutionScopeAttribution = apispec.NewOptSandboxAuditExecutionScopeAttribution(opts.ExecutionScopeAttribution)
+	}
 	if opts.Action != "" {
 		params.Action = apispec.NewOptString(opts.Action)
 	}
@@ -280,6 +319,7 @@ func applyEventObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilit
 	if opts.EventID != uuid.Nil {
 		params.EventID = apispec.NewOptUUID(opts.EventID)
 	}
+	params.MaxSchemaVersion = apispec.NewOptInt(opts.MaxSchemaVersion)
 }
 
 func applyLogObservabilityOptions(params *apispec.APIV1SandboxesIDObservabilityLogsGetParams, opts *SandboxObservabilityLogOptions, watch bool) {
@@ -364,6 +404,18 @@ func applyEventObservabilityValues(values url.Values, opts *SandboxObservability
 	if opts.ActorID != "" {
 		values.Set("actor_id", opts.ActorID)
 	}
+	if opts.ExecutionScopeNamespace != "" {
+		values.Set("execution_scope_namespace", opts.ExecutionScopeNamespace)
+	}
+	if opts.ExecutionScopeKind != "" {
+		values.Set("execution_scope_kind", opts.ExecutionScopeKind)
+	}
+	if opts.ExecutionScopeID != "" {
+		values.Set("execution_scope_id", opts.ExecutionScopeID)
+	}
+	if opts.ExecutionScopeAttribution != "" {
+		values.Set("execution_scope_attribution", string(opts.ExecutionScopeAttribution))
+	}
 	if opts.Action != "" {
 		values.Set("action", opts.Action)
 	}
@@ -376,6 +428,7 @@ func applyEventObservabilityValues(values url.Values, opts *SandboxObservability
 	if opts.EventID != uuid.Nil {
 		values.Set("event_id", opts.EventID.String())
 	}
+	values.Set("max_schema_version", strconv.Itoa(opts.MaxSchemaVersion))
 }
 
 func applyLogObservabilityValues(values url.Values, opts *SandboxObservabilityLogOptions) {
@@ -404,4 +457,40 @@ func applyCommonObservabilityValues(values url.Values, opts SandboxObservability
 	if opts.Cursor != "" {
 		values.Set("cursor", opts.Cursor)
 	}
+}
+
+func validateObservabilityWatchQueryOptions(opts SandboxObservabilityQueryOptions) error {
+	if opts.EndTime != nil {
+		return fmt.Errorf("sandbox observability watch does not support end_time")
+	}
+	return nil
+}
+
+const currentSandboxObservabilityEventSchemaVersion = 3
+
+func normalizeSandboxObservabilityEventOptions(opts *SandboxObservabilityEventOptions) (*SandboxObservabilityEventOptions, error) {
+	normalized := SandboxObservabilityEventOptions{
+		MaxSchemaVersion: currentSandboxObservabilityEventSchemaVersion,
+	}
+	if opts != nil {
+		normalized = *opts
+		if normalized.MaxSchemaVersion == 0 {
+			normalized.MaxSchemaVersion = currentSandboxObservabilityEventSchemaVersion
+		}
+	}
+	if hasExecutionScopeFilter(normalized) &&
+		normalized.MaxSchemaVersion < currentSandboxObservabilityEventSchemaVersion {
+		return nil, fmt.Errorf(
+			"sandbox observability execution scope filters require max_schema_version >= %d",
+			currentSandboxObservabilityEventSchemaVersion,
+		)
+	}
+	return &normalized, nil
+}
+
+func hasExecutionScopeFilter(opts SandboxObservabilityEventOptions) bool {
+	return opts.ExecutionScopeNamespace != "" ||
+		opts.ExecutionScopeKind != "" ||
+		opts.ExecutionScopeID != "" ||
+		opts.ExecutionScopeAttribution != ""
 }

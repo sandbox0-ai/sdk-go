@@ -11922,6 +11922,136 @@ func (s *ExecutionSessionRuntimeRecoveryPolicy) UnmarshalJSON(data []byte) error
 }
 
 // Encode implements json.Marshaler.
+func (s *ExecutionSessionScopeSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ExecutionSessionScopeSpec) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("namespace")
+		e.Str(s.Namespace)
+	}
+	{
+		e.FieldStart("kind")
+		e.Str(s.Kind)
+	}
+	{
+		e.FieldStart("id_environment_variable")
+		e.Str(s.IDEnvironmentVariable)
+	}
+}
+
+var jsonFieldsNameOfExecutionSessionScopeSpec = [3]string{
+	0: "namespace",
+	1: "kind",
+	2: "id_environment_variable",
+}
+
+// Decode decodes ExecutionSessionScopeSpec from json.
+func (s *ExecutionSessionScopeSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ExecutionSessionScopeSpec to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "namespace":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Namespace = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"namespace\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Kind = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"kind\"")
+			}
+		case "id_environment_variable":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.IDEnvironmentVariable = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id_environment_variable\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ExecutionSessionScopeSpec")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfExecutionSessionScopeSpec) {
+					name = jsonFieldsNameOfExecutionSessionScopeSpec[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ExecutionSessionScopeSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ExecutionSessionScopeSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *ExecutionSessionSignalRequest) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -12093,9 +12223,15 @@ func (s *ExecutionSessionSpec) encodeFields(e *jx.Encoder) {
 			s.EventRetention.Encode(e)
 		}
 	}
+	{
+		if s.ExecutionScope.Set {
+			e.FieldStart("execution_scope")
+			s.ExecutionScope.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfExecutionSessionSpec = [8]string{
+var jsonFieldsNameOfExecutionSessionSpec = [9]string{
 	0: "name",
 	1: "command",
 	2: "cwd",
@@ -12104,6 +12240,7 @@ var jsonFieldsNameOfExecutionSessionSpec = [8]string{
 	5: "lifecycle",
 	6: "readiness",
 	7: "event_retention",
+	8: "execution_scope",
 }
 
 // Decode decodes ExecutionSessionSpec from json.
@@ -12111,7 +12248,7 @@ func (s *ExecutionSessionSpec) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode ExecutionSessionSpec to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -12205,6 +12342,16 @@ func (s *ExecutionSessionSpec) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"event_retention\"")
 			}
+		case "execution_scope":
+			if err := func() error {
+				s.ExecutionScope.Reset()
+				if err := s.ExecutionScope.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -12214,8 +12361,9 @@ func (s *ExecutionSessionSpec) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00000010,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -17716,6 +17864,39 @@ func (s *OptExecutionSessionRuntimeRecoveryPolicy) UnmarshalJSON(data []byte) er
 	return s.Decode(d)
 }
 
+// Encode encodes ExecutionSessionScopeSpec as json.
+func (o OptExecutionSessionScopeSpec) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes ExecutionSessionScopeSpec from json.
+func (o *OptExecutionSessionScopeSpec) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptExecutionSessionScopeSpec to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptExecutionSessionScopeSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptExecutionSessionScopeSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes ExecutionSessionSpecEnv as json.
 func (o OptExecutionSessionSpecEnv) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -19725,6 +19906,72 @@ func (s OptSandboxAppServiceRuntimeEnvVars) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptSandboxAppServiceRuntimeEnvVars) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAuditExecutionScope as json.
+func (o OptSandboxAuditExecutionScope) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes SandboxAuditExecutionScope from json.
+func (o *OptSandboxAuditExecutionScope) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAuditExecutionScope to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAuditExecutionScope) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAuditExecutionScope) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAuditExecutionScopeAttribution as json.
+func (o OptSandboxAuditExecutionScopeAttribution) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes SandboxAuditExecutionScopeAttribution from json.
+func (o *OptSandboxAuditExecutionScopeAttribution) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptSandboxAuditExecutionScopeAttribution to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptSandboxAuditExecutionScopeAttribution) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptSandboxAuditExecutionScopeAttribution) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -29465,6 +29712,189 @@ func (s *SandboxAuditEventPhase) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SandboxAuditExecutionScope) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxAuditExecutionScope) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("namespace")
+		e.Str(s.Namespace)
+	}
+	{
+		e.FieldStart("kind")
+		e.Str(s.Kind)
+	}
+	{
+		e.FieldStart("id")
+		e.Str(s.ID)
+	}
+	{
+		e.FieldStart("attribution")
+		s.Attribution.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfSandboxAuditExecutionScope = [4]string{
+	0: "namespace",
+	1: "kind",
+	2: "id",
+	3: "attribution",
+}
+
+// Decode decodes SandboxAuditExecutionScope from json.
+func (s *SandboxAuditExecutionScope) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAuditExecutionScope to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "namespace":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Namespace = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"namespace\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Kind = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"kind\"")
+			}
+		case "id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "attribution":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.Attribution.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attribution\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxAuditExecutionScope")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxAuditExecutionScope) {
+					name = jsonFieldsNameOfSandboxAuditExecutionScope[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxAuditExecutionScope) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAuditExecutionScope) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes SandboxAuditExecutionScopeAttribution as json.
+func (s SandboxAuditExecutionScopeAttribution) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes SandboxAuditExecutionScopeAttribution from json.
+func (s *SandboxAuditExecutionScopeAttribution) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxAuditExecutionScopeAttribution to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch SandboxAuditExecutionScopeAttribution(v) {
+	case SandboxAuditExecutionScopeAttributionProcessEnvironment:
+		*s = SandboxAuditExecutionScopeAttributionProcessEnvironment
+	default:
+		*s = SandboxAuditExecutionScopeAttribution(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s SandboxAuditExecutionScopeAttribution) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxAuditExecutionScopeAttribution) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SandboxAuditIntegrity) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -30952,6 +31382,170 @@ func (s *SandboxNetworkPolicyMode) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *SandboxObservabilityEffectiveEventQuery) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *SandboxObservabilityEffectiveEventQuery) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("max_schema_version")
+		e.Int(s.MaxSchemaVersion)
+	}
+	{
+		if s.ExecutionScopeNamespace.Set {
+			e.FieldStart("execution_scope_namespace")
+			s.ExecutionScopeNamespace.Encode(e)
+		}
+	}
+	{
+		if s.ExecutionScopeKind.Set {
+			e.FieldStart("execution_scope_kind")
+			s.ExecutionScopeKind.Encode(e)
+		}
+	}
+	{
+		if s.ExecutionScopeID.Set {
+			e.FieldStart("execution_scope_id")
+			s.ExecutionScopeID.Encode(e)
+		}
+	}
+	{
+		if s.ExecutionScopeAttribution.Set {
+			e.FieldStart("execution_scope_attribution")
+			s.ExecutionScopeAttribution.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfSandboxObservabilityEffectiveEventQuery = [5]string{
+	0: "max_schema_version",
+	1: "execution_scope_namespace",
+	2: "execution_scope_kind",
+	3: "execution_scope_id",
+	4: "execution_scope_attribution",
+}
+
+// Decode decodes SandboxObservabilityEffectiveEventQuery from json.
+func (s *SandboxObservabilityEffectiveEventQuery) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode SandboxObservabilityEffectiveEventQuery to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "max_schema_version":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.MaxSchemaVersion = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"max_schema_version\"")
+			}
+		case "execution_scope_namespace":
+			if err := func() error {
+				s.ExecutionScopeNamespace.Reset()
+				if err := s.ExecutionScopeNamespace.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope_namespace\"")
+			}
+		case "execution_scope_kind":
+			if err := func() error {
+				s.ExecutionScopeKind.Reset()
+				if err := s.ExecutionScopeKind.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope_kind\"")
+			}
+		case "execution_scope_id":
+			if err := func() error {
+				s.ExecutionScopeID.Reset()
+				if err := s.ExecutionScopeID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope_id\"")
+			}
+		case "execution_scope_attribution":
+			if err := func() error {
+				s.ExecutionScopeAttribution.Reset()
+				if err := s.ExecutionScopeAttribution.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope_attribution\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode SandboxObservabilityEffectiveEventQuery")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfSandboxObservabilityEffectiveEventQuery) {
+					name = jsonFieldsNameOfSandboxObservabilityEffectiveEventQuery[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *SandboxObservabilityEffectiveEventQuery) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *SandboxObservabilityEffectiveEventQuery) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *SandboxObservabilityEvent) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -31013,6 +31607,12 @@ func (s *SandboxObservabilityEvent) encodeFields(e *jx.Encoder) {
 		s.Actor.Encode(e)
 	}
 	{
+		if s.ExecutionScope.Set {
+			e.FieldStart("execution_scope")
+			s.ExecutionScope.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("action")
 		e.Str(s.Action)
 	}
@@ -31052,7 +31652,7 @@ func (s *SandboxObservabilityEvent) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxObservabilityEvent = [21]string{
+var jsonFieldsNameOfSandboxObservabilityEvent = [22]string{
 	0:  "event_id",
 	1:  "schema_version",
 	2:  "team_id",
@@ -31066,14 +31666,15 @@ var jsonFieldsNameOfSandboxObservabilityEvent = [21]string{
 	10: "phase",
 	11: "outcome",
 	12: "actor",
-	13: "action",
-	14: "resource",
-	15: "operation_id",
-	16: "parent_event_id",
-	17: "producer",
-	18: "request",
-	19: "integrity",
-	20: "attributes",
+	13: "execution_scope",
+	14: "action",
+	15: "resource",
+	16: "operation_id",
+	17: "parent_event_id",
+	18: "producer",
+	19: "request",
+	20: "integrity",
+	21: "attributes",
 }
 
 // Decode decodes SandboxObservabilityEvent from json.
@@ -31229,8 +31830,18 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"actor\"")
 			}
+		case "execution_scope":
+			if err := func() error {
+				s.ExecutionScope.Reset()
+				if err := s.ExecutionScope.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"execution_scope\"")
+			}
 		case "action":
-			requiredBitSet[1] |= 1 << 5
+			requiredBitSet[1] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Action = string(v)
@@ -31242,7 +31853,7 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"action\"")
 			}
 		case "resource":
-			requiredBitSet[1] |= 1 << 6
+			requiredBitSet[1] |= 1 << 7
 			if err := func() error {
 				if err := s.Resource.Decode(d); err != nil {
 					return err
@@ -31252,7 +31863,7 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"resource\"")
 			}
 		case "operation_id":
-			requiredBitSet[1] |= 1 << 7
+			requiredBitSet[2] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.OperationID = string(v)
@@ -31274,7 +31885,7 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"parent_event_id\"")
 			}
 		case "producer":
-			requiredBitSet[2] |= 1 << 1
+			requiredBitSet[2] |= 1 << 2
 			if err := func() error {
 				if err := s.Producer.Decode(d); err != nil {
 					return err
@@ -31294,7 +31905,7 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"request\"")
 			}
 		case "integrity":
-			requiredBitSet[2] |= 1 << 3
+			requiredBitSet[2] |= 1 << 4
 			if err := func() error {
 				if err := s.Integrity.Decode(d); err != nil {
 					return err
@@ -31324,8 +31935,8 @@ func (s *SandboxObservabilityEvent) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [3]uint8{
 		0b11111111,
-		0b11111111,
-		0b00001010,
+		0b11011111,
+		0b00010101,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -31538,12 +32149,17 @@ func (s *SandboxObservabilityEventsResponse) encodeFields(e *jx.Encoder) {
 			s.Watermark.Encode(e)
 		}
 	}
+	{
+		e.FieldStart("effective_query")
+		s.EffectiveQuery.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfSandboxObservabilityEventsResponse = [3]string{
+var jsonFieldsNameOfSandboxObservabilityEventsResponse = [4]string{
 	0: "events",
 	1: "next_cursor",
 	2: "watermark",
+	3: "effective_query",
 }
 
 // Decode decodes SandboxObservabilityEventsResponse from json.
@@ -31593,6 +32209,16 @@ func (s *SandboxObservabilityEventsResponse) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"watermark\"")
 			}
+		case "effective_query":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.EffectiveQuery.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"effective_query\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -31603,7 +32229,7 @@ func (s *SandboxObservabilityEventsResponse) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00001001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
