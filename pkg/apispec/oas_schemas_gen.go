@@ -15768,20 +15768,16 @@ func (s *ResizeContextRequest) SetCols(val int32) {
 
 // Ref: #/components/schemas/ResourceQuota
 type ResourceQuota struct {
-	CPU    OptString `json:"cpu"`
-	Memory OptString `json:"memory"`
+	// Memory limit used by default when a sandbox claim does not provide a memory override. Sandbox0
+	// derives the internal CPU limit from platform configuration.
+	Memory string `json:"memory"`
 	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 8Gi when
 	// omitted.
 	EphemeralStorage OptString `json:"ephemeralStorage"`
 }
 
-// GetCPU returns the value of CPU.
-func (s *ResourceQuota) GetCPU() OptString {
-	return s.CPU
-}
-
 // GetMemory returns the value of Memory.
-func (s *ResourceQuota) GetMemory() OptString {
+func (s *ResourceQuota) GetMemory() string {
 	return s.Memory
 }
 
@@ -15790,13 +15786,8 @@ func (s *ResourceQuota) GetEphemeralStorage() OptString {
 	return s.EphemeralStorage
 }
 
-// SetCPU sets the value of CPU.
-func (s *ResourceQuota) SetCPU(val OptString) {
-	s.CPU = val
-}
-
 // SetMemory sets the value of Memory.
-func (s *ResourceQuota) SetMemory(val OptString) {
+func (s *ResourceQuota) SetMemory(val string) {
 	s.Memory = val
 }
 
@@ -18591,7 +18582,7 @@ func (s *SandboxRefreshRequest) SetDuration(val OptInt32) {
 }
 
 // Instance-level sandbox resource override. Sandbox0 exposes memory only and derives CPU from the
-// platform memory-per-CPU ratio.
+// platform memory-per-CPU ratio, with a minimum CPU limit of 150m.
 // Ref: #/components/schemas/SandboxResourceConfig
 type SandboxResourceConfig struct {
 	// Sandbox memory limit. Must be at least 128Mi and no more than the platform sandbox maximum, which

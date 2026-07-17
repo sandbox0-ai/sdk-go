@@ -41,23 +41,16 @@ func NewTemplateUpdateRequest(spec apispec.SandboxTemplateSpec) apispec.Template
 	return apispec.TemplateUpdateRequest{Spec: spec}
 }
 
-// TemplateResources builds a resource quota.
-func TemplateResources(cpu, memory string) apispec.ResourceQuota {
-	resources := apispec.ResourceQuota{}
-	if cpu != "" {
-		resources.CPU = apispec.NewOptString(cpu)
-	}
-	if memory != "" {
-		resources.Memory = apispec.NewOptString(memory)
-	}
-	return resources
+// TemplateResources builds a memory-only resource quota.
+func TemplateResources(memory string) apispec.ResourceQuota {
+	return apispec.ResourceQuota{Memory: memory}
 }
 
-// TemplateMainContainer builds a main container spec.
-func TemplateMainContainer(image, cpu, memory string, opts ...TemplateContainerOption) apispec.ContainerSpec {
+// TemplateMainContainer builds a main container spec. Sandbox0 derives CPU from platform configuration.
+func TemplateMainContainer(image, memory string, opts ...TemplateContainerOption) apispec.ContainerSpec {
 	container := apispec.ContainerSpec{
 		Image:     image,
-		Resources: TemplateResources(cpu, memory),
+		Resources: TemplateResources(memory),
 	}
 	for _, opt := range opts {
 		opt(&container)
