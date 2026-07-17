@@ -13,7 +13,6 @@ func TestNewTemplateCreateRequestBuildsTemplateSpec(t *testing.T) {
 		"tpl-helper",
 		TemplateMainContainer(
 			"ubuntu:24.04",
-			"1",
 			"4Gi",
 			WithTemplateContainerEnv(apispec.EnvVar{Name: "APP_ENV", Value: "test"}),
 		),
@@ -59,7 +58,7 @@ func TestWithTemplateEnvVarsCopiesMap(t *testing.T) {
 	t.Parallel()
 
 	envVars := map[string]string{"MODE": "template"}
-	spec := NewTemplateSpec(TemplateMainContainer("ubuntu:24.04", "1", "4Gi"), WithTemplateEnvVars(envVars))
+	spec := NewTemplateSpec(TemplateMainContainer("ubuntu:24.04", "4Gi"), WithTemplateEnvVars(envVars))
 	envVars["MODE"] = "changed"
 
 	copied, ok := spec.EnvVars.Get()

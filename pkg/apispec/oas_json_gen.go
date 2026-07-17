@@ -26145,16 +26145,8 @@ func (s *ResourceQuota) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *ResourceQuota) encodeFields(e *jx.Encoder) {
 	{
-		if s.CPU.Set {
-			e.FieldStart("cpu")
-			s.CPU.Encode(e)
-		}
-	}
-	{
-		if s.Memory.Set {
-			e.FieldStart("memory")
-			s.Memory.Encode(e)
-		}
+		e.FieldStart("memory")
+		e.Str(s.Memory)
 	}
 	{
 		if s.EphemeralStorage.Set {
@@ -26164,10 +26156,9 @@ func (s *ResourceQuota) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfResourceQuota = [3]string{
-	0: "cpu",
-	1: "memory",
-	2: "ephemeralStorage",
+var jsonFieldsNameOfResourceQuota = [2]string{
+	0: "memory",
+	1: "ephemeralStorage",
 }
 
 // Decode decodes ResourceQuota from json.
@@ -26175,23 +26166,16 @@ func (s *ResourceQuota) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode ResourceQuota to nil")
 	}
+	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "cpu":
-			if err := func() error {
-				s.CPU.Reset()
-				if err := s.CPU.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cpu\"")
-			}
 		case "memory":
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				s.Memory.Reset()
-				if err := s.Memory.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Memory = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -26214,6 +26198,38 @@ func (s *ResourceQuota) Decode(d *jx.Decoder) error {
 		return nil
 	}); err != nil {
 		return errors.Wrap(err, "decode ResourceQuota")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfResourceQuota) {
+					name = jsonFieldsNameOfResourceQuota[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 
 	return nil

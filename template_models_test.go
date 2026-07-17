@@ -16,8 +16,7 @@ func TestTemplateCreateRequestEnvVarsRoundTrip(t *testing.T) {
 			MainContainer: apispec.NewOptContainerSpec(apispec.ContainerSpec{
 				Image: "nginx:1.27-alpine",
 				Resources: apispec.ResourceQuota{
-					CPU:    apispec.NewOptString("500m"),
-					Memory: apispec.NewOptString("2Gi"),
+					Memory: "2Gi",
 				},
 			}),
 			EnvVars: apispec.NewOptSandboxTemplateSpecEnvVars(apispec.SandboxTemplateSpecEnvVars{"MODE": "template"}),
