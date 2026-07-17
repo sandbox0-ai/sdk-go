@@ -5574,6 +5574,23 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityEventsGet(ctx context.Context,
 		}
 	}
 	{
+		// Encode "max_schema_version" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "max_schema_version",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.MaxSchemaVersion.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
 		// Encode "source" parameter.
 		cfg := uri.QueryParameterEncodingConfig{
 			Name:    "source",
@@ -5652,6 +5669,74 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityEventsGet(ctx context.Context,
 		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
 			if val, ok := params.ActorID.Get(); ok {
 				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "execution_scope_namespace" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "execution_scope_namespace",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ExecutionScopeNamespace.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "execution_scope_kind" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "execution_scope_kind",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ExecutionScopeKind.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "execution_scope_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "execution_scope_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ExecutionScopeID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "execution_scope_attribution" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "execution_scope_attribution",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ExecutionScopeAttribution.Get(); ok {
+				return e.EncodeValue(conv.StringToString(string(val)))
 			}
 			return nil
 		}); err != nil {
