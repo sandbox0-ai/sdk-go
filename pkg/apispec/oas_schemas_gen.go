@@ -4545,49 +4545,6 @@ func (s *ExecutionSessionRuntimeRecoveryPolicy) UnmarshalText(data []byte) error
 	}
 }
 
-// Declares how descendants of this trusted supervisor process expose a
-// logical execution scope. The runtime reads only the named environment
-// variable and never exports the descendant process environment.
-// Ref: #/components/schemas/ExecutionSessionScopeSpec
-type ExecutionSessionScopeSpec struct {
-	// Producer namespace for the logical scope, for example codex.
-	Namespace string `json:"namespace"`
-	// Native scope kind, for example native_session.
-	Kind string `json:"kind"`
-	// Environment variable carrying the native scope identifier in descendant processes.
-	IDEnvironmentVariable string `json:"id_environment_variable"`
-}
-
-// GetNamespace returns the value of Namespace.
-func (s *ExecutionSessionScopeSpec) GetNamespace() string {
-	return s.Namespace
-}
-
-// GetKind returns the value of Kind.
-func (s *ExecutionSessionScopeSpec) GetKind() string {
-	return s.Kind
-}
-
-// GetIDEnvironmentVariable returns the value of IDEnvironmentVariable.
-func (s *ExecutionSessionScopeSpec) GetIDEnvironmentVariable() string {
-	return s.IDEnvironmentVariable
-}
-
-// SetNamespace sets the value of Namespace.
-func (s *ExecutionSessionScopeSpec) SetNamespace(val string) {
-	s.Namespace = val
-}
-
-// SetKind sets the value of Kind.
-func (s *ExecutionSessionScopeSpec) SetKind(val string) {
-	s.Kind = val
-}
-
-// SetIDEnvironmentVariable sets the value of IDEnvironmentVariable.
-func (s *ExecutionSessionScopeSpec) SetIDEnvironmentVariable(val string) {
-	s.IDEnvironmentVariable = val
-}
-
 // Ref: #/components/schemas/ExecutionSessionSignalRequest
 type ExecutionSessionSignalRequest struct {
 	Signal            string    `json:"signal"`
@@ -4626,7 +4583,6 @@ type ExecutionSessionSpec struct {
 	Lifecycle      OptExecutionSessionLifecycleSpec      `json:"lifecycle"`
 	Readiness      OptExecutionSessionReadinessSpec      `json:"readiness"`
 	EventRetention OptExecutionSessionEventRetentionSpec `json:"event_retention"`
-	ExecutionScope OptExecutionSessionScopeSpec          `json:"execution_scope"`
 }
 
 // GetName returns the value of Name.
@@ -4669,11 +4625,6 @@ func (s *ExecutionSessionSpec) GetEventRetention() OptExecutionSessionEventReten
 	return s.EventRetention
 }
 
-// GetExecutionScope returns the value of ExecutionScope.
-func (s *ExecutionSessionSpec) GetExecutionScope() OptExecutionSessionScopeSpec {
-	return s.ExecutionScope
-}
-
 // SetName sets the value of Name.
 func (s *ExecutionSessionSpec) SetName(val OptString) {
 	s.Name = val
@@ -4712,11 +4663,6 @@ func (s *ExecutionSessionSpec) SetReadiness(val OptExecutionSessionReadinessSpec
 // SetEventRetention sets the value of EventRetention.
 func (s *ExecutionSessionSpec) SetEventRetention(val OptExecutionSessionEventRetentionSpec) {
 	s.EventRetention = val
-}
-
-// SetExecutionScope sets the value of ExecutionScope.
-func (s *ExecutionSessionSpec) SetExecutionScope(val OptExecutionSessionScopeSpec) {
-	s.ExecutionScope = val
 }
 
 type ExecutionSessionSpecEnv map[string]string
@@ -8176,52 +8122,6 @@ func (o OptExecutionSessionRuntimeRecoveryPolicy) Or(d ExecutionSessionRuntimeRe
 	return d
 }
 
-// NewOptExecutionSessionScopeSpec returns new OptExecutionSessionScopeSpec with value set to v.
-func NewOptExecutionSessionScopeSpec(v ExecutionSessionScopeSpec) OptExecutionSessionScopeSpec {
-	return OptExecutionSessionScopeSpec{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptExecutionSessionScopeSpec is optional ExecutionSessionScopeSpec.
-type OptExecutionSessionScopeSpec struct {
-	Value ExecutionSessionScopeSpec
-	Set   bool
-}
-
-// IsSet returns true if OptExecutionSessionScopeSpec was set.
-func (o OptExecutionSessionScopeSpec) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptExecutionSessionScopeSpec) Reset() {
-	var v ExecutionSessionScopeSpec
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptExecutionSessionScopeSpec) SetTo(v ExecutionSessionScopeSpec) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptExecutionSessionScopeSpec) Get() (v ExecutionSessionScopeSpec, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptExecutionSessionScopeSpec) Or(d ExecutionSessionScopeSpec) ExecutionSessionScopeSpec {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptExecutionSessionSpecEnv returns new OptExecutionSessionSpecEnv with value set to v.
 func NewOptExecutionSessionSpecEnv(v ExecutionSessionSpecEnv) OptExecutionSessionSpecEnv {
 	return OptExecutionSessionSpecEnv{
@@ -11073,98 +10973,6 @@ func (o OptSandboxAuditActorKind) Get() (v SandboxAuditActorKind, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxAuditActorKind) Or(d SandboxAuditActorKind) SandboxAuditActorKind {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxAuditExecutionScope returns new OptSandboxAuditExecutionScope with value set to v.
-func NewOptSandboxAuditExecutionScope(v SandboxAuditExecutionScope) OptSandboxAuditExecutionScope {
-	return OptSandboxAuditExecutionScope{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxAuditExecutionScope is optional SandboxAuditExecutionScope.
-type OptSandboxAuditExecutionScope struct {
-	Value SandboxAuditExecutionScope
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxAuditExecutionScope was set.
-func (o OptSandboxAuditExecutionScope) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxAuditExecutionScope) Reset() {
-	var v SandboxAuditExecutionScope
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxAuditExecutionScope) SetTo(v SandboxAuditExecutionScope) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxAuditExecutionScope) Get() (v SandboxAuditExecutionScope, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxAuditExecutionScope) Or(d SandboxAuditExecutionScope) SandboxAuditExecutionScope {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxAuditExecutionScopeAttribution returns new OptSandboxAuditExecutionScopeAttribution with value set to v.
-func NewOptSandboxAuditExecutionScopeAttribution(v SandboxAuditExecutionScopeAttribution) OptSandboxAuditExecutionScopeAttribution {
-	return OptSandboxAuditExecutionScopeAttribution{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxAuditExecutionScopeAttribution is optional SandboxAuditExecutionScopeAttribution.
-type OptSandboxAuditExecutionScopeAttribution struct {
-	Value SandboxAuditExecutionScopeAttribution
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxAuditExecutionScopeAttribution was set.
-func (o OptSandboxAuditExecutionScopeAttribution) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxAuditExecutionScopeAttribution) Reset() {
-	var v SandboxAuditExecutionScopeAttribution
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxAuditExecutionScopeAttribution) SetTo(v SandboxAuditExecutionScopeAttribution) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxAuditExecutionScopeAttribution) Get() (v SandboxAuditExecutionScopeAttribution, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxAuditExecutionScopeAttribution) Or(d SandboxAuditExecutionScopeAttribution) SandboxAuditExecutionScopeAttribution {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -17370,91 +17178,6 @@ func (s *SandboxAuditEventPhase) UnmarshalText(data []byte) error {
 	}
 }
 
-// Attributes sandbox workload activity to one native harness execution
-// scope. The sandbox workload remains the audit actor.
-// Ref: #/components/schemas/SandboxAuditExecutionScope
-type SandboxAuditExecutionScope struct {
-	Namespace   string                                `json:"namespace"`
-	Kind        string                                `json:"kind"`
-	ID          string                                `json:"id"`
-	Attribution SandboxAuditExecutionScopeAttribution `json:"attribution"`
-}
-
-// GetNamespace returns the value of Namespace.
-func (s *SandboxAuditExecutionScope) GetNamespace() string {
-	return s.Namespace
-}
-
-// GetKind returns the value of Kind.
-func (s *SandboxAuditExecutionScope) GetKind() string {
-	return s.Kind
-}
-
-// GetID returns the value of ID.
-func (s *SandboxAuditExecutionScope) GetID() string {
-	return s.ID
-}
-
-// GetAttribution returns the value of Attribution.
-func (s *SandboxAuditExecutionScope) GetAttribution() SandboxAuditExecutionScopeAttribution {
-	return s.Attribution
-}
-
-// SetNamespace sets the value of Namespace.
-func (s *SandboxAuditExecutionScope) SetNamespace(val string) {
-	s.Namespace = val
-}
-
-// SetKind sets the value of Kind.
-func (s *SandboxAuditExecutionScope) SetKind(val string) {
-	s.Kind = val
-}
-
-// SetID sets the value of ID.
-func (s *SandboxAuditExecutionScope) SetID(val string) {
-	s.ID = val
-}
-
-// SetAttribution sets the value of Attribution.
-func (s *SandboxAuditExecutionScope) SetAttribution(val SandboxAuditExecutionScopeAttribution) {
-	s.Attribution = val
-}
-
-// Ref: #/components/schemas/SandboxAuditExecutionScopeAttribution
-type SandboxAuditExecutionScopeAttribution string
-
-const (
-	SandboxAuditExecutionScopeAttributionProcessEnvironment SandboxAuditExecutionScopeAttribution = "process_environment"
-)
-
-// AllValues returns all SandboxAuditExecutionScopeAttribution values.
-func (SandboxAuditExecutionScopeAttribution) AllValues() []SandboxAuditExecutionScopeAttribution {
-	return []SandboxAuditExecutionScopeAttribution{
-		SandboxAuditExecutionScopeAttributionProcessEnvironment,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SandboxAuditExecutionScopeAttribution) MarshalText() ([]byte, error) {
-	switch s {
-	case SandboxAuditExecutionScopeAttributionProcessEnvironment:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SandboxAuditExecutionScopeAttribution) UnmarshalText(data []byte) error {
-	switch SandboxAuditExecutionScopeAttribution(data) {
-	case SandboxAuditExecutionScopeAttributionProcessEnvironment:
-		*s = SandboxAuditExecutionScopeAttributionProcessEnvironment
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
 // Ref: #/components/schemas/SandboxAuditIntegrity
 type SandboxAuditIntegrity struct {
 	Algorithm       SandboxAuditIntegrityAlgorithm       `json:"algorithm"`
@@ -18166,92 +17889,29 @@ func (s *SandboxNetworkPolicyMode) UnmarshalText(data []byte) error {
 	}
 }
 
-// Normalized schema ceiling and execution-scope filters applied by the
-// server. This metadata is returned even when no events match.
-// Ref: #/components/schemas/SandboxObservabilityEffectiveEventQuery
-type SandboxObservabilityEffectiveEventQuery struct {
-	MaxSchemaVersion          int                                      `json:"max_schema_version"`
-	ExecutionScopeNamespace   OptString                                `json:"execution_scope_namespace"`
-	ExecutionScopeKind        OptString                                `json:"execution_scope_kind"`
-	ExecutionScopeID          OptString                                `json:"execution_scope_id"`
-	ExecutionScopeAttribution OptSandboxAuditExecutionScopeAttribution `json:"execution_scope_attribution"`
-}
-
-// GetMaxSchemaVersion returns the value of MaxSchemaVersion.
-func (s *SandboxObservabilityEffectiveEventQuery) GetMaxSchemaVersion() int {
-	return s.MaxSchemaVersion
-}
-
-// GetExecutionScopeNamespace returns the value of ExecutionScopeNamespace.
-func (s *SandboxObservabilityEffectiveEventQuery) GetExecutionScopeNamespace() OptString {
-	return s.ExecutionScopeNamespace
-}
-
-// GetExecutionScopeKind returns the value of ExecutionScopeKind.
-func (s *SandboxObservabilityEffectiveEventQuery) GetExecutionScopeKind() OptString {
-	return s.ExecutionScopeKind
-}
-
-// GetExecutionScopeID returns the value of ExecutionScopeID.
-func (s *SandboxObservabilityEffectiveEventQuery) GetExecutionScopeID() OptString {
-	return s.ExecutionScopeID
-}
-
-// GetExecutionScopeAttribution returns the value of ExecutionScopeAttribution.
-func (s *SandboxObservabilityEffectiveEventQuery) GetExecutionScopeAttribution() OptSandboxAuditExecutionScopeAttribution {
-	return s.ExecutionScopeAttribution
-}
-
-// SetMaxSchemaVersion sets the value of MaxSchemaVersion.
-func (s *SandboxObservabilityEffectiveEventQuery) SetMaxSchemaVersion(val int) {
-	s.MaxSchemaVersion = val
-}
-
-// SetExecutionScopeNamespace sets the value of ExecutionScopeNamespace.
-func (s *SandboxObservabilityEffectiveEventQuery) SetExecutionScopeNamespace(val OptString) {
-	s.ExecutionScopeNamespace = val
-}
-
-// SetExecutionScopeKind sets the value of ExecutionScopeKind.
-func (s *SandboxObservabilityEffectiveEventQuery) SetExecutionScopeKind(val OptString) {
-	s.ExecutionScopeKind = val
-}
-
-// SetExecutionScopeID sets the value of ExecutionScopeID.
-func (s *SandboxObservabilityEffectiveEventQuery) SetExecutionScopeID(val OptString) {
-	s.ExecutionScopeID = val
-}
-
-// SetExecutionScopeAttribution sets the value of ExecutionScopeAttribution.
-func (s *SandboxObservabilityEffectiveEventQuery) SetExecutionScopeAttribution(val OptSandboxAuditExecutionScopeAttribution) {
-	s.ExecutionScopeAttribution = val
-}
-
 // Ref: #/components/schemas/SandboxObservabilityEvent
 type SandboxObservabilityEvent struct {
-	EventID uuid.UUID `json:"event_id"`
-	// Schema v2 is used for unscoped facts; schema v3 requires execution_scope.
-	SchemaVersion  SandboxObservabilityEventSchemaVersion `json:"schema_version"`
-	TeamID         string                                 `json:"team_id"`
-	SandboxID      string                                 `json:"sandbox_id"`
-	RegionID       string                                 `json:"region_id"`
-	ClusterID      string                                 `json:"cluster_id"`
-	OccurredAt     time.Time                              `json:"occurred_at"`
-	IngestedAt     time.Time                              `json:"ingested_at"`
-	Source         ObservabilityEventSource               `json:"source"`
-	EventType      SandboxObservabilityEventType          `json:"event_type"`
-	Phase          SandboxAuditEventPhase                 `json:"phase"`
-	Outcome        SandboxObservabilityOutcome            `json:"outcome"`
-	Actor          SandboxAuditActor                      `json:"actor"`
-	ExecutionScope OptSandboxAuditExecutionScope          `json:"execution_scope"`
-	Action         string                                 `json:"action"`
-	Resource       SandboxAuditResource                   `json:"resource"`
-	OperationID    string                                 `json:"operation_id"`
-	ParentEventID  OptUUID                                `json:"parent_event_id"`
-	Producer       SandboxAuditProducer                   `json:"producer"`
-	Request        OptSandboxAuditRequest                 `json:"request"`
-	Integrity      SandboxAuditIntegrity                  `json:"integrity"`
-	Attributes     OptSandboxObservabilityEventAttributes `json:"attributes"`
+	EventID       uuid.UUID                              `json:"event_id"`
+	SchemaVersion SandboxObservabilityEventSchemaVersion `json:"schema_version"`
+	TeamID        string                                 `json:"team_id"`
+	SandboxID     string                                 `json:"sandbox_id"`
+	RegionID      string                                 `json:"region_id"`
+	ClusterID     string                                 `json:"cluster_id"`
+	OccurredAt    time.Time                              `json:"occurred_at"`
+	IngestedAt    time.Time                              `json:"ingested_at"`
+	Source        ObservabilityEventSource               `json:"source"`
+	EventType     SandboxObservabilityEventType          `json:"event_type"`
+	Phase         SandboxAuditEventPhase                 `json:"phase"`
+	Outcome       SandboxObservabilityOutcome            `json:"outcome"`
+	Actor         SandboxAuditActor                      `json:"actor"`
+	Action        string                                 `json:"action"`
+	Resource      SandboxAuditResource                   `json:"resource"`
+	OperationID   string                                 `json:"operation_id"`
+	ParentEventID OptUUID                                `json:"parent_event_id"`
+	Producer      SandboxAuditProducer                   `json:"producer"`
+	Request       OptSandboxAuditRequest                 `json:"request"`
+	Integrity     SandboxAuditIntegrity                  `json:"integrity"`
+	Attributes    OptSandboxObservabilityEventAttributes `json:"attributes"`
 }
 
 // GetEventID returns the value of EventID.
@@ -18317,11 +17977,6 @@ func (s *SandboxObservabilityEvent) GetOutcome() SandboxObservabilityOutcome {
 // GetActor returns the value of Actor.
 func (s *SandboxObservabilityEvent) GetActor() SandboxAuditActor {
 	return s.Actor
-}
-
-// GetExecutionScope returns the value of ExecutionScope.
-func (s *SandboxObservabilityEvent) GetExecutionScope() OptSandboxAuditExecutionScope {
-	return s.ExecutionScope
 }
 
 // GetAction returns the value of Action.
@@ -18429,11 +18084,6 @@ func (s *SandboxObservabilityEvent) SetActor(val SandboxAuditActor) {
 	s.Actor = val
 }
 
-// SetExecutionScope sets the value of ExecutionScope.
-func (s *SandboxObservabilityEvent) SetExecutionScope(val OptSandboxAuditExecutionScope) {
-	s.ExecutionScope = val
-}
-
 // SetAction sets the value of Action.
 func (s *SandboxObservabilityEvent) SetAction(val string) {
 	s.Action = val
@@ -18485,19 +18135,16 @@ func (s *SandboxObservabilityEventAttributes) init() SandboxObservabilityEventAt
 	return m
 }
 
-// Schema v2 is used for unscoped facts; schema v3 requires execution_scope.
 type SandboxObservabilityEventSchemaVersion int
 
 const (
 	SandboxObservabilityEventSchemaVersion2 SandboxObservabilityEventSchemaVersion = 2
-	SandboxObservabilityEventSchemaVersion3 SandboxObservabilityEventSchemaVersion = 3
 )
 
 // AllValues returns all SandboxObservabilityEventSchemaVersion values.
 func (SandboxObservabilityEventSchemaVersion) AllValues() []SandboxObservabilityEventSchemaVersion {
 	return []SandboxObservabilityEventSchemaVersion{
 		SandboxObservabilityEventSchemaVersion2,
-		SandboxObservabilityEventSchemaVersion3,
 	}
 }
 
@@ -18573,10 +18220,9 @@ func (s *SandboxObservabilityEventType) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/SandboxObservabilityEventsResponse
 type SandboxObservabilityEventsResponse struct {
-	Events         []SandboxObservabilityEvent             `json:"events"`
-	NextCursor     OptString                               `json:"next_cursor"`
-	Watermark      OptString                               `json:"watermark"`
-	EffectiveQuery SandboxObservabilityEffectiveEventQuery `json:"effective_query"`
+	Events     []SandboxObservabilityEvent `json:"events"`
+	NextCursor OptString                   `json:"next_cursor"`
+	Watermark  OptString                   `json:"watermark"`
 }
 
 // GetEvents returns the value of Events.
@@ -18594,11 +18240,6 @@ func (s *SandboxObservabilityEventsResponse) GetWatermark() OptString {
 	return s.Watermark
 }
 
-// GetEffectiveQuery returns the value of EffectiveQuery.
-func (s *SandboxObservabilityEventsResponse) GetEffectiveQuery() SandboxObservabilityEffectiveEventQuery {
-	return s.EffectiveQuery
-}
-
 // SetEvents sets the value of Events.
 func (s *SandboxObservabilityEventsResponse) SetEvents(val []SandboxObservabilityEvent) {
 	s.Events = val
@@ -18612,11 +18253,6 @@ func (s *SandboxObservabilityEventsResponse) SetNextCursor(val OptString) {
 // SetWatermark sets the value of Watermark.
 func (s *SandboxObservabilityEventsResponse) SetWatermark(val OptString) {
 	s.Watermark = val
-}
-
-// SetEffectiveQuery sets the value of EffectiveQuery.
-func (s *SandboxObservabilityEventsResponse) SetEffectiveQuery(val SandboxObservabilityEffectiveEventQuery) {
-	s.EffectiveQuery = val
 }
 
 // Ref: #/components/schemas/SandboxObservabilityLogEntry
