@@ -11,8 +11,7 @@ import (
 )
 
 var regexMap = map[string]ogenregex.Regexp{
-	"^[0-9a-f]{64}$":     ogenregex.MustCompile("^[0-9a-f]{64}$"),
-	"^[A-Z_][A-Z0-9_]*$": ogenregex.MustCompile("^[A-Z_][A-Z0-9_]*$"),
+	"^[0-9a-f]{64}$": ogenregex.MustCompile("^[0-9a-f]{64}$"),
 }
 
 type (

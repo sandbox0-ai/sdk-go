@@ -197,30 +197,15 @@ type APIV1SandboxesIDObservabilityEventsGetParams struct {
 	// Stream matching records as application/x-ndjson in ingestion order until the client disconnects.
 	// When watch is true, end_time is not supported. Without cursor or start_time, streaming starts at
 	// request time.
-	Watch OptBool `json:",omitempty,omitzero"`
-	// Highest audit-event schema the client can decode. The default is 2
-	// so clients generated before execution-scope support never receive
-	// schema v3. Values newer than this server supports are capped to its
-	// current schema. Omitting this parameter while using any
-	// execution_scope filter implicitly negotiates schema v3; explicitly
-	// requesting schema v2 with such a filter is invalid.
-	MaxSchemaVersion OptInt                           `json:",omitempty,omitzero"`
-	Source           OptObservabilityEventSource      `json:",omitempty,omitzero"`
-	EventType        OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
-	Outcome          OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
-	ActorKind        OptSandboxAuditActorKind         `json:",omitempty,omitzero"`
-	ActorID          OptString                        `json:",omitempty,omitzero"`
-	// Restrict results to an exact execution-scope namespace such as codex.
-	ExecutionScopeNamespace OptString `json:",omitempty,omitzero"`
-	// Restrict results to an exact execution-scope kind such as native_session.
-	ExecutionScopeKind OptString `json:",omitempty,omitzero"`
-	// Restrict results to an exact native execution-scope identifier.
-	ExecutionScopeID OptString `json:",omitempty,omitzero"`
-	// Restrict results to the runtime signal used to attribute the execution scope.
-	ExecutionScopeAttribution OptSandboxAuditExecutionScopeAttribution `json:",omitempty,omitzero"`
-	Action                    OptString                                `json:",omitempty,omitzero"`
-	ResourceType              OptString                                `json:",omitempty,omitzero"`
-	OperationID               OptString                                `json:",omitempty,omitzero"`
+	Watch        OptBool                          `json:",omitempty,omitzero"`
+	Source       OptObservabilityEventSource      `json:",omitempty,omitzero"`
+	EventType    OptSandboxObservabilityEventType `json:",omitempty,omitzero"`
+	Outcome      OptSandboxObservabilityOutcome   `json:",omitempty,omitzero"`
+	ActorKind    OptSandboxAuditActorKind         `json:",omitempty,omitzero"`
+	ActorID      OptString                        `json:",omitempty,omitzero"`
+	Action       OptString                        `json:",omitempty,omitzero"`
+	ResourceType OptString                        `json:",omitempty,omitzero"`
+	OperationID  OptString                        `json:",omitempty,omitzero"`
 	// Exact lookup mode for one stable audit event ID. It cannot be combined with time, cursor, watch,
 	// or other event filters and returns one canonical row or two conflicting payload variants.
 	EventID OptUUID `json:",omitempty,omitzero"`
