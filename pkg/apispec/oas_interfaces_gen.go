@@ -165,8 +165,16 @@ type APIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes interface {
 	aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()
 }
 
+type APIV1TemplatesFromSandboxPostRes interface {
+	aPIV1TemplatesFromSandboxPostRes()
+}
+
 type APIV1TemplatesIDGetRes interface {
 	aPIV1TemplatesIDGetRes()
+}
+
+type APIV1TemplatesIDPutRes interface {
+	aPIV1TemplatesIDPutRes()
 }
 
 type AuthChangePasswordPostRes interface {

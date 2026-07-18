@@ -458,6 +458,12 @@ type APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams struct {
 	SnapshotID string
 }
 
+// APIV1TemplatesFromSandboxPostParams is parameters of POST /api/v1/templates/from-sandbox operation.
+type APIV1TemplatesFromSandboxPostParams struct {
+	// Optional key for retrying creation without starting a duplicate image build.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
+}
+
 // APIV1TemplatesIDDeleteParams is parameters of DELETE /api/v1/templates/{id} operation.
 type APIV1TemplatesIDDeleteParams struct {
 	ID string
