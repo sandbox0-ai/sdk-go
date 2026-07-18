@@ -36119,6 +36119,18 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.MeteredStorageBytes.Set {
+			e.FieldStart("metered_storage_bytes")
+			s.MeteredStorageBytes.Encode(e)
+		}
+	}
+	{
+		if s.StorageObservedAt.Set {
+			e.FieldStart("storage_observed_at")
+			s.StorageObservedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
@@ -36128,7 +36140,7 @@ func (s *SandboxVolume) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxVolume = [11]string{
+var jsonFieldsNameOfSandboxVolume = [13]string{
 	0:  "id",
 	1:  "team_id",
 	2:  "user_id",
@@ -36138,8 +36150,10 @@ var jsonFieldsNameOfSandboxVolume = [11]string{
 	6:  "access_mode",
 	7:  "backend",
 	8:  "s3",
-	9:  "created_at",
-	10: "updated_at",
+	9:  "metered_storage_bytes",
+	10: "storage_observed_at",
+	11: "created_at",
+	12: "updated_at",
 }
 
 // Decode decodes SandboxVolume from json.
@@ -36247,8 +36261,28 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"s3\"")
 			}
+		case "metered_storage_bytes":
+			if err := func() error {
+				s.MeteredStorageBytes.Reset()
+				if err := s.MeteredStorageBytes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"metered_storage_bytes\"")
+			}
+		case "storage_observed_at":
+			if err := func() error {
+				s.StorageObservedAt.Reset()
+				if err := s.StorageObservedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"storage_observed_at\"")
+			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -36260,7 +36294,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -36282,7 +36316,7 @@ func (s *SandboxVolume) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b10000111,
-		0b00000110,
+		0b00011000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

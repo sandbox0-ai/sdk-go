@@ -20308,9 +20308,15 @@ type SandboxVolume struct {
 	// Configured storage backend for the volume.
 	Backend VolumeBackend `json:"backend"`
 	// Public S3-compatible backend metadata. Credentials are never returned.
-	S3        OptSandboxVolumeS3Config `json:"s3"`
-	CreatedAt time.Time                `json:"created_at"`
-	UpdatedAt time.Time                `json:"updated_at"`
+	S3 OptSandboxVolumeS3Config `json:"s3"`
+	// Latest metered logical payload bytes stored by this S0FS volume. Null for external backends or
+	// when metering state is unavailable.
+	MeteredStorageBytes OptNilInt64 `json:"metered_storage_bytes"`
+	// Time when metered_storage_bytes was last observed. Null for external backends or when metering
+	// state is unavailable.
+	StorageObservedAt OptNilDateTime `json:"storage_observed_at"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -20356,6 +20362,16 @@ func (s *SandboxVolume) GetBackend() VolumeBackend {
 // GetS3 returns the value of S3.
 func (s *SandboxVolume) GetS3() OptSandboxVolumeS3Config {
 	return s.S3
+}
+
+// GetMeteredStorageBytes returns the value of MeteredStorageBytes.
+func (s *SandboxVolume) GetMeteredStorageBytes() OptNilInt64 {
+	return s.MeteredStorageBytes
+}
+
+// GetStorageObservedAt returns the value of StorageObservedAt.
+func (s *SandboxVolume) GetStorageObservedAt() OptNilDateTime {
+	return s.StorageObservedAt
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -20411,6 +20427,16 @@ func (s *SandboxVolume) SetBackend(val VolumeBackend) {
 // SetS3 sets the value of S3.
 func (s *SandboxVolume) SetS3(val OptSandboxVolumeS3Config) {
 	s.S3 = val
+}
+
+// SetMeteredStorageBytes sets the value of MeteredStorageBytes.
+func (s *SandboxVolume) SetMeteredStorageBytes(val OptNilInt64) {
+	s.MeteredStorageBytes = val
+}
+
+// SetStorageObservedAt sets the value of StorageObservedAt.
+func (s *SandboxVolume) SetStorageObservedAt(val OptNilDateTime) {
+	s.StorageObservedAt = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
