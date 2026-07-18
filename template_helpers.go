@@ -36,6 +36,22 @@ func NewTemplateCreateRequest(templateID string, main apispec.ContainerSpec, opt
 	}
 }
 
+// NewTemplateFromSandboxCreateRequest builds a template request from a sandbox root filesystem.
+func NewTemplateFromSandboxCreateRequest(
+	templateID string,
+	sandboxID string,
+	overrides *apispec.TemplateFromSandboxSpecOverrides,
+) apispec.TemplateFromSandboxCreateRequest {
+	request := apispec.TemplateFromSandboxCreateRequest{
+		TemplateID: templateID,
+		SandboxID:  sandboxID,
+	}
+	if overrides != nil {
+		request.SpecOverrides = apispec.NewOptTemplateFromSandboxSpecOverrides(*overrides)
+	}
+	return request
+}
+
 // NewTemplateUpdateRequest builds a template update request.
 func NewTemplateUpdateRequest(spec apispec.SandboxTemplateSpec) apispec.TemplateUpdateRequest {
 	return apispec.TemplateUpdateRequest{Spec: spec}

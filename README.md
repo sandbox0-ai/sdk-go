@@ -122,6 +122,41 @@ for _, mount := range sandbox.BootstrapMounts {
 }
 ```
 
+## Create A Template From A Sandbox
+
+Capture an initialized sandbox root filesystem as a team-owned template. Creation is asynchronous; the capture point is `status.creation.capturedAt`, not request acceptance, so keep the source sandbox available and avoid rootfs writes during the `capturing` stage. `WaitTemplateReady` polls until the published image has been reconciled. Canceling the context only stops polling and does not cancel the server-side build.
+
+```go
+request := sandbox0.NewTemplateFromSandboxCreateRequest(
+    "python-workspace",
+    sandbox.ID,
+    &apispec.TemplateFromSandboxSpecOverrides{
+        DisplayName: apispec.NewOptString("Python workspace"),
+        Pool: apispec.NewOptPoolStrategy(apispec.PoolStrategy{
+            MinIdle: 0,
+            MaxIdle: 0,
+        }),
+    },
+)
+
+template, err := client.CreateTemplateFromSandbox(
+    ctx,
+    request,
+    &sandbox0.CreateTemplateFromSandboxOptions{
+        IdempotencyKey: "python-workspace-v1",
+    },
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+template, err = client.WaitTemplateReady(ctx, template.TemplateID, nil)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("template %s is ready\n", template.TemplateID)
+```
+
 ## Links
 
 - [Documentation](https://sandbox0.ai/docs)

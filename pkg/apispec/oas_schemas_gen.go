@@ -441,6 +441,10 @@ type APIV1SandboxesIDSnapshotsPostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDSnapshotsPostServiceUnavailable) aPIV1SandboxesIDSnapshotsPostRes() {}
 
+type APIV1SandboxesPostConflict ErrorEnvelopeHeaders
+
+func (*APIV1SandboxesPostConflict) aPIV1SandboxesPostRes() {}
+
 type APIV1SandboxesPostServiceUnavailable ErrorEnvelopeHeaders
 
 func (*APIV1SandboxesPostServiceUnavailable) aPIV1SandboxesPostRes() {}
@@ -537,6 +541,34 @@ func (s APIV1SandboxvolumesIDFilesPostReq) Read(p []byte) (n int, err error) {
 
 // APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxvolumesIDFilesWatchGet operation.
 type APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols struct{}
+
+type APIV1TemplatesFromSandboxPostBadRequest ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostBadRequest) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostConflict ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostConflict) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostForbidden ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostForbidden) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostInternalServerError ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostInternalServerError) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostNotFound ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostNotFound) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostServiceUnavailable ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostServiceUnavailable) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesFromSandboxPostUnauthorized ErrorEnvelope
+
+func (*APIV1TemplatesFromSandboxPostUnauthorized) aPIV1TemplatesFromSandboxPostRes() {}
 
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
@@ -3407,6 +3439,8 @@ func (s *ErrorEnvelopeHeaders) SetRetryAfter(val OptInt) {
 func (s *ErrorEnvelopeHeaders) SetResponse(val ErrorEnvelope) {
 	s.Response = val
 }
+
+func (*ErrorEnvelopeHeaders) aPIV1TemplatesIDPutRes() {}
 
 type ErrorEnvelopeSuccess bool
 
@@ -14153,6 +14187,98 @@ func (o OptTemplate) Or(d Template) Template {
 	return d
 }
 
+// NewOptTemplateCreationStatus returns new OptTemplateCreationStatus with value set to v.
+func NewOptTemplateCreationStatus(v TemplateCreationStatus) OptTemplateCreationStatus {
+	return OptTemplateCreationStatus{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTemplateCreationStatus is optional TemplateCreationStatus.
+type OptTemplateCreationStatus struct {
+	Value TemplateCreationStatus
+	Set   bool
+}
+
+// IsSet returns true if OptTemplateCreationStatus was set.
+func (o OptTemplateCreationStatus) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTemplateCreationStatus) Reset() {
+	var v TemplateCreationStatus
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTemplateCreationStatus) SetTo(v TemplateCreationStatus) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTemplateCreationStatus) Get() (v TemplateCreationStatus, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTemplateCreationStatus) Or(d TemplateCreationStatus) TemplateCreationStatus {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptTemplateFromSandboxSpecOverrides returns new OptTemplateFromSandboxSpecOverrides with value set to v.
+func NewOptTemplateFromSandboxSpecOverrides(v TemplateFromSandboxSpecOverrides) OptTemplateFromSandboxSpecOverrides {
+	return OptTemplateFromSandboxSpecOverrides{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTemplateFromSandboxSpecOverrides is optional TemplateFromSandboxSpecOverrides.
+type OptTemplateFromSandboxSpecOverrides struct {
+	Value TemplateFromSandboxSpecOverrides
+	Set   bool
+}
+
+// IsSet returns true if OptTemplateFromSandboxSpecOverrides was set.
+func (o OptTemplateFromSandboxSpecOverrides) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTemplateFromSandboxSpecOverrides) Reset() {
+	var v TemplateFromSandboxSpecOverrides
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTemplateFromSandboxSpecOverrides) SetTo(v TemplateFromSandboxSpecOverrides) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTemplateFromSandboxSpecOverrides) Get() (v TemplateFromSandboxSpecOverrides, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTemplateFromSandboxSpecOverrides) Or(d TemplateFromSandboxSpecOverrides) TemplateFromSandboxSpecOverrides {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptUUID returns new OptUUID with value set to v.
 func NewOptUUID(v uuid.UUID) OptUUID {
 	return OptUUID{
@@ -20132,6 +20258,7 @@ type SandboxTemplateStatus struct {
 	ActiveCount    OptInt32                   `json:"activeCount"`
 	Conditions     []SandboxTemplateCondition `json:"conditions"`
 	LastUpdateTime OptNilDateTime             `json:"lastUpdateTime"`
+	Creation       OptTemplateCreationStatus  `json:"creation"`
 }
 
 // GetIdleCount returns the value of IdleCount.
@@ -20154,6 +20281,11 @@ func (s *SandboxTemplateStatus) GetLastUpdateTime() OptNilDateTime {
 	return s.LastUpdateTime
 }
 
+// GetCreation returns the value of Creation.
+func (s *SandboxTemplateStatus) GetCreation() OptTemplateCreationStatus {
+	return s.Creation
+}
+
 // SetIdleCount sets the value of IdleCount.
 func (s *SandboxTemplateStatus) SetIdleCount(val OptInt32) {
 	s.IdleCount = val
@@ -20172,6 +20304,11 @@ func (s *SandboxTemplateStatus) SetConditions(val []SandboxTemplateCondition) {
 // SetLastUpdateTime sets the value of LastUpdateTime.
 func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
 	s.LastUpdateTime = val
+}
+
+// SetCreation sets the value of Creation.
+func (s *SandboxTemplateStatus) SetCreation(val OptTemplateCreationStatus) {
+	s.Creation = val
 }
 
 // Subset of SandboxConfig fields that can be updated at runtime without restarting the sandbox.
@@ -23952,6 +24089,46 @@ func (s *SuccessTemplateResponse) SetData(val OptTemplate) {
 }
 
 func (*SuccessTemplateResponse) aPIV1TemplatesIDGetRes() {}
+func (*SuccessTemplateResponse) aPIV1TemplatesIDPutRes() {}
+
+// SuccessTemplateResponseHeaders wraps SuccessTemplateResponse with response headers.
+type SuccessTemplateResponseHeaders struct {
+	Location   OptString
+	RetryAfter OptInt
+	Response   SuccessTemplateResponse
+}
+
+// GetLocation returns the value of Location.
+func (s *SuccessTemplateResponseHeaders) GetLocation() OptString {
+	return s.Location
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *SuccessTemplateResponseHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *SuccessTemplateResponseHeaders) GetResponse() SuccessTemplateResponse {
+	return s.Response
+}
+
+// SetLocation sets the value of Location.
+func (s *SuccessTemplateResponseHeaders) SetLocation(val OptString) {
+	s.Location = val
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *SuccessTemplateResponseHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *SuccessTemplateResponseHeaders) SetResponse(val SuccessTemplateResponse) {
+	s.Response = val
+}
+
+func (*SuccessTemplateResponseHeaders) aPIV1TemplatesFromSandboxPostRes() {}
 
 type SuccessTemplateResponseSuccess bool
 
@@ -24771,6 +24948,290 @@ func (s *TemplateCreateRequest) SetTemplateID(val string) {
 // SetSpec sets the value of Spec.
 func (s *TemplateCreateRequest) SetSpec(val SandboxTemplateSpec) {
 	s.Spec = val
+}
+
+// Asynchronous creation status for templates built from a sandbox.
+// Traditional image-based templates omit this object and are ready
+// immediately after creation. Ready means the template is visible in at
+// least one data-plane cluster and the claim API accepts it; when the
+// pool is zero, it does not imply that a sandbox image has already been
+// pulled.
+// Ref: #/components/schemas/TemplateCreationStatus
+type TemplateCreationStatus struct {
+	State       TemplateCreationStatusState `json:"state"`
+	Stage       TemplateCreationStatusStage `json:"stage"`
+	StartedAt   OptDateTime                 `json:"startedAt"`
+	CapturedAt  OptDateTime                 `json:"capturedAt"`
+	CompletedAt OptDateTime                 `json:"completedAt"`
+	// Digest-pinned image reference published to the configured team registry.
+	OutputImage OptString `json:"outputImage"`
+	Reason      OptString `json:"reason"`
+	Message     OptString `json:"message"`
+}
+
+// GetState returns the value of State.
+func (s *TemplateCreationStatus) GetState() TemplateCreationStatusState {
+	return s.State
+}
+
+// GetStage returns the value of Stage.
+func (s *TemplateCreationStatus) GetStage() TemplateCreationStatusStage {
+	return s.Stage
+}
+
+// GetStartedAt returns the value of StartedAt.
+func (s *TemplateCreationStatus) GetStartedAt() OptDateTime {
+	return s.StartedAt
+}
+
+// GetCapturedAt returns the value of CapturedAt.
+func (s *TemplateCreationStatus) GetCapturedAt() OptDateTime {
+	return s.CapturedAt
+}
+
+// GetCompletedAt returns the value of CompletedAt.
+func (s *TemplateCreationStatus) GetCompletedAt() OptDateTime {
+	return s.CompletedAt
+}
+
+// GetOutputImage returns the value of OutputImage.
+func (s *TemplateCreationStatus) GetOutputImage() OptString {
+	return s.OutputImage
+}
+
+// GetReason returns the value of Reason.
+func (s *TemplateCreationStatus) GetReason() OptString {
+	return s.Reason
+}
+
+// GetMessage returns the value of Message.
+func (s *TemplateCreationStatus) GetMessage() OptString {
+	return s.Message
+}
+
+// SetState sets the value of State.
+func (s *TemplateCreationStatus) SetState(val TemplateCreationStatusState) {
+	s.State = val
+}
+
+// SetStage sets the value of Stage.
+func (s *TemplateCreationStatus) SetStage(val TemplateCreationStatusStage) {
+	s.Stage = val
+}
+
+// SetStartedAt sets the value of StartedAt.
+func (s *TemplateCreationStatus) SetStartedAt(val OptDateTime) {
+	s.StartedAt = val
+}
+
+// SetCapturedAt sets the value of CapturedAt.
+func (s *TemplateCreationStatus) SetCapturedAt(val OptDateTime) {
+	s.CapturedAt = val
+}
+
+// SetCompletedAt sets the value of CompletedAt.
+func (s *TemplateCreationStatus) SetCompletedAt(val OptDateTime) {
+	s.CompletedAt = val
+}
+
+// SetOutputImage sets the value of OutputImage.
+func (s *TemplateCreationStatus) SetOutputImage(val OptString) {
+	s.OutputImage = val
+}
+
+// SetReason sets the value of Reason.
+func (s *TemplateCreationStatus) SetReason(val OptString) {
+	s.Reason = val
+}
+
+// SetMessage sets the value of Message.
+func (s *TemplateCreationStatus) SetMessage(val OptString) {
+	s.Message = val
+}
+
+type TemplateCreationStatusStage string
+
+const (
+	TemplateCreationStatusStageCapturing   TemplateCreationStatusStage = "capturing"
+	TemplateCreationStatusStagePublishing  TemplateCreationStatusStage = "publishing"
+	TemplateCreationStatusStageReconciling TemplateCreationStatusStage = "reconciling"
+)
+
+// AllValues returns all TemplateCreationStatusStage values.
+func (TemplateCreationStatusStage) AllValues() []TemplateCreationStatusStage {
+	return []TemplateCreationStatusStage{
+		TemplateCreationStatusStageCapturing,
+		TemplateCreationStatusStagePublishing,
+		TemplateCreationStatusStageReconciling,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TemplateCreationStatusStage) MarshalText() ([]byte, error) {
+	switch s {
+	case TemplateCreationStatusStageCapturing:
+		return []byte(s), nil
+	case TemplateCreationStatusStagePublishing:
+		return []byte(s), nil
+	case TemplateCreationStatusStageReconciling:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TemplateCreationStatusStage) UnmarshalText(data []byte) error {
+	switch TemplateCreationStatusStage(data) {
+	case TemplateCreationStatusStageCapturing:
+		*s = TemplateCreationStatusStageCapturing
+		return nil
+	case TemplateCreationStatusStagePublishing:
+		*s = TemplateCreationStatusStagePublishing
+		return nil
+	case TemplateCreationStatusStageReconciling:
+		*s = TemplateCreationStatusStageReconciling
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type TemplateCreationStatusState string
+
+const (
+	TemplateCreationStatusStateCreating TemplateCreationStatusState = "creating"
+	TemplateCreationStatusStateReady    TemplateCreationStatusState = "ready"
+	TemplateCreationStatusStateFailed   TemplateCreationStatusState = "failed"
+)
+
+// AllValues returns all TemplateCreationStatusState values.
+func (TemplateCreationStatusState) AllValues() []TemplateCreationStatusState {
+	return []TemplateCreationStatusState{
+		TemplateCreationStatusStateCreating,
+		TemplateCreationStatusStateReady,
+		TemplateCreationStatusStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TemplateCreationStatusState) MarshalText() ([]byte, error) {
+	switch s {
+	case TemplateCreationStatusStateCreating:
+		return []byte(s), nil
+	case TemplateCreationStatusStateReady:
+		return []byte(s), nil
+	case TemplateCreationStatusStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TemplateCreationStatusState) UnmarshalText(data []byte) error {
+	switch TemplateCreationStatusState(data) {
+	case TemplateCreationStatusStateCreating:
+		*s = TemplateCreationStatusStateCreating
+		return nil
+	case TemplateCreationStatusStateReady:
+		*s = TemplateCreationStatusStateReady
+		return nil
+	case TemplateCreationStatusStateFailed:
+		*s = TemplateCreationStatusStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Creates a template by capturing the current root filesystem of an existing sandbox.
+// Ref: #/components/schemas/TemplateFromSandboxCreateRequest
+type TemplateFromSandboxCreateRequest struct {
+	TemplateID    string                              `json:"template_id"`
+	SandboxID     string                              `json:"sandbox_id"`
+	SpecOverrides OptTemplateFromSandboxSpecOverrides `json:"spec_overrides"`
+}
+
+// GetTemplateID returns the value of TemplateID.
+func (s *TemplateFromSandboxCreateRequest) GetTemplateID() string {
+	return s.TemplateID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *TemplateFromSandboxCreateRequest) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetSpecOverrides returns the value of SpecOverrides.
+func (s *TemplateFromSandboxCreateRequest) GetSpecOverrides() OptTemplateFromSandboxSpecOverrides {
+	return s.SpecOverrides
+}
+
+// SetTemplateID sets the value of TemplateID.
+func (s *TemplateFromSandboxCreateRequest) SetTemplateID(val string) {
+	s.TemplateID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *TemplateFromSandboxCreateRequest) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetSpecOverrides sets the value of SpecOverrides.
+func (s *TemplateFromSandboxCreateRequest) SetSpecOverrides(val OptTemplateFromSandboxSpecOverrides) {
+	s.SpecOverrides = val
+}
+
+// Safe template fields that may override values inherited from the source
+// sandbox's originating template. Pool defaults to zero idle sandboxes
+// when omitted.
+// Ref: #/components/schemas/TemplateFromSandboxSpecOverrides
+type TemplateFromSandboxSpecOverrides struct {
+	Description OptString       `json:"description"`
+	DisplayName OptString       `json:"displayName"`
+	Tags        []string        `json:"tags"`
+	Pool        OptPoolStrategy `json:"pool"`
+}
+
+// GetDescription returns the value of Description.
+func (s *TemplateFromSandboxSpecOverrides) GetDescription() OptString {
+	return s.Description
+}
+
+// GetDisplayName returns the value of DisplayName.
+func (s *TemplateFromSandboxSpecOverrides) GetDisplayName() OptString {
+	return s.DisplayName
+}
+
+// GetTags returns the value of Tags.
+func (s *TemplateFromSandboxSpecOverrides) GetTags() []string {
+	return s.Tags
+}
+
+// GetPool returns the value of Pool.
+func (s *TemplateFromSandboxSpecOverrides) GetPool() OptPoolStrategy {
+	return s.Pool
+}
+
+// SetDescription sets the value of Description.
+func (s *TemplateFromSandboxSpecOverrides) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetDisplayName sets the value of DisplayName.
+func (s *TemplateFromSandboxSpecOverrides) SetDisplayName(val OptString) {
+	s.DisplayName = val
+}
+
+// SetTags sets the value of Tags.
+func (s *TemplateFromSandboxSpecOverrides) SetTags(val []string) {
+	s.Tags = val
+}
+
+// SetPool sets the value of Pool.
+func (s *TemplateFromSandboxSpecOverrides) SetPool(val OptPoolStrategy) {
+	s.Pool = val
 }
 
 // Ref: #/components/schemas/TemplateUpdateRequest

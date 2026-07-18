@@ -87,6 +87,7 @@ const (
 	APIV1SandboxvolumesIDSnapshotsSnapshotIDGetOperation         OperationName = "APIV1SandboxvolumesIDSnapshotsSnapshotIDGet"
 	APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostOperation OperationName = "APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost"
 	APIV1SandboxvolumesPostOperation                             OperationName = "APIV1SandboxvolumesPost"
+	APIV1TemplatesFromSandboxPostOperation                       OperationName = "APIV1TemplatesFromSandboxPost"
 	APIV1TemplatesGetOperation                                   OperationName = "APIV1TemplatesGet"
 	APIV1TemplatesIDDeleteOperation                              OperationName = "APIV1TemplatesIDDelete"
 	APIV1TemplatesIDGetOperation                                 OperationName = "APIV1TemplatesIDGet"

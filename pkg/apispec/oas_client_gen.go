@@ -623,6 +623,20 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxvolumes
 	APIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, options ...RequestOption) (*SuccessSandboxVolumeResponse, error)
+	// APIV1TemplatesFromSandboxPost invokes POST /api/v1/templates/from-sandbox operation.
+	//
+	// Asynchronously captures the sandbox's writable root filesystem,
+	// publishes it to the Sandbox0-configured team registry, and creates a
+	// digest-pinned template. The capture point is reported by
+	// `status.creation.capturedAt`, not by acceptance of this request. Keep
+	// the source sandbox available and avoid rootfs writes until capture
+	// completes. Poll the returned template with
+	// `GET /api/v1/templates/{id}` until `status.creation.state` is `ready`
+	// or `failed`. The caller needs both `template:create` and
+	// `sandbox:read` permissions.
+	//
+	// POST /api/v1/templates/from-sandbox
+	APIV1TemplatesFromSandboxPost(ctx context.Context, request *TemplateFromSandboxCreateRequest, params APIV1TemplatesFromSandboxPostParams, options ...RequestOption) (APIV1TemplatesFromSandboxPostRes, error)
 	// APIV1TemplatesGet invokes GET /api/v1/templates operation.
 	//
 	// List templates.
@@ -646,7 +660,7 @@ type Invoker interface {
 	// Update template.
 	//
 	// PUT /api/v1/templates/{id}
-	APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error)
+	APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (APIV1TemplatesIDPutRes, error)
 	// APIV1TemplatesPost invokes POST /api/v1/templates operation.
 	//
 	// Create template.
@@ -11368,6 +11382,128 @@ func (c *Client) sendAPIV1SandboxvolumesPost(ctx context.Context, request *Creat
 	return result, nil
 }
 
+// APIV1TemplatesFromSandboxPost invokes POST /api/v1/templates/from-sandbox operation.
+//
+// Asynchronously captures the sandbox's writable root filesystem,
+// publishes it to the Sandbox0-configured team registry, and creates a
+// digest-pinned template. The capture point is reported by
+// `status.creation.capturedAt`, not by acceptance of this request. Keep
+// the source sandbox available and avoid rootfs writes until capture
+// completes. Poll the returned template with
+// `GET /api/v1/templates/{id}` until `status.creation.state` is `ready`
+// or `failed`. The caller needs both `template:create` and
+// `sandbox:read` permissions.
+//
+// POST /api/v1/templates/from-sandbox
+func (c *Client) APIV1TemplatesFromSandboxPost(ctx context.Context, request *TemplateFromSandboxCreateRequest, params APIV1TemplatesFromSandboxPostParams, options ...RequestOption) (APIV1TemplatesFromSandboxPostRes, error) {
+	res, err := c.sendAPIV1TemplatesFromSandboxPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1TemplatesFromSandboxPost(ctx context.Context, request *TemplateFromSandboxCreateRequest, params APIV1TemplatesFromSandboxPostParams, requestOptions ...RequestOption) (res APIV1TemplatesFromSandboxPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/templates/from-sandbox"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1TemplatesFromSandboxPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.IdempotencyKey.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1TemplatesFromSandboxPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1TemplatesFromSandboxPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1TemplatesGet invokes GET /api/v1/templates operation.
 //
 // List templates.
@@ -11694,12 +11830,12 @@ func (c *Client) sendAPIV1TemplatesIDGet(ctx context.Context, params APIV1Templa
 // Update template.
 //
 // PUT /api/v1/templates/{id}
-func (c *Client) APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (*SuccessTemplateResponse, error) {
+func (c *Client) APIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, options ...RequestOption) (APIV1TemplatesIDPutRes, error) {
 	res, err := c.sendAPIV1TemplatesIDPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
+func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *TemplateUpdateRequest, params APIV1TemplatesIDPutParams, requestOptions ...RequestOption) (res APIV1TemplatesIDPutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)

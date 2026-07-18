@@ -54,6 +54,24 @@ func TestNewTemplateCreateRequestBuildsTemplateSpec(t *testing.T) {
 	}
 }
 
+func TestNewTemplateFromSandboxCreateRequest(t *testing.T) {
+	overrides := apispec.TemplateFromSandboxSpecOverrides{
+		DisplayName: apispec.NewOptString("Python ready"),
+		Pool: apispec.NewOptPoolStrategy(apispec.PoolStrategy{
+			MinIdle: 1,
+			MaxIdle: 2,
+		}),
+	}
+	request := NewTemplateFromSandboxCreateRequest("python-ready", "sb_source", &overrides)
+	if request.TemplateID != "python-ready" || request.SandboxID != "sb_source" {
+		t.Fatalf("request = %+v", request)
+	}
+	got, ok := request.SpecOverrides.Get()
+	if !ok || got.DisplayName.Or("") != "Python ready" {
+		t.Fatalf("SpecOverrides = %+v, set = %v", got, ok)
+	}
+}
+
 func TestWithTemplateEnvVarsCopiesMap(t *testing.T) {
 	t.Parallel()
 
