@@ -57,9 +57,9 @@ func NewTemplateUpdateRequest(spec apispec.SandboxTemplateSpec) apispec.Template
 	return apispec.TemplateUpdateRequest{Spec: spec}
 }
 
-// TemplateResources builds a memory-only resource quota.
-func TemplateResources(memory string) apispec.ResourceQuota {
-	return apispec.ResourceQuota{Memory: memory}
+// TemplateResources builds memory-only sandbox resource limits.
+func TemplateResources(memory string) apispec.SandboxResourceLimits {
+	return apispec.SandboxResourceLimits{Memory: memory}
 }
 
 // TemplateMainContainer builds a main container spec. Sandbox0 derives CPU from platform configuration.

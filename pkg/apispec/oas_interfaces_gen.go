@@ -21,6 +21,14 @@ type APIKeysPostRes interface {
 	aPIKeysPostRes()
 }
 
+type APIV1CredentialSourcesGetRes interface {
+	aPIV1CredentialSourcesGetRes()
+}
+
+type APIV1CredentialSourcesNameDeleteRes interface {
+	aPIV1CredentialSourcesNameDeleteRes()
+}
+
 type APIV1CredentialSourcesNameGetRes interface {
 	aPIV1CredentialSourcesNameGetRes()
 }
@@ -33,8 +41,8 @@ type APIV1CredentialSourcesPostRes interface {
 	aPIV1CredentialSourcesPostRes()
 }
 
-type APIV1QuotasDimensionGetRes interface {
-	aPIV1QuotasDimensionGetRes()
+type APIV1QuotasGetRes interface {
+	aPIV1QuotasGetRes()
 }
 
 type APIV1RegistryCredentialsPostRes interface {
@@ -53,16 +61,76 @@ type APIV1SandboxesGetRes interface {
 	aPIV1SandboxesGetRes()
 }
 
+type APIV1SandboxesIDContextsCtxIDDeleteRes interface {
+	aPIV1SandboxesIDContextsCtxIDDeleteRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDExecPostRes interface {
+	aPIV1SandboxesIDContextsCtxIDExecPostRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDGetRes interface {
+	aPIV1SandboxesIDContextsCtxIDGetRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDInputPostRes interface {
+	aPIV1SandboxesIDContextsCtxIDInputPostRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDResizePostRes interface {
+	aPIV1SandboxesIDContextsCtxIDResizePostRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDRestartPostRes interface {
+	aPIV1SandboxesIDContextsCtxIDRestartPostRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDSignalPostRes interface {
+	aPIV1SandboxesIDContextsCtxIDSignalPostRes()
+}
+
+type APIV1SandboxesIDContextsCtxIDWsGetRes interface {
+	aPIV1SandboxesIDContextsCtxIDWsGetRes()
+}
+
+type APIV1SandboxesIDContextsGetRes interface {
+	aPIV1SandboxesIDContextsGetRes()
+}
+
+type APIV1SandboxesIDContextsPostRes interface {
+	aPIV1SandboxesIDContextsPostRes()
+}
+
 type APIV1SandboxesIDDeleteRes interface {
 	aPIV1SandboxesIDDeleteRes()
+}
+
+type APIV1SandboxesIDFilesDeleteRes interface {
+	aPIV1SandboxesIDFilesDeleteRes()
 }
 
 type APIV1SandboxesIDFilesGetRes interface {
 	aPIV1SandboxesIDFilesGetRes()
 }
 
+type APIV1SandboxesIDFilesListGetRes interface {
+	aPIV1SandboxesIDFilesListGetRes()
+}
+
+type APIV1SandboxesIDFilesMovePostRes interface {
+	aPIV1SandboxesIDFilesMovePostRes()
+}
+
 type APIV1SandboxesIDFilesPostRes interface {
 	aPIV1SandboxesIDFilesPostRes()
+}
+
+type APIV1SandboxesIDFilesStatGetRes interface {
+	aPIV1SandboxesIDFilesStatGetRes()
+}
+
+type APIV1SandboxesIDFilesWatchGetRes interface {
+	aPIV1SandboxesIDFilesWatchGetRes()
 }
 
 type APIV1SandboxesIDForkPostRes interface {
@@ -75,6 +143,10 @@ type APIV1SandboxesIDGetRes interface {
 
 type APIV1SandboxesIDNetworkGetRes interface {
 	aPIV1SandboxesIDNetworkGetRes()
+}
+
+type APIV1SandboxesIDNetworkPutRes interface {
+	aPIV1SandboxesIDNetworkPutRes()
 }
 
 type APIV1SandboxesIDObservabilityEventsGetRes interface {
@@ -113,12 +185,56 @@ type APIV1SandboxesIDServicesPutRes interface {
 	aPIV1SandboxesIDServicesPutRes()
 }
 
+type APIV1SandboxesIDSessionsGetRes interface {
+	aPIV1SandboxesIDSessionsGetRes()
+}
+
 type APIV1SandboxesIDSessionsPostRes interface {
 	aPIV1SandboxesIDSessionsPostRes()
 }
 
+type APIV1SandboxesIDSessionsSessionIDAttemptsPostRes interface {
+	aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDDeleteRes interface {
+	aPIV1SandboxesIDSessionsSessionIDDeleteRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDDesiredStatePutRes interface {
+	aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes()
+}
+
 type APIV1SandboxesIDSessionsSessionIDEventsGetRes interface {
 	aPIV1SandboxesIDSessionsSessionIDEventsGetRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDEventsStreamGetRes interface {
+	aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDGetRes interface {
+	aPIV1SandboxesIDSessionsSessionIDGetRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDInputsPostRes interface {
+	aPIV1SandboxesIDSessionsSessionIDInputsPostRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDPutRes interface {
+	aPIV1SandboxesIDSessionsSessionIDPutRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDSignalsPostRes interface {
+	aPIV1SandboxesIDSessionsSessionIDSignalsPostRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDTerminalPutRes interface {
+	aPIV1SandboxesIDSessionsSessionIDTerminalPutRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDWsGetRes interface {
+	aPIV1SandboxesIDSessionsSessionIDWsGetRes()
 }
 
 type APIV1SandboxesIDSnapshotsGetRes interface {
@@ -137,16 +253,44 @@ type APIV1SandboxesPostRes interface {
 	aPIV1SandboxesPostRes()
 }
 
+type APIV1SandboxvolumesGetRes interface {
+	aPIV1SandboxvolumesGetRes()
+}
+
 type APIV1SandboxvolumesIDDeleteRes interface {
 	aPIV1SandboxvolumesIDDeleteRes()
+}
+
+type APIV1SandboxvolumesIDFilesArchivePutRes interface {
+	aPIV1SandboxvolumesIDFilesArchivePutRes()
+}
+
+type APIV1SandboxvolumesIDFilesDeleteRes interface {
+	aPIV1SandboxvolumesIDFilesDeleteRes()
 }
 
 type APIV1SandboxvolumesIDFilesGetRes interface {
 	aPIV1SandboxvolumesIDFilesGetRes()
 }
 
+type APIV1SandboxvolumesIDFilesListGetRes interface {
+	aPIV1SandboxvolumesIDFilesListGetRes()
+}
+
+type APIV1SandboxvolumesIDFilesMovePostRes interface {
+	aPIV1SandboxvolumesIDFilesMovePostRes()
+}
+
 type APIV1SandboxvolumesIDFilesPostRes interface {
 	aPIV1SandboxvolumesIDFilesPostRes()
+}
+
+type APIV1SandboxvolumesIDFilesStatGetRes interface {
+	aPIV1SandboxvolumesIDFilesStatGetRes()
+}
+
+type APIV1SandboxvolumesIDFilesWatchGetRes interface {
+	aPIV1SandboxvolumesIDFilesWatchGetRes()
 }
 
 type APIV1SandboxvolumesIDForkPostRes interface {
@@ -157,16 +301,52 @@ type APIV1SandboxvolumesIDGetRes interface {
 	aPIV1SandboxvolumesIDGetRes()
 }
 
+type APIV1SandboxvolumesIDSnapshotsGetRes interface {
+	aPIV1SandboxvolumesIDSnapshotsGetRes()
+}
+
 type APIV1SandboxvolumesIDSnapshotsPostRes interface {
 	aPIV1SandboxvolumesIDSnapshotsPostRes()
+}
+
+type APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes interface {
+	aPIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes()
 }
 
 type APIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes interface {
 	aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()
 }
 
+type APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes interface {
+	aPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes()
+}
+
+type APIV1SandboxvolumesPostRes interface {
+	aPIV1SandboxvolumesPostRes()
+}
+
+type APIV1TeamsTeamIDQuotasGetRes interface {
+	aPIV1TeamsTeamIDQuotasGetRes()
+}
+
+type APIV1TeamsTeamIDQuotasKeyDeleteRes interface {
+	aPIV1TeamsTeamIDQuotasKeyDeleteRes()
+}
+
+type APIV1TeamsTeamIDQuotasKeyPutRes interface {
+	aPIV1TeamsTeamIDQuotasKeyPutRes()
+}
+
 type APIV1TemplatesFromSandboxPostRes interface {
 	aPIV1TemplatesFromSandboxPostRes()
+}
+
+type APIV1TemplatesGetRes interface {
+	aPIV1TemplatesGetRes()
+}
+
+type APIV1TemplatesIDDeleteRes interface {
+	aPIV1TemplatesIDDeleteRes()
 }
 
 type APIV1TemplatesIDGetRes interface {
@@ -177,12 +357,20 @@ type APIV1TemplatesIDPutRes interface {
 	aPIV1TemplatesIDPutRes()
 }
 
+type APIV1TemplatesPostRes interface {
+	aPIV1TemplatesPostRes()
+}
+
 type AuthChangePasswordPostRes interface {
 	authChangePasswordPostRes()
 }
 
 type AuthLoginPostRes interface {
 	authLoginPostRes()
+}
+
+type AuthLogoutPostRes interface {
+	authLogoutPostRes()
 }
 
 type AuthOidcProviderCallbackGetRes interface {
@@ -199,6 +387,10 @@ type AuthOidcProviderDeviceStartPostRes interface {
 
 type AuthOidcProviderLoginGetRes interface {
 	authOidcProviderLoginGetRes()
+}
+
+type AuthOidcProviderLogoutGetRes interface {
+	authOidcProviderLogoutGetRes()
 }
 
 type AuthProvidersGetRes interface {

@@ -203,6 +203,14 @@ type APIV1CredentialSourcesNamePutNotFound ErrorEnvelope
 
 func (*APIV1CredentialSourcesNamePutNotFound) aPIV1CredentialSourcesNamePutRes() {}
 
+type APIV1QuotasGetForbidden ErrorEnvelope
+
+func (*APIV1QuotasGetForbidden) aPIV1QuotasGetRes() {}
+
+type APIV1QuotasGetUnauthorized ErrorEnvelope
+
+func (*APIV1QuotasGetUnauthorized) aPIV1QuotasGetRes() {}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -221,6 +229,9 @@ func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes
 
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols) aPIV1SandboxesIDContextsCtxIDWsGetRes() {
+}
 
 type APIV1SandboxesIDDeleteForbidden ErrorEnvelope
 
@@ -305,6 +316,8 @@ func (s APIV1SandboxesIDFilesPostReq) Read(p []byte) (n int, err error) {
 // APIV1SandboxesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxesIDFilesWatchGet operation.
 type APIV1SandboxesIDFilesWatchGetSwitchingProtocols struct{}
 
+func (*APIV1SandboxesIDFilesWatchGetSwitchingProtocols) aPIV1SandboxesIDFilesWatchGetRes() {}
+
 type APIV1SandboxesIDForkPostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
@@ -312,10 +325,6 @@ func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
 type APIV1SandboxesIDForkPostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostNotFound) aPIV1SandboxesIDForkPostRes() {}
-
-type APIV1SandboxesIDForkPostServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDForkPostServiceUnavailable) aPIV1SandboxesIDForkPostRes() {}
 
 type APIV1SandboxesIDGetForbidden ErrorEnvelope
 
@@ -364,10 +373,6 @@ type APIV1SandboxesIDPausePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
 
-type APIV1SandboxesIDPausePostServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDPausePostServiceUnavailable) aPIV1SandboxesIDPausePostRes() {}
-
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -387,14 +392,6 @@ func (*APIV1SandboxesIDResumePostGatewayTimeout) aPIV1SandboxesIDResumePostRes()
 type APIV1SandboxesIDResumePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostNotFound) aPIV1SandboxesIDResumePostRes() {}
-
-type APIV1SandboxesIDResumePostServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDResumePostServiceUnavailable) aPIV1SandboxesIDResumePostRes() {}
-
-type APIV1SandboxesIDResumePostTooManyRequests ErrorEnvelope
-
-func (*APIV1SandboxesIDResumePostTooManyRequests) aPIV1SandboxesIDResumePostRes() {}
 
 type APIV1SandboxesIDRootfsRestorePostConflict ErrorEnvelope
 
@@ -426,8 +423,14 @@ func (s APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK) Read(p []byte) (n in
 	return s.Data.Read(p)
 }
 
+func (*APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK) aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes() {
+}
+
 // APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols is response for APIV1SandboxesIDSessionsSessionIDWsGet operation.
 type APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols) aPIV1SandboxesIDSessionsSessionIDWsGetRes() {
+}
 
 type APIV1SandboxesIDSnapshotsPostConflict ErrorEnvelope
 
@@ -436,10 +439,6 @@ func (*APIV1SandboxesIDSnapshotsPostConflict) aPIV1SandboxesIDSnapshotsPostRes()
 type APIV1SandboxesIDSnapshotsPostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDSnapshotsPostNotFound) aPIV1SandboxesIDSnapshotsPostRes() {}
-
-type APIV1SandboxesIDSnapshotsPostServiceUnavailable ErrorEnvelope
-
-func (*APIV1SandboxesIDSnapshotsPostServiceUnavailable) aPIV1SandboxesIDSnapshotsPostRes() {}
 
 type APIV1SandboxesPostConflict ErrorEnvelopeHeaders
 
@@ -541,6 +540,53 @@ func (s APIV1SandboxvolumesIDFilesPostReq) Read(p []byte) (n int, err error) {
 
 // APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxvolumesIDFilesWatchGet operation.
 type APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols) aPIV1SandboxvolumesIDFilesWatchGetRes() {
+}
+
+type APIV1TeamsTeamIDQuotasGetForbidden ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasGetForbidden) aPIV1TeamsTeamIDQuotasGetRes() {}
+
+type APIV1TeamsTeamIDQuotasGetNotFound ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasGetNotFound) aPIV1TeamsTeamIDQuotasGetRes() {}
+
+type APIV1TeamsTeamIDQuotasGetUnauthorized ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasGetUnauthorized) aPIV1TeamsTeamIDQuotasGetRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyDeleteBadRequest ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyDeleteBadRequest) aPIV1TeamsTeamIDQuotasKeyDeleteRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyDeleteForbidden ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyDeleteForbidden) aPIV1TeamsTeamIDQuotasKeyDeleteRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyDeleteNotFound ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyDeleteNotFound) aPIV1TeamsTeamIDQuotasKeyDeleteRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyDeleteUnauthorized ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyDeleteUnauthorized) aPIV1TeamsTeamIDQuotasKeyDeleteRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyPutBadRequest ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyPutBadRequest) aPIV1TeamsTeamIDQuotasKeyPutRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyPutForbidden ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyPutForbidden) aPIV1TeamsTeamIDQuotasKeyPutRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyPutNotFound ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyPutNotFound) aPIV1TeamsTeamIDQuotasKeyPutRes() {}
+
+type APIV1TeamsTeamIDQuotasKeyPutUnauthorized ErrorEnvelope
+
+func (*APIV1TeamsTeamIDQuotasKeyPutUnauthorized) aPIV1TeamsTeamIDQuotasKeyPutRes() {}
 
 type APIV1TemplatesFromSandboxPostBadRequest ErrorEnvelope
 
@@ -650,6 +696,265 @@ func (s *AddTeamMemberRequestRole) UnmarshalText(data []byte) error {
 		return errors.Errorf("invalid value: %q", data)
 	}
 }
+
+// AdmissionRateLimitedHeaders wraps ErrorEnvelope with response headers.
+type AdmissionRateLimitedHeaders struct {
+	RetryAfter OptInt
+	Response   ErrorEnvelope
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *AdmissionRateLimitedHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *AdmissionRateLimitedHeaders) GetResponse() ErrorEnvelope {
+	return s.Response
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *AdmissionRateLimitedHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *AdmissionRateLimitedHeaders) SetResponse(val ErrorEnvelope) {
+	s.Response = val
+}
+
+func (*AdmissionRateLimitedHeaders) aPIKeysCurrentGetRes()                                {}
+func (*AdmissionRateLimitedHeaders) aPIKeysGetRes()                                       {}
+func (*AdmissionRateLimitedHeaders) aPIKeysIDDeactivatePostRes()                          {}
+func (*AdmissionRateLimitedHeaders) aPIKeysIDDeleteRes()                                  {}
+func (*AdmissionRateLimitedHeaders) aPIKeysPostRes()                                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1CredentialSourcesGetRes()                        {}
+func (*AdmissionRateLimitedHeaders) aPIV1CredentialSourcesNameDeleteRes()                 {}
+func (*AdmissionRateLimitedHeaders) aPIV1CredentialSourcesNameGetRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1CredentialSourcesNamePutRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1CredentialSourcesPostRes()                       {}
+func (*AdmissionRateLimitedHeaders) aPIV1QuotasGetRes()                                   {}
+func (*AdmissionRateLimitedHeaders) aPIV1RegistryCredentialsPostRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()         {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesGetRes()                                {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDDeleteRes()              {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDExecPostRes()            {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDGetRes()                 {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDInputPostRes()           {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDResizePostRes()          {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDRestartPostRes()         {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDSignalPostRes()          {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsCtxIDWsGetRes()               {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsGetRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDContextsPostRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesDeleteRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesGetRes()                         {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesListGetRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesMovePostRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesPostRes()                        {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesStatGetRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDFilesWatchGetRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDGetRes()                              {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDNetworkGetRes()                       {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDNetworkPutRes()                       {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDObservabilityEventsGetRes()           {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDObservabilityLogsGetRes()             {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDRefreshPostRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDServicesGetRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDServicesPutRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsGetRes()                      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()    {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDDeleteRes()          {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes() {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDEventsGetRes()       {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes() {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDInputsPostRes()      {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDSignalsPostRes()     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDTerminalPutRes()     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSessionsSessionIDWsGetRes()           {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDSnapshotsGetRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxesIDStatusGetRes()                        {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesGetRes()                           {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDFilesGetRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDFilesListGetRes()                {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDFilesStatGetRes()                {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDFilesWatchGetRes()               {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDGetRes()                         {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDSnapshotsGetRes()                {}
+func (*AdmissionRateLimitedHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()      {}
+func (*AdmissionRateLimitedHeaders) aPIV1TeamsTeamIDQuotasGetRes()                        {}
+func (*AdmissionRateLimitedHeaders) aPIV1TeamsTeamIDQuotasKeyDeleteRes()                  {}
+func (*AdmissionRateLimitedHeaders) aPIV1TeamsTeamIDQuotasKeyPutRes()                     {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesFromSandboxPostRes()                    {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesGetRes()                                {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesIDDeleteRes()                           {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesIDGetRes()                              {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesIDPutRes()                              {}
+func (*AdmissionRateLimitedHeaders) aPIV1TemplatesPostRes()                               {}
+func (*AdmissionRateLimitedHeaders) authChangePasswordPostRes()                           {}
+func (*AdmissionRateLimitedHeaders) authLoginPostRes()                                    {}
+func (*AdmissionRateLimitedHeaders) authLogoutPostRes()                                   {}
+func (*AdmissionRateLimitedHeaders) authOidcProviderCallbackGetRes()                      {}
+func (*AdmissionRateLimitedHeaders) authOidcProviderDevicePollPostRes()                   {}
+func (*AdmissionRateLimitedHeaders) authOidcProviderDeviceStartPostRes()                  {}
+func (*AdmissionRateLimitedHeaders) authOidcProviderLoginGetRes()                         {}
+func (*AdmissionRateLimitedHeaders) authOidcProviderLogoutGetRes()                        {}
+func (*AdmissionRateLimitedHeaders) authProvidersGetRes()                                 {}
+func (*AdmissionRateLimitedHeaders) authRefreshPostRes()                                  {}
+func (*AdmissionRateLimitedHeaders) authRegisterPostRes()                                 {}
+func (*AdmissionRateLimitedHeaders) authWebLoginExchangePostRes()                         {}
+func (*AdmissionRateLimitedHeaders) getSandboxRuntimeMetricsCatalogRes()                  {}
+func (*AdmissionRateLimitedHeaders) getSandboxRuntimeMetricsRes()                         {}
+func (*AdmissionRateLimitedHeaders) regionsGetRes()                                       {}
+func (*AdmissionRateLimitedHeaders) regionsIDDeleteRes()                                  {}
+func (*AdmissionRateLimitedHeaders) regionsIDGetRes()                                     {}
+func (*AdmissionRateLimitedHeaders) regionsIDPutRes()                                     {}
+func (*AdmissionRateLimitedHeaders) regionsPostRes()                                      {}
+func (*AdmissionRateLimitedHeaders) teamsGetRes()                                         {}
+func (*AdmissionRateLimitedHeaders) teamsIDDeleteRes()                                    {}
+func (*AdmissionRateLimitedHeaders) teamsIDGetRes()                                       {}
+func (*AdmissionRateLimitedHeaders) teamsIDMembersGetRes()                                {}
+func (*AdmissionRateLimitedHeaders) teamsIDMembersPostRes()                               {}
+func (*AdmissionRateLimitedHeaders) teamsIDMembersUserIdDeleteRes()                       {}
+func (*AdmissionRateLimitedHeaders) teamsIDMembersUserIdPutRes()                          {}
+func (*AdmissionRateLimitedHeaders) teamsIDOwnerPutRes()                                  {}
+func (*AdmissionRateLimitedHeaders) teamsIDPutRes()                                       {}
+func (*AdmissionRateLimitedHeaders) teamsPostRes()                                        {}
+func (*AdmissionRateLimitedHeaders) usersMeGetRes()                                       {}
+func (*AdmissionRateLimitedHeaders) usersMeIdentitiesGetRes()                             {}
+func (*AdmissionRateLimitedHeaders) usersMeIdentitiesIDDeleteRes()                        {}
+func (*AdmissionRateLimitedHeaders) usersMePutRes()                                       {}
+func (*AdmissionRateLimitedHeaders) usersMeSSHKeysGetRes()                                {}
+func (*AdmissionRateLimitedHeaders) usersMeSSHKeysIDDeleteRes()                           {}
+func (*AdmissionRateLimitedHeaders) usersMeSSHKeysPostRes()                               {}
+
+// AdmissionUnavailableHeaders wraps ErrorEnvelope with response headers.
+type AdmissionUnavailableHeaders struct {
+	RetryAfter OptInt
+	Response   ErrorEnvelope
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *AdmissionUnavailableHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *AdmissionUnavailableHeaders) GetResponse() ErrorEnvelope {
+	return s.Response
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *AdmissionUnavailableHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *AdmissionUnavailableHeaders) SetResponse(val ErrorEnvelope) {
+	s.Response = val
+}
+
+func (*AdmissionUnavailableHeaders) aPIKeysCurrentGetRes()                                {}
+func (*AdmissionUnavailableHeaders) aPIKeysGetRes()                                       {}
+func (*AdmissionUnavailableHeaders) aPIKeysIDDeactivatePostRes()                          {}
+func (*AdmissionUnavailableHeaders) aPIKeysIDDeleteRes()                                  {}
+func (*AdmissionUnavailableHeaders) aPIKeysPostRes()                                      {}
+func (*AdmissionUnavailableHeaders) aPIV1CredentialSourcesGetRes()                        {}
+func (*AdmissionUnavailableHeaders) aPIV1CredentialSourcesNameDeleteRes()                 {}
+func (*AdmissionUnavailableHeaders) aPIV1CredentialSourcesNameGetRes()                    {}
+func (*AdmissionUnavailableHeaders) aPIV1CredentialSourcesNamePutRes()                    {}
+func (*AdmissionUnavailableHeaders) aPIV1CredentialSourcesPostRes()                       {}
+func (*AdmissionUnavailableHeaders) aPIV1QuotasGetRes()                                   {}
+func (*AdmissionUnavailableHeaders) aPIV1RegistryCredentialsPostRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()         {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesGetRes()                                {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDDeleteRes()              {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDExecPostRes()            {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDGetRes()                 {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDInputPostRes()           {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDResizePostRes()          {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDRestartPostRes()         {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDSignalPostRes()          {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsCtxIDWsGetRes()               {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsGetRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDContextsPostRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesDeleteRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesGetRes()                         {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesListGetRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesMovePostRes()                    {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesPostRes()                        {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesStatGetRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDFilesWatchGetRes()                    {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDGetRes()                              {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDNetworkGetRes()                       {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDNetworkPutRes()                       {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDRefreshPostRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDServicesGetRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDServicesPutRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsGetRes()                      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsPostRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()    {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDDeleteRes()          {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes() {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDEventsGetRes()       {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes() {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDInputsPostRes()      {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDSignalsPostRes()     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDTerminalPutRes()     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSessionsSessionIDWsGetRes()           {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDSnapshotsGetRes()                     {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxesIDStatusGetRes()                        {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesGetRes()                           {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDFilesGetRes()                    {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDFilesListGetRes()                {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDFilesStatGetRes()                {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDFilesWatchGetRes()               {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDGetRes()                         {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDSnapshotsGetRes()                {}
+func (*AdmissionUnavailableHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()      {}
+func (*AdmissionUnavailableHeaders) aPIV1TemplatesGetRes()                                {}
+func (*AdmissionUnavailableHeaders) aPIV1TemplatesIDDeleteRes()                           {}
+func (*AdmissionUnavailableHeaders) aPIV1TemplatesIDGetRes()                              {}
+func (*AdmissionUnavailableHeaders) aPIV1TemplatesIDPutRes()                              {}
+func (*AdmissionUnavailableHeaders) aPIV1TemplatesPostRes()                               {}
+func (*AdmissionUnavailableHeaders) authChangePasswordPostRes()                           {}
+func (*AdmissionUnavailableHeaders) authLoginPostRes()                                    {}
+func (*AdmissionUnavailableHeaders) authLogoutPostRes()                                   {}
+func (*AdmissionUnavailableHeaders) authOidcProviderCallbackGetRes()                      {}
+func (*AdmissionUnavailableHeaders) authOidcProviderDevicePollPostRes()                   {}
+func (*AdmissionUnavailableHeaders) authOidcProviderDeviceStartPostRes()                  {}
+func (*AdmissionUnavailableHeaders) authOidcProviderLoginGetRes()                         {}
+func (*AdmissionUnavailableHeaders) authOidcProviderLogoutGetRes()                        {}
+func (*AdmissionUnavailableHeaders) authProvidersGetRes()                                 {}
+func (*AdmissionUnavailableHeaders) authRefreshPostRes()                                  {}
+func (*AdmissionUnavailableHeaders) authRegisterPostRes()                                 {}
+func (*AdmissionUnavailableHeaders) authWebLoginExchangePostRes()                         {}
+func (*AdmissionUnavailableHeaders) getSandboxRuntimeMetricsCatalogRes()                  {}
+func (*AdmissionUnavailableHeaders) regionsGetRes()                                       {}
+func (*AdmissionUnavailableHeaders) regionsIDDeleteRes()                                  {}
+func (*AdmissionUnavailableHeaders) regionsIDGetRes()                                     {}
+func (*AdmissionUnavailableHeaders) regionsIDPutRes()                                     {}
+func (*AdmissionUnavailableHeaders) regionsPostRes()                                      {}
+func (*AdmissionUnavailableHeaders) teamsGetRes()                                         {}
+func (*AdmissionUnavailableHeaders) teamsIDGetRes()                                       {}
+func (*AdmissionUnavailableHeaders) teamsIDMembersGetRes()                                {}
+func (*AdmissionUnavailableHeaders) teamsIDMembersPostRes()                               {}
+func (*AdmissionUnavailableHeaders) teamsIDMembersUserIdDeleteRes()                       {}
+func (*AdmissionUnavailableHeaders) teamsIDMembersUserIdPutRes()                          {}
+func (*AdmissionUnavailableHeaders) teamsIDOwnerPutRes()                                  {}
+func (*AdmissionUnavailableHeaders) teamsIDPutRes()                                       {}
+func (*AdmissionUnavailableHeaders) teamsPostRes()                                        {}
+func (*AdmissionUnavailableHeaders) usersMeGetRes()                                       {}
+func (*AdmissionUnavailableHeaders) usersMeIdentitiesGetRes()                             {}
+func (*AdmissionUnavailableHeaders) usersMeIdentitiesIDDeleteRes()                        {}
+func (*AdmissionUnavailableHeaders) usersMePutRes()                                       {}
+func (*AdmissionUnavailableHeaders) usersMeSSHKeysGetRes()                                {}
+func (*AdmissionUnavailableHeaders) usersMeSSHKeysIDDeleteRes()                           {}
+func (*AdmissionUnavailableHeaders) usersMeSSHKeysPostRes()                               {}
 
 // Ref: #/components/schemas/Affinity
 type Affinity struct {
@@ -808,6 +1113,19 @@ func (*AuthOidcProviderLoginGetFound) authOidcProviderLoginGetRes() {}
 type AuthOidcProviderLoginGetNotFound ErrorEnvelope
 
 func (*AuthOidcProviderLoginGetNotFound) authOidcProviderLoginGetRes() {}
+
+type AuthOidcProviderLogoutGetBadRequest ErrorEnvelope
+
+func (*AuthOidcProviderLogoutGetBadRequest) authOidcProviderLogoutGetRes() {}
+
+// AuthOidcProviderLogoutGetFound is response for AuthOidcProviderLogoutGet operation.
+type AuthOidcProviderLogoutGetFound struct{}
+
+func (*AuthOidcProviderLogoutGetFound) authOidcProviderLogoutGetRes() {}
+
+type AuthOidcProviderLogoutGetNotFound ErrorEnvelope
+
+func (*AuthOidcProviderLogoutGetNotFound) authOidcProviderLogoutGetRes() {}
 
 // Ref: #/components/schemas/AuthProvider
 type AuthProvider struct {
@@ -1153,11 +1471,11 @@ func (s *ClaimResponse) SetBootstrapMounts(val []MountStatus) {
 
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
-	Image           string             `json:"image"`
-	ImagePullPolicy OptString          `json:"imagePullPolicy"`
-	Env             []EnvVar           `json:"env"`
-	Resources       ResourceQuota      `json:"resources"`
-	SecurityContext OptSecurityContext `json:"securityContext"`
+	Image           string                `json:"image"`
+	ImagePullPolicy OptString             `json:"imagePullPolicy"`
+	Env             []EnvVar              `json:"env"`
+	Resources       SandboxResourceLimits `json:"resources"`
+	SecurityContext OptSecurityContext    `json:"securityContext"`
 }
 
 // GetImage returns the value of Image.
@@ -1176,7 +1494,7 @@ func (s *ContainerSpec) GetEnv() []EnvVar {
 }
 
 // GetResources returns the value of Resources.
-func (s *ContainerSpec) GetResources() ResourceQuota {
+func (s *ContainerSpec) GetResources() SandboxResourceLimits {
 	return s.Resources
 }
 
@@ -1201,7 +1519,7 @@ func (s *ContainerSpec) SetEnv(val []EnvVar) {
 }
 
 // SetResources sets the value of Resources.
-func (s *ContainerSpec) SetResources(val ResourceQuota) {
+func (s *ContainerSpec) SetResources(val SandboxResourceLimits) {
 	s.Resources = val
 }
 
@@ -3383,7 +3701,6 @@ func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
 func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
 func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                  {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
 func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
 func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()    {}
 func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
@@ -3391,6 +3708,7 @@ func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
 func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsPostRes()                {}
 func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDEventsGetRes()  {}
 func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
 func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
@@ -3440,7 +3758,15 @@ func (s *ErrorEnvelopeHeaders) SetResponse(val ErrorEnvelope) {
 	s.Response = val
 }
 
-func (*ErrorEnvelopeHeaders) aPIV1TemplatesIDPutRes() {}
+func (*ErrorEnvelopeHeaders) aPIV1SandboxesIDForkPostRes()        {}
+func (*ErrorEnvelopeHeaders) aPIV1SandboxesIDPausePostRes()       {}
+func (*ErrorEnvelopeHeaders) aPIV1SandboxesIDResumePostRes()      {}
+func (*ErrorEnvelopeHeaders) aPIV1SandboxesIDSnapshotsPostRes()   {}
+func (*ErrorEnvelopeHeaders) aPIV1TeamsTeamIDQuotasGetRes()       {}
+func (*ErrorEnvelopeHeaders) aPIV1TeamsTeamIDQuotasKeyDeleteRes() {}
+func (*ErrorEnvelopeHeaders) aPIV1TeamsTeamIDQuotasKeyPutRes()    {}
+func (*ErrorEnvelopeHeaders) aPIV1TemplatesIDPutRes()             {}
+func (*ErrorEnvelopeHeaders) teamsIDDeleteRes()                   {}
 
 type ErrorEnvelopeSuccess bool
 
@@ -14095,38 +14421,38 @@ func (o OptTeamMember) Or(d TeamMember) TeamMember {
 	return d
 }
 
-// NewOptTeamQuota returns new OptTeamQuota with value set to v.
-func NewOptTeamQuota(v TeamQuota) OptTeamQuota {
-	return OptTeamQuota{
+// NewOptTeamQuotaList returns new OptTeamQuotaList with value set to v.
+func NewOptTeamQuotaList(v TeamQuotaList) OptTeamQuotaList {
+	return OptTeamQuotaList{
 		Value: v,
 		Set:   true,
 	}
 }
 
-// OptTeamQuota is optional TeamQuota.
-type OptTeamQuota struct {
-	Value TeamQuota
+// OptTeamQuotaList is optional TeamQuotaList.
+type OptTeamQuotaList struct {
+	Value TeamQuotaList
 	Set   bool
 }
 
-// IsSet returns true if OptTeamQuota was set.
-func (o OptTeamQuota) IsSet() bool { return o.Set }
+// IsSet returns true if OptTeamQuotaList was set.
+func (o OptTeamQuotaList) IsSet() bool { return o.Set }
 
 // Reset unsets value.
-func (o *OptTeamQuota) Reset() {
-	var v TeamQuota
+func (o *OptTeamQuotaList) Reset() {
+	var v TeamQuotaList
 	o.Value = v
 	o.Set = false
 }
 
 // SetTo sets value to v.
-func (o *OptTeamQuota) SetTo(v TeamQuota) {
+func (o *OptTeamQuotaList) SetTo(v TeamQuotaList) {
 	o.Set = true
 	o.Value = v
 }
 
 // Get returns value and boolean that denotes whether value was set.
-func (o OptTeamQuota) Get() (v TeamQuota, ok bool) {
+func (o OptTeamQuotaList) Get() (v TeamQuotaList, ok bool) {
 	if !o.Set {
 		return v, false
 	}
@@ -14134,7 +14460,53 @@ func (o OptTeamQuota) Get() (v TeamQuota, ok bool) {
 }
 
 // Or returns value if set, or given parameter if does not.
-func (o OptTeamQuota) Or(d TeamQuota) TeamQuota {
+func (o OptTeamQuotaList) Or(d TeamQuotaList) TeamQuotaList {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptTeamQuotaPolicy returns new OptTeamQuotaPolicy with value set to v.
+func NewOptTeamQuotaPolicy(v TeamQuotaPolicy) OptTeamQuotaPolicy {
+	return OptTeamQuotaPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptTeamQuotaPolicy is optional TeamQuotaPolicy.
+type OptTeamQuotaPolicy struct {
+	Value TeamQuotaPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptTeamQuotaPolicy was set.
+func (o OptTeamQuotaPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptTeamQuotaPolicy) Reset() {
+	var v TeamQuotaPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptTeamQuotaPolicy) SetTo(v TeamQuotaPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptTeamQuotaPolicy) Get() (v TeamQuotaPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptTeamQuotaPolicy) Or(d TeamQuotaPolicy) TeamQuotaPolicy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -15259,83 +15631,6 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	}
 }
 
-// Ref: #/components/schemas/QuotaDimension
-type QuotaDimension string
-
-const (
-	QuotaDimensionActiveSandboxes   QuotaDimension = "active_sandboxes"
-	QuotaDimensionCPUMillicpu       QuotaDimension = "cpu_millicpu"
-	QuotaDimensionMemoryMib         QuotaDimension = "memory_mib"
-	QuotaDimensionVolumeStorageGB   QuotaDimension = "volume_storage_gb"
-	QuotaDimensionSnapshotStorageGB QuotaDimension = "snapshot_storage_gb"
-	QuotaDimensionEgress            QuotaDimension = "egress"
-	QuotaDimensionIngress           QuotaDimension = "ingress"
-)
-
-// AllValues returns all QuotaDimension values.
-func (QuotaDimension) AllValues() []QuotaDimension {
-	return []QuotaDimension{
-		QuotaDimensionActiveSandboxes,
-		QuotaDimensionCPUMillicpu,
-		QuotaDimensionMemoryMib,
-		QuotaDimensionVolumeStorageGB,
-		QuotaDimensionSnapshotStorageGB,
-		QuotaDimensionEgress,
-		QuotaDimensionIngress,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s QuotaDimension) MarshalText() ([]byte, error) {
-	switch s {
-	case QuotaDimensionActiveSandboxes:
-		return []byte(s), nil
-	case QuotaDimensionCPUMillicpu:
-		return []byte(s), nil
-	case QuotaDimensionMemoryMib:
-		return []byte(s), nil
-	case QuotaDimensionVolumeStorageGB:
-		return []byte(s), nil
-	case QuotaDimensionSnapshotStorageGB:
-		return []byte(s), nil
-	case QuotaDimensionEgress:
-		return []byte(s), nil
-	case QuotaDimensionIngress:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *QuotaDimension) UnmarshalText(data []byte) error {
-	switch QuotaDimension(data) {
-	case QuotaDimensionActiveSandboxes:
-		*s = QuotaDimensionActiveSandboxes
-		return nil
-	case QuotaDimensionCPUMillicpu:
-		*s = QuotaDimensionCPUMillicpu
-		return nil
-	case QuotaDimensionMemoryMib:
-		*s = QuotaDimensionMemoryMib
-		return nil
-	case QuotaDimensionVolumeStorageGB:
-		*s = QuotaDimensionVolumeStorageGB
-		return nil
-	case QuotaDimensionSnapshotStorageGB:
-		*s = QuotaDimensionSnapshotStorageGB
-		return nil
-	case QuotaDimensionEgress:
-		*s = QuotaDimensionEgress
-		return nil
-	case QuotaDimensionIngress:
-		*s = QuotaDimensionIngress
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
 // Ref: #/components/schemas/REPLConfig
 type REPLConfig struct {
 	Name        string              `json:"name"`
@@ -15890,36 +16185,6 @@ func (s *ResizeContextRequest) SetRows(val int32) {
 // SetCols sets the value of Cols.
 func (s *ResizeContextRequest) SetCols(val int32) {
 	s.Cols = val
-}
-
-// Ref: #/components/schemas/ResourceQuota
-type ResourceQuota struct {
-	// Memory limit used by default when a sandbox claim does not provide a memory override. Sandbox0
-	// derives the internal CPU limit from platform configuration.
-	Memory string `json:"memory"`
-	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 8Gi when
-	// omitted.
-	EphemeralStorage OptString `json:"ephemeralStorage"`
-}
-
-// GetMemory returns the value of Memory.
-func (s *ResourceQuota) GetMemory() string {
-	return s.Memory
-}
-
-// GetEphemeralStorage returns the value of EphemeralStorage.
-func (s *ResourceQuota) GetEphemeralStorage() OptString {
-	return s.EphemeralStorage
-}
-
-// SetMemory sets the value of Memory.
-func (s *ResourceQuota) SetMemory(val string) {
-	s.Memory = val
-}
-
-// SetEphemeralStorage sets the value of EphemeralStorage.
-func (s *ResourceQuota) SetEphemeralStorage(val OptString) {
-	s.EphemeralStorage = val
 }
 
 // Ref: #/components/schemas/ResourceUsage
@@ -18726,6 +18991,36 @@ func (s *SandboxResourceConfig) SetMemory(val OptString) {
 	s.Memory = val
 }
 
+// Ref: #/components/schemas/SandboxResourceLimits
+type SandboxResourceLimits struct {
+	// Memory limit used by default when a sandbox claim does not provide a memory override. Sandbox0
+	// derives the internal CPU limit from platform configuration.
+	Memory string `json:"memory"`
+	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 8Gi when
+	// omitted.
+	EphemeralStorage OptString `json:"ephemeralStorage"`
+}
+
+// GetMemory returns the value of Memory.
+func (s *SandboxResourceLimits) GetMemory() string {
+	return s.Memory
+}
+
+// GetEphemeralStorage returns the value of EphemeralStorage.
+func (s *SandboxResourceLimits) GetEphemeralStorage() OptString {
+	return s.EphemeralStorage
+}
+
+// SetMemory sets the value of Memory.
+func (s *SandboxResourceLimits) SetMemory(val string) {
+	s.Memory = val
+}
+
+// SetEphemeralStorage sets the value of EphemeralStorage.
+func (s *SandboxResourceLimits) SetEphemeralStorage(val OptString) {
+	s.EphemeralStorage = val
+}
+
 // Ref: #/components/schemas/SandboxResourceUsage
 type SandboxResourceUsage struct {
 	ContainerMemoryUsage      OptInt64               `json:"container_memory_usage"`
@@ -21166,6 +21461,8 @@ func (s *SuccessAcceptedResponse) SetData(val OptSuccessAcceptedResponseData) {
 	s.Data = val
 }
 
+func (*SuccessAcceptedResponse) aPIV1SandboxesIDSessionsSessionIDSignalsPostRes() {}
+
 type SuccessAcceptedResponseData struct {
 	Accepted bool `json:"accepted"`
 }
@@ -21321,6 +21618,8 @@ func (s *SuccessContextExecResponse) SetData(val OptContextExecResponse) {
 	s.Data = val
 }
 
+func (*SuccessContextExecResponse) aPIV1SandboxesIDContextsCtxIDExecPostRes() {}
+
 type SuccessContextExecResponseSuccess bool
 
 const (
@@ -21361,6 +21660,8 @@ func (s *SuccessContextListResponse) SetSuccess(val SuccessContextListResponseSu
 func (s *SuccessContextListResponse) SetData(val OptSuccessContextListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessContextListResponse) aPIV1SandboxesIDContextsGetRes() {}
 
 type SuccessContextListResponseData struct {
 	Contexts []ContextResponse `json:"contexts"`
@@ -21416,6 +21717,10 @@ func (s *SuccessContextResponse) SetSuccess(val SuccessContextResponseSuccess) {
 func (s *SuccessContextResponse) SetData(val OptContextResponse) {
 	s.Data = val
 }
+
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsCtxIDGetRes()         {}
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsCtxIDRestartPostRes() {}
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsPostRes()             {}
 
 type SuccessContextResponseSuccess bool
 
@@ -21558,6 +21863,8 @@ func (s *SuccessCredentialSourceListResponse) SetSuccess(val SuccessCredentialSo
 func (s *SuccessCredentialSourceListResponse) SetData(val []CredentialSourceMetadata) {
 	s.Data = val
 }
+
+func (*SuccessCredentialSourceListResponse) aPIV1CredentialSourcesGetRes() {}
 
 type SuccessCredentialSourceListResponseSuccess bool
 
@@ -21702,8 +22009,13 @@ func (s *SuccessDeletedResponse) SetData(val OptSuccessDeletedResponseData) {
 	s.Data = val
 }
 
-func (*SuccessDeletedResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
-func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes()                 {}
+func (*SuccessDeletedResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes()    {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDContextsCtxIDDeleteRes()            {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDFilesDeleteRes()                    {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDSessionsSessionIDDeleteRes()        {}
+func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDDeleteRes()                    {}
+func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDFilesDeleteRes()               {}
+func (*SuccessDeletedResponse) aPIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes() {}
 
 type SuccessDeletedResponseData struct {
 	Deleted OptBool `json:"deleted"`
@@ -21889,6 +22201,8 @@ func (s *SuccessExecutionSessionInputResponse) SetData(val OptExecutionSessionIn
 	s.Data = val
 }
 
+func (*SuccessExecutionSessionInputResponse) aPIV1SandboxesIDSessionsSessionIDInputsPostRes() {}
+
 type SuccessExecutionSessionInputResponseSuccess bool
 
 const (
@@ -21929,6 +22243,8 @@ func (s *SuccessExecutionSessionListResponse) SetSuccess(val SuccessExecutionSes
 func (s *SuccessExecutionSessionListResponse) SetData(val OptSuccessExecutionSessionListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessExecutionSessionListResponse) aPIV1SandboxesIDSessionsGetRes() {}
 
 type SuccessExecutionSessionListResponseData struct {
 	Sessions []ExecutionSession `json:"sessions"`
@@ -21985,6 +22301,11 @@ func (s *SuccessExecutionSessionResponse) SetData(val OptExecutionSession) {
 	s.Data = val
 }
 
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()    {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes() {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
+
 type SuccessExecutionSessionResponseSuccess bool
 
 const (
@@ -22025,6 +22346,9 @@ func (s *SuccessFileListResponse) SetSuccess(val SuccessFileListResponseSuccess)
 func (s *SuccessFileListResponse) SetData(val OptSuccessFileListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessFileListResponse) aPIV1SandboxesIDFilesListGetRes()      {}
+func (*SuccessFileListResponse) aPIV1SandboxvolumesIDFilesListGetRes() {}
 
 type SuccessFileListResponseData struct {
 	Entries []FileInfo `json:"entries"`
@@ -22080,6 +22404,9 @@ func (s *SuccessFileStatResponse) SetSuccess(val SuccessFileStatResponseSuccess)
 func (s *SuccessFileStatResponse) SetData(val OptFileInfo) {
 	s.Data = val
 }
+
+func (*SuccessFileStatResponse) aPIV1SandboxesIDFilesStatGetRes()      {}
+func (*SuccessFileStatResponse) aPIV1SandboxvolumesIDFilesStatGetRes() {}
 
 type SuccessFileStatResponseSuccess bool
 
@@ -22379,16 +22706,20 @@ func (s *SuccessMessageResponse) SetData(val OptSuccessMessageResponseData) {
 	s.Data = val
 }
 
-func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()    {}
-func (*SuccessMessageResponse) aPIKeysIDDeleteRes()            {}
-func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()     {}
-func (*SuccessMessageResponse) authChangePasswordPostRes()     {}
-func (*SuccessMessageResponse) regionsIDDeleteRes()            {}
-func (*SuccessMessageResponse) teamsIDDeleteRes()              {}
-func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes() {}
-func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()    {}
-func (*SuccessMessageResponse) usersMeIdentitiesIDDeleteRes()  {}
-func (*SuccessMessageResponse) usersMeSSHKeysIDDeleteRes()     {}
+func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()          {}
+func (*SuccessMessageResponse) aPIKeysIDDeleteRes()                  {}
+func (*SuccessMessageResponse) aPIV1CredentialSourcesNameDeleteRes() {}
+func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()           {}
+func (*SuccessMessageResponse) aPIV1TeamsTeamIDQuotasKeyDeleteRes()  {}
+func (*SuccessMessageResponse) aPIV1TemplatesIDDeleteRes()           {}
+func (*SuccessMessageResponse) authChangePasswordPostRes()           {}
+func (*SuccessMessageResponse) authLogoutPostRes()                   {}
+func (*SuccessMessageResponse) regionsIDDeleteRes()                  {}
+func (*SuccessMessageResponse) teamsIDDeleteRes()                    {}
+func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes()       {}
+func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()          {}
+func (*SuccessMessageResponse) usersMeIdentitiesIDDeleteRes()        {}
+func (*SuccessMessageResponse) usersMeSSHKeysIDDeleteRes()           {}
 
 type SuccessMessageResponseData struct {
 	Message OptString `json:"message"`
@@ -22444,6 +22775,9 @@ func (s *SuccessMovedResponse) SetSuccess(val SuccessMovedResponseSuccess) {
 func (s *SuccessMovedResponse) SetData(val OptSuccessMovedResponseData) {
 	s.Data = val
 }
+
+func (*SuccessMovedResponse) aPIV1SandboxesIDFilesMovePostRes()      {}
+func (*SuccessMovedResponse) aPIV1SandboxvolumesIDFilesMovePostRes() {}
 
 type SuccessMovedResponseData struct {
 	Moved OptBool `json:"moved"`
@@ -22731,6 +23065,9 @@ func (s *SuccessResizedResponse) SetData(val OptSuccessResizedResponseData) {
 	s.Data = val
 }
 
+func (*SuccessResizedResponse) aPIV1SandboxesIDContextsCtxIDResizePostRes()      {}
+func (*SuccessResizedResponse) aPIV1SandboxesIDSessionsSessionIDTerminalPutRes() {}
+
 type SuccessResizedResponseData struct {
 	Resized OptBool `json:"resized"`
 }
@@ -22785,6 +23122,8 @@ func (s *SuccessRestoreResponse) SetSuccess(val SuccessRestoreResponseSuccess) {
 func (s *SuccessRestoreResponse) SetData(val OptSuccessRestoreResponseData) {
 	s.Data = val
 }
+
+func (*SuccessRestoreResponse) aPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes() {}
 
 type SuccessRestoreResponseData struct {
 	Status OptString `json:"status"`
@@ -23109,6 +23448,7 @@ func (s *SuccessSandboxNetworkPolicyResponse) SetData(val OptSandboxNetworkPolic
 }
 
 func (*SuccessSandboxNetworkPolicyResponse) aPIV1SandboxesIDNetworkGetRes() {}
+func (*SuccessSandboxNetworkPolicyResponse) aPIV1SandboxesIDNetworkPutRes() {}
 
 type SuccessSandboxNetworkPolicyResponseSuccess bool
 
@@ -23577,6 +23917,8 @@ func (s *SuccessSandboxVolumeListResponse) SetData(val []SandboxVolume) {
 	s.Data = val
 }
 
+func (*SuccessSandboxVolumeListResponse) aPIV1SandboxvolumesGetRes() {}
+
 type SuccessSandboxVolumeListResponseSuccess bool
 
 const (
@@ -23620,6 +23962,7 @@ func (s *SuccessSandboxVolumeResponse) SetData(val OptSandboxVolume) {
 
 func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesIDForkPostRes() {}
 func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesIDGetRes()      {}
+func (*SuccessSandboxVolumeResponse) aPIV1SandboxvolumesPostRes()       {}
 
 type SuccessSandboxVolumeResponseSuccess bool
 
@@ -23661,6 +24004,8 @@ func (s *SuccessSignaledResponse) SetSuccess(val SuccessSignaledResponseSuccess)
 func (s *SuccessSignaledResponse) SetData(val OptSuccessSignaledResponseData) {
 	s.Data = val
 }
+
+func (*SuccessSignaledResponse) aPIV1SandboxesIDContextsCtxIDSignalPostRes() {}
 
 type SuccessSignaledResponseData struct {
 	Signaled OptBool `json:"signaled"`
@@ -23716,6 +24061,8 @@ func (s *SuccessSnapshotListResponse) SetSuccess(val SuccessSnapshotListResponse
 func (s *SuccessSnapshotListResponse) SetData(val []Snapshot) {
 	s.Data = val
 }
+
+func (*SuccessSnapshotListResponse) aPIV1SandboxvolumesIDSnapshotsGetRes() {}
 
 type SuccessSnapshotListResponseSuccess bool
 
@@ -23932,45 +24279,89 @@ func (SuccessTeamMemberResponseSuccess) AllValues() []SuccessTeamMemberResponseS
 }
 
 // Merged schema.
-// Ref: #/components/schemas/SuccessTeamQuotaResponse
-type SuccessTeamQuotaResponse struct {
-	Success SuccessTeamQuotaResponseSuccess `json:"success"`
+// Ref: #/components/schemas/SuccessTeamQuotaListResponse
+type SuccessTeamQuotaListResponse struct {
+	Success SuccessTeamQuotaListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTeamQuota `json:"data"`
+	Data OptTeamQuotaList `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
-func (s *SuccessTeamQuotaResponse) GetSuccess() SuccessTeamQuotaResponseSuccess {
+func (s *SuccessTeamQuotaListResponse) GetSuccess() SuccessTeamQuotaListResponseSuccess {
 	return s.Success
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamQuotaResponse) GetData() OptTeamQuota {
+func (s *SuccessTeamQuotaListResponse) GetData() OptTeamQuotaList {
 	return s.Data
 }
 
 // SetSuccess sets the value of Success.
-func (s *SuccessTeamQuotaResponse) SetSuccess(val SuccessTeamQuotaResponseSuccess) {
+func (s *SuccessTeamQuotaListResponse) SetSuccess(val SuccessTeamQuotaListResponseSuccess) {
 	s.Success = val
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamQuotaResponse) SetData(val OptTeamQuota) {
+func (s *SuccessTeamQuotaListResponse) SetData(val OptTeamQuotaList) {
 	s.Data = val
 }
 
-func (*SuccessTeamQuotaResponse) aPIV1QuotasDimensionGetRes() {}
+func (*SuccessTeamQuotaListResponse) aPIV1QuotasGetRes()            {}
+func (*SuccessTeamQuotaListResponse) aPIV1TeamsTeamIDQuotasGetRes() {}
 
-type SuccessTeamQuotaResponseSuccess bool
+type SuccessTeamQuotaListResponseSuccess bool
 
 const (
-	SuccessTeamQuotaResponseSuccessTrue SuccessTeamQuotaResponseSuccess = true
+	SuccessTeamQuotaListResponseSuccessTrue SuccessTeamQuotaListResponseSuccess = true
 )
 
-// AllValues returns all SuccessTeamQuotaResponseSuccess values.
-func (SuccessTeamQuotaResponseSuccess) AllValues() []SuccessTeamQuotaResponseSuccess {
-	return []SuccessTeamQuotaResponseSuccess{
-		SuccessTeamQuotaResponseSuccessTrue,
+// AllValues returns all SuccessTeamQuotaListResponseSuccess values.
+func (SuccessTeamQuotaListResponseSuccess) AllValues() []SuccessTeamQuotaListResponseSuccess {
+	return []SuccessTeamQuotaListResponseSuccess{
+		SuccessTeamQuotaListResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessTeamQuotaPolicyResponse
+type SuccessTeamQuotaPolicyResponse struct {
+	Success SuccessTeamQuotaPolicyResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptTeamQuotaPolicy `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessTeamQuotaPolicyResponse) GetSuccess() SuccessTeamQuotaPolicyResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessTeamQuotaPolicyResponse) GetData() OptTeamQuotaPolicy {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessTeamQuotaPolicyResponse) SetSuccess(val SuccessTeamQuotaPolicyResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessTeamQuotaPolicyResponse) SetData(val OptTeamQuotaPolicy) {
+	s.Data = val
+}
+
+func (*SuccessTeamQuotaPolicyResponse) aPIV1TeamsTeamIDQuotasKeyPutRes() {}
+
+type SuccessTeamQuotaPolicyResponseSuccess bool
+
+const (
+	SuccessTeamQuotaPolicyResponseSuccessTrue SuccessTeamQuotaPolicyResponseSuccess = true
+)
+
+// AllValues returns all SuccessTeamQuotaPolicyResponseSuccess values.
+func (SuccessTeamQuotaPolicyResponseSuccess) AllValues() []SuccessTeamQuotaPolicyResponseSuccess {
+	return []SuccessTeamQuotaPolicyResponseSuccess{
+		SuccessTeamQuotaPolicyResponseSuccessTrue,
 	}
 }
 
@@ -24048,6 +24439,8 @@ func (s *SuccessTemplateListResponse) SetData(val OptSuccessTemplateListResponse
 	s.Data = val
 }
 
+func (*SuccessTemplateListResponse) aPIV1TemplatesGetRes() {}
+
 type SuccessTemplateListResponseData struct {
 	Templates []Template `json:"templates"`
 	Count     OptInt     `json:"count"`
@@ -24116,6 +24509,7 @@ func (s *SuccessTemplateResponse) SetData(val OptTemplate) {
 
 func (*SuccessTemplateResponse) aPIV1TemplatesIDGetRes() {}
 func (*SuccessTemplateResponse) aPIV1TemplatesIDPutRes() {}
+func (*SuccessTemplateResponse) aPIV1TemplatesPostRes()  {}
 
 // SuccessTemplateResponseHeaders wraps SuccessTemplateResponse with response headers.
 type SuccessTemplateResponseHeaders struct {
@@ -24241,6 +24635,8 @@ func (s *SuccessVolumeFileArchiveImportResponse) SetData(val OptVolumeFileArchiv
 	s.Data = val
 }
 
+func (*SuccessVolumeFileArchiveImportResponse) aPIV1SandboxvolumesIDFilesArchivePutRes() {}
+
 type SuccessVolumeFileArchiveImportResponseSuccess bool
 
 const (
@@ -24282,8 +24678,9 @@ func (s *SuccessWrittenResponse) SetData(val OptSuccessWrittenResponseData) {
 	s.Data = val
 }
 
-func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes()      {}
-func (*SuccessWrittenResponse) aPIV1SandboxvolumesIDFilesPostRes() {}
+func (*SuccessWrittenResponse) aPIV1SandboxesIDContextsCtxIDInputPostRes() {}
+func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes()              {}
+func (*SuccessWrittenResponse) aPIV1SandboxvolumesIDFilesPostRes()         {}
 
 type SuccessWrittenResponseData struct {
 	Written OptBool `json:"written"`
@@ -24635,105 +25032,935 @@ func (s *TeamMember) SetAvatarURL(val OptString) {
 	s.AvatarURL = val
 }
 
-// Ref: #/components/schemas/TeamQuota
-type TeamQuota struct {
-	TeamID     string         `json:"team_id"`
-	Dimension  QuotaDimension `json:"dimension"`
-	LimitValue NilInt64       `json:"limit_value"`
-	Current    int64          `json:"current"`
-	Remaining  NilInt64       `json:"remaining"`
-	Unlimited  bool           `json:"unlimited"`
-	Unit       TeamQuotaUnit  `json:"unit"`
+// Ref: #/components/schemas/TeamQuotaCapacityPolicyWriteRequest
+type TeamQuotaCapacityPolicyWriteRequest struct {
+	Kind  TeamQuotaCapacityPolicyWriteRequestKind `json:"kind"`
+	Limit int64                                   `json:"limit"`
+}
+
+// GetKind returns the value of Kind.
+func (s *TeamQuotaCapacityPolicyWriteRequest) GetKind() TeamQuotaCapacityPolicyWriteRequestKind {
+	return s.Kind
+}
+
+// GetLimit returns the value of Limit.
+func (s *TeamQuotaCapacityPolicyWriteRequest) GetLimit() int64 {
+	return s.Limit
+}
+
+// SetKind sets the value of Kind.
+func (s *TeamQuotaCapacityPolicyWriteRequest) SetKind(val TeamQuotaCapacityPolicyWriteRequestKind) {
+	s.Kind = val
+}
+
+// SetLimit sets the value of Limit.
+func (s *TeamQuotaCapacityPolicyWriteRequest) SetLimit(val int64) {
+	s.Limit = val
+}
+
+type TeamQuotaCapacityPolicyWriteRequestKind string
+
+const (
+	TeamQuotaCapacityPolicyWriteRequestKindCapacity TeamQuotaCapacityPolicyWriteRequestKind = "capacity"
+)
+
+// AllValues returns all TeamQuotaCapacityPolicyWriteRequestKind values.
+func (TeamQuotaCapacityPolicyWriteRequestKind) AllValues() []TeamQuotaCapacityPolicyWriteRequestKind {
+	return []TeamQuotaCapacityPolicyWriteRequestKind{
+		TeamQuotaCapacityPolicyWriteRequestKindCapacity,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaCapacityPolicyWriteRequestKind) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaCapacityPolicyWriteRequestKindCapacity:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaCapacityPolicyWriteRequestKind) UnmarshalText(data []byte) error {
+	switch TeamQuotaCapacityPolicyWriteRequestKind(data) {
+	case TeamQuotaCapacityPolicyWriteRequestKindCapacity:
+		*s = TeamQuotaCapacityPolicyWriteRequestKindCapacity
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/TeamQuotaConcurrencyPolicyWriteRequest
+type TeamQuotaConcurrencyPolicyWriteRequest struct {
+	Kind  TeamQuotaConcurrencyPolicyWriteRequestKind `json:"kind"`
+	Limit int64                                      `json:"limit"`
+}
+
+// GetKind returns the value of Kind.
+func (s *TeamQuotaConcurrencyPolicyWriteRequest) GetKind() TeamQuotaConcurrencyPolicyWriteRequestKind {
+	return s.Kind
+}
+
+// GetLimit returns the value of Limit.
+func (s *TeamQuotaConcurrencyPolicyWriteRequest) GetLimit() int64 {
+	return s.Limit
+}
+
+// SetKind sets the value of Kind.
+func (s *TeamQuotaConcurrencyPolicyWriteRequest) SetKind(val TeamQuotaConcurrencyPolicyWriteRequestKind) {
+	s.Kind = val
+}
+
+// SetLimit sets the value of Limit.
+func (s *TeamQuotaConcurrencyPolicyWriteRequest) SetLimit(val int64) {
+	s.Limit = val
+}
+
+type TeamQuotaConcurrencyPolicyWriteRequestKind string
+
+const (
+	TeamQuotaConcurrencyPolicyWriteRequestKindConcurrency TeamQuotaConcurrencyPolicyWriteRequestKind = "concurrency"
+)
+
+// AllValues returns all TeamQuotaConcurrencyPolicyWriteRequestKind values.
+func (TeamQuotaConcurrencyPolicyWriteRequestKind) AllValues() []TeamQuotaConcurrencyPolicyWriteRequestKind {
+	return []TeamQuotaConcurrencyPolicyWriteRequestKind{
+		TeamQuotaConcurrencyPolicyWriteRequestKindConcurrency,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaConcurrencyPolicyWriteRequestKind) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaConcurrencyPolicyWriteRequestKindConcurrency:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaConcurrencyPolicyWriteRequestKind) UnmarshalText(data []byte) error {
+	switch TeamQuotaConcurrencyPolicyWriteRequestKind(data) {
+	case TeamQuotaConcurrencyPolicyWriteRequestKindConcurrency:
+		*s = TeamQuotaConcurrencyPolicyWriteRequestKindConcurrency
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// TeamQuotaExceededHeaders wraps ErrorEnvelope with response headers.
+type TeamQuotaExceededHeaders struct {
+	RetryAfter OptInt
+	Response   ErrorEnvelope
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *TeamQuotaExceededHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *TeamQuotaExceededHeaders) GetResponse() ErrorEnvelope {
+	return s.Response
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *TeamQuotaExceededHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *TeamQuotaExceededHeaders) SetResponse(val ErrorEnvelope) {
+	s.Response = val
+}
+
+func (*TeamQuotaExceededHeaders) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes()         {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDDeleteRes()                              {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDForkPostRes()                            {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDPausePostRes()                           {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDPutRes()                                 {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDResumePostRes()                          {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDRootfsRestorePostRes()                   {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxesIDSnapshotsPostRes()                       {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDDeleteRes()                         {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDFilesArchivePutRes()                {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDFilesDeleteRes()                    {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDFilesMovePostRes()                  {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDFilesPostRes()                      {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDForkPostRes()                       {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDSnapshotsPostRes()                  {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes()      {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes() {}
+func (*TeamQuotaExceededHeaders) aPIV1SandboxvolumesPostRes()                             {}
+
+// Ref: #/components/schemas/TeamQuotaKey
+type TeamQuotaKey string
+
+const (
+	TeamQuotaKeySandboxIdentityCount         TeamQuotaKey = "sandbox_identity_count"
+	TeamQuotaKeySandboxRuntimeCount          TeamQuotaKey = "sandbox_runtime_count"
+	TeamQuotaKeySandboxCPUMillicores         TeamQuotaKey = "sandbox_cpu_millicores"
+	TeamQuotaKeySandboxMemoryBytes           TeamQuotaKey = "sandbox_memory_bytes"
+	TeamQuotaKeySandboxEphemeralStorageBytes TeamQuotaKey = "sandbox_ephemeral_storage_bytes"
+	TeamQuotaKeyVolumeStorageBytes           TeamQuotaKey = "volume_storage_bytes"
+	TeamQuotaKeySnapshotStorageBytes         TeamQuotaKey = "snapshot_storage_bytes"
+	TeamQuotaKeyRootfsStorageBytes           TeamQuotaKey = "rootfs_storage_bytes"
+	TeamQuotaKeyTemplateImageStorageBytes    TeamQuotaKey = "template_image_storage_bytes"
+	TeamQuotaKeyStorageObjectCount           TeamQuotaKey = "storage_object_count"
+	TeamQuotaKeyControlPlaneObjectCount      TeamQuotaKey = "control_plane_object_count"
+	TeamQuotaKeyActiveConnectionCount        TeamQuotaKey = "active_connection_count"
+	TeamQuotaKeyActiveRequestCount           TeamQuotaKey = "active_request_count"
+	TeamQuotaKeyAPIRequests                  TeamQuotaKey = "api_requests"
+	TeamQuotaKeySandboxServiceRequests       TeamQuotaKey = "sandbox_service_requests"
+	TeamQuotaKeySandboxStarts                TeamQuotaKey = "sandbox_starts"
+	TeamQuotaKeyNetworkOperations            TeamQuotaKey = "network_operations"
+	TeamQuotaKeyNetworkIngressBytes          TeamQuotaKey = "network_ingress_bytes"
+	TeamQuotaKeyNetworkEgressBytes           TeamQuotaKey = "network_egress_bytes"
+	TeamQuotaKeyStorageOperations            TeamQuotaKey = "storage_operations"
+	TeamQuotaKeyObservabilityIngestBytes     TeamQuotaKey = "observability_ingest_bytes"
+)
+
+// AllValues returns all TeamQuotaKey values.
+func (TeamQuotaKey) AllValues() []TeamQuotaKey {
+	return []TeamQuotaKey{
+		TeamQuotaKeySandboxIdentityCount,
+		TeamQuotaKeySandboxRuntimeCount,
+		TeamQuotaKeySandboxCPUMillicores,
+		TeamQuotaKeySandboxMemoryBytes,
+		TeamQuotaKeySandboxEphemeralStorageBytes,
+		TeamQuotaKeyVolumeStorageBytes,
+		TeamQuotaKeySnapshotStorageBytes,
+		TeamQuotaKeyRootfsStorageBytes,
+		TeamQuotaKeyTemplateImageStorageBytes,
+		TeamQuotaKeyStorageObjectCount,
+		TeamQuotaKeyControlPlaneObjectCount,
+		TeamQuotaKeyActiveConnectionCount,
+		TeamQuotaKeyActiveRequestCount,
+		TeamQuotaKeyAPIRequests,
+		TeamQuotaKeySandboxServiceRequests,
+		TeamQuotaKeySandboxStarts,
+		TeamQuotaKeyNetworkOperations,
+		TeamQuotaKeyNetworkIngressBytes,
+		TeamQuotaKeyNetworkEgressBytes,
+		TeamQuotaKeyStorageOperations,
+		TeamQuotaKeyObservabilityIngestBytes,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaKey) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaKeySandboxIdentityCount:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxRuntimeCount:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxCPUMillicores:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxMemoryBytes:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxEphemeralStorageBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyVolumeStorageBytes:
+		return []byte(s), nil
+	case TeamQuotaKeySnapshotStorageBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyRootfsStorageBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyTemplateImageStorageBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyStorageObjectCount:
+		return []byte(s), nil
+	case TeamQuotaKeyControlPlaneObjectCount:
+		return []byte(s), nil
+	case TeamQuotaKeyActiveConnectionCount:
+		return []byte(s), nil
+	case TeamQuotaKeyActiveRequestCount:
+		return []byte(s), nil
+	case TeamQuotaKeyAPIRequests:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxServiceRequests:
+		return []byte(s), nil
+	case TeamQuotaKeySandboxStarts:
+		return []byte(s), nil
+	case TeamQuotaKeyNetworkOperations:
+		return []byte(s), nil
+	case TeamQuotaKeyNetworkIngressBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyNetworkEgressBytes:
+		return []byte(s), nil
+	case TeamQuotaKeyStorageOperations:
+		return []byte(s), nil
+	case TeamQuotaKeyObservabilityIngestBytes:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaKey) UnmarshalText(data []byte) error {
+	switch TeamQuotaKey(data) {
+	case TeamQuotaKeySandboxIdentityCount:
+		*s = TeamQuotaKeySandboxIdentityCount
+		return nil
+	case TeamQuotaKeySandboxRuntimeCount:
+		*s = TeamQuotaKeySandboxRuntimeCount
+		return nil
+	case TeamQuotaKeySandboxCPUMillicores:
+		*s = TeamQuotaKeySandboxCPUMillicores
+		return nil
+	case TeamQuotaKeySandboxMemoryBytes:
+		*s = TeamQuotaKeySandboxMemoryBytes
+		return nil
+	case TeamQuotaKeySandboxEphemeralStorageBytes:
+		*s = TeamQuotaKeySandboxEphemeralStorageBytes
+		return nil
+	case TeamQuotaKeyVolumeStorageBytes:
+		*s = TeamQuotaKeyVolumeStorageBytes
+		return nil
+	case TeamQuotaKeySnapshotStorageBytes:
+		*s = TeamQuotaKeySnapshotStorageBytes
+		return nil
+	case TeamQuotaKeyRootfsStorageBytes:
+		*s = TeamQuotaKeyRootfsStorageBytes
+		return nil
+	case TeamQuotaKeyTemplateImageStorageBytes:
+		*s = TeamQuotaKeyTemplateImageStorageBytes
+		return nil
+	case TeamQuotaKeyStorageObjectCount:
+		*s = TeamQuotaKeyStorageObjectCount
+		return nil
+	case TeamQuotaKeyControlPlaneObjectCount:
+		*s = TeamQuotaKeyControlPlaneObjectCount
+		return nil
+	case TeamQuotaKeyActiveConnectionCount:
+		*s = TeamQuotaKeyActiveConnectionCount
+		return nil
+	case TeamQuotaKeyActiveRequestCount:
+		*s = TeamQuotaKeyActiveRequestCount
+		return nil
+	case TeamQuotaKeyAPIRequests:
+		*s = TeamQuotaKeyAPIRequests
+		return nil
+	case TeamQuotaKeySandboxServiceRequests:
+		*s = TeamQuotaKeySandboxServiceRequests
+		return nil
+	case TeamQuotaKeySandboxStarts:
+		*s = TeamQuotaKeySandboxStarts
+		return nil
+	case TeamQuotaKeyNetworkOperations:
+		*s = TeamQuotaKeyNetworkOperations
+		return nil
+	case TeamQuotaKeyNetworkIngressBytes:
+		*s = TeamQuotaKeyNetworkIngressBytes
+		return nil
+	case TeamQuotaKeyNetworkEgressBytes:
+		*s = TeamQuotaKeyNetworkEgressBytes
+		return nil
+	case TeamQuotaKeyStorageOperations:
+		*s = TeamQuotaKeyStorageOperations
+		return nil
+	case TeamQuotaKeyObservabilityIngestBytes:
+		*s = TeamQuotaKeyObservabilityIngestBytes
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/TeamQuotaKind
+type TeamQuotaKind string
+
+const (
+	TeamQuotaKindCapacity    TeamQuotaKind = "capacity"
+	TeamQuotaKindConcurrency TeamQuotaKind = "concurrency"
+	TeamQuotaKindRate        TeamQuotaKind = "rate"
+)
+
+// AllValues returns all TeamQuotaKind values.
+func (TeamQuotaKind) AllValues() []TeamQuotaKind {
+	return []TeamQuotaKind{
+		TeamQuotaKindCapacity,
+		TeamQuotaKindConcurrency,
+		TeamQuotaKindRate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaKind) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaKindCapacity:
+		return []byte(s), nil
+	case TeamQuotaKindConcurrency:
+		return []byte(s), nil
+	case TeamQuotaKindRate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaKind) UnmarshalText(data []byte) error {
+	switch TeamQuotaKind(data) {
+	case TeamQuotaKindCapacity:
+		*s = TeamQuotaKindCapacity
+		return nil
+	case TeamQuotaKindConcurrency:
+		*s = TeamQuotaKindConcurrency
+		return nil
+	case TeamQuotaKindRate:
+		*s = TeamQuotaKindRate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/TeamQuotaList
+type TeamQuotaList struct {
+	TeamID string            `json:"team_id"`
+	Quotas []TeamQuotaStatus `json:"quotas"`
 }
 
 // GetTeamID returns the value of TeamID.
-func (s *TeamQuota) GetTeamID() string {
+func (s *TeamQuotaList) GetTeamID() string {
 	return s.TeamID
 }
 
-// GetDimension returns the value of Dimension.
-func (s *TeamQuota) GetDimension() QuotaDimension {
-	return s.Dimension
-}
-
-// GetLimitValue returns the value of LimitValue.
-func (s *TeamQuota) GetLimitValue() NilInt64 {
-	return s.LimitValue
-}
-
-// GetCurrent returns the value of Current.
-func (s *TeamQuota) GetCurrent() int64 {
-	return s.Current
-}
-
-// GetRemaining returns the value of Remaining.
-func (s *TeamQuota) GetRemaining() NilInt64 {
-	return s.Remaining
-}
-
-// GetUnlimited returns the value of Unlimited.
-func (s *TeamQuota) GetUnlimited() bool {
-	return s.Unlimited
-}
-
-// GetUnit returns the value of Unit.
-func (s *TeamQuota) GetUnit() TeamQuotaUnit {
-	return s.Unit
+// GetQuotas returns the value of Quotas.
+func (s *TeamQuotaList) GetQuotas() []TeamQuotaStatus {
+	return s.Quotas
 }
 
 // SetTeamID sets the value of TeamID.
-func (s *TeamQuota) SetTeamID(val string) {
+func (s *TeamQuotaList) SetTeamID(val string) {
 	s.TeamID = val
 }
 
-// SetDimension sets the value of Dimension.
-func (s *TeamQuota) SetDimension(val QuotaDimension) {
-	s.Dimension = val
+// SetQuotas sets the value of Quotas.
+func (s *TeamQuotaList) SetQuotas(val []TeamQuotaStatus) {
+	s.Quotas = val
 }
 
-// SetLimitValue sets the value of LimitValue.
-func (s *TeamQuota) SetLimitValue(val NilInt64) {
-	s.LimitValue = val
+// Capacity and concurrency policies use limit. Rate policies use tokens, interval_ms, and burst.
+// Ref: #/components/schemas/TeamQuotaPolicy
+type TeamQuotaPolicy struct {
+	TeamID     string        `json:"team_id"`
+	Key        TeamQuotaKey  `json:"key"`
+	Kind       TeamQuotaKind `json:"kind"`
+	Unit       TeamQuotaUnit `json:"unit"`
+	Revision   OptInt64      `json:"revision"`
+	Limit      OptInt64      `json:"limit"`
+	Tokens     OptInt64      `json:"tokens"`
+	IntervalMs OptInt64      `json:"interval_ms"`
+	Burst      OptInt64      `json:"burst"`
 }
 
-// SetCurrent sets the value of Current.
-func (s *TeamQuota) SetCurrent(val int64) {
-	s.Current = val
+// GetTeamID returns the value of TeamID.
+func (s *TeamQuotaPolicy) GetTeamID() string {
+	return s.TeamID
 }
 
-// SetRemaining sets the value of Remaining.
-func (s *TeamQuota) SetRemaining(val NilInt64) {
-	s.Remaining = val
+// GetKey returns the value of Key.
+func (s *TeamQuotaPolicy) GetKey() TeamQuotaKey {
+	return s.Key
 }
 
-// SetUnlimited sets the value of Unlimited.
-func (s *TeamQuota) SetUnlimited(val bool) {
-	s.Unlimited = val
+// GetKind returns the value of Kind.
+func (s *TeamQuotaPolicy) GetKind() TeamQuotaKind {
+	return s.Kind
+}
+
+// GetUnit returns the value of Unit.
+func (s *TeamQuotaPolicy) GetUnit() TeamQuotaUnit {
+	return s.Unit
+}
+
+// GetRevision returns the value of Revision.
+func (s *TeamQuotaPolicy) GetRevision() OptInt64 {
+	return s.Revision
+}
+
+// GetLimit returns the value of Limit.
+func (s *TeamQuotaPolicy) GetLimit() OptInt64 {
+	return s.Limit
+}
+
+// GetTokens returns the value of Tokens.
+func (s *TeamQuotaPolicy) GetTokens() OptInt64 {
+	return s.Tokens
+}
+
+// GetIntervalMs returns the value of IntervalMs.
+func (s *TeamQuotaPolicy) GetIntervalMs() OptInt64 {
+	return s.IntervalMs
+}
+
+// GetBurst returns the value of Burst.
+func (s *TeamQuotaPolicy) GetBurst() OptInt64 {
+	return s.Burst
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *TeamQuotaPolicy) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetKey sets the value of Key.
+func (s *TeamQuotaPolicy) SetKey(val TeamQuotaKey) {
+	s.Key = val
+}
+
+// SetKind sets the value of Kind.
+func (s *TeamQuotaPolicy) SetKind(val TeamQuotaKind) {
+	s.Kind = val
 }
 
 // SetUnit sets the value of Unit.
-func (s *TeamQuota) SetUnit(val TeamQuotaUnit) {
+func (s *TeamQuotaPolicy) SetUnit(val TeamQuotaUnit) {
 	s.Unit = val
 }
 
+// SetRevision sets the value of Revision.
+func (s *TeamQuotaPolicy) SetRevision(val OptInt64) {
+	s.Revision = val
+}
+
+// SetLimit sets the value of Limit.
+func (s *TeamQuotaPolicy) SetLimit(val OptInt64) {
+	s.Limit = val
+}
+
+// SetTokens sets the value of Tokens.
+func (s *TeamQuotaPolicy) SetTokens(val OptInt64) {
+	s.Tokens = val
+}
+
+// SetIntervalMs sets the value of IntervalMs.
+func (s *TeamQuotaPolicy) SetIntervalMs(val OptInt64) {
+	s.IntervalMs = val
+}
+
+// SetBurst sets the value of Burst.
+func (s *TeamQuotaPolicy) SetBurst(val OptInt64) {
+	s.Burst = val
+}
+
+// Identifies whether the effective policy is inherited from the region default or defined by an
+// explicit team override.
+// Ref: #/components/schemas/TeamQuotaPolicySource
+type TeamQuotaPolicySource string
+
+const (
+	TeamQuotaPolicySourceDefault  TeamQuotaPolicySource = "default"
+	TeamQuotaPolicySourceOverride TeamQuotaPolicySource = "override"
+)
+
+// AllValues returns all TeamQuotaPolicySource values.
+func (TeamQuotaPolicySource) AllValues() []TeamQuotaPolicySource {
+	return []TeamQuotaPolicySource{
+		TeamQuotaPolicySourceDefault,
+		TeamQuotaPolicySourceOverride,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaPolicySource) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaPolicySourceDefault:
+		return []byte(s), nil
+	case TeamQuotaPolicySourceOverride:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaPolicySource) UnmarshalText(data []byte) error {
+	switch TeamQuotaPolicySource(data) {
+	case TeamQuotaPolicySourceDefault:
+		*s = TeamQuotaPolicySourceDefault
+		return nil
+	case TeamQuotaPolicySourceOverride:
+		*s = TeamQuotaPolicySourceOverride
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Capacity and concurrency policies require limit and prohibit rate fields. Rate policies require
+// tokens, interval_ms, and burst and prohibit limit. Rate intervals are whole milliseconds in the
+// inclusive range from 1ms to 1h. The runtime additionally requires burst to be at least tokens and
+// kind to match the canonical kind of the path key because OpenAPI 3.0 cannot express those
+// cross-field and path/body comparisons.
+// Ref: #/components/schemas/TeamQuotaPolicyWriteRequest
+// TeamQuotaPolicyWriteRequest represents sum type.
+type TeamQuotaPolicyWriteRequest struct {
+	Type                                   TeamQuotaPolicyWriteRequestType // switch on this field
+	TeamQuotaCapacityPolicyWriteRequest    TeamQuotaCapacityPolicyWriteRequest
+	TeamQuotaConcurrencyPolicyWriteRequest TeamQuotaConcurrencyPolicyWriteRequest
+	TeamQuotaRatePolicyWriteRequest        TeamQuotaRatePolicyWriteRequest
+}
+
+// TeamQuotaPolicyWriteRequestType is oneOf type of TeamQuotaPolicyWriteRequest.
+type TeamQuotaPolicyWriteRequestType string
+
+// Possible values for TeamQuotaPolicyWriteRequestType.
+const (
+	TeamQuotaCapacityPolicyWriteRequestTeamQuotaPolicyWriteRequest    TeamQuotaPolicyWriteRequestType = "capacity"
+	TeamQuotaConcurrencyPolicyWriteRequestTeamQuotaPolicyWriteRequest TeamQuotaPolicyWriteRequestType = "concurrency"
+	TeamQuotaRatePolicyWriteRequestTeamQuotaPolicyWriteRequest        TeamQuotaPolicyWriteRequestType = "rate"
+)
+
+// IsTeamQuotaCapacityPolicyWriteRequest reports whether TeamQuotaPolicyWriteRequest is TeamQuotaCapacityPolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) IsTeamQuotaCapacityPolicyWriteRequest() bool {
+	return s.Type == TeamQuotaCapacityPolicyWriteRequestTeamQuotaPolicyWriteRequest
+}
+
+// IsTeamQuotaConcurrencyPolicyWriteRequest reports whether TeamQuotaPolicyWriteRequest is TeamQuotaConcurrencyPolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) IsTeamQuotaConcurrencyPolicyWriteRequest() bool {
+	return s.Type == TeamQuotaConcurrencyPolicyWriteRequestTeamQuotaPolicyWriteRequest
+}
+
+// IsTeamQuotaRatePolicyWriteRequest reports whether TeamQuotaPolicyWriteRequest is TeamQuotaRatePolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) IsTeamQuotaRatePolicyWriteRequest() bool {
+	return s.Type == TeamQuotaRatePolicyWriteRequestTeamQuotaPolicyWriteRequest
+}
+
+// SetTeamQuotaCapacityPolicyWriteRequest sets TeamQuotaPolicyWriteRequest to TeamQuotaCapacityPolicyWriteRequest.
+func (s *TeamQuotaPolicyWriteRequest) SetTeamQuotaCapacityPolicyWriteRequest(v TeamQuotaCapacityPolicyWriteRequest) {
+	s.Type = TeamQuotaCapacityPolicyWriteRequestTeamQuotaPolicyWriteRequest
+	s.TeamQuotaCapacityPolicyWriteRequest = v
+}
+
+// GetTeamQuotaCapacityPolicyWriteRequest returns TeamQuotaCapacityPolicyWriteRequest and true boolean if TeamQuotaPolicyWriteRequest is TeamQuotaCapacityPolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) GetTeamQuotaCapacityPolicyWriteRequest() (v TeamQuotaCapacityPolicyWriteRequest, ok bool) {
+	if !s.IsTeamQuotaCapacityPolicyWriteRequest() {
+		return v, false
+	}
+	return s.TeamQuotaCapacityPolicyWriteRequest, true
+}
+
+// NewTeamQuotaCapacityPolicyWriteRequestTeamQuotaPolicyWriteRequest returns new TeamQuotaPolicyWriteRequest from TeamQuotaCapacityPolicyWriteRequest.
+func NewTeamQuotaCapacityPolicyWriteRequestTeamQuotaPolicyWriteRequest(v TeamQuotaCapacityPolicyWriteRequest) TeamQuotaPolicyWriteRequest {
+	var s TeamQuotaPolicyWriteRequest
+	s.SetTeamQuotaCapacityPolicyWriteRequest(v)
+	return s
+}
+
+// SetTeamQuotaConcurrencyPolicyWriteRequest sets TeamQuotaPolicyWriteRequest to TeamQuotaConcurrencyPolicyWriteRequest.
+func (s *TeamQuotaPolicyWriteRequest) SetTeamQuotaConcurrencyPolicyWriteRequest(v TeamQuotaConcurrencyPolicyWriteRequest) {
+	s.Type = TeamQuotaConcurrencyPolicyWriteRequestTeamQuotaPolicyWriteRequest
+	s.TeamQuotaConcurrencyPolicyWriteRequest = v
+}
+
+// GetTeamQuotaConcurrencyPolicyWriteRequest returns TeamQuotaConcurrencyPolicyWriteRequest and true boolean if TeamQuotaPolicyWriteRequest is TeamQuotaConcurrencyPolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) GetTeamQuotaConcurrencyPolicyWriteRequest() (v TeamQuotaConcurrencyPolicyWriteRequest, ok bool) {
+	if !s.IsTeamQuotaConcurrencyPolicyWriteRequest() {
+		return v, false
+	}
+	return s.TeamQuotaConcurrencyPolicyWriteRequest, true
+}
+
+// NewTeamQuotaConcurrencyPolicyWriteRequestTeamQuotaPolicyWriteRequest returns new TeamQuotaPolicyWriteRequest from TeamQuotaConcurrencyPolicyWriteRequest.
+func NewTeamQuotaConcurrencyPolicyWriteRequestTeamQuotaPolicyWriteRequest(v TeamQuotaConcurrencyPolicyWriteRequest) TeamQuotaPolicyWriteRequest {
+	var s TeamQuotaPolicyWriteRequest
+	s.SetTeamQuotaConcurrencyPolicyWriteRequest(v)
+	return s
+}
+
+// SetTeamQuotaRatePolicyWriteRequest sets TeamQuotaPolicyWriteRequest to TeamQuotaRatePolicyWriteRequest.
+func (s *TeamQuotaPolicyWriteRequest) SetTeamQuotaRatePolicyWriteRequest(v TeamQuotaRatePolicyWriteRequest) {
+	s.Type = TeamQuotaRatePolicyWriteRequestTeamQuotaPolicyWriteRequest
+	s.TeamQuotaRatePolicyWriteRequest = v
+}
+
+// GetTeamQuotaRatePolicyWriteRequest returns TeamQuotaRatePolicyWriteRequest and true boolean if TeamQuotaPolicyWriteRequest is TeamQuotaRatePolicyWriteRequest.
+func (s TeamQuotaPolicyWriteRequest) GetTeamQuotaRatePolicyWriteRequest() (v TeamQuotaRatePolicyWriteRequest, ok bool) {
+	if !s.IsTeamQuotaRatePolicyWriteRequest() {
+		return v, false
+	}
+	return s.TeamQuotaRatePolicyWriteRequest, true
+}
+
+// NewTeamQuotaRatePolicyWriteRequestTeamQuotaPolicyWriteRequest returns new TeamQuotaPolicyWriteRequest from TeamQuotaRatePolicyWriteRequest.
+func NewTeamQuotaRatePolicyWriteRequestTeamQuotaPolicyWriteRequest(v TeamQuotaRatePolicyWriteRequest) TeamQuotaPolicyWriteRequest {
+	var s TeamQuotaPolicyWriteRequest
+	s.SetTeamQuotaRatePolicyWriteRequest(v)
+	return s
+}
+
+// Ref: #/components/schemas/TeamQuotaRatePolicyWriteRequest
+type TeamQuotaRatePolicyWriteRequest struct {
+	Kind       TeamQuotaRatePolicyWriteRequestKind `json:"kind"`
+	Tokens     int64                               `json:"tokens"`
+	IntervalMs int64                               `json:"interval_ms"`
+	Burst      int64                               `json:"burst"`
+}
+
+// GetKind returns the value of Kind.
+func (s *TeamQuotaRatePolicyWriteRequest) GetKind() TeamQuotaRatePolicyWriteRequestKind {
+	return s.Kind
+}
+
+// GetTokens returns the value of Tokens.
+func (s *TeamQuotaRatePolicyWriteRequest) GetTokens() int64 {
+	return s.Tokens
+}
+
+// GetIntervalMs returns the value of IntervalMs.
+func (s *TeamQuotaRatePolicyWriteRequest) GetIntervalMs() int64 {
+	return s.IntervalMs
+}
+
+// GetBurst returns the value of Burst.
+func (s *TeamQuotaRatePolicyWriteRequest) GetBurst() int64 {
+	return s.Burst
+}
+
+// SetKind sets the value of Kind.
+func (s *TeamQuotaRatePolicyWriteRequest) SetKind(val TeamQuotaRatePolicyWriteRequestKind) {
+	s.Kind = val
+}
+
+// SetTokens sets the value of Tokens.
+func (s *TeamQuotaRatePolicyWriteRequest) SetTokens(val int64) {
+	s.Tokens = val
+}
+
+// SetIntervalMs sets the value of IntervalMs.
+func (s *TeamQuotaRatePolicyWriteRequest) SetIntervalMs(val int64) {
+	s.IntervalMs = val
+}
+
+// SetBurst sets the value of Burst.
+func (s *TeamQuotaRatePolicyWriteRequest) SetBurst(val int64) {
+	s.Burst = val
+}
+
+type TeamQuotaRatePolicyWriteRequestKind string
+
+const (
+	TeamQuotaRatePolicyWriteRequestKindRate TeamQuotaRatePolicyWriteRequestKind = "rate"
+)
+
+// AllValues returns all TeamQuotaRatePolicyWriteRequestKind values.
+func (TeamQuotaRatePolicyWriteRequestKind) AllValues() []TeamQuotaRatePolicyWriteRequestKind {
+	return []TeamQuotaRatePolicyWriteRequestKind{
+		TeamQuotaRatePolicyWriteRequestKindRate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaRatePolicyWriteRequestKind) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaRatePolicyWriteRequestKindRate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaRatePolicyWriteRequestKind) UnmarshalText(data []byte) error {
+	switch TeamQuotaRatePolicyWriteRequestKind(data) {
+	case TeamQuotaRatePolicyWriteRequestKindRate:
+		*s = TeamQuotaRatePolicyWriteRequestKindRate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Capacity rows expose durable committed and reserved usage. Concurrency rows expose live lease
+// usage. Rate rows expose policy but not distributed Redis token balance, so committed, reserved,
+// and used are zero and remaining is null.
+// Ref: #/components/schemas/TeamQuotaStatus
+type TeamQuotaStatus struct {
+	TeamID string                `json:"team_id"`
+	Key    TeamQuotaKey          `json:"key"`
+	Kind   TeamQuotaKind         `json:"kind"`
+	Unit   TeamQuotaUnit         `json:"unit"`
+	Source TeamQuotaPolicySource `json:"source"`
+	Policy TeamQuotaPolicy       `json:"policy"`
+	// Durable committed capacity usage; zero for concurrency and rate policies.
+	Committed int64 `json:"committed"`
+	// Durable in-flight capacity reservation; zero for concurrency and rate policies.
+	Reserved int64 `json:"reserved"`
+	// Committed plus reserved capacity usage, or current live concurrency usage; zero for rate policies.
+	Used int64 `json:"used"`
+	// Remaining capacity or concurrency headroom; null for rate policies because token balance is not
+	// exposed.
+	Remaining NilInt64 `json:"remaining"`
+}
+
+// GetTeamID returns the value of TeamID.
+func (s *TeamQuotaStatus) GetTeamID() string {
+	return s.TeamID
+}
+
+// GetKey returns the value of Key.
+func (s *TeamQuotaStatus) GetKey() TeamQuotaKey {
+	return s.Key
+}
+
+// GetKind returns the value of Kind.
+func (s *TeamQuotaStatus) GetKind() TeamQuotaKind {
+	return s.Kind
+}
+
+// GetUnit returns the value of Unit.
+func (s *TeamQuotaStatus) GetUnit() TeamQuotaUnit {
+	return s.Unit
+}
+
+// GetSource returns the value of Source.
+func (s *TeamQuotaStatus) GetSource() TeamQuotaPolicySource {
+	return s.Source
+}
+
+// GetPolicy returns the value of Policy.
+func (s *TeamQuotaStatus) GetPolicy() TeamQuotaPolicy {
+	return s.Policy
+}
+
+// GetCommitted returns the value of Committed.
+func (s *TeamQuotaStatus) GetCommitted() int64 {
+	return s.Committed
+}
+
+// GetReserved returns the value of Reserved.
+func (s *TeamQuotaStatus) GetReserved() int64 {
+	return s.Reserved
+}
+
+// GetUsed returns the value of Used.
+func (s *TeamQuotaStatus) GetUsed() int64 {
+	return s.Used
+}
+
+// GetRemaining returns the value of Remaining.
+func (s *TeamQuotaStatus) GetRemaining() NilInt64 {
+	return s.Remaining
+}
+
+// SetTeamID sets the value of TeamID.
+func (s *TeamQuotaStatus) SetTeamID(val string) {
+	s.TeamID = val
+}
+
+// SetKey sets the value of Key.
+func (s *TeamQuotaStatus) SetKey(val TeamQuotaKey) {
+	s.Key = val
+}
+
+// SetKind sets the value of Kind.
+func (s *TeamQuotaStatus) SetKind(val TeamQuotaKind) {
+	s.Kind = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *TeamQuotaStatus) SetUnit(val TeamQuotaUnit) {
+	s.Unit = val
+}
+
+// SetSource sets the value of Source.
+func (s *TeamQuotaStatus) SetSource(val TeamQuotaPolicySource) {
+	s.Source = val
+}
+
+// SetPolicy sets the value of Policy.
+func (s *TeamQuotaStatus) SetPolicy(val TeamQuotaPolicy) {
+	s.Policy = val
+}
+
+// SetCommitted sets the value of Committed.
+func (s *TeamQuotaStatus) SetCommitted(val int64) {
+	s.Committed = val
+}
+
+// SetReserved sets the value of Reserved.
+func (s *TeamQuotaStatus) SetReserved(val int64) {
+	s.Reserved = val
+}
+
+// SetUsed sets the value of Used.
+func (s *TeamQuotaStatus) SetUsed(val int64) {
+	s.Used = val
+}
+
+// SetRemaining sets the value of Remaining.
+func (s *TeamQuotaStatus) SetRemaining(val NilInt64) {
+	s.Remaining = val
+}
+
+// TeamQuotaUnavailableHeaders wraps ErrorEnvelope with response headers.
+type TeamQuotaUnavailableHeaders struct {
+	RetryAfter OptInt
+	Response   ErrorEnvelope
+}
+
+// GetRetryAfter returns the value of RetryAfter.
+func (s *TeamQuotaUnavailableHeaders) GetRetryAfter() OptInt {
+	return s.RetryAfter
+}
+
+// GetResponse returns the value of Response.
+func (s *TeamQuotaUnavailableHeaders) GetResponse() ErrorEnvelope {
+	return s.Response
+}
+
+// SetRetryAfter sets the value of RetryAfter.
+func (s *TeamQuotaUnavailableHeaders) SetRetryAfter(val OptInt) {
+	s.RetryAfter = val
+}
+
+// SetResponse sets the value of Response.
+func (s *TeamQuotaUnavailableHeaders) SetResponse(val ErrorEnvelope) {
+	s.Response = val
+}
+
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes()         {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxesIDDeleteRes()                              {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxesIDPutRes()                                 {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxesIDRootfsRestorePostRes()                   {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDDeleteRes()                         {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDFilesArchivePutRes()                {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDFilesDeleteRes()                    {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDFilesMovePostRes()                  {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDFilesPostRes()                      {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDForkPostRes()                       {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDSnapshotsPostRes()                  {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes()      {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes() {}
+func (*TeamQuotaUnavailableHeaders) aPIV1SandboxvolumesPostRes()                             {}
+
+// Ref: #/components/schemas/TeamQuotaUnit
 type TeamQuotaUnit string
 
 const (
-	TeamQuotaUnitCount    TeamQuotaUnit = "count"
-	TeamQuotaUnitMillicpu TeamQuotaUnit = "millicpu"
-	TeamQuotaUnitMiB      TeamQuotaUnit = "MiB"
-	TeamQuotaUnitGB       TeamQuotaUnit = "GB"
-	TeamQuotaUnitBytes    TeamQuotaUnit = "bytes"
+	TeamQuotaUnitCount      TeamQuotaUnit = "count"
+	TeamQuotaUnitMillicores TeamQuotaUnit = "millicores"
+	TeamQuotaUnitBytes      TeamQuotaUnit = "bytes"
+	TeamQuotaUnitRequests   TeamQuotaUnit = "requests"
+	TeamQuotaUnitOperations TeamQuotaUnit = "operations"
 )
 
 // AllValues returns all TeamQuotaUnit values.
 func (TeamQuotaUnit) AllValues() []TeamQuotaUnit {
 	return []TeamQuotaUnit{
 		TeamQuotaUnitCount,
-		TeamQuotaUnitMillicpu,
-		TeamQuotaUnitMiB,
-		TeamQuotaUnitGB,
+		TeamQuotaUnitMillicores,
 		TeamQuotaUnitBytes,
+		TeamQuotaUnitRequests,
+		TeamQuotaUnitOperations,
 	}
 }
 
@@ -24742,13 +25969,13 @@ func (s TeamQuotaUnit) MarshalText() ([]byte, error) {
 	switch s {
 	case TeamQuotaUnitCount:
 		return []byte(s), nil
-	case TeamQuotaUnitMillicpu:
-		return []byte(s), nil
-	case TeamQuotaUnitMiB:
-		return []byte(s), nil
-	case TeamQuotaUnitGB:
+	case TeamQuotaUnitMillicores:
 		return []byte(s), nil
 	case TeamQuotaUnitBytes:
+		return []byte(s), nil
+	case TeamQuotaUnitRequests:
+		return []byte(s), nil
+	case TeamQuotaUnitOperations:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -24761,17 +25988,17 @@ func (s *TeamQuotaUnit) UnmarshalText(data []byte) error {
 	case TeamQuotaUnitCount:
 		*s = TeamQuotaUnitCount
 		return nil
-	case TeamQuotaUnitMillicpu:
-		*s = TeamQuotaUnitMillicpu
-		return nil
-	case TeamQuotaUnitMiB:
-		*s = TeamQuotaUnitMiB
-		return nil
-	case TeamQuotaUnitGB:
-		*s = TeamQuotaUnitGB
+	case TeamQuotaUnitMillicores:
+		*s = TeamQuotaUnitMillicores
 		return nil
 	case TeamQuotaUnitBytes:
 		*s = TeamQuotaUnitBytes
+		return nil
+	case TeamQuotaUnitRequests:
+		*s = TeamQuotaUnitRequests
+		return nil
+	case TeamQuotaUnitOperations:
+		*s = TeamQuotaUnitOperations
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -25673,8 +26900,9 @@ func (s *UpdateTeamMemberRequestRole) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/UpdateTeamRequest
 type UpdateTeamRequest struct {
-	Name OptString `json:"name"`
-	Slug OptString `json:"slug"`
+	Name         OptString    `json:"name"`
+	Slug         OptString    `json:"slug"`
+	HomeRegionID OptNilString `json:"home_region_id"`
 }
 
 // GetName returns the value of Name.
@@ -25687,6 +26915,11 @@ func (s *UpdateTeamRequest) GetSlug() OptString {
 	return s.Slug
 }
 
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *UpdateTeamRequest) GetHomeRegionID() OptNilString {
+	return s.HomeRegionID
+}
+
 // SetName sets the value of Name.
 func (s *UpdateTeamRequest) SetName(val OptString) {
 	s.Name = val
@@ -25695,6 +26928,11 @@ func (s *UpdateTeamRequest) SetName(val OptString) {
 // SetSlug sets the value of Slug.
 func (s *UpdateTeamRequest) SetSlug(val OptString) {
 	s.Slug = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *UpdateTeamRequest) SetHomeRegionID(val OptNilString) {
+	s.HomeRegionID = val
 }
 
 // Ref: #/components/schemas/UpdateUserRequest

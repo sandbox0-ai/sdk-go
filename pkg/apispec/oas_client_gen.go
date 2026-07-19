@@ -115,13 +115,13 @@ type Invoker interface {
 	// List credential sources.
 	//
 	// GET /api/v1/credential-sources
-	APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (*SuccessCredentialSourceListResponse, error)
+	APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (APIV1CredentialSourcesGetRes, error)
 	// APIV1CredentialSourcesNameDelete invokes DELETE /api/v1/credential-sources/{name} operation.
 	//
 	// Delete credential source.
 	//
 	// DELETE /api/v1/credential-sources/{name}
-	APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error)
+	APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (APIV1CredentialSourcesNameDeleteRes, error)
 	// APIV1CredentialSourcesNameGet invokes GET /api/v1/credential-sources/{name} operation.
 	//
 	// Get credential source.
@@ -141,12 +141,14 @@ type Invoker interface {
 	//
 	// POST /api/v1/credential-sources
 	APIV1CredentialSourcesPost(ctx context.Context, request *CredentialSourceWriteRequest, options ...RequestOption) (APIV1CredentialSourcesPostRes, error)
-	// APIV1QuotasDimensionGet invokes GET /api/v1/quotas/{dimension} operation.
+	// APIV1QuotasGet invokes GET /api/v1/quotas operation.
 	//
-	// Get team quota.
+	// Requires quota:read. Returns every effective policy. Capacity rows include PostgreSQL-backed usage,
+	//  concurrency rows include current live lease usage, and rate rows return committed, reserved, and
+	// used as zero with remaining null because distributed Redis token balances are not exposed.
 	//
-	// GET /api/v1/quotas/{dimension}
-	APIV1QuotasDimensionGet(ctx context.Context, params APIV1QuotasDimensionGetParams, options ...RequestOption) (APIV1QuotasDimensionGetRes, error)
+	// GET /api/v1/quotas
+	APIV1QuotasGet(ctx context.Context, options ...RequestOption) (APIV1QuotasGetRes, error)
 	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
 	//
 	// Get registry credentials for uploads.
@@ -177,45 +179,45 @@ type Invoker interface {
 	// Delete context.
 	//
 	// DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id}
-	APIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	APIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDDeleteRes, error)
 	// APIV1SandboxesIDContextsCtxIDExecPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec operation.
 	//
 	// Sends input and blocks until the context completes or times out. For REPL contexts, the server
 	// appends a trailing newline when the input does not already end in \n or \r.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec
-	APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (*SuccessContextExecResponse, error)
+	APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDExecPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id} operation.
 	//
 	// Get context.
 	//
 	// GET /api/v1/sandboxes/{id}/contexts/{ctx_id}
-	APIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, options ...RequestOption) (*SuccessContextResponse, error)
+	APIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDGetRes, error)
 	// APIV1SandboxesIDContextsCtxIDInputPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input operation.
 	//
 	// Writes input to the context stdin exactly as provided. For REPL contexts, include a trailing
 	// newline to submit a line for execution.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input
-	APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (*SuccessWrittenResponse, error)
+	APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDInputPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDResizePost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/resize operation.
 	//
 	// Resize context PTY.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/resize
-	APIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, options ...RequestOption) (*SuccessResizedResponse, error)
+	APIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDResizePostRes, error)
 	// APIV1SandboxesIDContextsCtxIDRestartPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/restart operation.
 	//
 	// Restart context.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/restart
-	APIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, options ...RequestOption) (*SuccessContextResponse, error)
+	APIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDRestartPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDSignalPost invokes POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/signal operation.
 	//
 	// Send signal to context.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/signal
-	APIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, options ...RequestOption) (*SuccessSignaledResponse, error)
+	APIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDSignalPostRes, error)
 	// APIV1SandboxesIDContextsCtxIDWsGet invokes GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws operation.
 	//
 	// Upgrades to WebSocket for streaming I/O.
@@ -231,19 +233,19 @@ type Invoker interface {
 	// - { "type": "done", "exit_code": 0, "state": "stopped" }.
 	//
 	// GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws
-	APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) error
+	APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDWsGetRes, error)
 	// APIV1SandboxesIDContextsGet invokes GET /api/v1/sandboxes/{id}/contexts operation.
 	//
 	// List contexts.
 	//
 	// GET /api/v1/sandboxes/{id}/contexts
-	APIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, options ...RequestOption) (*SuccessContextListResponse, error)
+	APIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, options ...RequestOption) (APIV1SandboxesIDContextsGetRes, error)
 	// APIV1SandboxesIDContextsPost invokes POST /api/v1/sandboxes/{id}/contexts operation.
 	//
 	// Create a context.
 	//
 	// POST /api/v1/sandboxes/{id}/contexts
-	APIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, options ...RequestOption) (*SuccessContextResponse, error)
+	APIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, options ...RequestOption) (APIV1SandboxesIDContextsPostRes, error)
 	// APIV1SandboxesIDDelete invokes DELETE /api/v1/sandboxes/{id} operation.
 	//
 	// Delete (terminate) a sandbox.
@@ -255,7 +257,7 @@ type Invoker interface {
 	// Delete file or directory.
 	//
 	// DELETE /api/v1/sandboxes/{id}/files
-	APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxesIDFilesDeleteRes, error)
 	// APIV1SandboxesIDFilesGet invokes GET /api/v1/sandboxes/{id}/files operation.
 	//
 	// Use query params:
@@ -270,13 +272,13 @@ type Invoker interface {
 	// - path=/tmp: target directory path.
 	//
 	// GET /api/v1/sandboxes/{id}/files/list
-	APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error)
+	APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxesIDFilesListGetRes, error)
 	// APIV1SandboxesIDFilesMovePost invokes POST /api/v1/sandboxes/{id}/files/move operation.
 	//
 	// Move a file or directory.
 	//
 	// POST /api/v1/sandboxes/{id}/files/move
-	APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error)
+	APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxesIDFilesMovePostRes, error)
 	// APIV1SandboxesIDFilesPost invokes POST /api/v1/sandboxes/{id}/files operation.
 	//
 	// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
@@ -289,7 +291,7 @@ type Invoker interface {
 	// - path=/tmp/a.txt: target file path.
 	//
 	// GET /api/v1/sandboxes/{id}/files/stat
-	APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error)
+	APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxesIDFilesStatGetRes, error)
 	// APIV1SandboxesIDFilesWatchGet invokes GET /api/v1/sandboxes/{id}/files/watch operation.
 	//
 	// Upgrades to WebSocket for file watch events.
@@ -303,7 +305,7 @@ type Invoker interface {
 	// - { "type": "error", "error": "message" }.
 	//
 	// GET /api/v1/sandboxes/{id}/files/watch
-	APIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, options ...RequestOption) error
+	APIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, options ...RequestOption) (APIV1SandboxesIDFilesWatchGetRes, error)
 	// APIV1SandboxesIDForkPost invokes POST /api/v1/sandboxes/{id}/fork operation.
 	//
 	// Forks the source sandbox writable rootfs into a new paused sandbox. A paused
@@ -330,7 +332,7 @@ type Invoker interface {
 	// Update sandbox network policy.
 	//
 	// PUT /api/v1/sandboxes/{id}/network
-	APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error)
+	APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (APIV1SandboxesIDNetworkPutRes, error)
 	// APIV1SandboxesIDObservabilityEventsGet invokes GET /api/v1/sandboxes/{id}/observability/events operation.
 	//
 	// Queries canonical signed per-sandbox audit facts from ClickHouse. Every returned
@@ -394,7 +396,7 @@ type Invoker interface {
 	// Lists durable process-backed sessions in the sandbox.
 	//
 	// GET /api/v1/sandboxes/{id}/sessions
-	APIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, options ...RequestOption) (*SuccessExecutionSessionListResponse, error)
+	APIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsGetRes, error)
 	// APIV1SandboxesIDSessionsPost invokes POST /api/v1/sandboxes/{id}/sessions operation.
 	//
 	// Creates a durable process-backed session. The client connection does not own the session lifecycle.
@@ -406,19 +408,19 @@ type Invoker interface {
 	// Starts a new process attempt. Set replace_current to stop and replace a running attempt.
 	//
 	// POST /api/v1/sandboxes/{id}/sessions/{session_id}/attempts
-	APIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error)
+	APIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDAttemptsPostRes, error)
 	// APIV1SandboxesIDSessionsSessionIDDelete invokes DELETE /api/v1/sandboxes/{id}/sessions/{session_id} operation.
 	//
 	// Delete an execution session.
 	//
 	// DELETE /api/v1/sandboxes/{id}/sessions/{session_id}
-	APIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	APIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDDeleteRes, error)
 	// APIV1SandboxesIDSessionsSessionIDDesiredStatePut invokes PUT /api/v1/sandboxes/{id}/sessions/{session_id}/desired-state operation.
 	//
 	// Set execution session desired state.
 	//
 	// PUT /api/v1/sandboxes/{id}/sessions/{session_id}/desired-state
-	APIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error)
+	APIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDDesiredStatePutRes, error)
 	// APIV1SandboxesIDSessionsSessionIDEventsGet invokes GET /api/v1/sandboxes/{id}/sessions/{session_id}/events operation.
 	//
 	// Returns retained events after the supplied sequence. Delivery is cursor-based and at least once.
@@ -431,13 +433,13 @@ type Invoker interface {
 	// parameter.
 	//
 	// GET /api/v1/sandboxes/{id}/sessions/{session_id}/events/stream
-	APIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK, error)
+	APIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDEventsStreamGetRes, error)
 	// APIV1SandboxesIDSessionsSessionIDGet invokes GET /api/v1/sandboxes/{id}/sessions/{session_id} operation.
 	//
 	// Get an execution session.
 	//
 	// GET /api/v1/sandboxes/{id}/sessions/{session_id}
-	APIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error)
+	APIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDGetRes, error)
 	// APIV1SandboxesIDSessionsSessionIDInputsPost invokes POST /api/v1/sandboxes/{id}/sessions/{session_id}/inputs operation.
 	//
 	// Writes binary-safe input to the current attempt. Once an input receipt is recorded, retrying the
@@ -445,33 +447,33 @@ type Invoker interface {
 	// make delivery ambiguous, so consumers must tolerate replay.
 	//
 	// POST /api/v1/sandboxes/{id}/sessions/{session_id}/inputs
-	APIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, options ...RequestOption) (*SuccessExecutionSessionInputResponse, error)
+	APIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDInputsPostRes, error)
 	// APIV1SandboxesIDSessionsSessionIDPut invokes PUT /api/v1/sandboxes/{id}/sessions/{session_id} operation.
 	//
 	// Replaces the specification. Changes to command, environment, I/O, or readiness create a new
 	// process attempt when the desired state is running.
 	//
 	// PUT /api/v1/sandboxes/{id}/sessions/{session_id}
-	APIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error)
+	APIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDPutRes, error)
 	// APIV1SandboxesIDSessionsSessionIDSignalsPost invokes POST /api/v1/sandboxes/{id}/sessions/{session_id}/signals operation.
 	//
 	// Send a signal to an execution session attempt.
 	//
 	// POST /api/v1/sandboxes/{id}/sessions/{session_id}/signals
-	APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, options ...RequestOption) (*SuccessAcceptedResponse, error)
+	APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDSignalsPostRes, error)
 	// APIV1SandboxesIDSessionsSessionIDTerminalPut invokes PUT /api/v1/sandboxes/{id}/sessions/{session_id}/terminal operation.
 	//
 	// Resize an execution session terminal.
 	//
 	// PUT /api/v1/sandboxes/{id}/sessions/{session_id}/terminal
-	APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, options ...RequestOption) (*SuccessResizedResponse, error)
+	APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDTerminalPutRes, error)
 	// APIV1SandboxesIDSessionsSessionIDWsGet invokes GET /api/v1/sandboxes/{id}/sessions/{session_id}/ws operation.
 	//
 	// A WebSocket is an ephemeral attachment. Closing it does not stop the session or close process
 	// input.
 	//
 	// GET /api/v1/sandboxes/{id}/sessions/{session_id}/ws
-	APIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, options ...RequestOption) error
+	APIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDWsGetRes, error)
 	// APIV1SandboxesIDSnapshotsGet invokes GET /api/v1/sandboxes/{id}/snapshots operation.
 	//
 	// List sandbox rootfs snapshots.
@@ -504,7 +506,7 @@ type Invoker interface {
 	// List sandbox volumes.
 	//
 	// GET /api/v1/sandboxvolumes
-	APIV1SandboxvolumesGet(ctx context.Context, options ...RequestOption) (*SuccessSandboxVolumeListResponse, error)
+	APIV1SandboxvolumesGet(ctx context.Context, options ...RequestOption) (APIV1SandboxvolumesGetRes, error)
 	// APIV1SandboxvolumesIDDelete invokes DELETE /api/v1/sandboxvolumes/{id} operation.
 	//
 	// Delete sandbox volume.
@@ -520,13 +522,13 @@ type Invoker interface {
 	// deployment flows should import into a fresh volume when rollback is required.
 	//
 	// PUT /api/v1/sandboxvolumes/{id}/files/archive
-	APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (*SuccessVolumeFileArchiveImportResponse, error)
+	APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesArchivePutRes, error)
 	// APIV1SandboxvolumesIDFilesDelete invokes DELETE /api/v1/sandboxvolumes/{id}/files operation.
 	//
 	// Delete volume file or directory.
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}/files
-	APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesDeleteRes, error)
 	// APIV1SandboxvolumesIDFilesGet invokes GET /api/v1/sandboxvolumes/{id}/files operation.
 	//
 	// Use query params:
@@ -541,13 +543,13 @@ type Invoker interface {
 	// - path=/tmp: target directory path relative to the volume root.
 	//
 	// GET /api/v1/sandboxvolumes/{id}/files/list
-	APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error)
+	APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesListGetRes, error)
 	// APIV1SandboxvolumesIDFilesMovePost invokes POST /api/v1/sandboxvolumes/{id}/files/move operation.
 	//
 	// Move a volume file or directory.
 	//
 	// POST /api/v1/sandboxvolumes/{id}/files/move
-	APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error)
+	APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesMovePostRes, error)
 	// APIV1SandboxvolumesIDFilesPost invokes POST /api/v1/sandboxvolumes/{id}/files operation.
 	//
 	// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
@@ -560,7 +562,7 @@ type Invoker interface {
 	// - path=/tmp/a.txt: target file path relative to the volume root.
 	//
 	// GET /api/v1/sandboxvolumes/{id}/files/stat
-	APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error)
+	APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesStatGetRes, error)
 	// APIV1SandboxvolumesIDFilesWatchGet invokes GET /api/v1/sandboxvolumes/{id}/files/watch operation.
 	//
 	// Upgrades to WebSocket for volume file watch events.
@@ -574,7 +576,7 @@ type Invoker interface {
 	// - { "type": "error", "error": "message" }.
 	//
 	// GET /api/v1/sandboxvolumes/{id}/files/watch
-	APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) error
+	APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesWatchGetRes, error)
 	// APIV1SandboxvolumesIDForkPost invokes POST /api/v1/sandboxvolumes/{id}/fork operation.
 	//
 	// Fork sandbox volume.
@@ -592,7 +594,7 @@ type Invoker interface {
 	// List snapshots.
 	//
 	// GET /api/v1/sandboxvolumes/{id}/snapshots
-	APIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, options ...RequestOption) (*SuccessSnapshotListResponse, error)
+	APIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsGetRes, error)
 	// APIV1SandboxvolumesIDSnapshotsPost invokes POST /api/v1/sandboxvolumes/{id}/snapshots operation.
 	//
 	// Create snapshot.
@@ -604,7 +606,7 @@ type Invoker interface {
 	// Delete snapshot.
 	//
 	// DELETE /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id}
-	APIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error)
+	APIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes, error)
 	// APIV1SandboxvolumesIDSnapshotsSnapshotIDGet invokes GET /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id} operation.
 	//
 	// Get snapshot.
@@ -616,13 +618,34 @@ type Invoker interface {
 	// Restore snapshot.
 	//
 	// POST /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id}/restore
-	APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (*SuccessRestoreResponse, error)
+	APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes, error)
 	// APIV1SandboxvolumesPost invokes POST /api/v1/sandboxvolumes operation.
 	//
 	// Create sandbox volume.
 	//
 	// POST /api/v1/sandboxvolumes
-	APIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, options ...RequestOption) (*SuccessSandboxVolumeResponse, error)
+	APIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, options ...RequestOption) (APIV1SandboxvolumesPostRes, error)
+	// APIV1TeamsTeamIDQuotasGet invokes GET /api/v1/teams/{team_id}/quotas operation.
+	//
+	// System admin access is required. Returns explicit team overrides and inherited defaults as
+	// effective policies.
+	//
+	// GET /api/v1/teams/{team_id}/quotas
+	APIV1TeamsTeamIDQuotasGet(ctx context.Context, params APIV1TeamsTeamIDQuotasGetParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasGetRes, error)
+	// APIV1TeamsTeamIDQuotasKeyDelete invokes DELETE /api/v1/teams/{team_id}/quotas/{key} operation.
+	//
+	// System admin access is required. The effective policy falls back to the region default after the
+	// override is deleted.
+	//
+	// DELETE /api/v1/teams/{team_id}/quotas/{key}
+	APIV1TeamsTeamIDQuotasKeyDelete(ctx context.Context, params APIV1TeamsTeamIDQuotasKeyDeleteParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasKeyDeleteRes, error)
+	// APIV1TeamsTeamIDQuotasKeyPut invokes PUT /api/v1/teams/{team_id}/quotas/{key} operation.
+	//
+	// System admin access is required. Replaces the explicit override for one quota key. The request
+	// kind must match the canonical kind of the path key.
+	//
+	// PUT /api/v1/teams/{team_id}/quotas/{key}
+	APIV1TeamsTeamIDQuotasKeyPut(ctx context.Context, request TeamQuotaPolicyWriteRequest, params APIV1TeamsTeamIDQuotasKeyPutParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasKeyPutRes, error)
 	// APIV1TemplatesFromSandboxPost invokes POST /api/v1/templates/from-sandbox operation.
 	//
 	// Asynchronously captures the sandbox's writable root filesystem,
@@ -642,13 +665,13 @@ type Invoker interface {
 	// List templates.
 	//
 	// GET /api/v1/templates
-	APIV1TemplatesGet(ctx context.Context, options ...RequestOption) (*SuccessTemplateListResponse, error)
+	APIV1TemplatesGet(ctx context.Context, options ...RequestOption) (APIV1TemplatesGetRes, error)
 	// APIV1TemplatesIDDelete invokes DELETE /api/v1/templates/{id} operation.
 	//
 	// Delete template.
 	//
 	// DELETE /api/v1/templates/{id}
-	APIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error)
+	APIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, options ...RequestOption) (APIV1TemplatesIDDeleteRes, error)
 	// APIV1TemplatesIDGet invokes GET /api/v1/templates/{id} operation.
 	//
 	// Get template.
@@ -666,7 +689,7 @@ type Invoker interface {
 	// Create template.
 	//
 	// POST /api/v1/templates
-	APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (*SuccessTemplateResponse, error)
+	APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (APIV1TemplatesPostRes, error)
 	// AuthChangePasswordPost invokes POST /auth/change-password operation.
 	//
 	// Change password.
@@ -684,7 +707,7 @@ type Invoker interface {
 	// Logout.
 	//
 	// POST /auth/logout
-	AuthLogoutPost(ctx context.Context, options ...RequestOption) (*SuccessMessageResponse, error)
+	AuthLogoutPost(ctx context.Context, options ...RequestOption) (AuthLogoutPostRes, error)
 	// AuthOidcProviderCallbackGet invokes GET /auth/oidc/{provider}/callback operation.
 	//
 	// OIDC callback.
@@ -709,6 +732,12 @@ type Invoker interface {
 	//
 	// GET /auth/oidc/{provider}/login
 	AuthOidcProviderLoginGet(ctx context.Context, params AuthOidcProviderLoginGetParams, options ...RequestOption) (AuthOidcProviderLoginGetRes, error)
+	// AuthOidcProviderLogoutGet invokes GET /auth/oidc/{provider}/logout operation.
+	//
+	// Initiate OIDC logout.
+	//
+	// GET /auth/oidc/{provider}/logout
+	AuthOidcProviderLogoutGet(ctx context.Context, params AuthOidcProviderLogoutGetParams, options ...RequestOption) (AuthOidcProviderLogoutGetRes, error)
 	// AuthProvidersGet invokes GET /auth/providers operation.
 	//
 	// Get available auth providers.
@@ -812,7 +841,13 @@ type Invoker interface {
 	TeamsGet(ctx context.Context, options ...RequestOption) (TeamsGetRes, error)
 	// TeamsIDDelete invokes DELETE /teams/{id} operation.
 	//
-	// Delete a team.
+	// Deletes a team through its home-region lifecycle coordinator. The
+	// coordinator first installs a durable admission tombstone, then finalizes
+	// Team Quota state before deleting identity data. The tombstone is retained
+	// through the longest accepted access-token lifetime plus a safety margin,
+	// and is pruned only after identity absence and quota-reference checks.
+	// Global gateway deployments without home-region coordination reject this
+	// operation with 503.
 	//
 	// DELETE /teams/{id}
 	TeamsIDDelete(ctx context.Context, params TeamsIDDeleteParams, options ...RequestOption) (TeamsIDDeleteRes, error)
@@ -1471,12 +1506,12 @@ func (c *Client) sendAPIKeysPost(ctx context.Context, request *CreateAPIKeyReque
 // List credential sources.
 //
 // GET /api/v1/credential-sources
-func (c *Client) APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (*SuccessCredentialSourceListResponse, error) {
+func (c *Client) APIV1CredentialSourcesGet(ctx context.Context, options ...RequestOption) (APIV1CredentialSourcesGetRes, error) {
 	res, err := c.sendAPIV1CredentialSourcesGet(ctx, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1CredentialSourcesGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessCredentialSourceListResponse, err error) {
+func (c *Client) sendAPIV1CredentialSourcesGet(ctx context.Context, requestOptions ...RequestOption) (res APIV1CredentialSourcesGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -1566,12 +1601,12 @@ func (c *Client) sendAPIV1CredentialSourcesGet(ctx context.Context, requestOptio
 // Delete credential source.
 //
 // DELETE /api/v1/credential-sources/{name}
-func (c *Client) APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error) {
+func (c *Client) APIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, options ...RequestOption) (APIV1CredentialSourcesNameDeleteRes, error) {
 	res, err := c.sendAPIV1CredentialSourcesNameDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, requestOptions ...RequestOption) (res *SuccessMessageResponse, err error) {
+func (c *Client) sendAPIV1CredentialSourcesNameDelete(ctx context.Context, params APIV1CredentialSourcesNameDeleteParams, requestOptions ...RequestOption) (res APIV1CredentialSourcesNameDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -2002,17 +2037,21 @@ func (c *Client) sendAPIV1CredentialSourcesPost(ctx context.Context, request *Cr
 	return result, nil
 }
 
-// APIV1QuotasDimensionGet invokes GET /api/v1/quotas/{dimension} operation.
+// APIV1QuotasGet invokes GET /api/v1/quotas operation.
 //
-// Get team quota.
+// Requires quota:read. Returns every effective policy. Capacity rows include PostgreSQL-backed usage,
 //
-// GET /api/v1/quotas/{dimension}
-func (c *Client) APIV1QuotasDimensionGet(ctx context.Context, params APIV1QuotasDimensionGetParams, options ...RequestOption) (APIV1QuotasDimensionGetRes, error) {
-	res, err := c.sendAPIV1QuotasDimensionGet(ctx, params, options...)
+//	concurrency rows include current live lease usage, and rate rows return committed, reserved, and
+//
+// used as zero with remaining null because distributed Redis token balances are not exposed.
+//
+// GET /api/v1/quotas
+func (c *Client) APIV1QuotasGet(ctx context.Context, options ...RequestOption) (APIV1QuotasGetRes, error) {
+	res, err := c.sendAPIV1QuotasGet(ctx, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1QuotasDimensionGetParams, requestOptions ...RequestOption) (res APIV1QuotasDimensionGetRes, err error) {
+func (c *Client) sendAPIV1QuotasGet(ctx context.Context, requestOptions ...RequestOption) (res APIV1QuotasGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -2025,26 +2064,8 @@ func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1Qu
 		u = override
 	}
 	u = uri.Clone(u)
-	var pathParts [2]string
-	pathParts[0] = "/api/v1/quotas/"
-	{
-		// Encode "dimension" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "dimension",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(string(params.Dimension)))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/quotas"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	r, err := ht.NewRequest(ctx, "GET", u)
@@ -2057,7 +2078,7 @@ func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1Qu
 		var satisfied bitset
 		{
 
-			switch err := c.securityBearerAuth(ctx, APIV1QuotasDimensionGetOperation, r); {
+			switch err := c.securityBearerAuth(ctx, APIV1QuotasGetOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -2107,7 +2128,7 @@ func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1Qu
 		return res, errors.Wrap(err, "edit response")
 	}
 
-	result, err := decodeAPIV1QuotasDimensionGetResponse(resp)
+	result, err := decodeAPIV1QuotasGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2628,12 +2649,12 @@ func (c *Client) sendAPIV1SandboxesGet(ctx context.Context, params APIV1Sandboxe
 // Delete context.
 //
 // DELETE /api/v1/sandboxes/{id}/contexts/{ctx_id}
-func (c *Client) APIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDDeleteRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, params APIV1SandboxesIDContextsCtxIDDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -2761,12 +2782,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDDelete(ctx context.Context, pa
 // appends a trailing newline when the input does not already end in \n or \r.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/exec
-func (c *Client) APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (*SuccessContextExecResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDExecPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDExecPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, requestOptions ...RequestOption) (res *SuccessContextExecResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDExecPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDExecPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -2897,12 +2918,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDExecPost(ctx context.Context, 
 // Get context.
 //
 // GET /api/v1/sandboxes/{id}/contexts/{ctx_id}
-func (c *Client) APIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, options ...RequestOption) (*SuccessContextResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, requestOptions ...RequestOption) (res *SuccessContextResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3030,12 +3051,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDGet(ctx context.Context, param
 // newline to submit a line for execution.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/input
-func (c *Client) APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (*SuccessWrittenResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDInputPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDInputPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, requestOptions ...RequestOption) (res *SuccessWrittenResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context, request *ContextInputRequest, params APIV1SandboxesIDContextsCtxIDInputPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDInputPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3166,12 +3187,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDInputPost(ctx context.Context,
 // Resize context PTY.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/resize
-func (c *Client) APIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, options ...RequestOption) (*SuccessResizedResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDResizePostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDResizePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, requestOptions ...RequestOption) (res *SuccessResizedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context, request *ResizeContextRequest, params APIV1SandboxesIDContextsCtxIDResizePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDResizePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3302,12 +3323,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDResizePost(ctx context.Context
 // Restart context.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/restart
-func (c *Client) APIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, options ...RequestOption) (*SuccessContextResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDRestartPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDRestartPost(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, requestOptions ...RequestOption) (res *SuccessContextResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Context, params APIV1SandboxesIDContextsCtxIDRestartPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDRestartPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3435,12 +3456,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDRestartPost(ctx context.Contex
 // Send signal to context.
 //
 // POST /api/v1/sandboxes/{id}/contexts/{ctx_id}/signal
-func (c *Client) APIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, options ...RequestOption) (*SuccessSignaledResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDSignalPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsCtxIDSignalPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, requestOptions ...RequestOption) (res *SuccessSignaledResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context, request *SignalContextRequest, params APIV1SandboxesIDContextsCtxIDSignalPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDSignalPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3581,12 +3602,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDSignalPost(ctx context.Context
 // - { "type": "done", "exit_code": 0, "state": "stopped" }.
 //
 // GET /api/v1/sandboxes/{id}/contexts/{ctx_id}/ws
-func (c *Client) APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) error {
-	_, err := c.sendAPIV1SandboxesIDContextsCtxIDWsGet(ctx, params, options...)
-	return err
+func (c *Client) APIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, options ...RequestOption) (APIV1SandboxesIDContextsCtxIDWsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDContextsCtxIDWsGet(ctx, params, options...)
+	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, requestOptions ...RequestOption) (res *APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, params APIV1SandboxesIDContextsCtxIDWsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsCtxIDWsGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3714,12 +3735,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsCtxIDWsGet(ctx context.Context, par
 // List contexts.
 //
 // GET /api/v1/sandboxes/{id}/contexts
-func (c *Client) APIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, options ...RequestOption) (*SuccessContextListResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, options ...RequestOption) (APIV1SandboxesIDContextsGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, requestOptions ...RequestOption) (res *SuccessContextListResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsGet(ctx context.Context, params APIV1SandboxesIDContextsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -3828,12 +3849,12 @@ func (c *Client) sendAPIV1SandboxesIDContextsGet(ctx context.Context, params API
 // Create a context.
 //
 // POST /api/v1/sandboxes/{id}/contexts
-func (c *Client) APIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, options ...RequestOption) (*SuccessContextResponse, error) {
+func (c *Client) APIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, options ...RequestOption) (APIV1SandboxesIDContextsPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDContextsPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, requestOptions ...RequestOption) (res *SuccessContextResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDContextsPost(ctx context.Context, request *CreateContextRequest, params APIV1SandboxesIDContextsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDContextsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -4058,12 +4079,12 @@ func (c *Client) sendAPIV1SandboxesIDDelete(ctx context.Context, params APIV1San
 // Delete file or directory.
 //
 // DELETE /api/v1/sandboxes/{id}/files
-func (c *Client) APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+func (c *Client) APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxesIDFilesDeleteRes, error) {
 	res, err := c.sendAPIV1SandboxesIDFilesDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDFilesDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -4323,12 +4344,12 @@ func (c *Client) sendAPIV1SandboxesIDFilesGet(ctx context.Context, params APIV1S
 // - path=/tmp: target directory path.
 //
 // GET /api/v1/sandboxes/{id}/files/list
-func (c *Client) APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error) {
+func (c *Client) APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxesIDFilesListGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDFilesListGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, requestOptions ...RequestOption) (res *SuccessFileListResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDFilesListGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -4454,12 +4475,12 @@ func (c *Client) sendAPIV1SandboxesIDFilesListGet(ctx context.Context, params AP
 // Move a file or directory.
 //
 // POST /api/v1/sandboxes/{id}/files/move
-func (c *Client) APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error) {
+func (c *Client) APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxesIDFilesMovePostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDFilesMovePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, requestOptions ...RequestOption) (res *SuccessMovedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDFilesMovePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -4740,12 +4761,12 @@ func (c *Client) sendAPIV1SandboxesIDFilesPost(ctx context.Context, request APIV
 // - path=/tmp/a.txt: target file path.
 //
 // GET /api/v1/sandboxes/{id}/files/stat
-func (c *Client) APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error) {
+func (c *Client) APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxesIDFilesStatGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDFilesStatGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, requestOptions ...RequestOption) (res *SuccessFileStatResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDFilesStatGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -4879,12 +4900,12 @@ func (c *Client) sendAPIV1SandboxesIDFilesStatGet(ctx context.Context, params AP
 // - { "type": "error", "error": "message" }.
 //
 // GET /api/v1/sandboxes/{id}/files/watch
-func (c *Client) APIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, options ...RequestOption) error {
-	_, err := c.sendAPIV1SandboxesIDFilesWatchGet(ctx, params, options...)
-	return err
+func (c *Client) APIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, options ...RequestOption) (APIV1SandboxesIDFilesWatchGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDFilesWatchGet(ctx, params, options...)
+	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, requestOptions ...RequestOption) (res *APIV1SandboxesIDFilesWatchGetSwitchingProtocols, err error) {
+func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params APIV1SandboxesIDFilesWatchGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDFilesWatchGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -5340,12 +5361,12 @@ func (c *Client) sendAPIV1SandboxesIDNetworkGet(ctx context.Context, params APIV
 // Update sandbox network policy.
 //
 // PUT /api/v1/sandboxes/{id}/network
-func (c *Client) APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (*SuccessSandboxNetworkPolicyResponse, error) {
+func (c *Client) APIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, options ...RequestOption) (APIV1SandboxesIDNetworkPutRes, error) {
 	res, err := c.sendAPIV1SandboxesIDNetworkPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, requestOptions ...RequestOption) (res *SuccessSandboxNetworkPolicyResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDNetworkPut(ctx context.Context, request *SandboxNetworkPolicy, params APIV1SandboxesIDNetworkPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDNetworkPutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -6861,12 +6882,12 @@ func (c *Client) sendAPIV1SandboxesIDServicesPut(ctx context.Context, request *S
 // Lists durable process-backed sessions in the sandbox.
 //
 // GET /api/v1/sandboxes/{id}/sessions
-func (c *Client) APIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, options ...RequestOption) (*SuccessExecutionSessionListResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionListResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsGet(ctx context.Context, params APIV1SandboxesIDSessionsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7108,12 +7129,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsPost(ctx context.Context, request *
 // Starts a new process attempt. Set replace_current to stop and replace a running attempt.
 //
 // POST /api/v1/sandboxes/{id}/sessions/{session_id}/attempts
-func (c *Client) APIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDAttemptsPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDAttemptsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7244,12 +7265,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.C
 // Delete an execution session.
 //
 // DELETE /api/v1/sandboxes/{id}/sessions/{session_id}
-func (c *Client) APIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDDeleteRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7376,12 +7397,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDDelete(ctx context.Context
 // Set execution session desired state.
 //
 // PUT /api/v1/sandboxes/{id}/sessions/{session_id}/desired-state
-func (c *Client) APIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDDesiredStatePutRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDDesiredStatePut(ctx context.Context, request *ExecutionSessionDesiredStateRequest, params APIV1SandboxesIDSessionsSessionIDDesiredStatePutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDDesiredStatePutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7683,12 +7704,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDEventsGet(ctx context.Cont
 // parameter.
 //
 // GET /api/v1/sandboxes/{id}/sessions/{session_id}/events/stream
-func (c *Client) APIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDEventsStreamGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDEventsStreamGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDEventsStreamGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7852,12 +7873,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDEventsStreamGet(ctx contex
 // Get an execution session.
 //
 // GET /api/v1/sandboxes/{id}/sessions/{session_id}
-func (c *Client) APIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDGetRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -7986,12 +8007,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDGet(ctx context.Context, p
 // make delivery ambiguous, so consumers must tolerate replay.
 //
 // POST /api/v1/sandboxes/{id}/sessions/{session_id}/inputs
-func (c *Client) APIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, options ...RequestOption) (*SuccessExecutionSessionInputResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDInputsPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDInputsPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionInputResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Context, request *ExecutionSessionInputRequest, params APIV1SandboxesIDSessionsSessionIDInputsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDInputsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -8123,12 +8144,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDInputsPost(ctx context.Con
 // process attempt when the desired state is running.
 //
 // PUT /api/v1/sandboxes/{id}/sessions/{session_id}
-func (c *Client) APIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, options ...RequestOption) (*SuccessExecutionSessionResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDPutRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, requestOptions ...RequestOption) (res *SuccessExecutionSessionResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, request *ExecutionSessionSpec, params APIV1SandboxesIDSessionsSessionIDPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDPutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -8258,12 +8279,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDPut(ctx context.Context, r
 // Send a signal to an execution session attempt.
 //
 // POST /api/v1/sandboxes/{id}/sessions/{session_id}/signals
-func (c *Client) APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, options ...RequestOption) (*SuccessAcceptedResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDSignalsPostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDSignalsPost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, requestOptions ...RequestOption) (res *SuccessAcceptedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Context, request *ExecutionSessionSignalRequest, params APIV1SandboxesIDSessionsSessionIDSignalsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDSignalsPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -8394,12 +8415,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDSignalsPost(ctx context.Co
 // Resize an execution session terminal.
 //
 // PUT /api/v1/sandboxes/{id}/sessions/{session_id}/terminal
-func (c *Client) APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, options ...RequestOption) (*SuccessResizedResponse, error) {
+func (c *Client) APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDTerminalPutRes, error) {
 	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDTerminalPut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, requestOptions ...RequestOption) (res *SuccessResizedResponse, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Context, request *ExecutionSessionTerminalResizeRequest, params APIV1SandboxesIDSessionsSessionIDTerminalPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDTerminalPutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -8531,12 +8552,12 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDTerminalPut(ctx context.Co
 // input.
 //
 // GET /api/v1/sandboxes/{id}/sessions/{session_id}/ws
-func (c *Client) APIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, options ...RequestOption) error {
-	_, err := c.sendAPIV1SandboxesIDSessionsSessionIDWsGet(ctx, params, options...)
-	return err
+func (c *Client) APIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDWsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDWsGet(ctx, params, options...)
+	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, requestOptions ...RequestOption) (res *APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols, err error) {
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDWsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDWsGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -9130,12 +9151,12 @@ func (c *Client) sendAPIV1SandboxesPost(ctx context.Context, request *ClaimReque
 // List sandbox volumes.
 //
 // GET /api/v1/sandboxvolumes
-func (c *Client) APIV1SandboxvolumesGet(ctx context.Context, options ...RequestOption) (*SuccessSandboxVolumeListResponse, error) {
+func (c *Client) APIV1SandboxvolumesGet(ctx context.Context, options ...RequestOption) (APIV1SandboxvolumesGetRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesGet(ctx, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessSandboxVolumeListResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesGet(ctx context.Context, requestOptions ...RequestOption) (res APIV1SandboxvolumesGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -9362,12 +9383,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDDelete(ctx context.Context, params API
 // deployment flows should import into a fresh volume when rollback is required.
 //
 // PUT /api/v1/sandboxvolumes/{id}/files/archive
-func (c *Client) APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (*SuccessVolumeFileArchiveImportResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesArchivePutRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDFilesArchivePut(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, requestOptions ...RequestOption) (res *SuccessVolumeFileArchiveImportResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, request APIV1SandboxvolumesIDFilesArchivePutReq, params APIV1SandboxvolumesIDFilesArchivePutParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesArchivePutRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -9496,12 +9517,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDFilesArchivePut(ctx context.Context, r
 // Delete volume file or directory.
 //
 // DELETE /api/v1/sandboxvolumes/{id}/files
-func (c *Client) APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesDeleteRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDFilesDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesDelete(ctx context.Context, params APIV1SandboxvolumesIDFilesDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -9761,12 +9782,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDFilesGet(ctx context.Context, params A
 // - path=/tmp: target directory path relative to the volume root.
 //
 // GET /api/v1/sandboxvolumes/{id}/files/list
-func (c *Client) APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (*SuccessFileListResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesListGetRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDFilesListGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, requestOptions ...RequestOption) (res *SuccessFileListResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesListGet(ctx context.Context, params APIV1SandboxvolumesIDFilesListGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesListGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -9892,12 +9913,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDFilesListGet(ctx context.Context, para
 // Move a volume file or directory.
 //
 // POST /api/v1/sandboxvolumes/{id}/files/move
-func (c *Client) APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (*SuccessMovedResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesMovePostRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDFilesMovePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, requestOptions ...RequestOption) (res *SuccessMovedResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxvolumesIDFilesMovePostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesMovePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -10178,12 +10199,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDFilesPost(ctx context.Context, request
 // - path=/tmp/a.txt: target file path relative to the volume root.
 //
 // GET /api/v1/sandboxvolumes/{id}/files/stat
-func (c *Client) APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (*SuccessFileStatResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesStatGetRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDFilesStatGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, requestOptions ...RequestOption) (res *SuccessFileStatResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesStatGet(ctx context.Context, params APIV1SandboxvolumesIDFilesStatGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesStatGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -10317,12 +10338,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDFilesStatGet(ctx context.Context, para
 // - { "type": "error", "error": "message" }.
 //
 // GET /api/v1/sandboxvolumes/{id}/files/watch
-func (c *Client) APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) error {
-	_, err := c.sendAPIV1SandboxvolumesIDFilesWatchGet(ctx, params, options...)
-	return err
+func (c *Client) APIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, options ...RequestOption) (APIV1SandboxvolumesIDFilesWatchGetRes, error) {
+	res, err := c.sendAPIV1SandboxvolumesIDFilesWatchGet(ctx, params, options...)
+	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, requestOptions ...RequestOption) (res *APIV1SandboxvolumesIDFilesWatchGetSwitchingProtocols, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDFilesWatchGet(ctx context.Context, params APIV1SandboxvolumesIDFilesWatchGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDFilesWatchGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -10661,12 +10682,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDGet(ctx context.Context, params APIV1S
 // List snapshots.
 //
 // GET /api/v1/sandboxvolumes/{id}/snapshots
-func (c *Client) APIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, options ...RequestOption) (*SuccessSnapshotListResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsGetRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDSnapshotsGet(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, requestOptions ...RequestOption) (res *SuccessSnapshotListResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsGet(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsGetParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSnapshotsGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -10892,12 +10913,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsPost(ctx context.Context, req
 // Delete snapshot.
 //
 // DELETE /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id}
-func (c *Client) APIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (*SuccessDeletedResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, requestOptions ...RequestOption) (res *SuccessDeletedResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDDelete(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSnapshotsSnapshotIDDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -11156,12 +11177,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDGet(ctx context.Con
 // Restore snapshot.
 //
 // POST /api/v1/sandboxvolumes/{id}/snapshots/{snapshot_id}/restore
-func (c *Client) APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (*SuccessRestoreResponse, error) {
+func (c *Client) APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, options ...RequestOption) (APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, requestOptions ...RequestOption) (res *SuccessRestoreResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx context.Context, params APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams, requestOptions ...RequestOption) (res APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -11289,12 +11310,12 @@ func (c *Client) sendAPIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePost(ctx con
 // Create sandbox volume.
 //
 // POST /api/v1/sandboxvolumes
-func (c *Client) APIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, options ...RequestOption) (*SuccessSandboxVolumeResponse, error) {
+func (c *Client) APIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, options ...RequestOption) (APIV1SandboxvolumesPostRes, error) {
 	res, err := c.sendAPIV1SandboxvolumesPost(ctx, request, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, requestOptions ...RequestOption) (res *SuccessSandboxVolumeResponse, err error) {
+func (c *Client) sendAPIV1SandboxvolumesPost(ctx context.Context, request *CreateSandboxVolumeRequest, requestOptions ...RequestOption) (res APIV1SandboxvolumesPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -11375,6 +11396,390 @@ func (c *Client) sendAPIV1SandboxvolumesPost(ctx context.Context, request *Creat
 	}
 
 	result, err := decodeAPIV1SandboxvolumesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1TeamsTeamIDQuotasGet invokes GET /api/v1/teams/{team_id}/quotas operation.
+//
+// System admin access is required. Returns explicit team overrides and inherited defaults as
+// effective policies.
+//
+// GET /api/v1/teams/{team_id}/quotas
+func (c *Client) APIV1TeamsTeamIDQuotasGet(ctx context.Context, params APIV1TeamsTeamIDQuotasGetParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasGetRes, error) {
+	res, err := c.sendAPIV1TeamsTeamIDQuotasGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1TeamsTeamIDQuotasGet(ctx context.Context, params APIV1TeamsTeamIDQuotasGetParams, requestOptions ...RequestOption) (res APIV1TeamsTeamIDQuotasGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/teams/"
+	{
+		// Encode "team_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "team_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.TeamID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/quotas"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1TeamsTeamIDQuotasGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1TeamsTeamIDQuotasGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1TeamsTeamIDQuotasKeyDelete invokes DELETE /api/v1/teams/{team_id}/quotas/{key} operation.
+//
+// System admin access is required. The effective policy falls back to the region default after the
+// override is deleted.
+//
+// DELETE /api/v1/teams/{team_id}/quotas/{key}
+func (c *Client) APIV1TeamsTeamIDQuotasKeyDelete(ctx context.Context, params APIV1TeamsTeamIDQuotasKeyDeleteParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasKeyDeleteRes, error) {
+	res, err := c.sendAPIV1TeamsTeamIDQuotasKeyDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1TeamsTeamIDQuotasKeyDelete(ctx context.Context, params APIV1TeamsTeamIDQuotasKeyDeleteParams, requestOptions ...RequestOption) (res APIV1TeamsTeamIDQuotasKeyDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/teams/"
+	{
+		// Encode "team_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "team_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.TeamID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/quotas/"
+	{
+		// Encode "key" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "key",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(string(params.Key)))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1TeamsTeamIDQuotasKeyDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1TeamsTeamIDQuotasKeyDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1TeamsTeamIDQuotasKeyPut invokes PUT /api/v1/teams/{team_id}/quotas/{key} operation.
+//
+// System admin access is required. Replaces the explicit override for one quota key. The request
+// kind must match the canonical kind of the path key.
+//
+// PUT /api/v1/teams/{team_id}/quotas/{key}
+func (c *Client) APIV1TeamsTeamIDQuotasKeyPut(ctx context.Context, request TeamQuotaPolicyWriteRequest, params APIV1TeamsTeamIDQuotasKeyPutParams, options ...RequestOption) (APIV1TeamsTeamIDQuotasKeyPutRes, error) {
+	res, err := c.sendAPIV1TeamsTeamIDQuotasKeyPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1TeamsTeamIDQuotasKeyPut(ctx context.Context, request TeamQuotaPolicyWriteRequest, params APIV1TeamsTeamIDQuotasKeyPutParams, requestOptions ...RequestOption) (res APIV1TeamsTeamIDQuotasKeyPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/teams/"
+	{
+		// Encode "team_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "team_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.TeamID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/quotas/"
+	{
+		// Encode "key" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "key",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(string(params.Key)))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1TeamsTeamIDQuotasKeyPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1TeamsTeamIDQuotasKeyPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1TeamsTeamIDQuotasKeyPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -11509,12 +11914,12 @@ func (c *Client) sendAPIV1TemplatesFromSandboxPost(ctx context.Context, request 
 // List templates.
 //
 // GET /api/v1/templates
-func (c *Client) APIV1TemplatesGet(ctx context.Context, options ...RequestOption) (*SuccessTemplateListResponse, error) {
+func (c *Client) APIV1TemplatesGet(ctx context.Context, options ...RequestOption) (APIV1TemplatesGetRes, error) {
 	res, err := c.sendAPIV1TemplatesGet(ctx, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesGet(ctx context.Context, requestOptions ...RequestOption) (res *SuccessTemplateListResponse, err error) {
+func (c *Client) sendAPIV1TemplatesGet(ctx context.Context, requestOptions ...RequestOption) (res APIV1TemplatesGetRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -11604,12 +12009,12 @@ func (c *Client) sendAPIV1TemplatesGet(ctx context.Context, requestOptions ...Re
 // Delete template.
 //
 // DELETE /api/v1/templates/{id}
-func (c *Client) APIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, options ...RequestOption) (*SuccessMessageResponse, error) {
+func (c *Client) APIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, options ...RequestOption) (APIV1TemplatesIDDeleteRes, error) {
 	res, err := c.sendAPIV1TemplatesIDDelete(ctx, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, requestOptions ...RequestOption) (res *SuccessMessageResponse, err error) {
+func (c *Client) sendAPIV1TemplatesIDDelete(ctx context.Context, params APIV1TemplatesIDDeleteParams, requestOptions ...RequestOption) (res APIV1TemplatesIDDeleteRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -11946,12 +12351,12 @@ func (c *Client) sendAPIV1TemplatesIDPut(ctx context.Context, request *TemplateU
 // Create template.
 //
 // POST /api/v1/templates
-func (c *Client) APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (*SuccessTemplateResponse, error) {
+func (c *Client) APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (APIV1TemplatesPostRes, error) {
 	res, err := c.sendAPIV1TemplatesPost(ctx, request, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, requestOptions ...RequestOption) (res *SuccessTemplateResponse, err error) {
+func (c *Client) sendAPIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, requestOptions ...RequestOption) (res APIV1TemplatesPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -12207,12 +12612,12 @@ func (c *Client) sendAuthLoginPost(ctx context.Context, request *LoginRequest, r
 // Logout.
 //
 // POST /auth/logout
-func (c *Client) AuthLogoutPost(ctx context.Context, options ...RequestOption) (*SuccessMessageResponse, error) {
+func (c *Client) AuthLogoutPost(ctx context.Context, options ...RequestOption) (AuthLogoutPostRes, error) {
 	res, err := c.sendAuthLogoutPost(ctx, options...)
 	return res, err
 }
 
-func (c *Client) sendAuthLogoutPost(ctx context.Context, requestOptions ...RequestOption) (res *SuccessMessageResponse, err error) {
+func (c *Client) sendAuthLogoutPost(ctx context.Context, requestOptions ...RequestOption) (res AuthLogoutPostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -12685,6 +13090,107 @@ func (c *Client) sendAuthOidcProviderLoginGet(ctx context.Context, params AuthOi
 	}
 
 	result, err := decodeAuthOidcProviderLoginGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AuthOidcProviderLogoutGet invokes GET /auth/oidc/{provider}/logout operation.
+//
+// Initiate OIDC logout.
+//
+// GET /auth/oidc/{provider}/logout
+func (c *Client) AuthOidcProviderLogoutGet(ctx context.Context, params AuthOidcProviderLogoutGetParams, options ...RequestOption) (AuthOidcProviderLogoutGetRes, error) {
+	res, err := c.sendAuthOidcProviderLogoutGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAuthOidcProviderLogoutGet(ctx context.Context, params AuthOidcProviderLogoutGetParams, requestOptions ...RequestOption) (res AuthOidcProviderLogoutGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/auth/oidc/"
+	{
+		// Encode "provider" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "provider",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Provider))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/logout"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "return_url" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "return_url",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ReturnURL.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAuthOidcProviderLogoutGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -14167,7 +14673,13 @@ func (c *Client) sendTeamsGet(ctx context.Context, requestOptions ...RequestOpti
 
 // TeamsIDDelete invokes DELETE /teams/{id} operation.
 //
-// Delete a team.
+// Deletes a team through its home-region lifecycle coordinator. The
+// coordinator first installs a durable admission tombstone, then finalizes
+// Team Quota state before deleting identity data. The tombstone is retained
+// through the longest accepted access-token lifetime plus a safety margin,
+// and is pruned only after identity absence and quota-reference checks.
+// Global gateway deployments without home-region coordination reject this
+// operation with 503.
 //
 // DELETE /teams/{id}
 func (c *Client) TeamsIDDelete(ctx context.Context, params TeamsIDDeleteParams, options ...RequestOption) (TeamsIDDeleteRes, error) {

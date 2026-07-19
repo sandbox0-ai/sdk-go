@@ -72,7 +72,7 @@ func decodeFileGetResponse(resp apispec.APIV1SandboxesIDFilesGetRes) ([]byte, er
 		}
 		return decoded, nil
 	default:
-		return nil, unexpectedResponseError(resp)
+		return nil, apiErrorFromResponse(resp)
 	}
 }
 
@@ -86,11 +86,16 @@ func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo,
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessFileStatResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ListFiles returns directory entries.
@@ -103,11 +108,16 @@ func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInf
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessFileListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return data.Entries, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return data.Entries, nil
 }
 
 // WriteFile writes a file.
@@ -163,7 +173,12 @@ func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.Success
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessDeletedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // MoveFile moves a file or directory.
@@ -175,7 +190,12 @@ func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*ap
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessMovedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // ConnectWatchFile opens a WebSocket stream for file watch events.

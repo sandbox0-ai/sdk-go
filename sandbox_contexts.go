@@ -20,14 +20,16 @@ func (s *Sandbox) ListContext(ctx context.Context) ([]apispec.ContextResponse, e
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessContextListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return data.Contexts, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return data.Contexts, nil
 }
 
 // CreateContext creates a new context.
@@ -36,11 +38,16 @@ func (s *Sandbox) CreateContext(ctx context.Context, request apispec.CreateConte
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessContextResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // GetContext returns a context by ID.
@@ -52,11 +59,16 @@ func (s *Sandbox) GetContext(ctx context.Context, contextID string) (*apispec.Co
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessContextResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // DeleteContext deletes a context.
@@ -68,7 +80,12 @@ func (s *Sandbox) DeleteContext(ctx context.Context, contextID string) (*apispec
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessDeletedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // RestartContext restarts a context.
@@ -80,11 +97,16 @@ func (s *Sandbox) RestartContext(ctx context.Context, contextID string) (*apispe
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessContextResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ContextInput sends input to a context.
@@ -96,7 +118,12 @@ func (s *Sandbox) ContextInput(ctx context.Context, contextID string, input stri
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessWrittenResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // ContextExec sends input and waits for completion.
@@ -108,11 +135,16 @@ func (s *Sandbox) ContextExec(ctx context.Context, contextID string, input strin
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessContextExecResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ContextResize resizes a PTY context.
@@ -127,7 +159,12 @@ func (s *Sandbox) ContextResize(ctx context.Context, contextID string, rows, col
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessResizedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // ContextSignal sends a signal to a context.
@@ -139,7 +176,12 @@ func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessSignaledResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // ConnectWSContext opens a WebSocket stream for a context.

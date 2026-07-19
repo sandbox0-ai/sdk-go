@@ -27,11 +27,6 @@ type APIV1CredentialSourcesNamePutParams struct {
 	Name string
 }
 
-// APIV1QuotasDimensionGetParams is parameters of GET /api/v1/quotas/{dimension} operation.
-type APIV1QuotasDimensionGetParams struct {
-	Dimension QuotaDimension
-}
-
 // APIV1SandboxRootfsSnapshotsSnapshotIDDeleteParams is parameters of DELETE /api/v1/sandbox-rootfs-snapshots/{snapshot_id} operation.
 type APIV1SandboxRootfsSnapshotsSnapshotIDDeleteParams struct {
 	SnapshotID string
@@ -458,6 +453,23 @@ type APIV1SandboxvolumesIDSnapshotsSnapshotIDRestorePostParams struct {
 	SnapshotID string
 }
 
+// APIV1TeamsTeamIDQuotasGetParams is parameters of GET /api/v1/teams/{team_id}/quotas operation.
+type APIV1TeamsTeamIDQuotasGetParams struct {
+	TeamID string
+}
+
+// APIV1TeamsTeamIDQuotasKeyDeleteParams is parameters of DELETE /api/v1/teams/{team_id}/quotas/{key} operation.
+type APIV1TeamsTeamIDQuotasKeyDeleteParams struct {
+	TeamID string
+	Key    TeamQuotaKey
+}
+
+// APIV1TeamsTeamIDQuotasKeyPutParams is parameters of PUT /api/v1/teams/{team_id}/quotas/{key} operation.
+type APIV1TeamsTeamIDQuotasKeyPutParams struct {
+	TeamID string
+	Key    TeamQuotaKey
+}
+
 // APIV1TemplatesFromSandboxPostParams is parameters of POST /api/v1/templates/from-sandbox operation.
 type APIV1TemplatesFromSandboxPostParams struct {
 	// Optional key for retrying creation without starting a duplicate image build.
@@ -503,6 +515,13 @@ type AuthOidcProviderLoginGetParams struct {
 	// When true, the OIDC callback redirects to return_url with a short-lived login_code for server-side
 	// exchange.
 	WebLogin OptBool `json:",omitempty,omitzero"`
+}
+
+// AuthOidcProviderLogoutGetParams is parameters of GET /auth/oidc/{provider}/logout operation.
+type AuthOidcProviderLogoutGetParams struct {
+	Provider string
+	// URL to return to after the identity provider completes logout.
+	ReturnURL OptString `json:",omitempty,omitzero"`
 }
 
 // GetSandboxRuntimeMetricsParams is parameters of getSandboxRuntimeMetrics operation.

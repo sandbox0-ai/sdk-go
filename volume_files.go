@@ -38,11 +38,16 @@ func (c *Client) StatVolumeFile(ctx context.Context, volumeID, path string) (*ap
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessFileStatResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ListVolumeFiles returns directory entries inside a volume path.
@@ -54,11 +59,16 @@ func (c *Client) ListVolumeFiles(ctx context.Context, volumeID, path string) ([]
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessFileListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return data.Entries, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return data.Entries, nil
 }
 
 // WriteVolumeFile writes file content into a volume path.
@@ -93,11 +103,16 @@ func (c *Client) ImportVolumeArchive(ctx context.Context, volumeID, path string,
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessVolumeFileArchiveImportResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // UploadVolumeDirectory packs a local directory as tar and imports it into a volume path.
@@ -148,7 +163,12 @@ func (c *Client) DeleteVolumeFile(ctx context.Context, volumeID, path string) (*
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessDeletedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // MoveVolumeFile moves a file or directory within a volume.
@@ -160,7 +180,12 @@ func (c *Client) MoveVolumeFile(ctx context.Context, volumeID, source, destinati
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessMovedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // ConnectWatchVolumeFile opens a WebSocket stream for volume file watch events.
@@ -346,6 +371,6 @@ func decodeVolumeFileGetResponse(resp apispec.APIV1SandboxvolumesIDFilesGetRes) 
 		}
 		return decoded, nil
 	default:
-		return nil, unexpectedResponseError(resp)
+		return nil, apiErrorFromResponse(resp)
 	}
 }

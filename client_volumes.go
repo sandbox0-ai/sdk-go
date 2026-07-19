@@ -18,11 +18,16 @@ func (c *Client) CreateVolume(ctx context.Context, request apispec.CreateSandbox
 		return nil, err
 	}
 
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxVolumeResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // ListVolume lists sandbox volumes.
@@ -31,10 +36,12 @@ func (c *Client) ListVolume(ctx context.Context) ([]apispec.SandboxVolume, error
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessSandboxVolumeListResponse:
+		return response.Data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return resp.Data, nil
 }
 
 // GetVolume retrieves a sandbox volume.
@@ -128,10 +135,12 @@ func (c *Client) ListVolumeSnapshots(ctx context.Context, volumeID string) ([]ap
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessSnapshotListResponse:
+		return response.Data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return resp.Data, nil
 }
 
 // GetVolumeSnapshot gets a snapshot.
@@ -164,7 +173,12 @@ func (c *Client) DeleteVolumeSnapshot(ctx context.Context, volumeID, snapshotID 
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessDeletedResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
 
 // RestoreVolumeSnapshot restores a snapshot.
@@ -176,5 +190,10 @@ func (c *Client) RestoreVolumeSnapshot(ctx context.Context, volumeID, snapshotID
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessRestoreResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }

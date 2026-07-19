@@ -139,6 +139,10 @@ func errorStatusFromResponse(res any) int {
 	}
 	name := t.Name()
 	switch {
+	case name == "AdmissionRateLimitedHeaders":
+		return http.StatusTooManyRequests
+	case name == "AdmissionUnavailableHeaders":
+		return http.StatusServiceUnavailable
 	case strings.HasSuffix(name, "BadRequest"):
 		return http.StatusBadRequest
 	case strings.HasSuffix(name, "Unauthorized"):

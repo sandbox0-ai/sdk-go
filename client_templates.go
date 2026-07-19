@@ -49,14 +49,16 @@ func (c *Client) ListTemplate(ctx context.Context) ([]apispec.Template, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessTemplateListResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return data.Templates, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return data.Templates, nil
 }
 
 // GetTemplate retrieves a template.
@@ -83,11 +85,16 @@ func (c *Client) CreateTemplate(ctx context.Context, request apispec.TemplateCre
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessTemplateResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return &data, nil
 }
 
 // CreateTemplateFromSandbox starts an asynchronous template build from a sandbox root filesystem.
@@ -200,5 +207,10 @@ func (c *Client) DeleteTemplate(ctx context.Context, templateID string) (*apispe
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessMessageResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }
