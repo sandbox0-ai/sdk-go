@@ -647,6 +647,160 @@ func (s *APIV1CredentialSourcesNamePutNotFound) UnmarshalJSON(data []byte) error
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *APIV1QuotasGetOK) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *APIV1QuotasGetOK) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("success")
+		s.Success.Encode(e)
+	}
+	{
+		if s.Data != nil {
+			e.FieldStart("data")
+			e.ArrStart()
+			for _, elem := range s.Data {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfAPIV1QuotasGetOK = [2]string{
+	0: "success",
+	1: "data",
+}
+
+// Decode decodes APIV1QuotasGetOK from json.
+func (s *APIV1QuotasGetOK) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1QuotasGetOK to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "success":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Success.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"success\"")
+			}
+		case "data":
+			if err := func() error {
+				s.Data = make([]TeamQuota, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem TeamQuota
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Data = append(s.Data, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode APIV1QuotasGetOK")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfAPIV1QuotasGetOK) {
+					name = jsonFieldsNameOfAPIV1QuotasGetOK[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *APIV1QuotasGetOK) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1QuotasGetOK) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes APIV1QuotasGetOKSuccess as json.
+func (s APIV1QuotasGetOKSuccess) Encode(e *jx.Encoder) {
+	e.Bool(bool(s))
+}
+
+// Decode decodes APIV1QuotasGetOKSuccess from json.
+func (s *APIV1QuotasGetOKSuccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode APIV1QuotasGetOKSuccess to nil")
+	}
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	*s = APIV1QuotasGetOKSuccess(v)
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s APIV1QuotasGetOKSuccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *APIV1QuotasGetOKSuccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes APIV1RegistryCredentialsPostBadRequest as json.
 func (s *APIV1RegistryCredentialsPostBadRequest) Encode(e *jx.Encoder) {
 	unwrapped := (*ErrorEnvelope)(s)
@@ -24413,10 +24567,12 @@ func (s *QuotaDimension) Decode(d *jx.Decoder) error {
 		*s = QuotaDimensionVolumeStorageGB
 	case QuotaDimensionSnapshotStorageGB:
 		*s = QuotaDimensionSnapshotStorageGB
-	case QuotaDimensionEgress:
-		*s = QuotaDimensionEgress
-	case QuotaDimensionIngress:
-		*s = QuotaDimensionIngress
+	case QuotaDimensionAPIRequests:
+		*s = QuotaDimensionAPIRequests
+	case QuotaDimensionNetworkEgressBytes:
+		*s = QuotaDimensionNetworkEgressBytes
+	case QuotaDimensionNetworkIngressBytes:
+		*s = QuotaDimensionNetworkIngressBytes
 	default:
 		*s = QuotaDimension(v)
 	}
@@ -50247,12 +50403,24 @@ func (s *TeamQuota) encodeFields(e *jx.Encoder) {
 		s.Dimension.Encode(e)
 	}
 	{
+		e.FieldStart("kind")
+		s.Kind.Encode(e)
+	}
+	{
 		e.FieldStart("limit_value")
 		s.LimitValue.Encode(e)
 	}
 	{
+		e.FieldStart("interval_ms")
+		s.IntervalMs.Encode(e)
+	}
+	{
+		e.FieldStart("burst_value")
+		s.BurstValue.Encode(e)
+	}
+	{
 		e.FieldStart("current")
-		e.Int64(s.Current)
+		s.Current.Encode(e)
 	}
 	{
 		e.FieldStart("remaining")
@@ -50266,16 +50434,24 @@ func (s *TeamQuota) encodeFields(e *jx.Encoder) {
 		e.FieldStart("unit")
 		s.Unit.Encode(e)
 	}
+	{
+		e.FieldStart("source")
+		s.Source.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfTeamQuota = [7]string{
-	0: "team_id",
-	1: "dimension",
-	2: "limit_value",
-	3: "current",
-	4: "remaining",
-	5: "unlimited",
-	6: "unit",
+var jsonFieldsNameOfTeamQuota = [11]string{
+	0:  "team_id",
+	1:  "dimension",
+	2:  "kind",
+	3:  "limit_value",
+	4:  "interval_ms",
+	5:  "burst_value",
+	6:  "current",
+	7:  "remaining",
+	8:  "unlimited",
+	9:  "unit",
+	10: "source",
 }
 
 // Decode decodes TeamQuota from json.
@@ -50283,7 +50459,7 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode TeamQuota to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -50309,8 +50485,18 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"dimension\"")
 			}
-		case "limit_value":
+		case "kind":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Kind.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"kind\"")
+			}
+		case "limit_value":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				if err := s.LimitValue.Decode(d); err != nil {
 					return err
@@ -50319,12 +50505,30 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"limit_value\"")
 			}
-		case "current":
-			requiredBitSet[0] |= 1 << 3
+		case "interval_ms":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				v, err := d.Int64()
-				s.Current = int64(v)
-				if err != nil {
+				if err := s.IntervalMs.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"interval_ms\"")
+			}
+		case "burst_value":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				if err := s.BurstValue.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"burst_value\"")
+			}
+		case "current":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				if err := s.Current.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -50332,7 +50536,7 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"current\"")
 			}
 		case "remaining":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				if err := s.Remaining.Decode(d); err != nil {
 					return err
@@ -50342,7 +50546,7 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"remaining\"")
 			}
 		case "unlimited":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Bool()
 				s.Unlimited = bool(v)
@@ -50354,7 +50558,7 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"unlimited\"")
 			}
 		case "unit":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				if err := s.Unit.Decode(d); err != nil {
 					return err
@@ -50362,6 +50566,16 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"unit\"")
+			}
+		case "source":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				if err := s.Source.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source\"")
 			}
 		default:
 			return d.Skip()
@@ -50372,8 +50586,9 @@ func (s *TeamQuota) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b01111111,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -50419,6 +50634,88 @@ func (s *TeamQuota) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes TeamQuotaKind as json.
+func (s TeamQuotaKind) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes TeamQuotaKind from json.
+func (s *TeamQuotaKind) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamQuotaKind to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch TeamQuotaKind(v) {
+	case TeamQuotaKindCapacity:
+		*s = TeamQuotaKindCapacity
+	case TeamQuotaKindRate:
+		*s = TeamQuotaKindRate
+	default:
+		*s = TeamQuotaKind(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s TeamQuotaKind) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamQuotaKind) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes TeamQuotaSource as json.
+func (s TeamQuotaSource) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes TeamQuotaSource from json.
+func (s *TeamQuotaSource) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode TeamQuotaSource to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch TeamQuotaSource(v) {
+	case TeamQuotaSourceTeamOverride:
+		*s = TeamQuotaSourceTeamOverride
+	case TeamQuotaSourceRegionDefault:
+		*s = TeamQuotaSourceRegionDefault
+	case TeamQuotaSourceUnlimited:
+		*s = TeamQuotaSourceUnlimited
+	default:
+		*s = TeamQuotaSource(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s TeamQuotaSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *TeamQuotaSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes TeamQuotaUnit as json.
 func (s TeamQuotaUnit) Encode(e *jx.Encoder) {
 	e.Str(string(s))
@@ -50443,6 +50740,8 @@ func (s *TeamQuotaUnit) Decode(d *jx.Decoder) error {
 		*s = TeamQuotaUnitMiB
 	case TeamQuotaUnitGB:
 		*s = TeamQuotaUnitGB
+	case TeamQuotaUnitRequests:
+		*s = TeamQuotaUnitRequests
 	case TeamQuotaUnitBytes:
 		*s = TeamQuotaUnitBytes
 	default:

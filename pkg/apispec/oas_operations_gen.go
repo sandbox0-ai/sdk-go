@@ -17,6 +17,7 @@ const (
 	APIV1CredentialSourcesNamePutOperation                       OperationName = "APIV1CredentialSourcesNamePut"
 	APIV1CredentialSourcesPostOperation                          OperationName = "APIV1CredentialSourcesPost"
 	APIV1QuotasDimensionGetOperation                             OperationName = "APIV1QuotasDimensionGet"
+	APIV1QuotasGetOperation                                      OperationName = "APIV1QuotasGet"
 	APIV1RegistryCredentialsPostOperation                        OperationName = "APIV1RegistryCredentialsPost"
 	APIV1SandboxRootfsSnapshotsSnapshotIDDeleteOperation         OperationName = "APIV1SandboxRootfsSnapshotsSnapshotIDDelete"
 	APIV1SandboxRootfsSnapshotsSnapshotIDGetOperation            OperationName = "APIV1SandboxRootfsSnapshotsSnapshotIDGet"
