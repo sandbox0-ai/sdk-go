@@ -203,6 +203,46 @@ type APIV1CredentialSourcesNamePutNotFound ErrorEnvelope
 
 func (*APIV1CredentialSourcesNamePutNotFound) aPIV1CredentialSourcesNamePutRes() {}
 
+// Merged schema.
+type APIV1QuotasGetOK struct {
+	Success APIV1QuotasGetOKSuccess `json:"success"`
+	// Merged property.
+	Data []TeamQuota `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *APIV1QuotasGetOK) GetSuccess() APIV1QuotasGetOKSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *APIV1QuotasGetOK) GetData() []TeamQuota {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *APIV1QuotasGetOK) SetSuccess(val APIV1QuotasGetOKSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *APIV1QuotasGetOK) SetData(val []TeamQuota) {
+	s.Data = val
+}
+
+type APIV1QuotasGetOKSuccess bool
+
+const (
+	APIV1QuotasGetOKSuccessTrue APIV1QuotasGetOKSuccess = true
+)
+
+// AllValues returns all APIV1QuotasGetOKSuccess values.
+func (APIV1QuotasGetOKSuccess) AllValues() []APIV1QuotasGetOKSuccess {
+	return []APIV1QuotasGetOKSuccess{
+		APIV1QuotasGetOKSuccessTrue,
+	}
+}
+
 type APIV1RegistryCredentialsPostBadRequest ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostBadRequest) aPIV1RegistryCredentialsPostRes() {}
@@ -15263,13 +15303,14 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 type QuotaDimension string
 
 const (
-	QuotaDimensionActiveSandboxes   QuotaDimension = "active_sandboxes"
-	QuotaDimensionCPUMillicpu       QuotaDimension = "cpu_millicpu"
-	QuotaDimensionMemoryMib         QuotaDimension = "memory_mib"
-	QuotaDimensionVolumeStorageGB   QuotaDimension = "volume_storage_gb"
-	QuotaDimensionSnapshotStorageGB QuotaDimension = "snapshot_storage_gb"
-	QuotaDimensionEgress            QuotaDimension = "egress"
-	QuotaDimensionIngress           QuotaDimension = "ingress"
+	QuotaDimensionActiveSandboxes     QuotaDimension = "active_sandboxes"
+	QuotaDimensionCPUMillicpu         QuotaDimension = "cpu_millicpu"
+	QuotaDimensionMemoryMib           QuotaDimension = "memory_mib"
+	QuotaDimensionVolumeStorageGB     QuotaDimension = "volume_storage_gb"
+	QuotaDimensionSnapshotStorageGB   QuotaDimension = "snapshot_storage_gb"
+	QuotaDimensionAPIRequests         QuotaDimension = "api_requests"
+	QuotaDimensionNetworkEgressBytes  QuotaDimension = "network_egress_bytes"
+	QuotaDimensionNetworkIngressBytes QuotaDimension = "network_ingress_bytes"
 )
 
 // AllValues returns all QuotaDimension values.
@@ -15280,8 +15321,9 @@ func (QuotaDimension) AllValues() []QuotaDimension {
 		QuotaDimensionMemoryMib,
 		QuotaDimensionVolumeStorageGB,
 		QuotaDimensionSnapshotStorageGB,
-		QuotaDimensionEgress,
-		QuotaDimensionIngress,
+		QuotaDimensionAPIRequests,
+		QuotaDimensionNetworkEgressBytes,
+		QuotaDimensionNetworkIngressBytes,
 	}
 }
 
@@ -15298,9 +15340,11 @@ func (s QuotaDimension) MarshalText() ([]byte, error) {
 		return []byte(s), nil
 	case QuotaDimensionSnapshotStorageGB:
 		return []byte(s), nil
-	case QuotaDimensionEgress:
+	case QuotaDimensionAPIRequests:
 		return []byte(s), nil
-	case QuotaDimensionIngress:
+	case QuotaDimensionNetworkEgressBytes:
+		return []byte(s), nil
+	case QuotaDimensionNetworkIngressBytes:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -15325,11 +15369,14 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 	case QuotaDimensionSnapshotStorageGB:
 		*s = QuotaDimensionSnapshotStorageGB
 		return nil
-	case QuotaDimensionEgress:
-		*s = QuotaDimensionEgress
+	case QuotaDimensionAPIRequests:
+		*s = QuotaDimensionAPIRequests
 		return nil
-	case QuotaDimensionIngress:
-		*s = QuotaDimensionIngress
+	case QuotaDimensionNetworkEgressBytes:
+		*s = QuotaDimensionNetworkEgressBytes
+		return nil
+	case QuotaDimensionNetworkIngressBytes:
+		*s = QuotaDimensionNetworkIngressBytes
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -24637,13 +24684,17 @@ func (s *TeamMember) SetAvatarURL(val OptString) {
 
 // Ref: #/components/schemas/TeamQuota
 type TeamQuota struct {
-	TeamID     string         `json:"team_id"`
-	Dimension  QuotaDimension `json:"dimension"`
-	LimitValue NilInt64       `json:"limit_value"`
-	Current    int64          `json:"current"`
-	Remaining  NilInt64       `json:"remaining"`
-	Unlimited  bool           `json:"unlimited"`
-	Unit       TeamQuotaUnit  `json:"unit"`
+	TeamID     string          `json:"team_id"`
+	Dimension  QuotaDimension  `json:"dimension"`
+	Kind       TeamQuotaKind   `json:"kind"`
+	LimitValue NilInt64        `json:"limit_value"`
+	IntervalMs NilInt64        `json:"interval_ms"`
+	BurstValue NilInt64        `json:"burst_value"`
+	Current    NilInt64        `json:"current"`
+	Remaining  NilInt64        `json:"remaining"`
+	Unlimited  bool            `json:"unlimited"`
+	Unit       TeamQuotaUnit   `json:"unit"`
+	Source     TeamQuotaSource `json:"source"`
 }
 
 // GetTeamID returns the value of TeamID.
@@ -24656,13 +24707,28 @@ func (s *TeamQuota) GetDimension() QuotaDimension {
 	return s.Dimension
 }
 
+// GetKind returns the value of Kind.
+func (s *TeamQuota) GetKind() TeamQuotaKind {
+	return s.Kind
+}
+
 // GetLimitValue returns the value of LimitValue.
 func (s *TeamQuota) GetLimitValue() NilInt64 {
 	return s.LimitValue
 }
 
+// GetIntervalMs returns the value of IntervalMs.
+func (s *TeamQuota) GetIntervalMs() NilInt64 {
+	return s.IntervalMs
+}
+
+// GetBurstValue returns the value of BurstValue.
+func (s *TeamQuota) GetBurstValue() NilInt64 {
+	return s.BurstValue
+}
+
 // GetCurrent returns the value of Current.
-func (s *TeamQuota) GetCurrent() int64 {
+func (s *TeamQuota) GetCurrent() NilInt64 {
 	return s.Current
 }
 
@@ -24681,6 +24747,11 @@ func (s *TeamQuota) GetUnit() TeamQuotaUnit {
 	return s.Unit
 }
 
+// GetSource returns the value of Source.
+func (s *TeamQuota) GetSource() TeamQuotaSource {
+	return s.Source
+}
+
 // SetTeamID sets the value of TeamID.
 func (s *TeamQuota) SetTeamID(val string) {
 	s.TeamID = val
@@ -24691,13 +24762,28 @@ func (s *TeamQuota) SetDimension(val QuotaDimension) {
 	s.Dimension = val
 }
 
+// SetKind sets the value of Kind.
+func (s *TeamQuota) SetKind(val TeamQuotaKind) {
+	s.Kind = val
+}
+
 // SetLimitValue sets the value of LimitValue.
 func (s *TeamQuota) SetLimitValue(val NilInt64) {
 	s.LimitValue = val
 }
 
+// SetIntervalMs sets the value of IntervalMs.
+func (s *TeamQuota) SetIntervalMs(val NilInt64) {
+	s.IntervalMs = val
+}
+
+// SetBurstValue sets the value of BurstValue.
+func (s *TeamQuota) SetBurstValue(val NilInt64) {
+	s.BurstValue = val
+}
+
 // SetCurrent sets the value of Current.
-func (s *TeamQuota) SetCurrent(val int64) {
+func (s *TeamQuota) SetCurrent(val NilInt64) {
 	s.Current = val
 }
 
@@ -24716,6 +24802,100 @@ func (s *TeamQuota) SetUnit(val TeamQuotaUnit) {
 	s.Unit = val
 }
 
+// SetSource sets the value of Source.
+func (s *TeamQuota) SetSource(val TeamQuotaSource) {
+	s.Source = val
+}
+
+type TeamQuotaKind string
+
+const (
+	TeamQuotaKindCapacity TeamQuotaKind = "capacity"
+	TeamQuotaKindRate     TeamQuotaKind = "rate"
+)
+
+// AllValues returns all TeamQuotaKind values.
+func (TeamQuotaKind) AllValues() []TeamQuotaKind {
+	return []TeamQuotaKind{
+		TeamQuotaKindCapacity,
+		TeamQuotaKindRate,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaKind) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaKindCapacity:
+		return []byte(s), nil
+	case TeamQuotaKindRate:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaKind) UnmarshalText(data []byte) error {
+	switch TeamQuotaKind(data) {
+	case TeamQuotaKindCapacity:
+		*s = TeamQuotaKindCapacity
+		return nil
+	case TeamQuotaKindRate:
+		*s = TeamQuotaKindRate
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type TeamQuotaSource string
+
+const (
+	TeamQuotaSourceTeamOverride  TeamQuotaSource = "team_override"
+	TeamQuotaSourceRegionDefault TeamQuotaSource = "region_default"
+	TeamQuotaSourceUnlimited     TeamQuotaSource = "unlimited"
+)
+
+// AllValues returns all TeamQuotaSource values.
+func (TeamQuotaSource) AllValues() []TeamQuotaSource {
+	return []TeamQuotaSource{
+		TeamQuotaSourceTeamOverride,
+		TeamQuotaSourceRegionDefault,
+		TeamQuotaSourceUnlimited,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s TeamQuotaSource) MarshalText() ([]byte, error) {
+	switch s {
+	case TeamQuotaSourceTeamOverride:
+		return []byte(s), nil
+	case TeamQuotaSourceRegionDefault:
+		return []byte(s), nil
+	case TeamQuotaSourceUnlimited:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *TeamQuotaSource) UnmarshalText(data []byte) error {
+	switch TeamQuotaSource(data) {
+	case TeamQuotaSourceTeamOverride:
+		*s = TeamQuotaSourceTeamOverride
+		return nil
+	case TeamQuotaSourceRegionDefault:
+		*s = TeamQuotaSourceRegionDefault
+		return nil
+	case TeamQuotaSourceUnlimited:
+		*s = TeamQuotaSourceUnlimited
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 type TeamQuotaUnit string
 
 const (
@@ -24723,6 +24903,7 @@ const (
 	TeamQuotaUnitMillicpu TeamQuotaUnit = "millicpu"
 	TeamQuotaUnitMiB      TeamQuotaUnit = "MiB"
 	TeamQuotaUnitGB       TeamQuotaUnit = "GB"
+	TeamQuotaUnitRequests TeamQuotaUnit = "requests"
 	TeamQuotaUnitBytes    TeamQuotaUnit = "bytes"
 )
 
@@ -24733,6 +24914,7 @@ func (TeamQuotaUnit) AllValues() []TeamQuotaUnit {
 		TeamQuotaUnitMillicpu,
 		TeamQuotaUnitMiB,
 		TeamQuotaUnitGB,
+		TeamQuotaUnitRequests,
 		TeamQuotaUnitBytes,
 	}
 }
@@ -24747,6 +24929,8 @@ func (s TeamQuotaUnit) MarshalText() ([]byte, error) {
 	case TeamQuotaUnitMiB:
 		return []byte(s), nil
 	case TeamQuotaUnitGB:
+		return []byte(s), nil
+	case TeamQuotaUnitRequests:
 		return []byte(s), nil
 	case TeamQuotaUnitBytes:
 		return []byte(s), nil
@@ -24769,6 +24953,9 @@ func (s *TeamQuotaUnit) UnmarshalText(data []byte) error {
 		return nil
 	case TeamQuotaUnitGB:
 		*s = TeamQuotaUnitGB
+		return nil
+	case TeamQuotaUnitRequests:
+		*s = TeamQuotaUnitRequests
 		return nil
 	case TeamQuotaUnitBytes:
 		*s = TeamQuotaUnitBytes

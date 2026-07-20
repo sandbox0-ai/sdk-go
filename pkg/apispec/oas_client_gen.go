@@ -147,6 +147,12 @@ type Invoker interface {
 	//
 	// GET /api/v1/quotas/{dimension}
 	APIV1QuotasDimensionGet(ctx context.Context, params APIV1QuotasDimensionGetParams, options ...RequestOption) (APIV1QuotasDimensionGetRes, error)
+	// APIV1QuotasGet invokes GET /api/v1/quotas operation.
+	//
+	// List team quotas.
+	//
+	// GET /api/v1/quotas
+	APIV1QuotasGet(ctx context.Context, options ...RequestOption) (*APIV1QuotasGetOK, error)
 	// APIV1RegistryCredentialsPost invokes POST /api/v1/registry/credentials operation.
 	//
 	// Get registry credentials for uploads.
@@ -2108,6 +2114,101 @@ func (c *Client) sendAPIV1QuotasDimensionGet(ctx context.Context, params APIV1Qu
 	}
 
 	result, err := decodeAPIV1QuotasDimensionGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1QuotasGet invokes GET /api/v1/quotas operation.
+//
+// List team quotas.
+//
+// GET /api/v1/quotas
+func (c *Client) APIV1QuotasGet(ctx context.Context, options ...RequestOption) (*APIV1QuotasGetOK, error) {
+	res, err := c.sendAPIV1QuotasGet(ctx, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1QuotasGet(ctx context.Context, requestOptions ...RequestOption) (res *APIV1QuotasGetOK, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/quotas"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1QuotasGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1QuotasGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
