@@ -24559,10 +24559,8 @@ func (s *QuotaDimension) Decode(d *jx.Decoder) error {
 	switch QuotaDimension(v) {
 	case QuotaDimensionActiveSandboxes:
 		*s = QuotaDimensionActiveSandboxes
-	case QuotaDimensionCPUMillicpu:
-		*s = QuotaDimensionCPUMillicpu
-	case QuotaDimensionMemoryMib:
-		*s = QuotaDimensionMemoryMib
+	case QuotaDimensionSandboxClaims:
+		*s = QuotaDimensionSandboxClaims
 	case QuotaDimensionVolumeStorageGB:
 		*s = QuotaDimensionVolumeStorageGB
 	case QuotaDimensionSnapshotStorageGB:
@@ -50734,10 +50732,8 @@ func (s *TeamQuotaUnit) Decode(d *jx.Decoder) error {
 	switch TeamQuotaUnit(v) {
 	case TeamQuotaUnitCount:
 		*s = TeamQuotaUnitCount
-	case TeamQuotaUnitMillicpu:
-		*s = TeamQuotaUnitMillicpu
-	case TeamQuotaUnitMiB:
-		*s = TeamQuotaUnitMiB
+	case TeamQuotaUnitClaims:
+		*s = TeamQuotaUnitClaims
 	case TeamQuotaUnitGB:
 		*s = TeamQuotaUnitGB
 	case TeamQuotaUnitRequests:

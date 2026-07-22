@@ -3469,9 +3469,7 @@ func (s QuotaDimension) Validate() error {
 	switch s {
 	case "active_sandboxes":
 		return nil
-	case "cpu_millicpu":
-		return nil
-	case "memory_mib":
+	case "sandbox_claims":
 		return nil
 	case "volume_storage_gb":
 		return nil
@@ -9452,9 +9450,7 @@ func (s TeamQuotaUnit) Validate() error {
 	switch s {
 	case "count":
 		return nil
-	case "millicpu":
-		return nil
-	case "MiB":
+	case "claims":
 		return nil
 	case "GB":
 		return nil

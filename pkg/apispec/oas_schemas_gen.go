@@ -15304,8 +15304,7 @@ type QuotaDimension string
 
 const (
 	QuotaDimensionActiveSandboxes     QuotaDimension = "active_sandboxes"
-	QuotaDimensionCPUMillicpu         QuotaDimension = "cpu_millicpu"
-	QuotaDimensionMemoryMib           QuotaDimension = "memory_mib"
+	QuotaDimensionSandboxClaims       QuotaDimension = "sandbox_claims"
 	QuotaDimensionVolumeStorageGB     QuotaDimension = "volume_storage_gb"
 	QuotaDimensionSnapshotStorageGB   QuotaDimension = "snapshot_storage_gb"
 	QuotaDimensionAPIRequests         QuotaDimension = "api_requests"
@@ -15317,8 +15316,7 @@ const (
 func (QuotaDimension) AllValues() []QuotaDimension {
 	return []QuotaDimension{
 		QuotaDimensionActiveSandboxes,
-		QuotaDimensionCPUMillicpu,
-		QuotaDimensionMemoryMib,
+		QuotaDimensionSandboxClaims,
 		QuotaDimensionVolumeStorageGB,
 		QuotaDimensionSnapshotStorageGB,
 		QuotaDimensionAPIRequests,
@@ -15332,9 +15330,7 @@ func (s QuotaDimension) MarshalText() ([]byte, error) {
 	switch s {
 	case QuotaDimensionActiveSandboxes:
 		return []byte(s), nil
-	case QuotaDimensionCPUMillicpu:
-		return []byte(s), nil
-	case QuotaDimensionMemoryMib:
+	case QuotaDimensionSandboxClaims:
 		return []byte(s), nil
 	case QuotaDimensionVolumeStorageGB:
 		return []byte(s), nil
@@ -15357,11 +15353,8 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 	case QuotaDimensionActiveSandboxes:
 		*s = QuotaDimensionActiveSandboxes
 		return nil
-	case QuotaDimensionCPUMillicpu:
-		*s = QuotaDimensionCPUMillicpu
-		return nil
-	case QuotaDimensionMemoryMib:
-		*s = QuotaDimensionMemoryMib
+	case QuotaDimensionSandboxClaims:
+		*s = QuotaDimensionSandboxClaims
 		return nil
 	case QuotaDimensionVolumeStorageGB:
 		*s = QuotaDimensionVolumeStorageGB
@@ -24900,8 +24893,7 @@ type TeamQuotaUnit string
 
 const (
 	TeamQuotaUnitCount    TeamQuotaUnit = "count"
-	TeamQuotaUnitMillicpu TeamQuotaUnit = "millicpu"
-	TeamQuotaUnitMiB      TeamQuotaUnit = "MiB"
+	TeamQuotaUnitClaims   TeamQuotaUnit = "claims"
 	TeamQuotaUnitGB       TeamQuotaUnit = "GB"
 	TeamQuotaUnitRequests TeamQuotaUnit = "requests"
 	TeamQuotaUnitBytes    TeamQuotaUnit = "bytes"
@@ -24911,8 +24903,7 @@ const (
 func (TeamQuotaUnit) AllValues() []TeamQuotaUnit {
 	return []TeamQuotaUnit{
 		TeamQuotaUnitCount,
-		TeamQuotaUnitMillicpu,
-		TeamQuotaUnitMiB,
+		TeamQuotaUnitClaims,
 		TeamQuotaUnitGB,
 		TeamQuotaUnitRequests,
 		TeamQuotaUnitBytes,
@@ -24924,9 +24915,7 @@ func (s TeamQuotaUnit) MarshalText() ([]byte, error) {
 	switch s {
 	case TeamQuotaUnitCount:
 		return []byte(s), nil
-	case TeamQuotaUnitMillicpu:
-		return []byte(s), nil
-	case TeamQuotaUnitMiB:
+	case TeamQuotaUnitClaims:
 		return []byte(s), nil
 	case TeamQuotaUnitGB:
 		return []byte(s), nil
@@ -24945,11 +24934,8 @@ func (s *TeamQuotaUnit) UnmarshalText(data []byte) error {
 	case TeamQuotaUnitCount:
 		*s = TeamQuotaUnitCount
 		return nil
-	case TeamQuotaUnitMillicpu:
-		*s = TeamQuotaUnitMillicpu
-		return nil
-	case TeamQuotaUnitMiB:
-		*s = TeamQuotaUnitMiB
+	case TeamQuotaUnitClaims:
+		*s = TeamQuotaUnitClaims
 		return nil
 	case TeamQuotaUnitGB:
 		*s = TeamQuotaUnitGB
