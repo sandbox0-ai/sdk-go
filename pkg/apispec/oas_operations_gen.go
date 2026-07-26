@@ -94,6 +94,7 @@ const (
 	APIV1TemplatesIDGetOperation                                 OperationName = "APIV1TemplatesIDGet"
 	APIV1TemplatesIDPutOperation                                 OperationName = "APIV1TemplatesIDPut"
 	APIV1TemplatesPostOperation                                  OperationName = "APIV1TemplatesPost"
+	APIV1UsageWindowsGetOperation                                OperationName = "APIV1UsageWindowsGet"
 	AuthChangePasswordPostOperation                              OperationName = "AuthChangePasswordPost"
 	AuthLoginPostOperation                                       OperationName = "AuthLoginPost"
 	AuthLogoutPostOperation                                      OperationName = "AuthLogoutPost"

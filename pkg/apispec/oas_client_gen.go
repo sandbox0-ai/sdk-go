@@ -673,6 +673,14 @@ type Invoker interface {
 	//
 	// POST /api/v1/templates
 	APIV1TemplatesPost(ctx context.Context, request *TemplateCreateRequest, options ...RequestOption) (*SuccessTemplateResponse, error)
+	// APIV1UsageWindowsGet invokes GET /api/v1/usage/windows operation.
+	//
+	// Returns immutable, closed usage windows belonging to the authenticated
+	// team. The opaque cursor can be retained and reused to incrementally
+	// import newly recorded windows.
+	//
+	// GET /api/v1/usage/windows
+	APIV1UsageWindowsGet(ctx context.Context, params APIV1UsageWindowsGetParams, options ...RequestOption) (APIV1UsageWindowsGetRes, error)
 	// AuthChangePasswordPost invokes POST /auth/change-password operation.
 	//
 	// Change password.
@@ -12133,6 +12141,157 @@ func (c *Client) sendAPIV1TemplatesPost(ctx context.Context, request *TemplateCr
 	}
 
 	result, err := decodeAPIV1TemplatesPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1UsageWindowsGet invokes GET /api/v1/usage/windows operation.
+//
+// Returns immutable, closed usage windows belonging to the authenticated
+// team. The opaque cursor can be retained and reused to incrementally
+// import newly recorded windows.
+//
+// GET /api/v1/usage/windows
+func (c *Client) APIV1UsageWindowsGet(ctx context.Context, params APIV1UsageWindowsGetParams, options ...RequestOption) (APIV1UsageWindowsGetRes, error) {
+	res, err := c.sendAPIV1UsageWindowsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1UsageWindowsGet(ctx context.Context, params APIV1UsageWindowsGetParams, requestOptions ...RequestOption) (res APIV1UsageWindowsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [1]string
+	pathParts[0] = "/api/v1/usage/windows"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "cursor" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "cursor",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Cursor.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "limit" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "limit",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Limit.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "window_type" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "window_type",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.WindowType.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1UsageWindowsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1UsageWindowsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

@@ -610,6 +610,22 @@ type APIV1TemplatesFromSandboxPostUnauthorized ErrorEnvelope
 
 func (*APIV1TemplatesFromSandboxPostUnauthorized) aPIV1TemplatesFromSandboxPostRes() {}
 
+type APIV1UsageWindowsGetBadRequest ErrorEnvelope
+
+func (*APIV1UsageWindowsGetBadRequest) aPIV1UsageWindowsGetRes() {}
+
+type APIV1UsageWindowsGetForbidden ErrorEnvelope
+
+func (*APIV1UsageWindowsGetForbidden) aPIV1UsageWindowsGetRes() {}
+
+type APIV1UsageWindowsGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1UsageWindowsGetServiceUnavailable) aPIV1UsageWindowsGetRes() {}
+
+type APIV1UsageWindowsGetUnauthorized ErrorEnvelope
+
+func (*APIV1UsageWindowsGetUnauthorized) aPIV1UsageWindowsGetRes() {}
+
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
 	Email string                   `json:"email"`
@@ -14365,6 +14381,52 @@ func (o OptUUID) Or(d uuid.UUID) uuid.UUID {
 	return d
 }
 
+// NewOptUsageWindowPage returns new OptUsageWindowPage with value set to v.
+func NewOptUsageWindowPage(v UsageWindowPage) OptUsageWindowPage {
+	return OptUsageWindowPage{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUsageWindowPage is optional UsageWindowPage.
+type OptUsageWindowPage struct {
+	Value UsageWindowPage
+	Set   bool
+}
+
+// IsSet returns true if OptUsageWindowPage was set.
+func (o OptUsageWindowPage) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUsageWindowPage) Reset() {
+	var v UsageWindowPage
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUsageWindowPage) SetTo(v UsageWindowPage) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUsageWindowPage) Get() (v UsageWindowPage, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUsageWindowPage) Or(d UsageWindowPage) UsageWindowPage {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptUser returns new OptUser with value set to v.
 func NewOptUser(v User) OptUser {
 	return OptUser{
@@ -16640,8 +16702,9 @@ type SandboxAppServiceRoute struct {
 	Cors           OptSandboxAppServiceRouteCORS      `json:"cors"`
 	RateLimit      OptSandboxAppServiceRouteRateLimit `json:"rate_limit"`
 	TimeoutSeconds OptInt32                           `json:"timeout_seconds"`
-	// Allows this public route to wake a paused sandbox when sandbox auto_resume is true.
-	// Resume-enabled public routes require a restartable service runtime: cmd or function.
+	// Allows this public route to wake a paused sandbox or replace a failed runtime when
+	// sandbox auto_resume is true. Resume-enabled public routes require a restartable service
+	// runtime: cmd or function.
 	Resume bool `json:"resume"`
 }
 
@@ -17664,8 +17727,8 @@ type SandboxConfig struct {
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	Webhook OptWebhookConfig        `json:"webhook"`
-	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
-	// (API or public exposure) must not auto resume the sandbox.
+	// Sandbox-level runtime recovery gate. When false, inbound API or public exposure
+	// requests must not automatically resume a paused sandbox or replace a failed runtime.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
 }
@@ -20367,8 +20430,8 @@ type SandboxUpdateConfig struct {
 	// durable state, including paused rootfs checkpoints.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
-	// Sandbox-level resume gate for paused sandboxes. When false, any inbound request
-	// (API or public exposure) must not auto resume the sandbox.
+	// Sandbox-level runtime recovery gate. When false, inbound API or public exposure
+	// requests must not automatically resume a paused sandbox or replace a failed runtime.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
 }
@@ -24210,6 +24273,49 @@ func (SuccessTemplateResponseSuccess) AllValues() []SuccessTemplateResponseSucce
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessUsageWindowsResponse
+type SuccessUsageWindowsResponse struct {
+	Success SuccessUsageWindowsResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptUsageWindowPage `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessUsageWindowsResponse) GetSuccess() SuccessUsageWindowsResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessUsageWindowsResponse) GetData() OptUsageWindowPage {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessUsageWindowsResponse) SetSuccess(val SuccessUsageWindowsResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessUsageWindowsResponse) SetData(val OptUsageWindowPage) {
+	s.Data = val
+}
+
+func (*SuccessUsageWindowsResponse) aPIV1UsageWindowsGetRes() {}
+
+type SuccessUsageWindowsResponseSuccess bool
+
+const (
+	SuccessUsageWindowsResponseSuccessTrue SuccessUsageWindowsResponseSuccess = true
+)
+
+// AllValues returns all SuccessUsageWindowsResponseSuccess values.
+func (SuccessUsageWindowsResponseSuccess) AllValues() []SuccessUsageWindowsResponseSuccess {
+	return []SuccessUsageWindowsResponseSuccess{
+		SuccessUsageWindowsResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessUserResponse
 type SuccessUserResponse struct {
 	Success SuccessUserResponseSuccess `json:"success"`
@@ -25894,6 +26000,168 @@ func (s *UpdateUserRequest) SetName(val OptString) {
 // SetAvatarURL sets the value of AvatarURL.
 func (s *UpdateUserRequest) SetAvatarURL(val OptString) {
 	s.AvatarURL = val
+}
+
+// Ref: #/components/schemas/UsageWindow
+type UsageWindow struct {
+	WindowID    string    `json:"window_id"`
+	RegionID    OptString `json:"region_id"`
+	ClusterID   OptString `json:"cluster_id"`
+	WindowType  string    `json:"window_type"`
+	SubjectType string    `json:"subject_type"`
+	SubjectID   string    `json:"subject_id"`
+	SandboxID   OptString `json:"sandbox_id"`
+	WindowStart time.Time `json:"window_start"`
+	WindowEnd   time.Time `json:"window_end"`
+	Value       int64     `json:"value"`
+	Unit        string    `json:"unit"`
+	RecordedAt  time.Time `json:"recorded_at"`
+}
+
+// GetWindowID returns the value of WindowID.
+func (s *UsageWindow) GetWindowID() string {
+	return s.WindowID
+}
+
+// GetRegionID returns the value of RegionID.
+func (s *UsageWindow) GetRegionID() OptString {
+	return s.RegionID
+}
+
+// GetClusterID returns the value of ClusterID.
+func (s *UsageWindow) GetClusterID() OptString {
+	return s.ClusterID
+}
+
+// GetWindowType returns the value of WindowType.
+func (s *UsageWindow) GetWindowType() string {
+	return s.WindowType
+}
+
+// GetSubjectType returns the value of SubjectType.
+func (s *UsageWindow) GetSubjectType() string {
+	return s.SubjectType
+}
+
+// GetSubjectID returns the value of SubjectID.
+func (s *UsageWindow) GetSubjectID() string {
+	return s.SubjectID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *UsageWindow) GetSandboxID() OptString {
+	return s.SandboxID
+}
+
+// GetWindowStart returns the value of WindowStart.
+func (s *UsageWindow) GetWindowStart() time.Time {
+	return s.WindowStart
+}
+
+// GetWindowEnd returns the value of WindowEnd.
+func (s *UsageWindow) GetWindowEnd() time.Time {
+	return s.WindowEnd
+}
+
+// GetValue returns the value of Value.
+func (s *UsageWindow) GetValue() int64 {
+	return s.Value
+}
+
+// GetUnit returns the value of Unit.
+func (s *UsageWindow) GetUnit() string {
+	return s.Unit
+}
+
+// GetRecordedAt returns the value of RecordedAt.
+func (s *UsageWindow) GetRecordedAt() time.Time {
+	return s.RecordedAt
+}
+
+// SetWindowID sets the value of WindowID.
+func (s *UsageWindow) SetWindowID(val string) {
+	s.WindowID = val
+}
+
+// SetRegionID sets the value of RegionID.
+func (s *UsageWindow) SetRegionID(val OptString) {
+	s.RegionID = val
+}
+
+// SetClusterID sets the value of ClusterID.
+func (s *UsageWindow) SetClusterID(val OptString) {
+	s.ClusterID = val
+}
+
+// SetWindowType sets the value of WindowType.
+func (s *UsageWindow) SetWindowType(val string) {
+	s.WindowType = val
+}
+
+// SetSubjectType sets the value of SubjectType.
+func (s *UsageWindow) SetSubjectType(val string) {
+	s.SubjectType = val
+}
+
+// SetSubjectID sets the value of SubjectID.
+func (s *UsageWindow) SetSubjectID(val string) {
+	s.SubjectID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *UsageWindow) SetSandboxID(val OptString) {
+	s.SandboxID = val
+}
+
+// SetWindowStart sets the value of WindowStart.
+func (s *UsageWindow) SetWindowStart(val time.Time) {
+	s.WindowStart = val
+}
+
+// SetWindowEnd sets the value of WindowEnd.
+func (s *UsageWindow) SetWindowEnd(val time.Time) {
+	s.WindowEnd = val
+}
+
+// SetValue sets the value of Value.
+func (s *UsageWindow) SetValue(val int64) {
+	s.Value = val
+}
+
+// SetUnit sets the value of Unit.
+func (s *UsageWindow) SetUnit(val string) {
+	s.Unit = val
+}
+
+// SetRecordedAt sets the value of RecordedAt.
+func (s *UsageWindow) SetRecordedAt(val time.Time) {
+	s.RecordedAt = val
+}
+
+// Ref: #/components/schemas/UsageWindowPage
+type UsageWindowPage struct {
+	Windows    []UsageWindow `json:"windows"`
+	NextCursor string        `json:"next_cursor"`
+}
+
+// GetWindows returns the value of Windows.
+func (s *UsageWindowPage) GetWindows() []UsageWindow {
+	return s.Windows
+}
+
+// GetNextCursor returns the value of NextCursor.
+func (s *UsageWindowPage) GetNextCursor() string {
+	return s.NextCursor
+}
+
+// SetWindows sets the value of Windows.
+func (s *UsageWindowPage) SetWindows(val []UsageWindow) {
+	s.Windows = val
+}
+
+// SetNextCursor sets the value of NextCursor.
+func (s *UsageWindowPage) SetNextCursor(val string) {
+	s.NextCursor = val
 }
 
 // Ref: #/components/schemas/User

@@ -479,6 +479,16 @@ type APIV1TemplatesIDPutParams struct {
 	ID string
 }
 
+// APIV1UsageWindowsGetParams is parameters of GET /api/v1/usage/windows operation.
+type APIV1UsageWindowsGetParams struct {
+	// Opaque pagination cursor returned by a previous response.
+	Cursor OptString `json:",omitempty,omitzero"`
+	// Maximum number of windows to return. Values above 1000 are capped.
+	Limit OptInt `json:",omitempty,omitzero"`
+	// Return only windows with this exact usage type.
+	WindowType OptString `json:",omitempty,omitzero"`
+}
+
 // AuthOidcProviderCallbackGetParams is parameters of GET /auth/oidc/{provider}/callback operation.
 type AuthOidcProviderCallbackGetParams struct {
 	Provider string
