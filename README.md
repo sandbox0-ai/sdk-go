@@ -93,6 +93,27 @@ if err != nil {
 fmt.Printf("exit=%d state=%s\n", *done.ExitCode, done.State)
 ```
 
+## Usage Windows
+
+Usage windows are immutable, team-scoped usage records. Retain `NextCursor` to
+incrementally import only newly recorded windows:
+
+```go
+page, err := client.ListUsageWindows(ctx, &sandbox0.ListUsageWindowsOptions{
+    Cursor:     savedCursor,
+    Limit:      250,
+    WindowType: "sandbox.runtime_mib_milliseconds",
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, window := range page.Windows {
+    fmt.Printf("%s %d %s\n", window.WindowID, window.Value, window.Unit)
+}
+savedCursor = page.NextCursor
+```
+
 ## Documentation
 
 - [Sandbox0 docs](https://sandbox0.ai/docs)

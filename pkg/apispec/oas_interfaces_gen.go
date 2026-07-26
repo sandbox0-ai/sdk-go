@@ -177,6 +177,10 @@ type APIV1TemplatesIDPutRes interface {
 	aPIV1TemplatesIDPutRes()
 }
 
+type APIV1UsageWindowsGetRes interface {
+	aPIV1UsageWindowsGetRes()
+}
+
 type AuthChangePasswordPostRes interface {
 	authChangePasswordPostRes()
 }
