@@ -1744,9 +1744,13 @@ func (s *CreateCMDContextRequest) SetCommand(val []string) {
 
 // Ref: #/components/schemas/CreateContextRequest
 type CreateContextRequest struct {
-	Type           OptProcessType                 `json:"type"`
-	Repl           OptCreateREPLContextRequest    `json:"repl"`
-	Cmd            OptCreateCMDContextRequest     `json:"cmd"`
+	Type OptProcessType              `json:"type"`
+	Repl OptCreateREPLContextRequest `json:"repl"`
+	Cmd  OptCreateCMDContextRequest  `json:"cmd"`
+	// Wait for the context process to finish before returning. For long-running commands, prefer an
+	// asynchronous context with a bounded ttl_sec and follow it through the context WebSocket and GET
+	// APIs. Use a supervised session when reconnectable, replayable, or restartable execution is
+	// required.
 	WaitUntilDone  OptBool                        `json:"wait_until_done"`
 	Cwd            OptString                      `json:"cwd"`
 	EnvVars        OptCreateContextRequestEnvVars `json:"env_vars"`
@@ -2294,7 +2298,9 @@ func (s *CreateSnapshotRequest) SetDescription(val OptString) {
 
 // Ref: #/components/schemas/CreateTeamRequest
 type CreateTeamRequest struct {
-	Name         string       `json:"name"`
+	// Display name. Team names are not unique.
+	Name string `json:"name"`
+	// Human-readable alias. Team slugs are not unique.
 	Slug         OptString    `json:"slug"`
 	HomeRegionID OptNilString `json:"home_region_id"`
 }
@@ -15678,10 +15684,11 @@ func (s *RefreshRequest) SetRefreshToken(val string) {
 
 // Ref: #/components/schemas/RefreshResponse
 type RefreshResponse struct {
-	SandboxID string    `json:"sandbox_id"`
-	ExpiresAt time.Time `json:"expires_at"`
-	// Hard expiration timestamp. Zero value means not set.
-	HardExpiresAt time.Time `json:"hard_expires_at"`
+	SandboxID string `json:"sandbox_id"`
+	// Soft expiration timestamp. Omitted or null means disabled or not set.
+	ExpiresAt OptNilDateTime `json:"expires_at"`
+	// Hard expiration timestamp. Omitted or null means disabled or not set.
+	HardExpiresAt OptNilDateTime `json:"hard_expires_at"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -15690,12 +15697,12 @@ func (s *RefreshResponse) GetSandboxID() string {
 }
 
 // GetExpiresAt returns the value of ExpiresAt.
-func (s *RefreshResponse) GetExpiresAt() time.Time {
+func (s *RefreshResponse) GetExpiresAt() OptNilDateTime {
 	return s.ExpiresAt
 }
 
 // GetHardExpiresAt returns the value of HardExpiresAt.
-func (s *RefreshResponse) GetHardExpiresAt() time.Time {
+func (s *RefreshResponse) GetHardExpiresAt() OptNilDateTime {
 	return s.HardExpiresAt
 }
 
@@ -15705,12 +15712,12 @@ func (s *RefreshResponse) SetSandboxID(val string) {
 }
 
 // SetExpiresAt sets the value of ExpiresAt.
-func (s *RefreshResponse) SetExpiresAt(val time.Time) {
+func (s *RefreshResponse) SetExpiresAt(val OptNilDateTime) {
 	s.ExpiresAt = val
 }
 
 // SetHardExpiresAt sets the value of HardExpiresAt.
-func (s *RefreshResponse) SetHardExpiresAt(val time.Time) {
+func (s *RefreshResponse) SetHardExpiresAt(val OptNilDateTime) {
 	s.HardExpiresAt = val
 }
 
@@ -15772,10 +15779,6 @@ func (s *Region) SetMeteringExportURL(val OptNilString) {
 func (s *Region) SetEnabled(val bool) {
 	s.Enabled = val
 }
-
-type RegionsIDDeleteConflict ErrorEnvelope
-
-func (*RegionsIDDeleteConflict) regionsIDDeleteRes() {}
 
 type RegionsIDDeleteForbidden ErrorEnvelope
 
@@ -16388,13 +16391,13 @@ type Sandbox struct {
 	// Monotonically increasing runtime generation. Resume starts a new generation.
 	RuntimeGeneration int64                   `json:"runtime_generation"`
 	SSH               OptSandboxSSHConnection `json:"ssh"`
-	// Soft expiration timestamp. Zero value means not set.
-	ExpiresAt time.Time `json:"expires_at"`
-	// Hard expiration timestamp. Zero value means not set.
-	HardExpiresAt time.Time `json:"hard_expires_at"`
-	ClaimedAt     time.Time `json:"claimed_at"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	// Soft expiration timestamp. Omitted or null means disabled or not set.
+	ExpiresAt OptNilDateTime `json:"expires_at"`
+	// Hard expiration timestamp. Omitted or null means disabled or not set.
+	HardExpiresAt OptNilDateTime `json:"hard_expires_at"`
+	ClaimedAt     time.Time      `json:"claimed_at"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -16463,12 +16466,12 @@ func (s *Sandbox) GetSSH() OptSandboxSSHConnection {
 }
 
 // GetExpiresAt returns the value of ExpiresAt.
-func (s *Sandbox) GetExpiresAt() time.Time {
+func (s *Sandbox) GetExpiresAt() OptNilDateTime {
 	return s.ExpiresAt
 }
 
 // GetHardExpiresAt returns the value of HardExpiresAt.
-func (s *Sandbox) GetHardExpiresAt() time.Time {
+func (s *Sandbox) GetHardExpiresAt() OptNilDateTime {
 	return s.HardExpiresAt
 }
 
@@ -16553,12 +16556,12 @@ func (s *Sandbox) SetSSH(val OptSandboxSSHConnection) {
 }
 
 // SetExpiresAt sets the value of ExpiresAt.
-func (s *Sandbox) SetExpiresAt(val time.Time) {
+func (s *Sandbox) SetExpiresAt(val OptNilDateTime) {
 	s.ExpiresAt = val
 }
 
 // SetHardExpiresAt sets the value of HardExpiresAt.
-func (s *Sandbox) SetHardExpiresAt(val time.Time) {
+func (s *Sandbox) SetHardExpiresAt(val OptNilDateTime) {
 	s.HardExpiresAt = val
 }
 
@@ -17727,8 +17730,11 @@ type SandboxConfig struct {
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
 	Webhook OptWebhookConfig        `json:"webhook"`
-	// Sandbox-level runtime recovery gate. When false, inbound API or public exposure
-	// requests must not automatically resume a paused sandbox or replace a failed runtime.
+	// Controls whether supported inbound API or public exposure requests may automatically
+	// make an inactive sandbox available. This setting does not control platform-initiated
+	// runtime fault recovery. A supported access request returns `503 unavailable` with
+	// `sandbox is waking up` when an accepted resume has not committed yet. It returns
+	// `503 sandbox_resume_failed` when that resume attempt has ended unsuccessfully.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
 }
@@ -19948,8 +19954,8 @@ type SandboxStatus struct {
 	PodName       OptString                 `json:"pod_name"`
 	Status        OptSandboxLifecycleStatus `json:"status"`
 	ClaimedAt     OptString                 `json:"claimed_at"`
-	ExpiresAt     OptString                 `json:"expires_at"`
-	HardExpiresAt OptString                 `json:"hard_expires_at"`
+	ExpiresAt     OptNilDateTime            `json:"expires_at"`
+	HardExpiresAt OptNilDateTime            `json:"hard_expires_at"`
 	CreatedAt     OptString                 `json:"created_at"`
 }
 
@@ -19989,12 +19995,12 @@ func (s *SandboxStatus) GetClaimedAt() OptString {
 }
 
 // GetExpiresAt returns the value of ExpiresAt.
-func (s *SandboxStatus) GetExpiresAt() OptString {
+func (s *SandboxStatus) GetExpiresAt() OptNilDateTime {
 	return s.ExpiresAt
 }
 
 // GetHardExpiresAt returns the value of HardExpiresAt.
-func (s *SandboxStatus) GetHardExpiresAt() OptString {
+func (s *SandboxStatus) GetHardExpiresAt() OptNilDateTime {
 	return s.HardExpiresAt
 }
 
@@ -20039,12 +20045,12 @@ func (s *SandboxStatus) SetClaimedAt(val OptString) {
 }
 
 // SetExpiresAt sets the value of ExpiresAt.
-func (s *SandboxStatus) SetExpiresAt(val OptString) {
+func (s *SandboxStatus) SetExpiresAt(val OptNilDateTime) {
 	s.ExpiresAt = val
 }
 
 // SetHardExpiresAt sets the value of HardExpiresAt.
-func (s *SandboxStatus) SetHardExpiresAt(val OptString) {
+func (s *SandboxStatus) SetHardExpiresAt(val OptNilDateTime) {
 	s.HardExpiresAt = val
 }
 
@@ -20065,10 +20071,11 @@ type SandboxSummary struct {
 	// Cluster where sandbox runs (multi-cluster only).
 	ClusterID OptNilString `json:"cluster_id"`
 	CreatedAt time.Time    `json:"created_at"`
-	ExpiresAt time.Time    `json:"expires_at"`
-	// Hard expiration timestamp. Zero value means not set.
-	HardExpiresAt time.Time `json:"hard_expires_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	// Soft expiration timestamp. Omitted or null means disabled or not set.
+	ExpiresAt OptNilDateTime `json:"expires_at"`
+	// Hard expiration timestamp. Omitted or null means disabled or not set.
+	HardExpiresAt OptNilDateTime `json:"hard_expires_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
@@ -20107,12 +20114,12 @@ func (s *SandboxSummary) GetCreatedAt() time.Time {
 }
 
 // GetExpiresAt returns the value of ExpiresAt.
-func (s *SandboxSummary) GetExpiresAt() time.Time {
+func (s *SandboxSummary) GetExpiresAt() OptNilDateTime {
 	return s.ExpiresAt
 }
 
 // GetHardExpiresAt returns the value of HardExpiresAt.
-func (s *SandboxSummary) GetHardExpiresAt() time.Time {
+func (s *SandboxSummary) GetHardExpiresAt() OptNilDateTime {
 	return s.HardExpiresAt
 }
 
@@ -20157,12 +20164,12 @@ func (s *SandboxSummary) SetCreatedAt(val time.Time) {
 }
 
 // SetExpiresAt sets the value of ExpiresAt.
-func (s *SandboxSummary) SetExpiresAt(val time.Time) {
+func (s *SandboxSummary) SetExpiresAt(val OptNilDateTime) {
 	s.ExpiresAt = val
 }
 
 // SetHardExpiresAt sets the value of HardExpiresAt.
-func (s *SandboxSummary) SetHardExpiresAt(val time.Time) {
+func (s *SandboxSummary) SetHardExpiresAt(val OptNilDateTime) {
 	s.HardExpiresAt = val
 }
 
@@ -20430,8 +20437,11 @@ type SandboxUpdateConfig struct {
 	// durable state, including paused rootfs checkpoints.
 	HardTTL OptInt32                `json:"hard_ttl"`
 	Network OptSandboxNetworkPolicy `json:"network"`
-	// Sandbox-level runtime recovery gate. When false, inbound API or public exposure
-	// requests must not automatically resume a paused sandbox or replace a failed runtime.
+	// Controls whether supported inbound API or public exposure requests may automatically
+	// make an inactive sandbox available. This setting does not control platform-initiated
+	// runtime fault recovery. A supported access request returns `503 unavailable` with
+	// `sandbox is waking up` when an accepted resume has not committed yet. It returns
+	// `503 sandbox_resume_failed` when that resume attempt has ended unsuccessfully.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
 }
@@ -24464,8 +24474,10 @@ type TLSClientCertificateProjection struct{}
 
 // Ref: #/components/schemas/Team
 type Team struct {
-	ID           string       `json:"id"`
-	Name         string       `json:"name"`
+	ID string `json:"id"`
+	// Display name. Team names are not unique; use the team ID as the canonical identifier.
+	Name string `json:"name"`
+	// Human-readable alias. Team slugs are not unique; use the team ID as the canonical identifier.
 	Slug         string       `json:"slug"`
 	OwnerID      OptNilString `json:"owner_id"`
 	HomeRegionID OptNilString `json:"home_region_id"`
@@ -25952,7 +25964,9 @@ func (s *UpdateTeamMemberRequestRole) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/UpdateTeamRequest
 type UpdateTeamRequest struct {
+	// Display name. Team names are not unique.
 	Name OptString `json:"name"`
+	// Human-readable alias. Team slugs are not unique.
 	Slug OptString `json:"slug"`
 }
 
