@@ -3600,14 +3600,6 @@ func (s REPLReadyMode) Validate() error {
 	}
 }
 
-func (s *RegionsIDDeleteConflict) Validate() error {
-	alias := (*ErrorEnvelope)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *RegionsIDDeleteForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
