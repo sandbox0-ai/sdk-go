@@ -237,6 +237,23 @@ type APIV1SandboxesIDPausePostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDPreviewsPostParams is parameters of POST /api/v1/sandboxes/{id}/previews operation.
+type APIV1SandboxesIDPreviewsPostParams struct {
+	ID string
+}
+
+// APIV1SandboxesIDPreviewsPreviewIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+type APIV1SandboxesIDPreviewsPreviewIDDeleteParams struct {
+	ID        string
+	PreviewID string
+}
+
+// APIV1SandboxesIDPreviewsPreviewIDPutParams is parameters of PUT /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+type APIV1SandboxesIDPreviewsPreviewIDPutParams struct {
+	ID        string
+	PreviewID string
+}
+
 // APIV1SandboxesIDPutParams is parameters of PUT /api/v1/sandboxes/{id} operation.
 type APIV1SandboxesIDPutParams struct {
 	ID string

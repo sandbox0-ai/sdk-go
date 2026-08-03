@@ -359,6 +359,27 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/pause
 	APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	// APIV1SandboxesIDPreviewsPost invokes POST /api/v1/sandboxes/{id}/previews operation.
+	//
+	// Creates a short-lived, sandbox-runtime-bound authorization for previewing a loopback HTTP
+	// server through the region public exposure domain. The returned URL performs a one-time
+	// browser bootstrap and then redirects to a clean same-origin URL. This does not publish or
+	// modify sandbox services.
+	//
+	// POST /api/v1/sandboxes/{id}/previews
+	APIV1SandboxesIDPreviewsPost(ctx context.Context, request *SandboxPreviewCreateRequest, params APIV1SandboxesIDPreviewsPostParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPostRes, error)
+	// APIV1SandboxesIDPreviewsPreviewIDDelete invokes DELETE /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+	//
+	// Revoke a private sandbox preview grant.
+	//
+	// DELETE /api/v1/sandboxes/{id}/previews/{preview_id}
+	APIV1SandboxesIDPreviewsPreviewIDDelete(ctx context.Context, params APIV1SandboxesIDPreviewsPreviewIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPreviewIDDeleteRes, error)
+	// APIV1SandboxesIDPreviewsPreviewIDPut invokes PUT /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+	//
+	// Renew a private sandbox preview grant.
+	//
+	// PUT /api/v1/sandboxes/{id}/previews/{preview_id}
+	APIV1SandboxesIDPreviewsPreviewIDPut(ctx context.Context, request *SandboxPreviewRenewRequest, params APIV1SandboxesIDPreviewsPreviewIDPutParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPreviewIDPutRes, error)
 	// APIV1SandboxesIDPut invokes PUT /api/v1/sandboxes/{id} operation.
 	//
 	// Update sandbox configuration.
@@ -6263,6 +6284,393 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1
 	}
 
 	result, err := decodeAPIV1SandboxesIDPausePostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPreviewsPost invokes POST /api/v1/sandboxes/{id}/previews operation.
+//
+// Creates a short-lived, sandbox-runtime-bound authorization for previewing a loopback HTTP
+// server through the region public exposure domain. The returned URL performs a one-time
+// browser bootstrap and then redirects to a clean same-origin URL. This does not publish or
+// modify sandbox services.
+//
+// POST /api/v1/sandboxes/{id}/previews
+func (c *Client) APIV1SandboxesIDPreviewsPost(ctx context.Context, request *SandboxPreviewCreateRequest, params APIV1SandboxesIDPreviewsPostParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPreviewsPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPreviewsPost(ctx context.Context, request *SandboxPreviewCreateRequest, params APIV1SandboxesIDPreviewsPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPreviewsPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/previews"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDPreviewsPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPreviewsPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPreviewsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPreviewsPreviewIDDelete invokes DELETE /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+//
+// Revoke a private sandbox preview grant.
+//
+// DELETE /api/v1/sandboxes/{id}/previews/{preview_id}
+func (c *Client) APIV1SandboxesIDPreviewsPreviewIDDelete(ctx context.Context, params APIV1SandboxesIDPreviewsPreviewIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPreviewIDDeleteRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPreviewsPreviewIDDelete(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPreviewsPreviewIDDelete(ctx context.Context, params APIV1SandboxesIDPreviewsPreviewIDDeleteParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPreviewsPreviewIDDeleteRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/previews/"
+	{
+		// Encode "preview_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "preview_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.PreviewID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPreviewsPreviewIDDeleteOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPreviewsPreviewIDDeleteResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDPreviewsPreviewIDPut invokes PUT /api/v1/sandboxes/{id}/previews/{preview_id} operation.
+//
+// Renew a private sandbox preview grant.
+//
+// PUT /api/v1/sandboxes/{id}/previews/{preview_id}
+func (c *Client) APIV1SandboxesIDPreviewsPreviewIDPut(ctx context.Context, request *SandboxPreviewRenewRequest, params APIV1SandboxesIDPreviewsPreviewIDPutParams, options ...RequestOption) (APIV1SandboxesIDPreviewsPreviewIDPutRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPreviewsPreviewIDPut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDPreviewsPreviewIDPut(ctx context.Context, request *SandboxPreviewRenewRequest, params APIV1SandboxesIDPreviewsPreviewIDPutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPreviewsPreviewIDPutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/previews/"
+	{
+		// Encode "preview_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "preview_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.PreviewID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDPreviewsPreviewIDPutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDPreviewsPreviewIDPutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDPreviewsPreviewIDPutResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

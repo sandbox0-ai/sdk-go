@@ -151,6 +151,30 @@ func (s *SandboxConfig) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *SandboxPreviewCreateRequest) setDefaults() {
+	{
+		val := SandboxPreviewCreateRequestProtocol("http")
+		s.Protocol.SetTo(val)
+	}
+	{
+		val := string("/")
+		s.Path.SetTo(val)
+	}
+	{
+		val := int32(900)
+		s.TTLSeconds.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *SandboxPreviewRenewRequest) setDefaults() {
+	{
+		val := int32(900)
+		s.TTLSeconds.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxUpdateConfig) setDefaults() {
 	{
 		val := bool(true)

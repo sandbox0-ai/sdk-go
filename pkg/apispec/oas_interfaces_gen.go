@@ -89,6 +89,18 @@ type APIV1SandboxesIDPausePostRes interface {
 	aPIV1SandboxesIDPausePostRes()
 }
 
+type APIV1SandboxesIDPreviewsPostRes interface {
+	aPIV1SandboxesIDPreviewsPostRes()
+}
+
+type APIV1SandboxesIDPreviewsPreviewIDDeleteRes interface {
+	aPIV1SandboxesIDPreviewsPreviewIDDeleteRes()
+}
+
+type APIV1SandboxesIDPreviewsPreviewIDPutRes interface {
+	aPIV1SandboxesIDPreviewsPreviewIDPutRes()
+}
+
 type APIV1SandboxesIDPutRes interface {
 	aPIV1SandboxesIDPutRes()
 }
