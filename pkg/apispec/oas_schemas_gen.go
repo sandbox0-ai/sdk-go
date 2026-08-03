@@ -4,6 +4,7 @@ package apispec
 
 import (
 	"io"
+	"net/url"
 	"time"
 
 	"github.com/go-faster/errors"
@@ -407,6 +408,49 @@ func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
 type APIV1SandboxesIDPausePostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostServiceUnavailable) aPIV1SandboxesIDPausePostRes() {}
+
+type APIV1SandboxesIDPreviewsPostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPostBadRequest) aPIV1SandboxesIDPreviewsPostRes() {}
+
+type APIV1SandboxesIDPreviewsPostForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPostForbidden) aPIV1SandboxesIDPreviewsPostRes() {}
+
+type APIV1SandboxesIDPreviewsPostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPostNotFound) aPIV1SandboxesIDPreviewsPostRes() {}
+
+type APIV1SandboxesIDPreviewsPostServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPostServiceUnavailable) aPIV1SandboxesIDPreviewsPostRes() {}
+
+type APIV1SandboxesIDPreviewsPreviewIDDeleteNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDDeleteNotFound) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {
+}
+
+type APIV1SandboxesIDPreviewsPreviewIDDeleteServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDDeleteServiceUnavailable) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {
+}
+
+type APIV1SandboxesIDPreviewsPreviewIDPutBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDPutBadRequest) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {}
+
+type APIV1SandboxesIDPreviewsPreviewIDPutConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDPutConflict) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {}
+
+type APIV1SandboxesIDPreviewsPreviewIDPutNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDPutNotFound) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {}
+
+type APIV1SandboxesIDPreviewsPreviewIDPutServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDPutServiceUnavailable) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {
+}
 
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
@@ -11673,6 +11717,98 @@ func (o OptSandboxObservabilityOutcome) Or(d SandboxObservabilityOutcome) Sandbo
 	return d
 }
 
+// NewOptSandboxPreviewCreateRequestProtocol returns new OptSandboxPreviewCreateRequestProtocol with value set to v.
+func NewOptSandboxPreviewCreateRequestProtocol(v SandboxPreviewCreateRequestProtocol) OptSandboxPreviewCreateRequestProtocol {
+	return OptSandboxPreviewCreateRequestProtocol{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxPreviewCreateRequestProtocol is optional SandboxPreviewCreateRequestProtocol.
+type OptSandboxPreviewCreateRequestProtocol struct {
+	Value SandboxPreviewCreateRequestProtocol
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxPreviewCreateRequestProtocol was set.
+func (o OptSandboxPreviewCreateRequestProtocol) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxPreviewCreateRequestProtocol) Reset() {
+	var v SandboxPreviewCreateRequestProtocol
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxPreviewCreateRequestProtocol) SetTo(v SandboxPreviewCreateRequestProtocol) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxPreviewCreateRequestProtocol) Get() (v SandboxPreviewCreateRequestProtocol, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxPreviewCreateRequestProtocol) Or(d SandboxPreviewCreateRequestProtocol) SandboxPreviewCreateRequestProtocol {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxPreviewGrant returns new OptSandboxPreviewGrant with value set to v.
+func NewOptSandboxPreviewGrant(v SandboxPreviewGrant) OptSandboxPreviewGrant {
+	return OptSandboxPreviewGrant{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxPreviewGrant is optional SandboxPreviewGrant.
+type OptSandboxPreviewGrant struct {
+	Value SandboxPreviewGrant
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxPreviewGrant was set.
+func (o OptSandboxPreviewGrant) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxPreviewGrant) Reset() {
+	var v SandboxPreviewGrant
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxPreviewGrant) SetTo(v SandboxPreviewGrant) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxPreviewGrant) Get() (v SandboxPreviewGrant, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxPreviewGrant) Or(d SandboxPreviewGrant) SandboxPreviewGrant {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxRefreshRequest returns new OptSandboxRefreshRequest with value set to v.
 func NewOptSandboxRefreshRequest(v SandboxRefreshRequest) OptSandboxRefreshRequest {
 	return OptSandboxRefreshRequest{
@@ -18800,6 +18936,251 @@ func (s *SandboxObservabilityOutcome) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/SandboxPreviewCreateRequest
+type SandboxPreviewCreateRequest struct {
+	// Loopback TCP port inside the sandbox runtime.
+	Port int32 `json:"port"`
+	// Protocol spoken by the loopback server. HTTPS permits a self-signed loopback certificate.
+	Protocol OptSandboxPreviewCreateRequestProtocol `json:"protocol"`
+	// Same-origin absolute path, including an optional query or fragment, opened after browser bootstrap.
+	Path       OptString `json:"path"`
+	TTLSeconds OptInt32  `json:"ttl_seconds"`
+}
+
+// GetPort returns the value of Port.
+func (s *SandboxPreviewCreateRequest) GetPort() int32 {
+	return s.Port
+}
+
+// GetProtocol returns the value of Protocol.
+func (s *SandboxPreviewCreateRequest) GetProtocol() OptSandboxPreviewCreateRequestProtocol {
+	return s.Protocol
+}
+
+// GetPath returns the value of Path.
+func (s *SandboxPreviewCreateRequest) GetPath() OptString {
+	return s.Path
+}
+
+// GetTTLSeconds returns the value of TTLSeconds.
+func (s *SandboxPreviewCreateRequest) GetTTLSeconds() OptInt32 {
+	return s.TTLSeconds
+}
+
+// SetPort sets the value of Port.
+func (s *SandboxPreviewCreateRequest) SetPort(val int32) {
+	s.Port = val
+}
+
+// SetProtocol sets the value of Protocol.
+func (s *SandboxPreviewCreateRequest) SetProtocol(val OptSandboxPreviewCreateRequestProtocol) {
+	s.Protocol = val
+}
+
+// SetPath sets the value of Path.
+func (s *SandboxPreviewCreateRequest) SetPath(val OptString) {
+	s.Path = val
+}
+
+// SetTTLSeconds sets the value of TTLSeconds.
+func (s *SandboxPreviewCreateRequest) SetTTLSeconds(val OptInt32) {
+	s.TTLSeconds = val
+}
+
+// Protocol spoken by the loopback server. HTTPS permits a self-signed loopback certificate.
+type SandboxPreviewCreateRequestProtocol string
+
+const (
+	SandboxPreviewCreateRequestProtocolHTTP  SandboxPreviewCreateRequestProtocol = "http"
+	SandboxPreviewCreateRequestProtocolHTTPS SandboxPreviewCreateRequestProtocol = "https"
+)
+
+// AllValues returns all SandboxPreviewCreateRequestProtocol values.
+func (SandboxPreviewCreateRequestProtocol) AllValues() []SandboxPreviewCreateRequestProtocol {
+	return []SandboxPreviewCreateRequestProtocol{
+		SandboxPreviewCreateRequestProtocolHTTP,
+		SandboxPreviewCreateRequestProtocolHTTPS,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxPreviewCreateRequestProtocol) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxPreviewCreateRequestProtocolHTTP:
+		return []byte(s), nil
+	case SandboxPreviewCreateRequestProtocolHTTPS:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxPreviewCreateRequestProtocol) UnmarshalText(data []byte) error {
+	switch SandboxPreviewCreateRequestProtocol(data) {
+	case SandboxPreviewCreateRequestProtocolHTTP:
+		*s = SandboxPreviewCreateRequestProtocolHTTP
+		return nil
+	case SandboxPreviewCreateRequestProtocolHTTPS:
+		*s = SandboxPreviewCreateRequestProtocolHTTPS
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxPreviewGrant
+type SandboxPreviewGrant struct {
+	ID        string                      `json:"id"`
+	SandboxID string                      `json:"sandbox_id"`
+	Port      int32                       `json:"port"`
+	Protocol  SandboxPreviewGrantProtocol `json:"protocol"`
+	// One-time browser bootstrap URL for a newly created grant; a clean target URL for a renewal
+	// response. The resulting browser cookie is session-scoped while this server-side grant remains
+	// authoritative for expiration.
+	URL url.URL `json:"url"`
+	// Clean preview origin and path without credentials.
+	TargetURL         url.URL   `json:"target_url"`
+	ExpiresAt         time.Time `json:"expires_at"`
+	RuntimeGeneration int64     `json:"runtime_generation"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxPreviewGrant) GetID() string {
+	return s.ID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxPreviewGrant) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetPort returns the value of Port.
+func (s *SandboxPreviewGrant) GetPort() int32 {
+	return s.Port
+}
+
+// GetProtocol returns the value of Protocol.
+func (s *SandboxPreviewGrant) GetProtocol() SandboxPreviewGrantProtocol {
+	return s.Protocol
+}
+
+// GetURL returns the value of URL.
+func (s *SandboxPreviewGrant) GetURL() url.URL {
+	return s.URL
+}
+
+// GetTargetURL returns the value of TargetURL.
+func (s *SandboxPreviewGrant) GetTargetURL() url.URL {
+	return s.TargetURL
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *SandboxPreviewGrant) GetExpiresAt() time.Time {
+	return s.ExpiresAt
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxPreviewGrant) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// SetID sets the value of ID.
+func (s *SandboxPreviewGrant) SetID(val string) {
+	s.ID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxPreviewGrant) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetPort sets the value of Port.
+func (s *SandboxPreviewGrant) SetPort(val int32) {
+	s.Port = val
+}
+
+// SetProtocol sets the value of Protocol.
+func (s *SandboxPreviewGrant) SetProtocol(val SandboxPreviewGrantProtocol) {
+	s.Protocol = val
+}
+
+// SetURL sets the value of URL.
+func (s *SandboxPreviewGrant) SetURL(val url.URL) {
+	s.URL = val
+}
+
+// SetTargetURL sets the value of TargetURL.
+func (s *SandboxPreviewGrant) SetTargetURL(val url.URL) {
+	s.TargetURL = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *SandboxPreviewGrant) SetExpiresAt(val time.Time) {
+	s.ExpiresAt = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxPreviewGrant) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+type SandboxPreviewGrantProtocol string
+
+const (
+	SandboxPreviewGrantProtocolHTTP  SandboxPreviewGrantProtocol = "http"
+	SandboxPreviewGrantProtocolHTTPS SandboxPreviewGrantProtocol = "https"
+)
+
+// AllValues returns all SandboxPreviewGrantProtocol values.
+func (SandboxPreviewGrantProtocol) AllValues() []SandboxPreviewGrantProtocol {
+	return []SandboxPreviewGrantProtocol{
+		SandboxPreviewGrantProtocolHTTP,
+		SandboxPreviewGrantProtocolHTTPS,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxPreviewGrantProtocol) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxPreviewGrantProtocolHTTP:
+		return []byte(s), nil
+	case SandboxPreviewGrantProtocolHTTPS:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxPreviewGrantProtocol) UnmarshalText(data []byte) error {
+	switch SandboxPreviewGrantProtocol(data) {
+	case SandboxPreviewGrantProtocolHTTP:
+		*s = SandboxPreviewGrantProtocolHTTP
+		return nil
+	case SandboxPreviewGrantProtocolHTTPS:
+		*s = SandboxPreviewGrantProtocolHTTPS
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxPreviewRenewRequest
+type SandboxPreviewRenewRequest struct {
+	TTLSeconds OptInt32 `json:"ttl_seconds"`
+}
+
+// GetTTLSeconds returns the value of TTLSeconds.
+func (s *SandboxPreviewRenewRequest) GetTTLSeconds() OptInt32 {
+	return s.TTLSeconds
+}
+
+// SetTTLSeconds sets the value of TTLSeconds.
+func (s *SandboxPreviewRenewRequest) SetTTLSeconds(val OptInt32) {
+	s.TTLSeconds = val
+}
+
 // Ref: #/components/schemas/SandboxRefreshRequest
 type SandboxRefreshRequest struct {
 	// Duration to extend TTL in seconds (optional, defaults to original TTL).
@@ -22492,16 +22873,17 @@ func (s *SuccessMessageResponse) SetData(val OptSuccessMessageResponseData) {
 	s.Data = val
 }
 
-func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()    {}
-func (*SuccessMessageResponse) aPIKeysIDDeleteRes()            {}
-func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()     {}
-func (*SuccessMessageResponse) authChangePasswordPostRes()     {}
-func (*SuccessMessageResponse) regionsIDDeleteRes()            {}
-func (*SuccessMessageResponse) teamsIDDeleteRes()              {}
-func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes() {}
-func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()    {}
-func (*SuccessMessageResponse) usersMeIdentitiesIDDeleteRes()  {}
-func (*SuccessMessageResponse) usersMeSSHKeysIDDeleteRes()     {}
+func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()                 {}
+func (*SuccessMessageResponse) aPIKeysIDDeleteRes()                         {}
+func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()                  {}
+func (*SuccessMessageResponse) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {}
+func (*SuccessMessageResponse) authChangePasswordPostRes()                  {}
+func (*SuccessMessageResponse) regionsIDDeleteRes()                         {}
+func (*SuccessMessageResponse) teamsIDDeleteRes()                           {}
+func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes()              {}
+func (*SuccessMessageResponse) teamsIDMembersUserIdPutRes()                 {}
+func (*SuccessMessageResponse) usersMeIdentitiesIDDeleteRes()               {}
+func (*SuccessMessageResponse) usersMeSSHKeysIDDeleteRes()                  {}
 
 type SuccessMessageResponseData struct {
 	Message OptString `json:"message"`
@@ -23319,6 +23701,50 @@ const (
 func (SuccessSandboxObservabilityLogsResponseSuccess) AllValues() []SuccessSandboxObservabilityLogsResponseSuccess {
 	return []SuccessSandboxObservabilityLogsResponseSuccess{
 		SuccessSandboxObservabilityLogsResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxPreviewResponse
+type SuccessSandboxPreviewResponse struct {
+	Success SuccessSandboxPreviewResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptSandboxPreviewGrant `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxPreviewResponse) GetSuccess() SuccessSandboxPreviewResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxPreviewResponse) GetData() OptSandboxPreviewGrant {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxPreviewResponse) SetSuccess(val SuccessSandboxPreviewResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxPreviewResponse) SetData(val OptSandboxPreviewGrant) {
+	s.Data = val
+}
+
+func (*SuccessSandboxPreviewResponse) aPIV1SandboxesIDPreviewsPostRes()         {}
+func (*SuccessSandboxPreviewResponse) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {}
+
+type SuccessSandboxPreviewResponseSuccess bool
+
+const (
+	SuccessSandboxPreviewResponseSuccessTrue SuccessSandboxPreviewResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxPreviewResponseSuccess values.
+func (SuccessSandboxPreviewResponseSuccess) AllValues() []SuccessSandboxPreviewResponseSuccess {
+	return []SuccessSandboxPreviewResponseSuccess{
+		SuccessSandboxPreviewResponseSuccessTrue,
 	}
 }
 
