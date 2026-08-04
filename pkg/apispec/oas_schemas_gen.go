@@ -16023,12 +16023,17 @@ func (s *RegisterRequest) SetHomeRegionID(val OptNilString) {
 
 // Ref: #/components/schemas/RegistryCredentials
 type RegistryCredentials struct {
-	Provider     string      `json:"provider"`
-	PushRegistry string      `json:"pushRegistry"`
-	PullRegistry string      `json:"pullRegistry"`
-	Username     string      `json:"username"`
-	Password     string      `json:"password"`
-	ExpiresAt    OptDateTime `json:"expiresAt"`
+	Provider     string `json:"provider"`
+	PushRegistry string `json:"pushRegistry"`
+	PullRegistry string `json:"pullRegistry"`
+	// Complete provider-specific image reference to push. Clients should prefer this over composing
+	// pushRegistry and targetImage.
+	PushImage OptString `json:"pushImage"`
+	// Complete image reference for templates and sandbox pulls. It may use a private regional endpoint.
+	PullImage OptString   `json:"pullImage"`
+	Username  string      `json:"username"`
+	Password  string      `json:"password"`
+	ExpiresAt OptDateTime `json:"expiresAt"`
 }
 
 // GetProvider returns the value of Provider.
@@ -16044,6 +16049,16 @@ func (s *RegistryCredentials) GetPushRegistry() string {
 // GetPullRegistry returns the value of PullRegistry.
 func (s *RegistryCredentials) GetPullRegistry() string {
 	return s.PullRegistry
+}
+
+// GetPushImage returns the value of PushImage.
+func (s *RegistryCredentials) GetPushImage() OptString {
+	return s.PushImage
+}
+
+// GetPullImage returns the value of PullImage.
+func (s *RegistryCredentials) GetPullImage() OptString {
+	return s.PullImage
 }
 
 // GetUsername returns the value of Username.
@@ -16074,6 +16089,16 @@ func (s *RegistryCredentials) SetPushRegistry(val string) {
 // SetPullRegistry sets the value of PullRegistry.
 func (s *RegistryCredentials) SetPullRegistry(val string) {
 	s.PullRegistry = val
+}
+
+// SetPushImage sets the value of PushImage.
+func (s *RegistryCredentials) SetPushImage(val OptString) {
+	s.PushImage = val
+}
+
+// SetPullImage sets the value of PullImage.
+func (s *RegistryCredentials) SetPullImage(val OptString) {
+	s.PullImage = val
 }
 
 // SetUsername sets the value of Username.
@@ -26954,10 +26979,12 @@ func (s *WebLoginExchangeRequest) SetReturnURL(val string) {
 	s.ReturnURL = val
 }
 
-// Per-sandbox webhook configuration. Sandbox0 delivers webhook events at least once and consumers
-// should deduplicate by event_id. For sandbox lifecycle events, procd persists signed delivery
-// records to a manager-owned SandboxVolume outside the workspace before dispatch; manager also emits
-// sandbox.deleted during pod deletion cleanup.
+// Per-sandbox webhook configuration. Retries can deliver the same event more than once, so consumers
+// should deduplicate by event_id and must not assume every unavailable endpoint eventually receives
+// every event. Procd persists signed delivery records to a manager-owned SandboxVolume outside the
+// workspace. Manager transactionally queues sandbox.deleted in PostgreSQL, retries transient
+// failures for up to 24 hours, and never waits for the external endpoint before completing sandbox
+// cleanup.
 // Ref: #/components/schemas/WebhookConfig
 type WebhookConfig struct {
 	// Required when webhook is enabled. Target URL that receives event callbacks.
