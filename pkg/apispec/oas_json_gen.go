@@ -26879,6 +26879,18 @@ func (s *RegistryCredentials) encodeFields(e *jx.Encoder) {
 		e.Str(s.PullRegistry)
 	}
 	{
+		if s.PushImage.Set {
+			e.FieldStart("pushImage")
+			s.PushImage.Encode(e)
+		}
+	}
+	{
+		if s.PullImage.Set {
+			e.FieldStart("pullImage")
+			s.PullImage.Encode(e)
+		}
+	}
+	{
 		e.FieldStart("username")
 		e.Str(s.Username)
 	}
@@ -26894,13 +26906,15 @@ func (s *RegistryCredentials) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfRegistryCredentials = [6]string{
+var jsonFieldsNameOfRegistryCredentials = [8]string{
 	0: "provider",
 	1: "pushRegistry",
 	2: "pullRegistry",
-	3: "username",
-	4: "password",
-	5: "expiresAt",
+	3: "pushImage",
+	4: "pullImage",
+	5: "username",
+	6: "password",
+	7: "expiresAt",
 }
 
 // Decode decodes RegistryCredentials from json.
@@ -26948,8 +26962,28 @@ func (s *RegistryCredentials) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"pullRegistry\"")
 			}
+		case "pushImage":
+			if err := func() error {
+				s.PushImage.Reset()
+				if err := s.PushImage.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"pushImage\"")
+			}
+		case "pullImage":
+			if err := func() error {
+				s.PullImage.Reset()
+				if err := s.PullImage.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"pullImage\"")
+			}
 		case "username":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := d.Str()
 				s.Username = string(v)
@@ -26961,7 +26995,7 @@ func (s *RegistryCredentials) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"username\"")
 			}
 		case "password":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Password = string(v)
@@ -26992,7 +27026,7 @@ func (s *RegistryCredentials) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00011111,
+		0b01100111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
