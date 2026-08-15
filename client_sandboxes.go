@@ -8,14 +8,7 @@ import (
 
 type sandboxOptions struct {
 	config     *apispec.SandboxConfig
-	mounts     []apispec.ClaimMountRequest
 	snapshotID string
-}
-
-// SandboxBootstrapMount configures a volume mount during sandbox claim.
-type SandboxBootstrapMount struct {
-	SandboxVolumeID string
-	MountPoint      string
 }
 
 // SandboxOption configures sandbox creation.
@@ -32,30 +25,6 @@ func ensureSandboxConfig(opts *sandboxOptions) *apispec.SandboxConfig {
 func WithSandboxConfig(config apispec.SandboxConfig) SandboxOption {
 	return func(opts *sandboxOptions) {
 		opts.config = &config
-	}
-}
-
-// WithSandboxBootstrapMount requests mounting an existing volume during claim.
-func WithSandboxBootstrapMount(volumeID, mountPoint string) SandboxOption {
-	return func(opts *sandboxOptions) {
-		mount := apispec.ClaimMountRequest{
-			SandboxvolumeID: volumeID,
-			MountPoint:      mountPoint,
-		}
-		opts.mounts = append(opts.mounts, mount)
-	}
-}
-
-// WithSandboxBootstrapMounts requests mounting multiple existing volumes during claim.
-func WithSandboxBootstrapMounts(mounts ...SandboxBootstrapMount) SandboxOption {
-	return func(opts *sandboxOptions) {
-		for _, mount := range mounts {
-			claimMount := apispec.ClaimMountRequest{
-				SandboxvolumeID: mount.SandboxVolumeID,
-				MountPoint:      mount.MountPoint,
-			}
-			opts.mounts = append(opts.mounts, claimMount)
-		}
 	}
 }
 
@@ -166,9 +135,6 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	if options.config != nil {
 		req.Config = apispec.NewOptSandboxConfig(*options.config)
 	}
-	if len(options.mounts) > 0 {
-		req.Mounts = append(req.Mounts, options.mounts...)
-	}
 	if options.snapshotID != "" {
 		req.SnapshotID = apispec.NewOptString(options.snapshotID)
 	}
@@ -198,7 +164,6 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 			ClusterID:         clusterID,
 			PodName:           data.PodName,
 			Status:            string(data.Status),
-			BootstrapMounts:   append([]apispec.MountStatus(nil), data.BootstrapMounts...),
 			client:            c,
 			replContextByLang: map[string]string{},
 		}

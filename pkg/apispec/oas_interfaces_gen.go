@@ -149,34 +149,6 @@ type APIV1SandboxesPostRes interface {
 	aPIV1SandboxesPostRes()
 }
 
-type APIV1SandboxvolumesIDDeleteRes interface {
-	aPIV1SandboxvolumesIDDeleteRes()
-}
-
-type APIV1SandboxvolumesIDFilesGetRes interface {
-	aPIV1SandboxvolumesIDFilesGetRes()
-}
-
-type APIV1SandboxvolumesIDFilesPostRes interface {
-	aPIV1SandboxvolumesIDFilesPostRes()
-}
-
-type APIV1SandboxvolumesIDForkPostRes interface {
-	aPIV1SandboxvolumesIDForkPostRes()
-}
-
-type APIV1SandboxvolumesIDGetRes interface {
-	aPIV1SandboxvolumesIDGetRes()
-}
-
-type APIV1SandboxvolumesIDSnapshotsPostRes interface {
-	aPIV1SandboxvolumesIDSnapshotsPostRes()
-}
-
-type APIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes interface {
-	aPIV1SandboxvolumesIDSnapshotsSnapshotIDGetRes()
-}
-
 type APIV1TemplatesFromSandboxPostRes interface {
 	aPIV1TemplatesFromSandboxPostRes()
 }
