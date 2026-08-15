@@ -11,26 +11,6 @@ func (s *CreateExecutionSessionAttemptRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *CreateSandboxVolumeRequest) setDefaults() {
-	{
-		val := int64(0)
-		s.DefaultPosixUID.SetTo(val)
-	}
-	{
-		val := int64(0)
-		s.DefaultPosixGid.SetTo(val)
-	}
-}
-
-// setDefaults set default value of fields.
-func (s *CreateSandboxVolumeS3Config) setDefaults() {
-	{
-		val := CreateSandboxVolumeS3ConfigProvider("aws")
-		s.Provider.SetTo(val)
-	}
-}
-
-// setDefaults set default value of fields.
 func (s *ExecutionSessionDesiredStateRequest) setDefaults() {
 	{
 		val := ExecutionSessionDesiredState("running")

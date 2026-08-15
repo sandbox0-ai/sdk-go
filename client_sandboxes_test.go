@@ -10,7 +10,7 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
-func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
+func TestClaimSandboxWithOptions(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			t.Fatalf("method = %s, want POST", r.Method)
@@ -41,15 +41,6 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		if !ok || memory != "512Mi" {
 			t.Fatalf("memory = %q, want 512Mi", memory)
 		}
-		if len(body.Mounts) != 2 {
-			t.Fatalf("mount count = %d, want 2", len(body.Mounts))
-		}
-		if body.Mounts[0].SandboxvolumeID != "vol_1" || body.Mounts[0].MountPoint != "/workspace/data" {
-			t.Fatalf("mount[0] = %+v, want vol_1:/workspace/data", body.Mounts[0])
-		}
-		if body.Mounts[1].SandboxvolumeID != "vol_2" || body.Mounts[1].MountPoint != "/workspace/readonly" {
-			t.Fatalf("mount[1] = %+v, want vol_2:/workspace/readonly", body.Mounts[1])
-		}
 		snapshotID, ok := body.SnapshotID.Get()
 		if !ok || snapshotID != "snap_123" {
 			t.Fatalf("snapshot_id = %q, want snap_123", snapshotID)
@@ -63,13 +54,6 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 				"cluster_id": "cluster-a",
 				"pod_name":   "pod-a",
 				"status":     "running",
-				"bootstrap_mounts": []map[string]any{
-					{
-						"sandboxvolume_id": "vol_1",
-						"mount_point":      "/workspace/data",
-						"state":            "mounted",
-					},
-				},
 			},
 		})
 	})
@@ -80,11 +64,6 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 		"default",
 		WithSandboxTTL(300),
 		WithSandboxMemory("512Mi"),
-		WithSandboxBootstrapMount("vol_1", "/workspace/data"),
-		WithSandboxBootstrapMounts(SandboxBootstrapMount{
-			SandboxVolumeID: "vol_2",
-			MountPoint:      "/workspace/readonly",
-		}),
 		WithSandboxSnapshotID("snap_123"),
 	)
 	if err != nil {
@@ -98,12 +77,6 @@ func TestClaimSandboxWithBootstrapMountOptions(t *testing.T) {
 	}
 	if sandbox.ClusterID == nil || *sandbox.ClusterID != "cluster-a" {
 		t.Fatalf("sandbox.ClusterID = %v, want cluster-a", sandbox.ClusterID)
-	}
-	if len(sandbox.BootstrapMounts) != 1 {
-		t.Fatalf("bootstrap mount count = %d, want 1", len(sandbox.BootstrapMounts))
-	}
-	if sandbox.BootstrapMounts[0].SandboxvolumeID != "vol_1" {
-		t.Fatalf("bootstrap mount volume id = %q, want vol_1", sandbox.BootstrapMounts[0].SandboxvolumeID)
 	}
 }
 

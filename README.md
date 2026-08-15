@@ -117,31 +117,6 @@ savedCursor = page.NextCursor
 ## Documentation
 
 - [Sandbox0 docs](https://sandbox0.ai/docs)
-- [Volume mounts](https://sandbox0.ai/docs/volume/mounts)
-
-## Bootstrap Mounts At Claim Time
-
-You can request existing volumes during `ClaimSandbox` so the sandbox starts with them already mounted:
-
-```go
-volume, err := client.CreateVolume(ctx, apispec.CreateSandboxVolumeRequest{})
-if err != nil {
-    log.Fatal(err)
-}
-
-sandbox, err := client.ClaimSandbox(
-    ctx,
-    "default",
-    sandbox0.WithSandboxBootstrapMount(volume.ID, "/workspace/data"),
-)
-if err != nil {
-    log.Fatal(err)
-}
-
-for _, mount := range sandbox.BootstrapMounts {
-    fmt.Printf("%s %s\n", mount.SandboxvolumeID, mount.State)
-}
-```
 
 ## Create A Template From A Sandbox
 
