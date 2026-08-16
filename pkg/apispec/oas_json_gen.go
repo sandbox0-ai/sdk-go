@@ -16046,14 +16046,10 @@ func (s *ObservabilityEventSource) Decode(d *jx.Decoder) error {
 		*s = ObservabilityEventSourceClusterGateway
 	case ObservabilityEventSourceManager:
 		*s = ObservabilityEventSourceManager
-	case ObservabilityEventSourceNetd:
-		*s = ObservabilityEventSourceNetd
 	case ObservabilityEventSourceProcd:
 		*s = ObservabilityEventSourceProcd
 	case ObservabilityEventSourceCtld:
 		*s = ObservabilityEventSourceCtld
-	case ObservabilityEventSourceStorageProxy:
-		*s = ObservabilityEventSourceStorageProxy
 	default:
 		*s = ObservabilityEventSource(v)
 	}

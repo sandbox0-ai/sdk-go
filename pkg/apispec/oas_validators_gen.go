@@ -2958,13 +2958,9 @@ func (s ObservabilityEventSource) Validate() error {
 		return nil
 	case "manager":
 		return nil
-	case "netd":
-		return nil
 	case "procd":
 		return nil
 	case "ctld":
-		return nil
-	case "storage_proxy":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
