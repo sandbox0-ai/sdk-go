@@ -5639,10 +5639,8 @@ type ObservabilityEventSource string
 const (
 	ObservabilityEventSourceClusterGateway ObservabilityEventSource = "cluster_gateway"
 	ObservabilityEventSourceManager        ObservabilityEventSource = "manager"
-	ObservabilityEventSourceNetd           ObservabilityEventSource = "netd"
 	ObservabilityEventSourceProcd          ObservabilityEventSource = "procd"
 	ObservabilityEventSourceCtld           ObservabilityEventSource = "ctld"
-	ObservabilityEventSourceStorageProxy   ObservabilityEventSource = "storage_proxy"
 )
 
 // AllValues returns all ObservabilityEventSource values.
@@ -5650,10 +5648,8 @@ func (ObservabilityEventSource) AllValues() []ObservabilityEventSource {
 	return []ObservabilityEventSource{
 		ObservabilityEventSourceClusterGateway,
 		ObservabilityEventSourceManager,
-		ObservabilityEventSourceNetd,
 		ObservabilityEventSourceProcd,
 		ObservabilityEventSourceCtld,
-		ObservabilityEventSourceStorageProxy,
 	}
 }
 
@@ -5664,13 +5660,9 @@ func (s ObservabilityEventSource) MarshalText() ([]byte, error) {
 		return []byte(s), nil
 	case ObservabilityEventSourceManager:
 		return []byte(s), nil
-	case ObservabilityEventSourceNetd:
-		return []byte(s), nil
 	case ObservabilityEventSourceProcd:
 		return []byte(s), nil
 	case ObservabilityEventSourceCtld:
-		return []byte(s), nil
-	case ObservabilityEventSourceStorageProxy:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -5686,17 +5678,11 @@ func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
 	case ObservabilityEventSourceManager:
 		*s = ObservabilityEventSourceManager
 		return nil
-	case ObservabilityEventSourceNetd:
-		*s = ObservabilityEventSourceNetd
-		return nil
 	case ObservabilityEventSourceProcd:
 		*s = ObservabilityEventSourceProcd
 		return nil
 	case ObservabilityEventSourceCtld:
 		*s = ObservabilityEventSourceCtld
-		return nil
-	case ObservabilityEventSourceStorageProxy:
-		*s = ObservabilityEventSourceStorageProxy
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -15290,7 +15276,7 @@ func (s *ResumeSandboxResponse) SetRestoredMemory(val OptString) {
 type SSHProxyProjection struct {
 	// Fake public keys accepted from sandbox-side SSH clients.
 	SandboxPublicKeys []string `json:"sandboxPublicKeys"`
-	// Username used by netd when authenticating to the upstream SSH server.
+	// Username used by the ctld network runtime when authenticating to the upstream SSH server.
 	UpstreamUsername OptString `json:"upstreamUsername"`
 	// OpenSSH known_hosts entries used to verify upstream host keys.
 	KnownHosts []string `json:"knownHosts"`
