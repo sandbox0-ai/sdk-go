@@ -162,7 +162,7 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 			ID:                data.SandboxID,
 			Template:          data.Template,
 			ClusterID:         clusterID,
-			PodName:           data.PodName,
+			RuntimeID:         data.RuntimeID,
 			Status:            string(data.Status),
 			client:            c,
 			replContextByLang: map[string]string{},
@@ -207,18 +207,6 @@ func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request ap
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
-}
-
-// UpdateSandboxMemory updates the sandbox memory limit. Sandbox0 derives CPU
-// from the platform memory-per-CPU ratio.
-func (c *Client) UpdateSandboxMemory(ctx context.Context, sandboxID, memory string) (*apispec.Sandbox, error) {
-	return c.UpdateSandbox(ctx, sandboxID, apispec.SandboxUpdateRequest{
-		Config: apispec.NewOptSandboxUpdateConfig(apispec.SandboxUpdateConfig{
-			Resources: apispec.NewOptSandboxResourceConfig(apispec.SandboxResourceConfig{
-				Memory: apispec.NewOptString(memory),
-			}),
-		}),
-	})
 }
 
 // DeleteSandbox terminates a sandbox.
@@ -320,7 +308,7 @@ func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *
 	}
 }
 
-// CreateSandboxRootFSSnapshot creates a root filesystem snapshot for a paused sandbox.
+// CreateSandboxRootFSSnapshot creates a root filesystem snapshot for a running or paused sandbox.
 func (c *Client) CreateSandboxRootFSSnapshot(ctx context.Context, sandboxID string, request *apispec.CreateSandboxRootFSSnapshotRequest) (*apispec.SandboxRootFSSnapshot, error) {
 	var req apispec.OptCreateSandboxRootFSSnapshotRequest
 	if request != nil {
@@ -392,6 +380,24 @@ func (c *Client) DeleteSandboxRootFSSnapshot(ctx context.Context, snapshotID str
 	}
 }
 
+// RebaseSandboxRootFS applies a paused sandbox's file-level changes to a new immutable base artifact.
+func (c *Client) RebaseSandboxRootFS(ctx context.Context, sandboxID string, request apispec.RebaseSandboxRootFSRequest) (*apispec.RebaseSandboxRootFSResponse, error) {
+	resp, err := c.api.APIV1SandboxesIDRootfsRebasePut(ctx, &request, apispec.APIV1SandboxesIDRootfsRebasePutParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessRebaseSandboxRootFSResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
 // RestoreSandboxRootFS restores a paused sandbox root filesystem from a rootfs snapshot.
 func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, request apispec.RestoreSandboxRootFSRequest) (*apispec.RestoreSandboxRootFSResponse, error) {
 	resp, err := c.api.APIV1SandboxesIDRootfsRestorePost(ctx, &request, apispec.APIV1SandboxesIDRootfsRestorePostParams{ID: sandboxID})
@@ -410,7 +416,7 @@ func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, req
 	}
 }
 
-// ForkSandbox creates a paused sandbox fork from a paused source sandbox root filesystem.
+// ForkSandbox creates a paused sandbox fork from a running or paused source sandbox root filesystem.
 func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {

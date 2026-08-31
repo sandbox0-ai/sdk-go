@@ -398,6 +398,15 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/resume
 	APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
+	// APIV1SandboxesIDRootfsRebasePut invokes PUT /api/v1/sandboxes/{id}/rootfs/rebase operation.
+	//
+	// Applies the paused sandbox's file-level changes to an already-attested
+	// immutable Base artifact. The operation keeps the sandbox paused, publishes
+	// one durable block-COW generation, and retains the previous generation for
+	// the requested bounded rollback window.
+	//
+	// PUT /api/v1/sandboxes/{id}/rootfs/rebase
+	APIV1SandboxesIDRootfsRebasePut(ctx context.Context, request *RebaseSandboxRootFSRequest, params APIV1SandboxesIDRootfsRebasePutParams, options ...RequestOption) (APIV1SandboxesIDRootfsRebasePutRes, error)
 	// APIV1SandboxesIDRootfsRestorePost invokes POST /api/v1/sandboxes/{id}/rootfs/restore operation.
 	//
 	// Restore sandbox rootfs from snapshot.
@@ -529,11 +538,12 @@ type Invoker interface {
 	// APIV1TemplatesFromSandboxPost invokes POST /api/v1/templates/from-sandbox operation.
 	//
 	// Asynchronously captures the sandbox's writable root filesystem,
-	// publishes it to the Sandbox0-configured team registry, and creates a
-	// digest-pinned template. The capture point is reported by
+	// retains the resulting immutable regional block-COW generation, and
+	// creates a claimable template. The capture point is reported by
 	// `status.creation.capturedAt`, not by acceptance of this request. Keep
-	// the source sandbox available and avoid rootfs writes until capture
-	// completes. Poll the returned template with
+	// the source sandbox available until capture completes. A running source
+	// is briefly write-barriered while its exact writer publishes the capture;
+	// it does not need to be paused. Poll the returned template with
 	// `GET /api/v1/templates/{id}` until `status.creation.state` is `ready`
 	// or `failed`. The caller needs both `template:create` and
 	// `sandbox:read` permissions.
@@ -6901,6 +6911,126 @@ func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, params APIV
 	return result, nil
 }
 
+// APIV1SandboxesIDRootfsRebasePut invokes PUT /api/v1/sandboxes/{id}/rootfs/rebase operation.
+//
+// Applies the paused sandbox's file-level changes to an already-attested
+// immutable Base artifact. The operation keeps the sandbox paused, publishes
+// one durable block-COW generation, and retains the previous generation for
+// the requested bounded rollback window.
+//
+// PUT /api/v1/sandboxes/{id}/rootfs/rebase
+func (c *Client) APIV1SandboxesIDRootfsRebasePut(ctx context.Context, request *RebaseSandboxRootFSRequest, params APIV1SandboxesIDRootfsRebasePutParams, options ...RequestOption) (APIV1SandboxesIDRootfsRebasePutRes, error) {
+	res, err := c.sendAPIV1SandboxesIDRootfsRebasePut(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDRootfsRebasePut(ctx context.Context, request *RebaseSandboxRootFSRequest, params APIV1SandboxesIDRootfsRebasePutParams, requestOptions ...RequestOption) (res APIV1SandboxesIDRootfsRebasePutRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/rootfs/rebase"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDRootfsRebasePutRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDRootfsRebasePutOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDRootfsRebasePutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1SandboxesIDRootfsRestorePost invokes POST /api/v1/sandboxes/{id}/rootfs/restore operation.
 //
 // Restore sandbox rootfs from snapshot.
@@ -9521,11 +9651,12 @@ func (c *Client) sendAPIV1SandboxesPost(ctx context.Context, request *ClaimReque
 // APIV1TemplatesFromSandboxPost invokes POST /api/v1/templates/from-sandbox operation.
 //
 // Asynchronously captures the sandbox's writable root filesystem,
-// publishes it to the Sandbox0-configured team registry, and creates a
-// digest-pinned template. The capture point is reported by
+// retains the resulting immutable regional block-COW generation, and
+// creates a claimable template. The capture point is reported by
 // `status.creation.capturedAt`, not by acceptance of this request. Keep
-// the source sandbox available and avoid rootfs writes until capture
-// completes. Poll the returned template with
+// the source sandbox available until capture completes. A running source
+// is briefly write-barriered while its exact writer publishes the capture;
+// it does not need to be paused. Poll the returned template with
 // `GET /api/v1/templates/{id}` until `status.creation.state` is `ready`
 // or `failed`. The caller needs both `template:create` and
 // `sandbox:read` permissions.

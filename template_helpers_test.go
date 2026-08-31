@@ -12,24 +12,25 @@ func TestNewTemplateCreateRequestBuildsTemplateSpec(t *testing.T) {
 	request := NewTemplateCreateRequest(
 		"tpl-helper",
 		TemplateMainContainer(
-			"ubuntu:24.04",
+			"docker.io/library/ubuntu@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 			"4Gi",
 			WithTemplateContainerEnv(apispec.EnvVar{Name: "APP_ENV", Value: "test"}),
+			WithTemplateContainerSecurityClass(apispec.ContainerSpecSecurityClassPrivileged),
 		),
 		WithTemplateDisplayName("Helper Template"),
 		WithTemplateEnvVars(map[string]string{"MODE": "template"}),
-		WithTemplateEmptyDirMount(TemplateEmptyDirMount("/var/lib/docker", "20Gi")),
+		WithTemplateEphemeralMount(TemplateEphemeralMount("/var/lib/docker", "20Gi")),
 	)
 
 	if request.TemplateID != "tpl-helper" {
 		t.Fatalf("TemplateID = %q, want tpl-helper", request.TemplateID)
 	}
-	main, ok := request.Spec.MainContainer.Get()
-	if !ok {
-		t.Fatal("mainContainer should be set")
+	main := request.Spec.MainContainer
+	if main.Image != "docker.io/library/ubuntu@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" {
+		t.Fatalf("mainContainer.image = %q", main.Image)
 	}
-	if main.Image != "ubuntu:24.04" {
-		t.Fatalf("mainContainer.image = %q, want ubuntu:24.04", main.Image)
+	if got, ok := main.SecurityClass.Get(); !ok || got != apispec.ContainerSpecSecurityClassPrivileged {
+		t.Fatalf("mainContainer.securityClass = %q, want privileged", got)
 	}
 	displayName, ok := request.Spec.DisplayName.Get()
 	if !ok || displayName != "Helper Template" {
@@ -39,28 +40,21 @@ func TestNewTemplateCreateRequestBuildsTemplateSpec(t *testing.T) {
 	if !ok || envVars["MODE"] != "template" {
 		t.Fatalf("envVars = %#v, want MODE=template", envVars)
 	}
-	pod, ok := request.Spec.Pod.Get()
-	if !ok {
-		t.Fatal("pod should be set")
+	if len(request.Spec.EphemeralMounts) != 1 {
+		t.Fatalf("len(ephemeralMounts) = %d, want 1", len(request.Spec.EphemeralMounts))
 	}
-	if len(pod.EmptyDirMounts) != 1 {
-		t.Fatalf("len(emptyDirMounts) = %d, want 1", len(pod.EmptyDirMounts))
+	if got := request.Spec.EphemeralMounts[0].MountPath; got != "/var/lib/docker" {
+		t.Fatalf("ephemeralMounts[0].mountPath = %q, want /var/lib/docker", got)
 	}
-	if got := pod.EmptyDirMounts[0].MountPath; got != "/var/lib/docker" {
-		t.Fatalf("emptyDirMounts[0].mountPath = %q, want /var/lib/docker", got)
-	}
-	if got, ok := pod.EmptyDirMounts[0].SizeLimit.Get(); !ok || got != "20Gi" {
-		t.Fatalf("emptyDirMounts[0].sizeLimit = %q, want 20Gi", got)
+	if got := request.Spec.EphemeralMounts[0].SizeLimit; got != "20Gi" {
+		t.Fatalf("ephemeralMounts[0].sizeLimit = %q, want 20Gi", got)
 	}
 }
 
 func TestNewTemplateFromSandboxCreateRequest(t *testing.T) {
 	overrides := apispec.TemplateFromSandboxSpecOverrides{
 		DisplayName: apispec.NewOptString("Python ready"),
-		Pool: apispec.NewOptPoolStrategy(apispec.PoolStrategy{
-			MinIdle: 1,
-			MaxIdle: 2,
-		}),
+		Tags:        []string{"python"},
 	}
 	request := NewTemplateFromSandboxCreateRequest("python-ready", "sb_source", &overrides)
 	if request.TemplateID != "python-ready" || request.SandboxID != "sb_source" {
@@ -76,7 +70,10 @@ func TestWithTemplateEnvVarsCopiesMap(t *testing.T) {
 	t.Parallel()
 
 	envVars := map[string]string{"MODE": "template"}
-	spec := NewTemplateSpec(TemplateMainContainer("ubuntu:24.04", "4Gi"), WithTemplateEnvVars(envVars))
+	spec := NewTemplateSpec(
+		TemplateMainContainer("docker.io/library/ubuntu@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "4Gi"),
+		WithTemplateEnvVars(envVars),
+	)
 	envVars["MODE"] = "changed"
 
 	copied, ok := spec.EnvVars.Get()

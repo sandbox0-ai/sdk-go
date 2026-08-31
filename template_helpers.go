@@ -8,19 +8,18 @@ type TemplateOption func(*apispec.SandboxTemplateSpec)
 // TemplateContainerOption configures the main container spec.
 type TemplateContainerOption func(*apispec.ContainerSpec)
 
-// TemplateEmptyDirMount builds an emptyDir mount spec.
-func TemplateEmptyDirMount(mountPath, sizeLimit string) apispec.EmptyDirMountSpec {
-	mount := apispec.EmptyDirMountSpec{MountPath: mountPath}
-	if sizeLimit != "" {
-		mount.SizeLimit = apispec.NewOptString(sizeLimit)
+// TemplateEphemeralMount builds a claim-lifetime tmpfs mount spec.
+func TemplateEphemeralMount(mountPath, sizeLimit string) apispec.EphemeralMountSpec {
+	return apispec.EphemeralMountSpec{
+		MountPath: mountPath,
+		SizeLimit: sizeLimit,
 	}
-	return mount
 }
 
 // NewTemplateSpec builds a template spec around a main container.
 func NewTemplateSpec(main apispec.ContainerSpec, opts ...TemplateOption) apispec.SandboxTemplateSpec {
 	spec := apispec.SandboxTemplateSpec{
-		MainContainer: apispec.NewOptContainerSpec(main),
+		MainContainer: main,
 	}
 	for _, opt := range opts {
 		opt(&spec)
@@ -110,13 +109,6 @@ func WithTemplateEnvVars(envVars map[string]string) TemplateOption {
 	}
 }
 
-// WithTemplatePool sets the pool strategy.
-func WithTemplatePool(pool apispec.PoolStrategy) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Pool = apispec.NewOptPoolStrategy(pool)
-	}
-}
-
 // WithTemplateNetwork sets the network policy.
 func WithTemplateNetwork(network apispec.SandboxNetworkPolicy) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
@@ -124,41 +116,17 @@ func WithTemplateNetwork(network apispec.SandboxNetworkPolicy) TemplateOption {
 	}
 }
 
-// WithTemplateClusterID pins the template to a cluster.
-func WithTemplateClusterID(clusterID string) TemplateOption {
+// WithTemplateEphemeralMount appends one claim-lifetime tmpfs mount.
+func WithTemplateEphemeralMount(mount apispec.EphemeralMountSpec) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.ClusterId = apispec.NewOptString(clusterID)
+		spec.EphemeralMounts = append(spec.EphemeralMounts, mount)
 	}
 }
 
-// WithTemplatePod sets pod-level template overrides.
-func WithTemplatePod(pod apispec.PodSpecOverride) TemplateOption {
+// WithTemplateEphemeralMounts appends multiple claim-lifetime tmpfs mounts.
+func WithTemplateEphemeralMounts(mounts ...apispec.EphemeralMountSpec) TemplateOption {
 	return func(spec *apispec.SandboxTemplateSpec) {
-		spec.Pod = apispec.NewOptPodSpecOverride(pod)
-	}
-}
-
-// WithTemplateEmptyDirMount appends one pod emptyDir mount.
-func WithTemplateEmptyDirMount(mount apispec.EmptyDirMountSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		pod, ok := spec.Pod.Get()
-		if !ok {
-			pod = apispec.PodSpecOverride{}
-		}
-		pod.EmptyDirMounts = append(pod.EmptyDirMounts, mount)
-		spec.Pod = apispec.NewOptPodSpecOverride(pod)
-	}
-}
-
-// WithTemplateEmptyDirMounts appends multiple pod emptyDir mounts.
-func WithTemplateEmptyDirMounts(mounts ...apispec.EmptyDirMountSpec) TemplateOption {
-	return func(spec *apispec.SandboxTemplateSpec) {
-		pod, ok := spec.Pod.Get()
-		if !ok {
-			pod = apispec.PodSpecOverride{}
-		}
-		pod.EmptyDirMounts = append(pod.EmptyDirMounts, mounts...)
-		spec.Pod = apispec.NewOptPodSpecOverride(pod)
+		spec.EphemeralMounts = append(spec.EphemeralMounts, mounts...)
 	}
 }
 
@@ -169,16 +137,9 @@ func WithTemplateContainerEnv(env ...apispec.EnvVar) TemplateContainerOption {
 	}
 }
 
-// WithTemplateContainerImagePullPolicy sets the main container pull policy.
-func WithTemplateContainerImagePullPolicy(policy string) TemplateContainerOption {
+// WithTemplateContainerSecurityClass sets the immutable gVisor guest privilege class.
+func WithTemplateContainerSecurityClass(securityClass apispec.ContainerSpecSecurityClass) TemplateContainerOption {
 	return func(container *apispec.ContainerSpec) {
-		container.ImagePullPolicy = apispec.NewOptString(policy)
-	}
-}
-
-// WithTemplateContainerSecurityContext sets the main container security context.
-func WithTemplateContainerSecurityContext(securityContext apispec.SecurityContext) TemplateContainerOption {
-	return func(container *apispec.ContainerSpec) {
-		container.SecurityContext = apispec.NewOptSecurityContext(securityContext)
+		container.SecurityClass = apispec.NewOptContainerSpecSecurityClass(securityClass)
 	}
 }

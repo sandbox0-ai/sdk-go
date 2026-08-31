@@ -15,7 +15,7 @@ type Sandbox struct {
 	ID        string
 	Template  string
 	ClusterID *string
-	PodName   string
+	RuntimeID string
 	Status    string
 
 	client            *Client

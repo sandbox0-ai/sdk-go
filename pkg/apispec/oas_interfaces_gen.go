@@ -113,6 +113,10 @@ type APIV1SandboxesIDResumePostRes interface {
 	aPIV1SandboxesIDResumePostRes()
 }
 
+type APIV1SandboxesIDRootfsRebasePutRes interface {
+	aPIV1SandboxesIDRootfsRebasePutRes()
+}
+
 type APIV1SandboxesIDRootfsRestorePostRes interface {
 	aPIV1SandboxesIDRootfsRestorePostRes()
 }
