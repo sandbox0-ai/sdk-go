@@ -20,23 +20,25 @@ type e2eConfig struct {
 	email    string
 	password string
 	template string
+	token    string
 }
 
 func loadE2EConfig(t *testing.T) e2eConfig {
 	t.Helper()
-	baseURL := strings.TrimSpace(os.Getenv("S0_E2E_BASE_URL"))
+	baseURL := firstE2EEnv("S0_E2E_BASE_URL", "SANDBOX0_BASE_URL")
 	if baseURL == "" {
-		t.Skip("S0_E2E_BASE_URL not set")
+		t.Skip("S0_E2E_BASE_URL or SANDBOX0_BASE_URL not set")
 	}
+	token := firstE2EEnv("S0_E2E_TOKEN", "SANDBOX0_TOKEN", "SANDBOX0_API_KEY")
 	password := strings.TrimSpace(os.Getenv("S0_E2E_PASSWORD"))
-	if password == "" {
-		t.Skip("S0_E2E_PASSWORD not set")
+	if token == "" && password == "" {
+		t.Skip("S0_E2E_TOKEN/SANDBOX0_TOKEN or S0_E2E_PASSWORD not set")
 	}
 	email := strings.TrimSpace(os.Getenv("S0_E2E_EMAIL"))
 	if email == "" {
 		email = "admin@example.com"
 	}
-	template := strings.TrimSpace(os.Getenv("S0_E2E_TEMPLATE"))
+	template := firstE2EEnv("S0_E2E_TEMPLATE", "SANDBOX0_TEMPLATE")
 	if template == "" {
 		template = "default"
 	}
@@ -45,7 +47,17 @@ func loadE2EConfig(t *testing.T) e2eConfig {
 		email:    email,
 		password: password,
 		template: template,
+		token:    token,
 	}
+}
+
+func firstE2EEnv(names ...string) string {
+	for _, name := range names {
+		if value := strings.TrimSpace(os.Getenv(name)); value != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 type e2eNoAuthSource struct{}
@@ -102,6 +114,9 @@ func loginOnce(ctx context.Context, apiClient *apispec.Client, email, password s
 
 func e2eToken(t *testing.T, cfg e2eConfig) string {
 	t.Helper()
+	if cfg.token != "" {
+		return cfg.token
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	token, err := loginWithRetry(ctx, cfg.baseURL, cfg.email, cfg.password)

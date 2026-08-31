@@ -2,9 +2,26 @@ package sandbox0
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
+
+const (
+	defaultSandboxLifecycleTimeout      = 60 * time.Second
+	defaultSandboxLifecyclePollInterval = 500 * time.Millisecond
+)
+
+// SandboxLifecyclePredicate decides whether a committed sandbox projection has
+// reached the state required by a caller.
+type SandboxLifecyclePredicate func(*apispec.Sandbox) bool
+
+// SandboxLifecycleWaitOptions configures lifecycle projection polling.
+type SandboxLifecycleWaitOptions struct {
+	Timeout      time.Duration
+	PollInterval time.Duration
+}
 
 type sandboxOptions struct {
 	config     *apispec.SandboxConfig
@@ -191,6 +208,70 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 	}
 }
 
+// WaitForSandboxLifecycle polls committed sandbox details until predicate
+// matches, the context is canceled, or the wait times out.
+func (c *Client) WaitForSandboxLifecycle(
+	ctx context.Context,
+	sandboxID string,
+	predicate SandboxLifecyclePredicate,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	if predicate == nil {
+		return nil, errors.New("sandbox lifecycle predicate is required")
+	}
+	timeout := defaultSandboxLifecycleTimeout
+	pollInterval := defaultSandboxLifecyclePollInterval
+	if options != nil {
+		if options.Timeout < 0 {
+			return nil, errors.New("sandbox lifecycle timeout cannot be negative")
+		}
+		if options.PollInterval < 0 {
+			return nil, errors.New("sandbox lifecycle poll interval cannot be negative")
+		}
+		if options.Timeout > 0 {
+			timeout = options.Timeout
+		}
+		if options.PollInterval > 0 {
+			pollInterval = options.PollInterval
+		}
+	}
+
+	deadline := time.Now().Add(timeout)
+	var lastSandbox *apispec.Sandbox
+	for {
+		sandbox, err := c.GetSandbox(ctx, sandboxID)
+		if err != nil {
+			return nil, err
+		}
+		lastSandbox = sandbox
+		if predicate(sandbox) {
+			return sandbox, nil
+		}
+
+		remaining := time.Until(deadline)
+		if remaining <= 0 {
+			return nil, &SandboxWaitTimeoutError{
+				SandboxID:   sandboxID,
+				Timeout:     timeout,
+				LastSandbox: lastSandbox,
+			}
+		}
+		wait := pollInterval
+		if remaining < wait {
+			wait = remaining
+		}
+		timer := time.NewTimer(wait)
+		select {
+		case <-ctx.Done():
+			if !timer.Stop() {
+				<-timer.C
+			}
+			return nil, ctx.Err()
+		case <-timer.C:
+		}
+	}
+}
+
 // UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
 	resp, err := c.api.APIV1SandboxesIDPut(ctx, &request, apispec.APIV1SandboxesIDPutParams{ID: sandboxID})
@@ -259,6 +340,21 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 	}
 }
 
+// PauseSandboxAndWait requests a pause and waits for the committed paused
+// projection, including its durable checkpoint.
+func (c *Client) PauseSandboxAndWait(
+	ctx context.Context,
+	sandboxID string,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	if _, err := c.PauseSandbox(ctx, sandboxID); err != nil {
+		return nil, err
+	}
+	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.Status == apispec.SandboxLifecycleStatusPaused && sandbox.Paused
+	}, options)
+}
+
 // ResumeSandbox resumes a sandbox.
 func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.ResumeSandboxResponse, error) {
 	resp, err := c.api.APIV1SandboxesIDResumePost(ctx, apispec.APIV1SandboxesIDResumePostParams{ID: sandboxID})
@@ -275,6 +371,30 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
+}
+
+// ResumeSandboxAndWait requests a resume and waits for the committed running
+// runtime generation.
+func (c *Client) ResumeSandboxAndWait(
+	ctx context.Context,
+	sandboxID string,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	before, err := c.GetSandbox(ctx, sandboxID)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := c.ResumeSandbox(ctx, sandboxID); err != nil {
+		return nil, err
+	}
+	minimumGeneration := before.RuntimeGeneration
+	if before.Paused || before.Status == apispec.SandboxLifecycleStatusPaused {
+		minimumGeneration++
+	}
+	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.Status == apispec.SandboxLifecycleStatusRunning &&
+			!sandbox.Paused && sandbox.RuntimeGeneration >= minimumGeneration
+	}, options)
 }
 
 // RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.

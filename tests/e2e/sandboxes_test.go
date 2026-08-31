@@ -3,6 +3,7 @@
 package sandbox0_test
 
 import (
+	"bytes"
 	"context"
 	"testing"
 	"time"
@@ -16,7 +17,7 @@ func TestSandboxLifecycle(t *testing.T) {
 	token := e2eToken(t, cfg)
 	client := newClientWithToken(t, cfg, token)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 
 	sandbox, err := client.ClaimSandbox(
@@ -66,10 +67,10 @@ func TestSandboxLifecycle(t *testing.T) {
 		t.Fatalf("expected sandbox auto_resume to be false after update")
 	}
 
-	if _, err := client.PauseSandbox(ctx, sandbox.ID); err != nil {
+	if _, err := client.PauseSandboxAndWait(ctx, sandbox.ID, nil); err != nil {
 		t.Fatalf("pause sandbox failed: %v", err)
 	}
-	if _, err := client.ResumeSandbox(ctx, sandbox.ID); err != nil {
+	if _, err := client.ResumeSandboxAndWait(ctx, sandbox.ID, nil); err != nil {
 		t.Fatalf("resume sandbox failed: %v", err)
 	}
 	if _, err := client.RefreshSandbox(ctx, sandbox.ID, nil); err != nil {
@@ -85,7 +86,7 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 
-	source, err := client.ClaimSandbox(ctx, cfg.template)
+	source, err := client.ClaimSandbox(ctx, cfg.template, sandbox0.WithSandboxHardTTL(600))
 	if err != nil {
 		t.Fatalf("claim sandbox failed: %v", err)
 	}
@@ -99,10 +100,6 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if _, err := source.WriteFile(ctx, markerPath, []byte("rootfs-v1\n")); err != nil {
 		t.Fatalf("write v1 marker failed: %v", err)
 	}
-	if _, err := client.PauseSandbox(ctx, source.ID); err != nil {
-		t.Fatalf("pause source failed: %v", err)
-	}
-
 	snapshot, err := client.CreateSandboxRootFSSnapshot(ctx, source.ID, &apispec.CreateSandboxRootFSSnapshotRequest{
 		Name: apispec.NewOptString("sdk-go-e2e-rootfs"),
 	})
@@ -135,24 +132,13 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 		t.Fatalf("fetched snapshot ID = %q, want %q", fetched.ID, snapshot.ID)
 	}
 
-	if _, err := client.ResumeSandbox(ctx, source.ID); err != nil {
-		t.Fatalf("resume source failed: %v", err)
-	}
 	if _, err := source.WriteFile(ctx, markerPath, []byte("rootfs-v2\n")); err != nil {
 		t.Fatalf("write v2 marker failed: %v", err)
-	}
-	if _, err := client.PauseSandbox(ctx, source.ID); err != nil {
-		t.Fatalf("pause source for restore failed: %v", err)
-	}
-	if restored, err := client.RestoreSandboxRootFS(ctx, source.ID, apispec.RestoreSandboxRootFSRequest{SnapshotID: snapshot.ID}); err != nil {
-		t.Fatalf("restore rootfs failed: %v", err)
-	} else if restored.SnapshotID != snapshot.ID {
-		t.Fatalf("restored snapshot ID = %q, want %q", restored.SnapshotID, snapshot.ID)
 	}
 
 	forked, err := client.ForkSandbox(ctx, source.ID, nil)
 	if err != nil {
-		t.Fatalf("fork sandbox failed: %v", err)
+		t.Fatalf("fork running sandbox failed: %v", err)
 	}
 	t.Cleanup(func() {
 		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -162,14 +148,26 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if forked.SourceSandboxID != source.ID {
 		t.Fatalf("fork source ID = %q, want %q", forked.SourceSandboxID, source.ID)
 	}
+	if !forked.Sandbox.Paused {
+		t.Fatalf("forked sandbox should be paused: %+v", forked.Sandbox)
+	}
+
+	if _, err := client.PauseSandboxAndWait(ctx, source.ID, nil); err != nil {
+		t.Fatalf("pause source for restore failed: %v", err)
+	}
+	if restored, err := client.RestoreSandboxRootFS(ctx, source.ID, apispec.RestoreSandboxRootFSRequest{SnapshotID: snapshot.ID}); err != nil {
+		t.Fatalf("restore rootfs failed: %v", err)
+	} else if restored.SnapshotID != snapshot.ID {
+		t.Fatalf("restored snapshot ID = %q, want %q", restored.SnapshotID, snapshot.ID)
+	}
 
 	if _, err := client.DeleteSandboxRootFSSnapshot(ctx, snapshot.ID); err != nil {
 		t.Fatalf("delete rootfs snapshot failed: %v", err)
 	}
-	if _, err := client.ResumeSandbox(ctx, source.ID); err != nil {
+	if _, err := client.ResumeSandboxAndWait(ctx, source.ID, nil); err != nil {
 		t.Fatalf("resume restored source failed: %v", err)
 	}
-	if _, err := client.ResumeSandbox(ctx, forked.Sandbox.ID); err != nil {
+	if _, err := client.ResumeSandboxAndWait(ctx, forked.Sandbox.ID, nil); err != nil {
 		t.Fatalf("resume fork failed: %v", err)
 	}
 
@@ -184,7 +182,7 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read fork marker failed: %v", err)
 	}
-	if !bytes.Equal(forkContent, []byte("rootfs-v1\n")) {
-		t.Fatalf("fork marker = %q, want rootfs-v1", string(forkContent))
+	if !bytes.Equal(forkContent, []byte("rootfs-v2\n")) {
+		t.Fatalf("fork marker = %q, want rootfs-v2", string(forkContent))
 	}
 }

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
@@ -218,6 +220,111 @@ func TestUpdateSandboxLifecycleBuildsRequest(t *testing.T) {
 	}
 	if sandbox.ID != "sb_123" {
 		t.Fatalf("sandbox.ID = %q, want sb_123", sandbox.ID)
+	}
+}
+
+func TestPauseSandboxAndWaitPollsCommittedProjection(t *testing.T) {
+	var getCalls atomic.Int32
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method + " " + r.URL.Path {
+		case "POST /api/v1/sandboxes/sb_123/pause":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id": "sb_123",
+					"paused":     true,
+					"status":     "paused",
+				},
+			})
+		case "GET /api/v1/sandboxes/sb_123":
+			payload := sandboxJSON("sb_123")
+			if getCalls.Add(1) == 1 {
+				payload["status"] = "running"
+				payload["paused"] = false
+				payload["runtime_id"] = "alloc-a"
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{"success": true, "data": payload})
+		default:
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+	})
+	defer server.Close()
+
+	sandbox, err := client.PauseSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Timeout:      time.Second,
+		PollInterval: time.Millisecond,
+	})
+	if err != nil {
+		t.Fatalf("PauseSandboxAndWait() error = %v", err)
+	}
+	if sandbox.Status != apispec.SandboxLifecycleStatusPaused || !sandbox.Paused {
+		t.Fatalf("sandbox = %+v, want committed paused projection", sandbox)
+	}
+	if getCalls.Load() < 2 {
+		t.Fatalf("GET calls = %d, want at least 2", getCalls.Load())
+	}
+}
+
+func TestResumeSandboxAndWaitRequiresNextRuntimeGeneration(t *testing.T) {
+	var getCalls atomic.Int32
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method + " " + r.URL.Path {
+		case "POST /api/v1/sandboxes/sb_123/resume":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id": "sb_123",
+					"resumed":    true,
+				},
+			})
+		case "GET /api/v1/sandboxes/sb_123":
+			payload := sandboxJSON("sb_123")
+			if getCalls.Add(1) >= 3 {
+				payload["status"] = "running"
+				payload["paused"] = false
+				payload["runtime_id"] = "alloc-b"
+				payload["runtime_generation"] = 2
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{"success": true, "data": payload})
+		default:
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+	})
+	defer server.Close()
+
+	sandbox, err := client.ResumeSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Timeout:      time.Second,
+		PollInterval: time.Millisecond,
+	})
+	if err != nil {
+		t.Fatalf("ResumeSandboxAndWait() error = %v", err)
+	}
+	if sandbox.Status != apispec.SandboxLifecycleStatusRunning || sandbox.RuntimeGeneration != 2 {
+		t.Fatalf("sandbox = %+v, want running generation 2", sandbox)
+	}
+}
+
+func TestWaitForSandboxLifecycleTimesOutWithLastProjection(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(t, w, http.StatusOK, map[string]any{
+			"success": true,
+			"data":    sandboxJSON("sb_123"),
+		})
+	})
+	defer server.Close()
+
+	_, err := client.WaitForSandboxLifecycle(
+		context.Background(),
+		"sb_123",
+		func(*apispec.Sandbox) bool { return false },
+		&SandboxLifecycleWaitOptions{Timeout: 10 * time.Millisecond, PollInterval: time.Millisecond},
+	)
+	var timeoutErr *SandboxWaitTimeoutError
+	if !errors.As(err, &timeoutErr) {
+		t.Fatalf("error = %v, want *SandboxWaitTimeoutError", err)
+	}
+	if timeoutErr.LastSandbox == nil || timeoutErr.LastSandbox.ID != "sb_123" {
+		t.Fatalf("last sandbox = %+v, want sb_123", timeoutErr.LastSandbox)
 	}
 }
 
@@ -478,7 +585,6 @@ func sandboxJSON(id string) map[string]any {
 		"paused":             true,
 		"auto_resume":        false,
 		"services":           []map[string]any{},
-		"mounts":             []map[string]any{},
 		"runtime_id":         "",
 		"runtime_generation": 1,
 		"expires_at":         "2026-01-02T04:04:05Z",
