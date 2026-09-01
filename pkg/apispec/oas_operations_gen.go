@@ -53,6 +53,7 @@ const (
 	APIV1SandboxesIDPutOperation                              OperationName = "APIV1SandboxesIDPut"
 	APIV1SandboxesIDRefreshPostOperation                      OperationName = "APIV1SandboxesIDRefreshPost"
 	APIV1SandboxesIDResumePostOperation                       OperationName = "APIV1SandboxesIDResumePost"
+	APIV1SandboxesIDRootfsRebasePutOperation                  OperationName = "APIV1SandboxesIDRootfsRebasePut"
 	APIV1SandboxesIDRootfsRestorePostOperation                OperationName = "APIV1SandboxesIDRootfsRestorePost"
 	APIV1SandboxesIDServicesGetOperation                      OperationName = "APIV1SandboxesIDServicesGet"
 	APIV1SandboxesIDServicesPutOperation                      OperationName = "APIV1SandboxesIDServicesPut"

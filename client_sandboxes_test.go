@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
@@ -52,7 +54,7 @@ func TestClaimSandboxWithOptions(t *testing.T) {
 				"sandbox_id": "sb_123",
 				"template":   "default",
 				"cluster_id": "cluster-a",
-				"pod_name":   "pod-a",
+				"runtime_id": "alloc-a",
 				"status":     "running",
 			},
 		})
@@ -77,6 +79,9 @@ func TestClaimSandboxWithOptions(t *testing.T) {
 	}
 	if sandbox.ClusterID == nil || *sandbox.ClusterID != "cluster-a" {
 		t.Fatalf("sandbox.ClusterID = %v, want cluster-a", sandbox.ClusterID)
+	}
+	if sandbox.RuntimeID != "alloc-a" {
+		t.Fatalf("sandbox.RuntimeID = %q, want alloc-a", sandbox.RuntimeID)
 	}
 }
 
@@ -104,7 +109,7 @@ func TestClaimSandboxWithServicesOption(t *testing.T) {
 			"data": map[string]any{
 				"sandbox_id": "sb_123",
 				"template":   "default",
-				"pod_name":   "pod-a",
+				"runtime_id": "alloc-a",
 				"status":     "running",
 			},
 		})
@@ -170,7 +175,7 @@ func TestClaimSandboxReturnsClaimStartThrottledAPIError(t *testing.T) {
 	}
 }
 
-func TestUpdateSandboxMemoryBuildsRequest(t *testing.T) {
+func TestUpdateSandboxLifecycleBuildsRequest(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPut {
 			t.Fatalf("method = %s, want PUT", r.Method)
@@ -187,17 +192,16 @@ func TestUpdateSandboxMemoryBuildsRequest(t *testing.T) {
 		if !ok {
 			t.Fatal("config not set")
 		}
-		resources, ok := config.Resources.Get()
-		if !ok {
-			t.Fatal("resources not set")
+		ttl, ok := config.TTL.Get()
+		if !ok || ttl != 600 {
+			t.Fatalf("ttl = %d, want 600", ttl)
 		}
-		memory, ok := resources.Memory.Get()
-		if !ok || memory != "2Gi" {
-			t.Fatalf("memory = %q, want 2Gi", memory)
+		autoResume, ok := config.AutoResume.Get()
+		if !ok || !autoResume {
+			t.Fatalf("auto_resume = %v, %v; want true, true", autoResume, ok)
 		}
 
 		payload := sandboxJSON("sb_123")
-		payload["resources"] = map[string]any{"memory": "2Gi"}
 		writeJSON(t, w, http.StatusOK, map[string]any{
 			"success": true,
 			"data":    payload,
@@ -205,22 +209,127 @@ func TestUpdateSandboxMemoryBuildsRequest(t *testing.T) {
 	})
 	defer server.Close()
 
-	sandbox, err := client.UpdateSandboxMemory(context.Background(), "sb_123", "2Gi")
+	sandbox, err := client.UpdateSandbox(context.Background(), "sb_123", apispec.SandboxUpdateRequest{
+		Config: apispec.NewOptSandboxUpdateConfig(apispec.SandboxUpdateConfig{
+			TTL:        apispec.NewOptInt32(600),
+			AutoResume: apispec.NewOptBool(true),
+		}),
+	})
 	if err != nil {
-		t.Fatalf("UpdateSandboxMemory() error = %v", err)
+		t.Fatalf("UpdateSandbox() error = %v", err)
 	}
-	resources, ok := sandbox.Resources.Get()
-	if !ok {
-		t.Fatal("sandbox resources not set")
+	if sandbox.ID != "sb_123" {
+		t.Fatalf("sandbox.ID = %q, want sb_123", sandbox.ID)
 	}
-	memory, ok := resources.Memory.Get()
-	if !ok || memory != "2Gi" {
-		t.Fatalf("sandbox memory = %q, want 2Gi", memory)
+}
+
+func TestPauseSandboxAndWaitPollsCommittedProjection(t *testing.T) {
+	var getCalls atomic.Int32
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method + " " + r.URL.Path {
+		case "POST /api/v1/sandboxes/sb_123/pause":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id": "sb_123",
+					"paused":     true,
+					"status":     "paused",
+				},
+			})
+		case "GET /api/v1/sandboxes/sb_123":
+			payload := sandboxJSON("sb_123")
+			if getCalls.Add(1) == 1 {
+				payload["status"] = "running"
+				payload["paused"] = false
+				payload["runtime_id"] = "alloc-a"
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{"success": true, "data": payload})
+		default:
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+	})
+	defer server.Close()
+
+	sandbox, err := client.PauseSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Timeout:      time.Second,
+		PollInterval: time.Millisecond,
+	})
+	if err != nil {
+		t.Fatalf("PauseSandboxAndWait() error = %v", err)
+	}
+	if sandbox.Status != apispec.SandboxLifecycleStatusPaused || !sandbox.Paused {
+		t.Fatalf("sandbox = %+v, want committed paused projection", sandbox)
+	}
+	if getCalls.Load() < 2 {
+		t.Fatalf("GET calls = %d, want at least 2", getCalls.Load())
+	}
+}
+
+func TestResumeSandboxAndWaitRequiresNextRuntimeGeneration(t *testing.T) {
+	var getCalls atomic.Int32
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method + " " + r.URL.Path {
+		case "POST /api/v1/sandboxes/sb_123/resume":
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id": "sb_123",
+					"resumed":    true,
+				},
+			})
+		case "GET /api/v1/sandboxes/sb_123":
+			payload := sandboxJSON("sb_123")
+			if getCalls.Add(1) >= 3 {
+				payload["status"] = "running"
+				payload["paused"] = false
+				payload["runtime_id"] = "alloc-b"
+				payload["runtime_generation"] = 2
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{"success": true, "data": payload})
+		default:
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+	})
+	defer server.Close()
+
+	sandbox, err := client.ResumeSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Timeout:      time.Second,
+		PollInterval: time.Millisecond,
+	})
+	if err != nil {
+		t.Fatalf("ResumeSandboxAndWait() error = %v", err)
+	}
+	if sandbox.Status != apispec.SandboxLifecycleStatusRunning || sandbox.RuntimeGeneration != 2 {
+		t.Fatalf("sandbox = %+v, want running generation 2", sandbox)
+	}
+}
+
+func TestWaitForSandboxLifecycleTimesOutWithLastProjection(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(t, w, http.StatusOK, map[string]any{
+			"success": true,
+			"data":    sandboxJSON("sb_123"),
+		})
+	})
+	defer server.Close()
+
+	_, err := client.WaitForSandboxLifecycle(
+		context.Background(),
+		"sb_123",
+		func(*apispec.Sandbox) bool { return false },
+		&SandboxLifecycleWaitOptions{Timeout: 10 * time.Millisecond, PollInterval: time.Millisecond},
+	)
+	var timeoutErr *SandboxWaitTimeoutError
+	if !errors.As(err, &timeoutErr) {
+		t.Fatalf("error = %v, want *SandboxWaitTimeoutError", err)
+	}
+	if timeoutErr.LastSandbox == nil || timeoutErr.LastSandbox.ID != "sb_123" {
+		t.Fatalf("last sandbox = %+v, want sb_123", timeoutErr.LastSandbox)
 	}
 }
 
 func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
-	calls := make([]string, 0, 6)
+	calls := make([]string, 0, 7)
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		key := r.Method + " " + r.URL.Path
 		calls = append(calls, key)
@@ -268,6 +377,27 @@ func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
 					"sandbox_id":  "sb_1",
 					"snapshot_id": "snap_1",
 					"status":      "paused",
+				},
+			})
+		case "PUT /api/v1/sandboxes/sb_1/rootfs/rebase":
+			var req apispec.RebaseSandboxRootFSRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				t.Fatalf("decode rebase request: %v", err)
+			}
+			if req.TargetBaseArtifactDigest != "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" {
+				t.Fatalf("target_base_artifact_digest = %q", req.TargetBaseArtifactDigest)
+			}
+			if ttl, ok := req.RollbackTTL.Get(); !ok || ttl != 3600 {
+				t.Fatalf("rollback_ttl = %d, %v; want 3600, true", ttl, ok)
+			}
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data": map[string]any{
+					"sandbox_id":           "sb_1",
+					"generation_id":        "gen_2",
+					"base_artifact_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+					"rollback_expires_at":  "2026-01-02T04:04:05Z",
+					"status":               "paused",
 				},
 			})
 		case "POST /api/v1/sandboxes/sb_1/fork":
@@ -334,6 +464,17 @@ func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
 		t.Fatalf("restored = %+v, want snapshot snap_1 paused", restored)
 	}
 
+	rebased, err := client.RebaseSandboxRootFS(ctx, "sb_1", apispec.RebaseSandboxRootFSRequest{
+		TargetBaseArtifactDigest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		RollbackTTL:              apispec.NewOptInt32(3600),
+	})
+	if err != nil {
+		t.Fatalf("RebaseSandboxRootFS() error = %v", err)
+	}
+	if rebased.GenerationID != "gen_2" || rebased.Status != apispec.SandboxLifecycleStatusPaused {
+		t.Fatalf("rebased = %+v, want generation gen_2 paused", rebased)
+	}
+
 	forked, err := client.ForkSandbox(ctx, "sb_1", nil)
 	if err != nil {
 		t.Fatalf("ForkSandbox() error = %v", err)
@@ -348,6 +489,7 @@ func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
 		"GET /api/v1/sandbox-rootfs-snapshots/snap_1",
 		"DELETE /api/v1/sandbox-rootfs-snapshots/snap_1",
 		"POST /api/v1/sandboxes/sb_1/rootfs/restore",
+		"PUT /api/v1/sandboxes/sb_1/rootfs/rebase",
 		"POST /api/v1/sandboxes/sb_1/fork",
 	}
 	if len(calls) != len(wantCalls) {
@@ -443,8 +585,7 @@ func sandboxJSON(id string) map[string]any {
 		"paused":             true,
 		"auto_resume":        false,
 		"services":           []map[string]any{},
-		"mounts":             []map[string]any{},
-		"pod_name":           "",
+		"runtime_id":         "",
 		"runtime_generation": 1,
 		"expires_at":         "2026-01-02T04:04:05Z",
 		"hard_expires_at":    "2026-01-03T03:04:05Z",

@@ -3,6 +3,14 @@
 package apispec
 
 // setDefaults set default value of fields.
+func (s *ContainerSpec) setDefaults() {
+	{
+		val := ContainerSpecSecurityClass("standard")
+		s.SecurityClass.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *CreateExecutionSessionAttemptRequest) setDefaults() {
 	{
 		val := bool(false)

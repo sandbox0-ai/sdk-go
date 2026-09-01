@@ -109,7 +109,7 @@ func TestWaitTemplateReady(t *testing.T) {
 			writeTemplateResponse(t, w, http.StatusOK, "python-ready", "creating", "publishing")
 			return
 		}
-		writeTemplateResponse(t, w, http.StatusOK, "python-ready", "ready", "reconciling")
+		writeTemplateResponse(t, w, http.StatusOK, "python-ready", "ready", "publishing")
 	})
 	defer server.Close()
 
@@ -132,7 +132,7 @@ func TestWaitTemplateReadyReturnsCreationFailure(t *testing.T) {
 			"data": map[string]any{
 				"template_id": "python-ready",
 				"scope":       "team",
-				"spec":        map[string]any{},
+				"spec":        templateSpecJSON(),
 				"status": map[string]any{
 					"creation": map[string]any{
 						"state":   "failed",
@@ -166,7 +166,7 @@ func TestWaitTemplateReadyTreatsLegacyTemplateAsReady(t *testing.T) {
 			"data": map[string]any{
 				"template_id": "legacy",
 				"scope":       "team",
-				"spec":        map[string]any{},
+				"spec":        templateSpecJSON(),
 				"created_at":  now,
 				"updated_at":  now,
 			},
@@ -207,7 +207,7 @@ func writeTemplateResponse(t *testing.T, w http.ResponseWriter, status int, temp
 		"data": map[string]any{
 			"template_id": templateID,
 			"scope":       "team",
-			"spec":        map[string]any{},
+			"spec":        templateSpecJSON(),
 			"status": map[string]any{
 				"creation": map[string]any{
 					"state": state,
@@ -218,4 +218,15 @@ func writeTemplateResponse(t *testing.T, w http.ResponseWriter, status int, temp
 			"updated_at": now,
 		},
 	})
+}
+
+func templateSpecJSON() map[string]any {
+	return map[string]any{
+		"mainContainer": map[string]any{
+			"image": "docker.io/library/ubuntu@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			"resources": map[string]any{
+				"memory": "1Gi",
+			},
+		},
+	}
 }

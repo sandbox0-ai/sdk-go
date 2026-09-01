@@ -6,11 +6,24 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
 const CodeClaimStartThrottled = "claim_start_throttled"
+
+// SandboxWaitTimeoutError reports that a sandbox did not reach the requested
+// committed lifecycle state before the wait deadline.
+type SandboxWaitTimeoutError struct {
+	SandboxID   string
+	Timeout     time.Duration
+	LastSandbox *apispec.Sandbox
+}
+
+func (e *SandboxWaitTimeoutError) Error() string {
+	return fmt.Sprintf("timed out waiting for sandbox %s after %s", e.SandboxID, e.Timeout)
+}
 
 // APIError represents a structured error returned by the Sandbox0 API.
 type APIError struct {

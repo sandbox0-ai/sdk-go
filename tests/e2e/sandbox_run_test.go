@@ -22,7 +22,7 @@ func TestSandboxRunAndCmd(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
 	// Create a custom REPL context with specific settings
@@ -86,7 +86,7 @@ func TestSandboxStreams(t *testing.T) {
 	client := newClientWithToken(t, cfg, token)
 	sandbox := claimSandbox(t, client, cfg)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
 	// Test REPL stream via WebSocket

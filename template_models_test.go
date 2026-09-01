@@ -13,12 +13,12 @@ func TestTemplateCreateRequestEnvVarsRoundTrip(t *testing.T) {
 	req := apispec.TemplateCreateRequest{
 		TemplateID: "tpl-env-vars",
 		Spec: apispec.SandboxTemplateSpec{
-			MainContainer: apispec.NewOptContainerSpec(apispec.ContainerSpec{
-				Image: "nginx:1.27-alpine",
+			MainContainer: apispec.ContainerSpec{
+				Image: "docker.io/library/nginx@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
 				Resources: apispec.ResourceQuota{
 					Memory: "2Gi",
 				},
-			}),
+			},
 			EnvVars: apispec.NewOptSandboxTemplateSpecEnvVars(apispec.SandboxTemplateSpecEnvVars{"MODE": "template"}),
 		},
 	}

@@ -480,6 +480,22 @@ type APIV1SandboxesIDResumePostTooManyRequests ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostTooManyRequests) aPIV1SandboxesIDResumePostRes() {}
 
+type APIV1SandboxesIDRootfsRebasePutBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRebasePutBadRequest) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
+type APIV1SandboxesIDRootfsRebasePutConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRebasePutConflict) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
+type APIV1SandboxesIDRootfsRebasePutNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRebasePutNotFound) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
+type APIV1SandboxesIDRootfsRebasePutServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRebasePutServiceUnavailable) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
 type APIV1SandboxesIDRootfsRestorePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRestorePostConflict) aPIV1SandboxesIDRootfsRestorePostRes() {}
@@ -656,106 +672,6 @@ func (s *AddTeamMemberRequestRole) UnmarshalText(data []byte) error {
 		return nil
 	case AddTeamMemberRequestRoleViewer:
 		*s = AddTeamMemberRequestRoleViewer
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-// Ref: #/components/schemas/Affinity
-type Affinity struct {
-	NodeAffinity OptNodeAffinity `json:"nodeAffinity"`
-	PodAffinity  OptPodAffinity  `json:"podAffinity"`
-}
-
-// GetNodeAffinity returns the value of NodeAffinity.
-func (s *Affinity) GetNodeAffinity() OptNodeAffinity {
-	return s.NodeAffinity
-}
-
-// GetPodAffinity returns the value of PodAffinity.
-func (s *Affinity) GetPodAffinity() OptPodAffinity {
-	return s.PodAffinity
-}
-
-// SetNodeAffinity sets the value of NodeAffinity.
-func (s *Affinity) SetNodeAffinity(val OptNodeAffinity) {
-	s.NodeAffinity = val
-}
-
-// SetPodAffinity sets the value of PodAffinity.
-func (s *Affinity) SetPodAffinity(val OptPodAffinity) {
-	s.PodAffinity = val
-}
-
-// Ref: #/components/schemas/AppArmorProfile
-type AppArmorProfile struct {
-	Type             AppArmorProfileType `json:"type"`
-	LocalhostProfile OptString           `json:"localhostProfile"`
-}
-
-// GetType returns the value of Type.
-func (s *AppArmorProfile) GetType() AppArmorProfileType {
-	return s.Type
-}
-
-// GetLocalhostProfile returns the value of LocalhostProfile.
-func (s *AppArmorProfile) GetLocalhostProfile() OptString {
-	return s.LocalhostProfile
-}
-
-// SetType sets the value of Type.
-func (s *AppArmorProfile) SetType(val AppArmorProfileType) {
-	s.Type = val
-}
-
-// SetLocalhostProfile sets the value of LocalhostProfile.
-func (s *AppArmorProfile) SetLocalhostProfile(val OptString) {
-	s.LocalhostProfile = val
-}
-
-type AppArmorProfileType string
-
-const (
-	AppArmorProfileTypeUnconfined     AppArmorProfileType = "Unconfined"
-	AppArmorProfileTypeRuntimeDefault AppArmorProfileType = "RuntimeDefault"
-	AppArmorProfileTypeLocalhost      AppArmorProfileType = "Localhost"
-)
-
-// AllValues returns all AppArmorProfileType values.
-func (AppArmorProfileType) AllValues() []AppArmorProfileType {
-	return []AppArmorProfileType{
-		AppArmorProfileTypeUnconfined,
-		AppArmorProfileTypeRuntimeDefault,
-		AppArmorProfileTypeLocalhost,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s AppArmorProfileType) MarshalText() ([]byte, error) {
-	switch s {
-	case AppArmorProfileTypeUnconfined:
-		return []byte(s), nil
-	case AppArmorProfileTypeRuntimeDefault:
-		return []byte(s), nil
-	case AppArmorProfileTypeLocalhost:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *AppArmorProfileType) UnmarshalText(data []byte) error {
-	switch AppArmorProfileType(data) {
-	case AppArmorProfileTypeUnconfined:
-		*s = AppArmorProfileTypeUnconfined
-		return nil
-	case AppArmorProfileTypeRuntimeDefault:
-		*s = AppArmorProfileTypeRuntimeDefault
-		return nil
-	case AppArmorProfileTypeLocalhost:
-		*s = AppArmorProfileTypeLocalhost
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -961,32 +877,6 @@ func (s *CachePolicySpec) SetTTL(val OptString) {
 	s.TTL = val
 }
 
-// Ref: #/components/schemas/Capabilities
-type Capabilities struct {
-	Add  []string `json:"add"`
-	Drop []string `json:"drop"`
-}
-
-// GetAdd returns the value of Add.
-func (s *Capabilities) GetAdd() []string {
-	return s.Add
-}
-
-// GetDrop returns the value of Drop.
-func (s *Capabilities) GetDrop() []string {
-	return s.Drop
-}
-
-// SetAdd sets the value of Add.
-func (s *Capabilities) SetAdd(val []string) {
-	s.Add = val
-}
-
-// SetDrop sets the value of Drop.
-func (s *Capabilities) SetDrop(val []string) {
-	s.Drop = val
-}
-
 // Ref: #/components/schemas/ChangePasswordRequest
 type ChangePasswordRequest struct {
 	OldPassword string `json:"old_password"`
@@ -1056,9 +946,10 @@ func (s *ClaimRequest) SetConfig(val OptSandboxConfig) {
 type ClaimResponse struct {
 	SandboxID string                 `json:"sandbox_id"`
 	Status    SandboxLifecycleStatus `json:"status"`
-	PodName   string                 `json:"pod_name"`
-	Template  string                 `json:"template"`
-	ClusterID OptNilString           `json:"cluster_id"`
+	// Opaque identifier of the current physical runtime allocation.
+	RuntimeID string       `json:"runtime_id"`
+	Template  string       `json:"template"`
+	ClusterID OptNilString `json:"cluster_id"`
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -1071,9 +962,9 @@ func (s *ClaimResponse) GetStatus() SandboxLifecycleStatus {
 	return s.Status
 }
 
-// GetPodName returns the value of PodName.
-func (s *ClaimResponse) GetPodName() string {
-	return s.PodName
+// GetRuntimeID returns the value of RuntimeID.
+func (s *ClaimResponse) GetRuntimeID() string {
+	return s.RuntimeID
 }
 
 // GetTemplate returns the value of Template.
@@ -1096,9 +987,9 @@ func (s *ClaimResponse) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
 }
 
-// SetPodName sets the value of PodName.
-func (s *ClaimResponse) SetPodName(val string) {
-	s.PodName = val
+// SetRuntimeID sets the value of RuntimeID.
+func (s *ClaimResponse) SetRuntimeID(val string) {
+	s.RuntimeID = val
 }
 
 // SetTemplate sets the value of Template.
@@ -1113,21 +1004,18 @@ func (s *ClaimResponse) SetClusterID(val OptNilString) {
 
 // Ref: #/components/schemas/ContainerSpec
 type ContainerSpec struct {
-	Image           string             `json:"image"`
-	ImagePullPolicy OptString          `json:"imagePullPolicy"`
-	Env             []EnvVar           `json:"env"`
-	Resources       ResourceQuota      `json:"resources"`
-	SecurityContext OptSecurityContext `json:"securityContext"`
+	// Canonical normalized OCI reference pinned by a lowercase SHA-256 digest. Mutable tags are rejected.
+	Image     string        `json:"image"`
+	Env       []EnvVar      `json:"env"`
+	Resources ResourceQuota `json:"resources"`
+	// Immutable gVisor guest privilege class. Privileged capabilities remain confined by runsc and do
+	// not expose host devices.
+	SecurityClass OptContainerSpecSecurityClass `json:"securityClass"`
 }
 
 // GetImage returns the value of Image.
 func (s *ContainerSpec) GetImage() string {
 	return s.Image
-}
-
-// GetImagePullPolicy returns the value of ImagePullPolicy.
-func (s *ContainerSpec) GetImagePullPolicy() OptString {
-	return s.ImagePullPolicy
 }
 
 // GetEnv returns the value of Env.
@@ -1140,19 +1028,14 @@ func (s *ContainerSpec) GetResources() ResourceQuota {
 	return s.Resources
 }
 
-// GetSecurityContext returns the value of SecurityContext.
-func (s *ContainerSpec) GetSecurityContext() OptSecurityContext {
-	return s.SecurityContext
+// GetSecurityClass returns the value of SecurityClass.
+func (s *ContainerSpec) GetSecurityClass() OptContainerSpecSecurityClass {
+	return s.SecurityClass
 }
 
 // SetImage sets the value of Image.
 func (s *ContainerSpec) SetImage(val string) {
 	s.Image = val
-}
-
-// SetImagePullPolicy sets the value of ImagePullPolicy.
-func (s *ContainerSpec) SetImagePullPolicy(val OptString) {
-	s.ImagePullPolicy = val
 }
 
 // SetEnv sets the value of Env.
@@ -1165,9 +1048,52 @@ func (s *ContainerSpec) SetResources(val ResourceQuota) {
 	s.Resources = val
 }
 
-// SetSecurityContext sets the value of SecurityContext.
-func (s *ContainerSpec) SetSecurityContext(val OptSecurityContext) {
-	s.SecurityContext = val
+// SetSecurityClass sets the value of SecurityClass.
+func (s *ContainerSpec) SetSecurityClass(val OptContainerSpecSecurityClass) {
+	s.SecurityClass = val
+}
+
+// Immutable gVisor guest privilege class. Privileged capabilities remain confined by runsc and do
+// not expose host devices.
+type ContainerSpecSecurityClass string
+
+const (
+	ContainerSpecSecurityClassStandard   ContainerSpecSecurityClass = "standard"
+	ContainerSpecSecurityClassPrivileged ContainerSpecSecurityClass = "privileged"
+)
+
+// AllValues returns all ContainerSpecSecurityClass values.
+func (ContainerSpecSecurityClass) AllValues() []ContainerSpecSecurityClass {
+	return []ContainerSpecSecurityClass{
+		ContainerSpecSecurityClassStandard,
+		ContainerSpecSecurityClassPrivileged,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ContainerSpecSecurityClass) MarshalText() ([]byte, error) {
+	switch s {
+	case ContainerSpecSecurityClassStandard:
+		return []byte(s), nil
+	case ContainerSpecSecurityClassPrivileged:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ContainerSpecSecurityClass) UnmarshalText(data []byte) error {
+	switch ContainerSpecSecurityClass(data) {
+	case ContainerSpecSecurityClassStandard:
+		*s = ContainerSpecSecurityClassStandard
+		return nil
+	case ContainerSpecSecurityClassPrivileged:
+		*s = ContainerSpecSecurityClassPrivileged
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/ContextExecResponse
@@ -2971,33 +2897,6 @@ func (s *EgressTLSMode) UnmarshalText(data []byte) error {
 	}
 }
 
-// Ref: #/components/schemas/EmptyDirMountSpec
-type EmptyDirMountSpec struct {
-	MountPath string `json:"mountPath"`
-	// Optional size limit for the Kubernetes emptyDir volume.
-	SizeLimit OptString `json:"sizeLimit"`
-}
-
-// GetMountPath returns the value of MountPath.
-func (s *EmptyDirMountSpec) GetMountPath() string {
-	return s.MountPath
-}
-
-// GetSizeLimit returns the value of SizeLimit.
-func (s *EmptyDirMountSpec) GetSizeLimit() OptString {
-	return s.SizeLimit
-}
-
-// SetMountPath sets the value of MountPath.
-func (s *EmptyDirMountSpec) SetMountPath(val string) {
-	s.MountPath = val
-}
-
-// SetSizeLimit sets the value of SizeLimit.
-func (s *EmptyDirMountSpec) SetSizeLimit(val OptString) {
-	s.SizeLimit = val
-}
-
 // Ref: #/components/schemas/EnvVar
 type EnvVar struct {
 	Name  string `json:"name"`
@@ -3022,6 +2921,33 @@ func (s *EnvVar) SetName(val string) {
 // SetValue sets the value of Value.
 func (s *EnvVar) SetValue(val string) {
 	s.Value = val
+}
+
+// Ref: #/components/schemas/EphemeralMountSpec
+type EphemeralMountSpec struct {
+	MountPath string `json:"mountPath"`
+	// Exact byte quantity between 1Mi and 1Ti. The tmpfs remains subject to the sandbox memory cgroup.
+	SizeLimit string `json:"sizeLimit"`
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *EphemeralMountSpec) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetSizeLimit returns the value of SizeLimit.
+func (s *EphemeralMountSpec) GetSizeLimit() string {
+	return s.SizeLimit
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *EphemeralMountSpec) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetSizeLimit sets the value of SizeLimit.
+func (s *EphemeralMountSpec) SetSizeLimit(val string) {
+	s.SizeLimit = val
 }
 
 // Ref: #/components/schemas/Error
@@ -5107,80 +5033,6 @@ func (s *Identity) SetCreatedAt(val int64) {
 	s.CreatedAt = val
 }
 
-// Ref: #/components/schemas/LabelSelector
-type LabelSelector struct {
-	MatchLabels      OptLabelSelectorMatchLabels `json:"matchLabels"`
-	MatchExpressions []LabelSelectorRequirement  `json:"matchExpressions"`
-}
-
-// GetMatchLabels returns the value of MatchLabels.
-func (s *LabelSelector) GetMatchLabels() OptLabelSelectorMatchLabels {
-	return s.MatchLabels
-}
-
-// GetMatchExpressions returns the value of MatchExpressions.
-func (s *LabelSelector) GetMatchExpressions() []LabelSelectorRequirement {
-	return s.MatchExpressions
-}
-
-// SetMatchLabels sets the value of MatchLabels.
-func (s *LabelSelector) SetMatchLabels(val OptLabelSelectorMatchLabels) {
-	s.MatchLabels = val
-}
-
-// SetMatchExpressions sets the value of MatchExpressions.
-func (s *LabelSelector) SetMatchExpressions(val []LabelSelectorRequirement) {
-	s.MatchExpressions = val
-}
-
-type LabelSelectorMatchLabels map[string]string
-
-func (s *LabelSelectorMatchLabels) init() LabelSelectorMatchLabels {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
-}
-
-// Ref: #/components/schemas/LabelSelectorRequirement
-type LabelSelectorRequirement struct {
-	Key      string   `json:"key"`
-	Operator string   `json:"operator"`
-	Values   []string `json:"values"`
-}
-
-// GetKey returns the value of Key.
-func (s *LabelSelectorRequirement) GetKey() string {
-	return s.Key
-}
-
-// GetOperator returns the value of Operator.
-func (s *LabelSelectorRequirement) GetOperator() string {
-	return s.Operator
-}
-
-// GetValues returns the value of Values.
-func (s *LabelSelectorRequirement) GetValues() []string {
-	return s.Values
-}
-
-// SetKey sets the value of Key.
-func (s *LabelSelectorRequirement) SetKey(val string) {
-	s.Key = val
-}
-
-// SetOperator sets the value of Operator.
-func (s *LabelSelectorRequirement) SetOperator(val string) {
-	s.Operator = val
-}
-
-// SetValues sets the value of Values.
-func (s *LabelSelectorRequirement) SetValues(val []string) {
-	s.Values = val
-}
-
 // Ref: #/components/schemas/LoginRequest
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -5529,110 +5381,6 @@ func (o NilInt64) Or(d int64) int64 {
 	return d
 }
 
-// Ref: #/components/schemas/NodeAffinity
-type NodeAffinity struct {
-	RequiredDuringSchedulingIgnoredDuringExecution  OptNodeSelector           `json:"requiredDuringSchedulingIgnoredDuringExecution"`
-	PreferredDuringSchedulingIgnoredDuringExecution []PreferredSchedulingTerm `json:"preferredDuringSchedulingIgnoredDuringExecution"`
-}
-
-// GetRequiredDuringSchedulingIgnoredDuringExecution returns the value of RequiredDuringSchedulingIgnoredDuringExecution.
-func (s *NodeAffinity) GetRequiredDuringSchedulingIgnoredDuringExecution() OptNodeSelector {
-	return s.RequiredDuringSchedulingIgnoredDuringExecution
-}
-
-// GetPreferredDuringSchedulingIgnoredDuringExecution returns the value of PreferredDuringSchedulingIgnoredDuringExecution.
-func (s *NodeAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() []PreferredSchedulingTerm {
-	return s.PreferredDuringSchedulingIgnoredDuringExecution
-}
-
-// SetRequiredDuringSchedulingIgnoredDuringExecution sets the value of RequiredDuringSchedulingIgnoredDuringExecution.
-func (s *NodeAffinity) SetRequiredDuringSchedulingIgnoredDuringExecution(val OptNodeSelector) {
-	s.RequiredDuringSchedulingIgnoredDuringExecution = val
-}
-
-// SetPreferredDuringSchedulingIgnoredDuringExecution sets the value of PreferredDuringSchedulingIgnoredDuringExecution.
-func (s *NodeAffinity) SetPreferredDuringSchedulingIgnoredDuringExecution(val []PreferredSchedulingTerm) {
-	s.PreferredDuringSchedulingIgnoredDuringExecution = val
-}
-
-// Ref: #/components/schemas/NodeSelector
-type NodeSelector struct {
-	NodeSelectorTerms []NodeSelectorTerm `json:"nodeSelectorTerms"`
-}
-
-// GetNodeSelectorTerms returns the value of NodeSelectorTerms.
-func (s *NodeSelector) GetNodeSelectorTerms() []NodeSelectorTerm {
-	return s.NodeSelectorTerms
-}
-
-// SetNodeSelectorTerms sets the value of NodeSelectorTerms.
-func (s *NodeSelector) SetNodeSelectorTerms(val []NodeSelectorTerm) {
-	s.NodeSelectorTerms = val
-}
-
-// Ref: #/components/schemas/NodeSelectorRequirement
-type NodeSelectorRequirement struct {
-	Key      string   `json:"key"`
-	Operator string   `json:"operator"`
-	Values   []string `json:"values"`
-}
-
-// GetKey returns the value of Key.
-func (s *NodeSelectorRequirement) GetKey() string {
-	return s.Key
-}
-
-// GetOperator returns the value of Operator.
-func (s *NodeSelectorRequirement) GetOperator() string {
-	return s.Operator
-}
-
-// GetValues returns the value of Values.
-func (s *NodeSelectorRequirement) GetValues() []string {
-	return s.Values
-}
-
-// SetKey sets the value of Key.
-func (s *NodeSelectorRequirement) SetKey(val string) {
-	s.Key = val
-}
-
-// SetOperator sets the value of Operator.
-func (s *NodeSelectorRequirement) SetOperator(val string) {
-	s.Operator = val
-}
-
-// SetValues sets the value of Values.
-func (s *NodeSelectorRequirement) SetValues(val []string) {
-	s.Values = val
-}
-
-// Ref: #/components/schemas/NodeSelectorTerm
-type NodeSelectorTerm struct {
-	MatchExpressions []NodeSelectorRequirement `json:"matchExpressions"`
-	MatchFields      []NodeSelectorRequirement `json:"matchFields"`
-}
-
-// GetMatchExpressions returns the value of MatchExpressions.
-func (s *NodeSelectorTerm) GetMatchExpressions() []NodeSelectorRequirement {
-	return s.MatchExpressions
-}
-
-// GetMatchFields returns the value of MatchFields.
-func (s *NodeSelectorTerm) GetMatchFields() []NodeSelectorRequirement {
-	return s.MatchFields
-}
-
-// SetMatchExpressions sets the value of MatchExpressions.
-func (s *NodeSelectorTerm) SetMatchExpressions(val []NodeSelectorRequirement) {
-	s.MatchExpressions = val
-}
-
-// SetMatchFields sets the value of MatchFields.
-func (s *NodeSelectorTerm) SetMatchFields(val []NodeSelectorRequirement) {
-	s.MatchFields = val
-}
-
 // Ref: #/components/schemas/ObservabilityEventSource
 type ObservabilityEventSource string
 
@@ -5687,98 +5435,6 @@ func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
-}
-
-// NewOptAffinity returns new OptAffinity with value set to v.
-func NewOptAffinity(v Affinity) OptAffinity {
-	return OptAffinity{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptAffinity is optional Affinity.
-type OptAffinity struct {
-	Value Affinity
-	Set   bool
-}
-
-// IsSet returns true if OptAffinity was set.
-func (o OptAffinity) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptAffinity) Reset() {
-	var v Affinity
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptAffinity) SetTo(v Affinity) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptAffinity) Get() (v Affinity, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptAffinity) Or(d Affinity) Affinity {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptAppArmorProfile returns new OptAppArmorProfile with value set to v.
-func NewOptAppArmorProfile(v AppArmorProfile) OptAppArmorProfile {
-	return OptAppArmorProfile{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptAppArmorProfile is optional AppArmorProfile.
-type OptAppArmorProfile struct {
-	Value AppArmorProfile
-	Set   bool
-}
-
-// IsSet returns true if OptAppArmorProfile was set.
-func (o OptAppArmorProfile) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptAppArmorProfile) Reset() {
-	var v AppArmorProfile
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptAppArmorProfile) SetTo(v AppArmorProfile) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptAppArmorProfile) Get() (v AppArmorProfile, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptAppArmorProfile) Or(d AppArmorProfile) AppArmorProfile {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
 }
 
 // NewOptBool returns new OptBool with value set to v.
@@ -5873,52 +5529,6 @@ func (o OptCachePolicySpec) Or(d CachePolicySpec) CachePolicySpec {
 	return d
 }
 
-// NewOptCapabilities returns new OptCapabilities with value set to v.
-func NewOptCapabilities(v Capabilities) OptCapabilities {
-	return OptCapabilities{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptCapabilities is optional Capabilities.
-type OptCapabilities struct {
-	Value Capabilities
-	Set   bool
-}
-
-// IsSet returns true if OptCapabilities was set.
-func (o OptCapabilities) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptCapabilities) Reset() {
-	var v Capabilities
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptCapabilities) SetTo(v Capabilities) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptCapabilities) Get() (v Capabilities, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptCapabilities) Or(d Capabilities) Capabilities {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptClaimResponse returns new OptClaimResponse with value set to v.
 func NewOptClaimResponse(v ClaimResponse) OptClaimResponse {
 	return OptClaimResponse{
@@ -5965,38 +5575,38 @@ func (o OptClaimResponse) Or(d ClaimResponse) ClaimResponse {
 	return d
 }
 
-// NewOptContainerSpec returns new OptContainerSpec with value set to v.
-func NewOptContainerSpec(v ContainerSpec) OptContainerSpec {
-	return OptContainerSpec{
+// NewOptContainerSpecSecurityClass returns new OptContainerSpecSecurityClass with value set to v.
+func NewOptContainerSpecSecurityClass(v ContainerSpecSecurityClass) OptContainerSpecSecurityClass {
+	return OptContainerSpecSecurityClass{
 		Value: v,
 		Set:   true,
 	}
 }
 
-// OptContainerSpec is optional ContainerSpec.
-type OptContainerSpec struct {
-	Value ContainerSpec
+// OptContainerSpecSecurityClass is optional ContainerSpecSecurityClass.
+type OptContainerSpecSecurityClass struct {
+	Value ContainerSpecSecurityClass
 	Set   bool
 }
 
-// IsSet returns true if OptContainerSpec was set.
-func (o OptContainerSpec) IsSet() bool { return o.Set }
+// IsSet returns true if OptContainerSpecSecurityClass was set.
+func (o OptContainerSpecSecurityClass) IsSet() bool { return o.Set }
 
 // Reset unsets value.
-func (o *OptContainerSpec) Reset() {
-	var v ContainerSpec
+func (o *OptContainerSpecSecurityClass) Reset() {
+	var v ContainerSpecSecurityClass
 	o.Value = v
 	o.Set = false
 }
 
 // SetTo sets value to v.
-func (o *OptContainerSpec) SetTo(v ContainerSpec) {
+func (o *OptContainerSpecSecurityClass) SetTo(v ContainerSpecSecurityClass) {
 	o.Set = true
 	o.Value = v
 }
 
 // Get returns value and boolean that denotes whether value was set.
-func (o OptContainerSpec) Get() (v ContainerSpec, ok bool) {
+func (o OptContainerSpecSecurityClass) Get() (v ContainerSpecSecurityClass, ok bool) {
 	if !o.Set {
 		return v, false
 	}
@@ -6004,7 +5614,7 @@ func (o OptContainerSpec) Get() (v ContainerSpec, ok bool) {
 }
 
 // Or returns value if set, or given parameter if does not.
-func (o OptContainerSpec) Or(d ContainerSpec) ContainerSpec {
+func (o OptContainerSpecSecurityClass) Or(d ContainerSpecSecurityClass) ContainerSpecSecurityClass {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8449,98 +8059,6 @@ func (o OptInt64) Or(d int64) int64 {
 	return d
 }
 
-// NewOptLabelSelector returns new OptLabelSelector with value set to v.
-func NewOptLabelSelector(v LabelSelector) OptLabelSelector {
-	return OptLabelSelector{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptLabelSelector is optional LabelSelector.
-type OptLabelSelector struct {
-	Value LabelSelector
-	Set   bool
-}
-
-// IsSet returns true if OptLabelSelector was set.
-func (o OptLabelSelector) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptLabelSelector) Reset() {
-	var v LabelSelector
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptLabelSelector) SetTo(v LabelSelector) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptLabelSelector) Get() (v LabelSelector, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptLabelSelector) Or(d LabelSelector) LabelSelector {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptLabelSelectorMatchLabels returns new OptLabelSelectorMatchLabels with value set to v.
-func NewOptLabelSelectorMatchLabels(v LabelSelectorMatchLabels) OptLabelSelectorMatchLabels {
-	return OptLabelSelectorMatchLabels{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptLabelSelectorMatchLabels is optional LabelSelectorMatchLabels.
-type OptLabelSelectorMatchLabels struct {
-	Value LabelSelectorMatchLabels
-	Set   bool
-}
-
-// IsSet returns true if OptLabelSelectorMatchLabels was set.
-func (o OptLabelSelectorMatchLabels) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptLabelSelectorMatchLabels) Reset() {
-	var v LabelSelectorMatchLabels
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptLabelSelectorMatchLabels) SetTo(v LabelSelectorMatchLabels) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptLabelSelectorMatchLabels) Get() (v LabelSelectorMatchLabels, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptLabelSelectorMatchLabels) Or(d LabelSelectorMatchLabels) LabelSelectorMatchLabels {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptLoginResponse returns new OptLoginResponse with value set to v.
 func NewOptLoginResponse(v LoginResponse) OptLoginResponse {
 	return OptLoginResponse{
@@ -8851,98 +8369,6 @@ func (o OptNilString) Or(d string) string {
 	return d
 }
 
-// NewOptNodeAffinity returns new OptNodeAffinity with value set to v.
-func NewOptNodeAffinity(v NodeAffinity) OptNodeAffinity {
-	return OptNodeAffinity{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptNodeAffinity is optional NodeAffinity.
-type OptNodeAffinity struct {
-	Value NodeAffinity
-	Set   bool
-}
-
-// IsSet returns true if OptNodeAffinity was set.
-func (o OptNodeAffinity) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptNodeAffinity) Reset() {
-	var v NodeAffinity
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptNodeAffinity) SetTo(v NodeAffinity) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptNodeAffinity) Get() (v NodeAffinity, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptNodeAffinity) Or(d NodeAffinity) NodeAffinity {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptNodeSelector returns new OptNodeSelector with value set to v.
-func NewOptNodeSelector(v NodeSelector) OptNodeSelector {
-	return OptNodeSelector{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptNodeSelector is optional NodeSelector.
-type OptNodeSelector struct {
-	Value NodeSelector
-	Set   bool
-}
-
-// IsSet returns true if OptNodeSelector was set.
-func (o OptNodeSelector) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptNodeSelector) Reset() {
-	var v NodeSelector
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptNodeSelector) SetTo(v NodeSelector) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptNodeSelector) Get() (v NodeSelector, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptNodeSelector) Or(d NodeSelector) NodeSelector {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptObservabilityEventSource returns new OptObservabilityEventSource with value set to v.
 func NewOptObservabilityEventSource(v ObservabilityEventSource) OptObservabilityEventSource {
 	return OptObservabilityEventSource{
@@ -9121,190 +8547,6 @@ func (o OptPlaceholderSubstitutionProjection) Get() (v PlaceholderSubstitutionPr
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPlaceholderSubstitutionProjection) Or(d PlaceholderSubstitutionProjection) PlaceholderSubstitutionProjection {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPodAffinity returns new OptPodAffinity with value set to v.
-func NewOptPodAffinity(v PodAffinity) OptPodAffinity {
-	return OptPodAffinity{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPodAffinity is optional PodAffinity.
-type OptPodAffinity struct {
-	Value PodAffinity
-	Set   bool
-}
-
-// IsSet returns true if OptPodAffinity was set.
-func (o OptPodAffinity) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPodAffinity) Reset() {
-	var v PodAffinity
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPodAffinity) SetTo(v PodAffinity) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPodAffinity) Get() (v PodAffinity, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPodAffinity) Or(d PodAffinity) PodAffinity {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPodSpecOverride returns new OptPodSpecOverride with value set to v.
-func NewOptPodSpecOverride(v PodSpecOverride) OptPodSpecOverride {
-	return OptPodSpecOverride{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPodSpecOverride is optional PodSpecOverride.
-type OptPodSpecOverride struct {
-	Value PodSpecOverride
-	Set   bool
-}
-
-// IsSet returns true if OptPodSpecOverride was set.
-func (o OptPodSpecOverride) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPodSpecOverride) Reset() {
-	var v PodSpecOverride
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPodSpecOverride) SetTo(v PodSpecOverride) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPodSpecOverride) Get() (v PodSpecOverride, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPodSpecOverride) Or(d PodSpecOverride) PodSpecOverride {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPodSpecOverrideNodeSelector returns new OptPodSpecOverrideNodeSelector with value set to v.
-func NewOptPodSpecOverrideNodeSelector(v PodSpecOverrideNodeSelector) OptPodSpecOverrideNodeSelector {
-	return OptPodSpecOverrideNodeSelector{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPodSpecOverrideNodeSelector is optional PodSpecOverrideNodeSelector.
-type OptPodSpecOverrideNodeSelector struct {
-	Value PodSpecOverrideNodeSelector
-	Set   bool
-}
-
-// IsSet returns true if OptPodSpecOverrideNodeSelector was set.
-func (o OptPodSpecOverrideNodeSelector) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPodSpecOverrideNodeSelector) Reset() {
-	var v PodSpecOverrideNodeSelector
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPodSpecOverrideNodeSelector) SetTo(v PodSpecOverrideNodeSelector) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPodSpecOverrideNodeSelector) Get() (v PodSpecOverrideNodeSelector, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPodSpecOverrideNodeSelector) Or(d PodSpecOverrideNodeSelector) PodSpecOverrideNodeSelector {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPoolStrategy returns new OptPoolStrategy with value set to v.
-func NewOptPoolStrategy(v PoolStrategy) OptPoolStrategy {
-	return OptPoolStrategy{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPoolStrategy is optional PoolStrategy.
-type OptPoolStrategy struct {
-	Value PoolStrategy
-	Set   bool
-}
-
-// IsSet returns true if OptPoolStrategy was set.
-func (o OptPoolStrategy) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPoolStrategy) Reset() {
-	var v PoolStrategy
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPoolStrategy) SetTo(v PoolStrategy) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPoolStrategy) Get() (v PoolStrategy, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPoolStrategy) Or(d PoolStrategy) PoolStrategy {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9535,6 +8777,52 @@ func (o OptREPLReadyMode) Get() (v REPLReadyMode, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptREPLReadyMode) Or(d REPLReadyMode) REPLReadyMode {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptRebaseSandboxRootFSResponse returns new OptRebaseSandboxRootFSResponse with value set to v.
+func NewOptRebaseSandboxRootFSResponse(v RebaseSandboxRootFSResponse) OptRebaseSandboxRootFSResponse {
+	return OptRebaseSandboxRootFSResponse{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptRebaseSandboxRootFSResponse is optional RebaseSandboxRootFSResponse.
+type OptRebaseSandboxRootFSResponse struct {
+	Value RebaseSandboxRootFSResponse
+	Set   bool
+}
+
+// IsSet returns true if OptRebaseSandboxRootFSResponse was set.
+func (o OptRebaseSandboxRootFSResponse) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptRebaseSandboxRootFSResponse) Reset() {
+	var v RebaseSandboxRootFSResponse
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptRebaseSandboxRootFSResponse) SetTo(v RebaseSandboxRootFSResponse) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptRebaseSandboxRootFSResponse) Get() (v RebaseSandboxRootFSResponse, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptRebaseSandboxRootFSResponse) Or(d RebaseSandboxRootFSResponse) RebaseSandboxRootFSResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11703,144 +10991,6 @@ func (o OptSandboxUpdateConfig) Or(d SandboxUpdateConfig) SandboxUpdateConfig {
 	return d
 }
 
-// NewOptSandboxUpdateConfigEnvVars returns new OptSandboxUpdateConfigEnvVars with value set to v.
-func NewOptSandboxUpdateConfigEnvVars(v SandboxUpdateConfigEnvVars) OptSandboxUpdateConfigEnvVars {
-	return OptSandboxUpdateConfigEnvVars{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxUpdateConfigEnvVars is optional SandboxUpdateConfigEnvVars.
-type OptSandboxUpdateConfigEnvVars struct {
-	Value SandboxUpdateConfigEnvVars
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxUpdateConfigEnvVars was set.
-func (o OptSandboxUpdateConfigEnvVars) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxUpdateConfigEnvVars) Reset() {
-	var v SandboxUpdateConfigEnvVars
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxUpdateConfigEnvVars) SetTo(v SandboxUpdateConfigEnvVars) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxUpdateConfigEnvVars) Get() (v SandboxUpdateConfigEnvVars, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxUpdateConfigEnvVars) Or(d SandboxUpdateConfigEnvVars) SandboxUpdateConfigEnvVars {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSeccompProfile returns new OptSeccompProfile with value set to v.
-func NewOptSeccompProfile(v SeccompProfile) OptSeccompProfile {
-	return OptSeccompProfile{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSeccompProfile is optional SeccompProfile.
-type OptSeccompProfile struct {
-	Value SeccompProfile
-	Set   bool
-}
-
-// IsSet returns true if OptSeccompProfile was set.
-func (o OptSeccompProfile) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSeccompProfile) Reset() {
-	var v SeccompProfile
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSeccompProfile) SetTo(v SeccompProfile) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSeccompProfile) Get() (v SeccompProfile, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSeccompProfile) Or(d SeccompProfile) SeccompProfile {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSecurityContext returns new OptSecurityContext with value set to v.
-func NewOptSecurityContext(v SecurityContext) OptSecurityContext {
-	return OptSecurityContext{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSecurityContext is optional SecurityContext.
-type OptSecurityContext struct {
-	Value SecurityContext
-	Set   bool
-}
-
-// IsSet returns true if OptSecurityContext was set.
-func (o OptSecurityContext) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSecurityContext) Reset() {
-	var v SecurityContext
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSecurityContext) SetTo(v SecurityContext) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSecurityContext) Get() (v SecurityContext, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSecurityContext) Or(d SecurityContext) SecurityContext {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptStaticHeadersSourceSpec returns new OptStaticHeadersSourceSpec with value set to v.
 func NewOptStaticHeadersSourceSpec(v StaticHeadersSourceSpec) OptStaticHeadersSourceSpec {
 	return OptStaticHeadersSourceSpec{
@@ -13885,165 +13035,6 @@ func (s *PlaceholderSubstitutionProjection) SetReplacements(val []PlaceholderRep
 	s.Replacements = val
 }
 
-// Ref: #/components/schemas/PodAffinity
-type PodAffinity struct {
-	RequiredDuringSchedulingIgnoredDuringExecution  []PodAffinityTerm         `json:"requiredDuringSchedulingIgnoredDuringExecution"`
-	PreferredDuringSchedulingIgnoredDuringExecution []WeightedPodAffinityTerm `json:"preferredDuringSchedulingIgnoredDuringExecution"`
-}
-
-// GetRequiredDuringSchedulingIgnoredDuringExecution returns the value of RequiredDuringSchedulingIgnoredDuringExecution.
-func (s *PodAffinity) GetRequiredDuringSchedulingIgnoredDuringExecution() []PodAffinityTerm {
-	return s.RequiredDuringSchedulingIgnoredDuringExecution
-}
-
-// GetPreferredDuringSchedulingIgnoredDuringExecution returns the value of PreferredDuringSchedulingIgnoredDuringExecution.
-func (s *PodAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() []WeightedPodAffinityTerm {
-	return s.PreferredDuringSchedulingIgnoredDuringExecution
-}
-
-// SetRequiredDuringSchedulingIgnoredDuringExecution sets the value of RequiredDuringSchedulingIgnoredDuringExecution.
-func (s *PodAffinity) SetRequiredDuringSchedulingIgnoredDuringExecution(val []PodAffinityTerm) {
-	s.RequiredDuringSchedulingIgnoredDuringExecution = val
-}
-
-// SetPreferredDuringSchedulingIgnoredDuringExecution sets the value of PreferredDuringSchedulingIgnoredDuringExecution.
-func (s *PodAffinity) SetPreferredDuringSchedulingIgnoredDuringExecution(val []WeightedPodAffinityTerm) {
-	s.PreferredDuringSchedulingIgnoredDuringExecution = val
-}
-
-// Ref: #/components/schemas/PodAffinityTerm
-type PodAffinityTerm struct {
-	LabelSelector OptLabelSelector `json:"labelSelector"`
-	Namespaces    []string         `json:"namespaces"`
-	TopologyKey   string           `json:"topologyKey"`
-}
-
-// GetLabelSelector returns the value of LabelSelector.
-func (s *PodAffinityTerm) GetLabelSelector() OptLabelSelector {
-	return s.LabelSelector
-}
-
-// GetNamespaces returns the value of Namespaces.
-func (s *PodAffinityTerm) GetNamespaces() []string {
-	return s.Namespaces
-}
-
-// GetTopologyKey returns the value of TopologyKey.
-func (s *PodAffinityTerm) GetTopologyKey() string {
-	return s.TopologyKey
-}
-
-// SetLabelSelector sets the value of LabelSelector.
-func (s *PodAffinityTerm) SetLabelSelector(val OptLabelSelector) {
-	s.LabelSelector = val
-}
-
-// SetNamespaces sets the value of Namespaces.
-func (s *PodAffinityTerm) SetNamespaces(val []string) {
-	s.Namespaces = val
-}
-
-// SetTopologyKey sets the value of TopologyKey.
-func (s *PodAffinityTerm) SetTopologyKey(val string) {
-	s.TopologyKey = val
-}
-
-// Ref: #/components/schemas/PodSpecOverride
-type PodSpecOverride struct {
-	NodeSelector       OptPodSpecOverrideNodeSelector `json:"nodeSelector"`
-	Affinity           OptAffinity                    `json:"affinity"`
-	Tolerations        []Toleration                   `json:"tolerations"`
-	ServiceAccountName OptString                      `json:"serviceAccountName"`
-	EmptyDirMounts     []EmptyDirMountSpec            `json:"emptyDirMounts"`
-}
-
-// GetNodeSelector returns the value of NodeSelector.
-func (s *PodSpecOverride) GetNodeSelector() OptPodSpecOverrideNodeSelector {
-	return s.NodeSelector
-}
-
-// GetAffinity returns the value of Affinity.
-func (s *PodSpecOverride) GetAffinity() OptAffinity {
-	return s.Affinity
-}
-
-// GetTolerations returns the value of Tolerations.
-func (s *PodSpecOverride) GetTolerations() []Toleration {
-	return s.Tolerations
-}
-
-// GetServiceAccountName returns the value of ServiceAccountName.
-func (s *PodSpecOverride) GetServiceAccountName() OptString {
-	return s.ServiceAccountName
-}
-
-// GetEmptyDirMounts returns the value of EmptyDirMounts.
-func (s *PodSpecOverride) GetEmptyDirMounts() []EmptyDirMountSpec {
-	return s.EmptyDirMounts
-}
-
-// SetNodeSelector sets the value of NodeSelector.
-func (s *PodSpecOverride) SetNodeSelector(val OptPodSpecOverrideNodeSelector) {
-	s.NodeSelector = val
-}
-
-// SetAffinity sets the value of Affinity.
-func (s *PodSpecOverride) SetAffinity(val OptAffinity) {
-	s.Affinity = val
-}
-
-// SetTolerations sets the value of Tolerations.
-func (s *PodSpecOverride) SetTolerations(val []Toleration) {
-	s.Tolerations = val
-}
-
-// SetServiceAccountName sets the value of ServiceAccountName.
-func (s *PodSpecOverride) SetServiceAccountName(val OptString) {
-	s.ServiceAccountName = val
-}
-
-// SetEmptyDirMounts sets the value of EmptyDirMounts.
-func (s *PodSpecOverride) SetEmptyDirMounts(val []EmptyDirMountSpec) {
-	s.EmptyDirMounts = val
-}
-
-type PodSpecOverrideNodeSelector map[string]string
-
-func (s *PodSpecOverrideNodeSelector) init() PodSpecOverrideNodeSelector {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
-}
-
-// Ref: #/components/schemas/PoolStrategy
-type PoolStrategy struct {
-	MinIdle int32 `json:"minIdle"`
-	MaxIdle int32 `json:"maxIdle"`
-}
-
-// GetMinIdle returns the value of MinIdle.
-func (s *PoolStrategy) GetMinIdle() int32 {
-	return s.MinIdle
-}
-
-// GetMaxIdle returns the value of MaxIdle.
-func (s *PoolStrategy) GetMaxIdle() int32 {
-	return s.MaxIdle
-}
-
-// SetMinIdle sets the value of MinIdle.
-func (s *PoolStrategy) SetMinIdle(val int32) {
-	s.MinIdle = val
-}
-
-// SetMaxIdle sets the value of MaxIdle.
-func (s *PoolStrategy) SetMaxIdle(val int32) {
-	s.MaxIdle = val
-}
-
 // Ref: #/components/schemas/PortSpec
 type PortSpec struct {
 	Port     int32     `json:"port"`
@@ -14079,32 +13070,6 @@ func (s *PortSpec) SetProtocol(val OptString) {
 // SetEndPort sets the value of EndPort.
 func (s *PortSpec) SetEndPort(val OptInt32) {
 	s.EndPort = val
-}
-
-// Ref: #/components/schemas/PreferredSchedulingTerm
-type PreferredSchedulingTerm struct {
-	Weight     int32            `json:"weight"`
-	Preference NodeSelectorTerm `json:"preference"`
-}
-
-// GetWeight returns the value of Weight.
-func (s *PreferredSchedulingTerm) GetWeight() int32 {
-	return s.Weight
-}
-
-// GetPreference returns the value of Preference.
-func (s *PreferredSchedulingTerm) GetPreference() NodeSelectorTerm {
-	return s.Preference
-}
-
-// SetWeight sets the value of Weight.
-func (s *PreferredSchedulingTerm) SetWeight(val int32) {
-	s.Weight = val
-}
-
-// SetPreference sets the value of Preference.
-func (s *PreferredSchedulingTerm) SetPreference(val NodeSelectorTerm) {
-	s.Preference = val
 }
 
 // Ref: #/components/schemas/ProcessType
@@ -14671,6 +13636,93 @@ func (s *REPLReadyMode) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/RebaseSandboxRootFSRequest
+type RebaseSandboxRootFSRequest struct {
+	// Canonical SHA-256 digest of an already-attested immutable RootFS Base artifact.
+	TargetBaseArtifactDigest string `json:"target_base_artifact_digest"`
+	// Rollback retention in seconds. Defaults to 86400 seconds and cannot exceed seven days.
+	RollbackTTL OptInt32 `json:"rollback_ttl"`
+}
+
+// GetTargetBaseArtifactDigest returns the value of TargetBaseArtifactDigest.
+func (s *RebaseSandboxRootFSRequest) GetTargetBaseArtifactDigest() string {
+	return s.TargetBaseArtifactDigest
+}
+
+// GetRollbackTTL returns the value of RollbackTTL.
+func (s *RebaseSandboxRootFSRequest) GetRollbackTTL() OptInt32 {
+	return s.RollbackTTL
+}
+
+// SetTargetBaseArtifactDigest sets the value of TargetBaseArtifactDigest.
+func (s *RebaseSandboxRootFSRequest) SetTargetBaseArtifactDigest(val string) {
+	s.TargetBaseArtifactDigest = val
+}
+
+// SetRollbackTTL sets the value of RollbackTTL.
+func (s *RebaseSandboxRootFSRequest) SetRollbackTTL(val OptInt32) {
+	s.RollbackTTL = val
+}
+
+// Ref: #/components/schemas/RebaseSandboxRootFSResponse
+type RebaseSandboxRootFSResponse struct {
+	SandboxID          string                 `json:"sandbox_id"`
+	GenerationID       string                 `json:"generation_id"`
+	BaseArtifactDigest string                 `json:"base_artifact_digest"`
+	RollbackExpiresAt  time.Time              `json:"rollback_expires_at"`
+	Status             SandboxLifecycleStatus `json:"status"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *RebaseSandboxRootFSResponse) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetGenerationID returns the value of GenerationID.
+func (s *RebaseSandboxRootFSResponse) GetGenerationID() string {
+	return s.GenerationID
+}
+
+// GetBaseArtifactDigest returns the value of BaseArtifactDigest.
+func (s *RebaseSandboxRootFSResponse) GetBaseArtifactDigest() string {
+	return s.BaseArtifactDigest
+}
+
+// GetRollbackExpiresAt returns the value of RollbackExpiresAt.
+func (s *RebaseSandboxRootFSResponse) GetRollbackExpiresAt() time.Time {
+	return s.RollbackExpiresAt
+}
+
+// GetStatus returns the value of Status.
+func (s *RebaseSandboxRootFSResponse) GetStatus() SandboxLifecycleStatus {
+	return s.Status
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *RebaseSandboxRootFSResponse) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetGenerationID sets the value of GenerationID.
+func (s *RebaseSandboxRootFSResponse) SetGenerationID(val string) {
+	s.GenerationID = val
+}
+
+// SetBaseArtifactDigest sets the value of BaseArtifactDigest.
+func (s *RebaseSandboxRootFSResponse) SetBaseArtifactDigest(val string) {
+	s.BaseArtifactDigest = val
+}
+
+// SetRollbackExpiresAt sets the value of RollbackExpiresAt.
+func (s *RebaseSandboxRootFSResponse) SetRollbackExpiresAt(val time.Time) {
+	s.RollbackExpiresAt = val
+}
+
+// SetStatus sets the value of Status.
+func (s *RebaseSandboxRootFSResponse) SetStatus(val SandboxLifecycleStatus) {
+	s.Status = val
+}
+
 // Ref: #/components/schemas/RefreshRequest
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
@@ -15032,8 +14084,8 @@ type ResourceQuota struct {
 	// exceed the platform sandbox maximum, which defaults to 16Gi. Sandbox0 derives the internal CPU
 	// limit from platform configuration.
 	Memory string `json:"memory"`
-	// Ephemeral storage limit for the sandbox writable layer and container logs. Defaults to 8Gi when
-	// omitted.
+	// Immutable RootFS block-device size. Defaults to 8Gi when omitted; it must be an exact byte
+	// quantity between 300Mi and 1Ti and aligned to 4096 bytes.
 	EphemeralStorage OptString `json:"ephemeralStorage"`
 }
 
@@ -15416,7 +14468,8 @@ type Sandbox struct {
 	AutoResume bool                     `json:"auto_resume"`
 	Services   []SandboxAppService      `json:"services"`
 	Resources  OptSandboxResourceConfig `json:"resources"`
-	PodName    string                   `json:"pod_name"`
+	// Opaque identifier of the current physical runtime allocation. Empty while paused.
+	RuntimeID string `json:"runtime_id"`
 	// Monotonically increasing runtime generation. Resume starts a new generation.
 	RuntimeGeneration int64                   `json:"runtime_generation"`
 	SSH               OptSandboxSSHConnection `json:"ssh"`
@@ -15474,9 +14527,9 @@ func (s *Sandbox) GetResources() OptSandboxResourceConfig {
 	return s.Resources
 }
 
-// GetPodName returns the value of PodName.
-func (s *Sandbox) GetPodName() string {
-	return s.PodName
+// GetRuntimeID returns the value of RuntimeID.
+func (s *Sandbox) GetRuntimeID() string {
+	return s.RuntimeID
 }
 
 // GetRuntimeGeneration returns the value of RuntimeGeneration.
@@ -15559,9 +14612,9 @@ func (s *Sandbox) SetResources(val OptSandboxResourceConfig) {
 	s.Resources = val
 }
 
-// SetPodName sets the value of PodName.
-func (s *Sandbox) SetPodName(val string) {
-	s.PodName = val
+// SetRuntimeID sets the value of RuntimeID.
+func (s *Sandbox) SetRuntimeID(val string) {
+	s.RuntimeID = val
 }
 
 // SetRuntimeGeneration sets the value of RuntimeGeneration.
@@ -18081,7 +17134,7 @@ func (s *SandboxRefreshRequest) SetDuration(val OptInt32) {
 }
 
 // Instance-level sandbox resource override. Sandbox0 exposes memory only and derives CPU from the
-// platform memory-per-CPU ratio, with a minimum CPU limit of 150m.
+// platform memory-per-CPU ratio.
 // Ref: #/components/schemas/SandboxResourceConfig
 type SandboxResourceConfig struct {
 	// Sandbox memory limit. Must be at least 128Mi and no more than the platform sandbox maximum, which
@@ -19212,11 +18265,12 @@ func (s *SandboxServicesUpdateRequest) SetServices(val []SandboxAppService) {
 
 // Ref: #/components/schemas/SandboxStatus
 type SandboxStatus struct {
-	SandboxID     OptString                 `json:"sandbox_id"`
-	TemplateID    OptString                 `json:"template_id"`
-	TeamID        OptString                 `json:"team_id"`
-	UserID        OptString                 `json:"user_id"`
-	PodName       OptString                 `json:"pod_name"`
+	SandboxID  OptString `json:"sandbox_id"`
+	TemplateID OptString `json:"template_id"`
+	TeamID     OptString `json:"team_id"`
+	UserID     OptString `json:"user_id"`
+	// Opaque identifier of the current physical runtime allocation. Empty while paused.
+	RuntimeID     OptString                 `json:"runtime_id"`
 	Status        OptSandboxLifecycleStatus `json:"status"`
 	ClaimedAt     OptString                 `json:"claimed_at"`
 	ExpiresAt     OptNilDateTime            `json:"expires_at"`
@@ -19244,9 +18298,9 @@ func (s *SandboxStatus) GetUserID() OptString {
 	return s.UserID
 }
 
-// GetPodName returns the value of PodName.
-func (s *SandboxStatus) GetPodName() OptString {
-	return s.PodName
+// GetRuntimeID returns the value of RuntimeID.
+func (s *SandboxStatus) GetRuntimeID() OptString {
+	return s.RuntimeID
 }
 
 // GetStatus returns the value of Status.
@@ -19294,9 +18348,9 @@ func (s *SandboxStatus) SetUserID(val OptString) {
 	s.UserID = val
 }
 
-// SetPodName sets the value of PodName.
-func (s *SandboxStatus) SetPodName(val OptString) {
-	s.PodName = val
+// SetRuntimeID sets the value of RuntimeID.
+func (s *SandboxStatus) SetRuntimeID(val OptString) {
+	s.RuntimeID = val
 }
 
 // SetStatus sets the value of Status.
@@ -19443,76 +18497,16 @@ func (s *SandboxSummary) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
-// Ref: #/components/schemas/SandboxTemplateCondition
-type SandboxTemplateCondition struct {
-	Type               OptString   `json:"type"`
-	Status             OptString   `json:"status"`
-	LastTransitionTime OptDateTime `json:"lastTransitionTime"`
-	Reason             OptString   `json:"reason"`
-	Message            OptString   `json:"message"`
-}
-
-// GetType returns the value of Type.
-func (s *SandboxTemplateCondition) GetType() OptString {
-	return s.Type
-}
-
-// GetStatus returns the value of Status.
-func (s *SandboxTemplateCondition) GetStatus() OptString {
-	return s.Status
-}
-
-// GetLastTransitionTime returns the value of LastTransitionTime.
-func (s *SandboxTemplateCondition) GetLastTransitionTime() OptDateTime {
-	return s.LastTransitionTime
-}
-
-// GetReason returns the value of Reason.
-func (s *SandboxTemplateCondition) GetReason() OptString {
-	return s.Reason
-}
-
-// GetMessage returns the value of Message.
-func (s *SandboxTemplateCondition) GetMessage() OptString {
-	return s.Message
-}
-
-// SetType sets the value of Type.
-func (s *SandboxTemplateCondition) SetType(val OptString) {
-	s.Type = val
-}
-
-// SetStatus sets the value of Status.
-func (s *SandboxTemplateCondition) SetStatus(val OptString) {
-	s.Status = val
-}
-
-// SetLastTransitionTime sets the value of LastTransitionTime.
-func (s *SandboxTemplateCondition) SetLastTransitionTime(val OptDateTime) {
-	s.LastTransitionTime = val
-}
-
-// SetReason sets the value of Reason.
-func (s *SandboxTemplateCondition) SetReason(val OptString) {
-	s.Reason = val
-}
-
-// SetMessage sets the value of Message.
-func (s *SandboxTemplateCondition) SetMessage(val OptString) {
-	s.Message = val
-}
-
 // Ref: #/components/schemas/SandboxTemplateSpec
 type SandboxTemplateSpec struct {
-	Description   OptString                     `json:"description"`
-	DisplayName   OptString                     `json:"displayName"`
-	Tags          []string                      `json:"tags"`
-	MainContainer OptContainerSpec              `json:"mainContainer"`
-	Pod           OptPodSpecOverride            `json:"pod"`
-	Network       OptSandboxNetworkPolicy       `json:"network"`
-	Pool          OptPoolStrategy               `json:"pool"`
-	EnvVars       OptSandboxTemplateSpecEnvVars `json:"envVars"`
-	ClusterId     OptString                     `json:"clusterId"`
+	Description   OptString     `json:"description"`
+	DisplayName   OptString     `json:"displayName"`
+	Tags          []string      `json:"tags"`
+	MainContainer ContainerSpec `json:"mainContainer"`
+	// Claim-lifetime tmpfs mounts excluded from pause, resume, fork, and snapshot RootFS generations.
+	EphemeralMounts []EphemeralMountSpec          `json:"ephemeralMounts"`
+	Network         OptSandboxNetworkPolicy       `json:"network"`
+	EnvVars         OptSandboxTemplateSpecEnvVars `json:"envVars"`
 }
 
 // GetDescription returns the value of Description.
@@ -19531,13 +18525,13 @@ func (s *SandboxTemplateSpec) GetTags() []string {
 }
 
 // GetMainContainer returns the value of MainContainer.
-func (s *SandboxTemplateSpec) GetMainContainer() OptContainerSpec {
+func (s *SandboxTemplateSpec) GetMainContainer() ContainerSpec {
 	return s.MainContainer
 }
 
-// GetPod returns the value of Pod.
-func (s *SandboxTemplateSpec) GetPod() OptPodSpecOverride {
-	return s.Pod
+// GetEphemeralMounts returns the value of EphemeralMounts.
+func (s *SandboxTemplateSpec) GetEphemeralMounts() []EphemeralMountSpec {
+	return s.EphemeralMounts
 }
 
 // GetNetwork returns the value of Network.
@@ -19545,19 +18539,9 @@ func (s *SandboxTemplateSpec) GetNetwork() OptSandboxNetworkPolicy {
 	return s.Network
 }
 
-// GetPool returns the value of Pool.
-func (s *SandboxTemplateSpec) GetPool() OptPoolStrategy {
-	return s.Pool
-}
-
 // GetEnvVars returns the value of EnvVars.
 func (s *SandboxTemplateSpec) GetEnvVars() OptSandboxTemplateSpecEnvVars {
 	return s.EnvVars
-}
-
-// GetClusterId returns the value of ClusterId.
-func (s *SandboxTemplateSpec) GetClusterId() OptString {
-	return s.ClusterId
 }
 
 // SetDescription sets the value of Description.
@@ -19576,13 +18560,13 @@ func (s *SandboxTemplateSpec) SetTags(val []string) {
 }
 
 // SetMainContainer sets the value of MainContainer.
-func (s *SandboxTemplateSpec) SetMainContainer(val OptContainerSpec) {
+func (s *SandboxTemplateSpec) SetMainContainer(val ContainerSpec) {
 	s.MainContainer = val
 }
 
-// SetPod sets the value of Pod.
-func (s *SandboxTemplateSpec) SetPod(val OptPodSpecOverride) {
-	s.Pod = val
+// SetEphemeralMounts sets the value of EphemeralMounts.
+func (s *SandboxTemplateSpec) SetEphemeralMounts(val []EphemeralMountSpec) {
+	s.EphemeralMounts = val
 }
 
 // SetNetwork sets the value of Network.
@@ -19590,19 +18574,9 @@ func (s *SandboxTemplateSpec) SetNetwork(val OptSandboxNetworkPolicy) {
 	s.Network = val
 }
 
-// SetPool sets the value of Pool.
-func (s *SandboxTemplateSpec) SetPool(val OptPoolStrategy) {
-	s.Pool = val
-}
-
 // SetEnvVars sets the value of EnvVars.
 func (s *SandboxTemplateSpec) SetEnvVars(val OptSandboxTemplateSpecEnvVars) {
 	s.EnvVars = val
-}
-
-// SetClusterId sets the value of ClusterId.
-func (s *SandboxTemplateSpec) SetClusterId(val OptString) {
-	s.ClusterId = val
 }
 
 type SandboxTemplateSpecEnvVars map[string]string
@@ -19618,31 +18592,7 @@ func (s *SandboxTemplateSpecEnvVars) init() SandboxTemplateSpecEnvVars {
 
 // Ref: #/components/schemas/SandboxTemplateStatus
 type SandboxTemplateStatus struct {
-	IdleCount      OptInt32                   `json:"idleCount"`
-	ActiveCount    OptInt32                   `json:"activeCount"`
-	Conditions     []SandboxTemplateCondition `json:"conditions"`
-	LastUpdateTime OptNilDateTime             `json:"lastUpdateTime"`
-	Creation       OptTemplateCreationStatus  `json:"creation"`
-}
-
-// GetIdleCount returns the value of IdleCount.
-func (s *SandboxTemplateStatus) GetIdleCount() OptInt32 {
-	return s.IdleCount
-}
-
-// GetActiveCount returns the value of ActiveCount.
-func (s *SandboxTemplateStatus) GetActiveCount() OptInt32 {
-	return s.ActiveCount
-}
-
-// GetConditions returns the value of Conditions.
-func (s *SandboxTemplateStatus) GetConditions() []SandboxTemplateCondition {
-	return s.Conditions
-}
-
-// GetLastUpdateTime returns the value of LastUpdateTime.
-func (s *SandboxTemplateStatus) GetLastUpdateTime() OptNilDateTime {
-	return s.LastUpdateTime
+	Creation OptTemplateCreationStatus `json:"creation"`
 }
 
 // GetCreation returns the value of Creation.
@@ -19650,47 +18600,22 @@ func (s *SandboxTemplateStatus) GetCreation() OptTemplateCreationStatus {
 	return s.Creation
 }
 
-// SetIdleCount sets the value of IdleCount.
-func (s *SandboxTemplateStatus) SetIdleCount(val OptInt32) {
-	s.IdleCount = val
-}
-
-// SetActiveCount sets the value of ActiveCount.
-func (s *SandboxTemplateStatus) SetActiveCount(val OptInt32) {
-	s.ActiveCount = val
-}
-
-// SetConditions sets the value of Conditions.
-func (s *SandboxTemplateStatus) SetConditions(val []SandboxTemplateCondition) {
-	s.Conditions = val
-}
-
-// SetLastUpdateTime sets the value of LastUpdateTime.
-func (s *SandboxTemplateStatus) SetLastUpdateTime(val OptNilDateTime) {
-	s.LastUpdateTime = val
-}
-
 // SetCreation sets the value of Creation.
 func (s *SandboxTemplateStatus) SetCreation(val OptTemplateCreationStatus) {
 	s.Creation = val
 }
 
-// Subset of SandboxConfig fields that can be updated at runtime without restarting the sandbox.
-// Note: env_vars only affect new processes. webhook is not included as it requires restart.
+// Durable lifecycle and service fields that can be updated without replacing
+// the current runtime allocation. Network policy uses the dedicated network
+// endpoint. Environment, resource, and webhook changes require a new runtime.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
-	// Sandbox-level environment variables used as defaults for new procd-managed
-	// processes. Omitting this field preserves the existing environment map; passing
-	// an empty object clears it.
-	EnvVars   OptSandboxUpdateConfigEnvVars `json:"env_vars"`
-	Resources OptSandboxResourceConfig      `json:"resources"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
 	// Sandbox hard time-to-live in seconds. When it expires, Sandbox0 deletes the sandbox identity and
 	// durable state, including paused rootfs checkpoints.
-	HardTTL OptInt32                `json:"hard_ttl"`
-	Network OptSandboxNetworkPolicy `json:"network"`
+	HardTTL OptInt32 `json:"hard_ttl"`
 	// Controls whether supported inbound API or public exposure requests may automatically
 	// make an inactive sandbox available. This setting does not control platform-initiated
 	// runtime fault recovery. A supported access request returns `503 unavailable` with
@@ -19698,16 +18623,6 @@ type SandboxUpdateConfig struct {
 	// `503 sandbox_resume_failed` when that resume attempt has ended unsuccessfully.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
-}
-
-// GetEnvVars returns the value of EnvVars.
-func (s *SandboxUpdateConfig) GetEnvVars() OptSandboxUpdateConfigEnvVars {
-	return s.EnvVars
-}
-
-// GetResources returns the value of Resources.
-func (s *SandboxUpdateConfig) GetResources() OptSandboxResourceConfig {
-	return s.Resources
 }
 
 // GetTTL returns the value of TTL.
@@ -19720,11 +18635,6 @@ func (s *SandboxUpdateConfig) GetHardTTL() OptInt32 {
 	return s.HardTTL
 }
 
-// GetNetwork returns the value of Network.
-func (s *SandboxUpdateConfig) GetNetwork() OptSandboxNetworkPolicy {
-	return s.Network
-}
-
 // GetAutoResume returns the value of AutoResume.
 func (s *SandboxUpdateConfig) GetAutoResume() OptBool {
 	return s.AutoResume
@@ -19733,16 +18643,6 @@ func (s *SandboxUpdateConfig) GetAutoResume() OptBool {
 // GetServices returns the value of Services.
 func (s *SandboxUpdateConfig) GetServices() []SandboxAppService {
 	return s.Services
-}
-
-// SetEnvVars sets the value of EnvVars.
-func (s *SandboxUpdateConfig) SetEnvVars(val OptSandboxUpdateConfigEnvVars) {
-	s.EnvVars = val
-}
-
-// SetResources sets the value of Resources.
-func (s *SandboxUpdateConfig) SetResources(val OptSandboxResourceConfig) {
-	s.Resources = val
 }
 
 // SetTTL sets the value of TTL.
@@ -19755,11 +18655,6 @@ func (s *SandboxUpdateConfig) SetHardTTL(val OptInt32) {
 	s.HardTTL = val
 }
 
-// SetNetwork sets the value of Network.
-func (s *SandboxUpdateConfig) SetNetwork(val OptSandboxNetworkPolicy) {
-	s.Network = val
-}
-
 // SetAutoResume sets the value of AutoResume.
 func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
 	s.AutoResume = val
@@ -19768,20 +18663,6 @@ func (s *SandboxUpdateConfig) SetAutoResume(val OptBool) {
 // SetServices sets the value of Services.
 func (s *SandboxUpdateConfig) SetServices(val []SandboxAppService) {
 	s.Services = val
-}
-
-// Sandbox-level environment variables used as defaults for new procd-managed
-// processes. Omitting this field preserves the existing environment map; passing
-// an empty object clears it.
-type SandboxUpdateConfigEnvVars map[string]string
-
-func (s *SandboxUpdateConfigEnvVars) init() SandboxUpdateConfigEnvVars {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
 }
 
 // Ref: #/components/schemas/SandboxUpdateRequest
@@ -19797,183 +18678,6 @@ func (s *SandboxUpdateRequest) GetConfig() OptSandboxUpdateConfig {
 // SetConfig sets the value of Config.
 func (s *SandboxUpdateRequest) SetConfig(val OptSandboxUpdateConfig) {
 	s.Config = val
-}
-
-// Ref: #/components/schemas/SeccompProfile
-type SeccompProfile struct {
-	Type             SeccompProfileType `json:"type"`
-	LocalhostProfile OptString          `json:"localhostProfile"`
-}
-
-// GetType returns the value of Type.
-func (s *SeccompProfile) GetType() SeccompProfileType {
-	return s.Type
-}
-
-// GetLocalhostProfile returns the value of LocalhostProfile.
-func (s *SeccompProfile) GetLocalhostProfile() OptString {
-	return s.LocalhostProfile
-}
-
-// SetType sets the value of Type.
-func (s *SeccompProfile) SetType(val SeccompProfileType) {
-	s.Type = val
-}
-
-// SetLocalhostProfile sets the value of LocalhostProfile.
-func (s *SeccompProfile) SetLocalhostProfile(val OptString) {
-	s.LocalhostProfile = val
-}
-
-type SeccompProfileType string
-
-const (
-	SeccompProfileTypeUnconfined     SeccompProfileType = "Unconfined"
-	SeccompProfileTypeRuntimeDefault SeccompProfileType = "RuntimeDefault"
-	SeccompProfileTypeLocalhost      SeccompProfileType = "Localhost"
-)
-
-// AllValues returns all SeccompProfileType values.
-func (SeccompProfileType) AllValues() []SeccompProfileType {
-	return []SeccompProfileType{
-		SeccompProfileTypeUnconfined,
-		SeccompProfileTypeRuntimeDefault,
-		SeccompProfileTypeLocalhost,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s SeccompProfileType) MarshalText() ([]byte, error) {
-	switch s {
-	case SeccompProfileTypeUnconfined:
-		return []byte(s), nil
-	case SeccompProfileTypeRuntimeDefault:
-		return []byte(s), nil
-	case SeccompProfileTypeLocalhost:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *SeccompProfileType) UnmarshalText(data []byte) error {
-	switch SeccompProfileType(data) {
-	case SeccompProfileTypeUnconfined:
-		*s = SeccompProfileTypeUnconfined
-		return nil
-	case SeccompProfileTypeRuntimeDefault:
-		*s = SeccompProfileTypeRuntimeDefault
-		return nil
-	case SeccompProfileTypeLocalhost:
-		*s = SeccompProfileTypeLocalhost
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-// Ref: #/components/schemas/SecurityContext
-type SecurityContext struct {
-	Capabilities             OptCapabilities    `json:"capabilities"`
-	Privileged               OptBool            `json:"privileged"`
-	RunAsUser                OptInt64           `json:"runAsUser"`
-	RunAsGroup               OptInt64           `json:"runAsGroup"`
-	RunAsNonRoot             OptBool            `json:"runAsNonRoot"`
-	ReadOnlyRootFilesystem   OptBool            `json:"readOnlyRootFilesystem"`
-	AllowPrivilegeEscalation OptBool            `json:"allowPrivilegeEscalation"`
-	SeccompProfile           OptSeccompProfile  `json:"seccompProfile"`
-	AppArmorProfile          OptAppArmorProfile `json:"appArmorProfile"`
-}
-
-// GetCapabilities returns the value of Capabilities.
-func (s *SecurityContext) GetCapabilities() OptCapabilities {
-	return s.Capabilities
-}
-
-// GetPrivileged returns the value of Privileged.
-func (s *SecurityContext) GetPrivileged() OptBool {
-	return s.Privileged
-}
-
-// GetRunAsUser returns the value of RunAsUser.
-func (s *SecurityContext) GetRunAsUser() OptInt64 {
-	return s.RunAsUser
-}
-
-// GetRunAsGroup returns the value of RunAsGroup.
-func (s *SecurityContext) GetRunAsGroup() OptInt64 {
-	return s.RunAsGroup
-}
-
-// GetRunAsNonRoot returns the value of RunAsNonRoot.
-func (s *SecurityContext) GetRunAsNonRoot() OptBool {
-	return s.RunAsNonRoot
-}
-
-// GetReadOnlyRootFilesystem returns the value of ReadOnlyRootFilesystem.
-func (s *SecurityContext) GetReadOnlyRootFilesystem() OptBool {
-	return s.ReadOnlyRootFilesystem
-}
-
-// GetAllowPrivilegeEscalation returns the value of AllowPrivilegeEscalation.
-func (s *SecurityContext) GetAllowPrivilegeEscalation() OptBool {
-	return s.AllowPrivilegeEscalation
-}
-
-// GetSeccompProfile returns the value of SeccompProfile.
-func (s *SecurityContext) GetSeccompProfile() OptSeccompProfile {
-	return s.SeccompProfile
-}
-
-// GetAppArmorProfile returns the value of AppArmorProfile.
-func (s *SecurityContext) GetAppArmorProfile() OptAppArmorProfile {
-	return s.AppArmorProfile
-}
-
-// SetCapabilities sets the value of Capabilities.
-func (s *SecurityContext) SetCapabilities(val OptCapabilities) {
-	s.Capabilities = val
-}
-
-// SetPrivileged sets the value of Privileged.
-func (s *SecurityContext) SetPrivileged(val OptBool) {
-	s.Privileged = val
-}
-
-// SetRunAsUser sets the value of RunAsUser.
-func (s *SecurityContext) SetRunAsUser(val OptInt64) {
-	s.RunAsUser = val
-}
-
-// SetRunAsGroup sets the value of RunAsGroup.
-func (s *SecurityContext) SetRunAsGroup(val OptInt64) {
-	s.RunAsGroup = val
-}
-
-// SetRunAsNonRoot sets the value of RunAsNonRoot.
-func (s *SecurityContext) SetRunAsNonRoot(val OptBool) {
-	s.RunAsNonRoot = val
-}
-
-// SetReadOnlyRootFilesystem sets the value of ReadOnlyRootFilesystem.
-func (s *SecurityContext) SetReadOnlyRootFilesystem(val OptBool) {
-	s.ReadOnlyRootFilesystem = val
-}
-
-// SetAllowPrivilegeEscalation sets the value of AllowPrivilegeEscalation.
-func (s *SecurityContext) SetAllowPrivilegeEscalation(val OptBool) {
-	s.AllowPrivilegeEscalation = val
-}
-
-// SetSeccompProfile sets the value of SeccompProfile.
-func (s *SecurityContext) SetSeccompProfile(val OptSeccompProfile) {
-	s.SeccompProfile = val
-}
-
-// SetAppArmorProfile sets the value of AppArmorProfile.
-func (s *SecurityContext) SetAppArmorProfile(val OptAppArmorProfile) {
-	s.AppArmorProfile = val
 }
 
 // Ref: #/components/schemas/SignalContextRequest
@@ -21536,6 +20240,49 @@ const (
 func (SuccessPauseSandboxResponseSuccess) AllValues() []SuccessPauseSandboxResponseSuccess {
 	return []SuccessPauseSandboxResponseSuccess{
 		SuccessPauseSandboxResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessRebaseSandboxRootFSResponse
+type SuccessRebaseSandboxRootFSResponse struct {
+	Success SuccessRebaseSandboxRootFSResponseSuccess `json:"success"`
+	// Merged property.
+	Data OptRebaseSandboxRootFSResponse `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessRebaseSandboxRootFSResponse) GetSuccess() SuccessRebaseSandboxRootFSResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessRebaseSandboxRootFSResponse) GetData() OptRebaseSandboxRootFSResponse {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessRebaseSandboxRootFSResponse) SetSuccess(val SuccessRebaseSandboxRootFSResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessRebaseSandboxRootFSResponse) SetData(val OptRebaseSandboxRootFSResponse) {
+	s.Data = val
+}
+
+func (*SuccessRebaseSandboxRootFSResponse) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
+type SuccessRebaseSandboxRootFSResponseSuccess bool
+
+const (
+	SuccessRebaseSandboxRootFSResponseSuccessTrue SuccessRebaseSandboxRootFSResponseSuccess = true
+)
+
+// AllValues returns all SuccessRebaseSandboxRootFSResponseSuccess values.
+func (SuccessRebaseSandboxRootFSResponseSuccess) AllValues() []SuccessRebaseSandboxRootFSResponseSuccess {
+	return []SuccessRebaseSandboxRootFSResponseSuccess{
+		SuccessRebaseSandboxRootFSResponseSuccessTrue,
 	}
 }
 
@@ -23957,10 +22704,8 @@ func (s *TemplateCreateRequest) SetSpec(val SandboxTemplateSpec) {
 
 // Asynchronous creation status for templates built from a sandbox.
 // Traditional image-based templates omit this object and are ready
-// immediately after creation. Ready means the template is visible in at
-// least one data-plane cluster and the claim API accepts it; when the
-// pool is zero, it does not imply that a sandbox image has already been
-// pulled.
+// immediately after creation. Ready means the regional template source
+// has been committed and the claim API may consume it.
 // Ref: #/components/schemas/TemplateCreationStatus
 type TemplateCreationStatus struct {
 	State       TemplateCreationStatusState `json:"state"`
@@ -23968,10 +22713,8 @@ type TemplateCreationStatus struct {
 	StartedAt   OptDateTime                 `json:"startedAt"`
 	CapturedAt  OptDateTime                 `json:"capturedAt"`
 	CompletedAt OptDateTime                 `json:"completedAt"`
-	// Digest-pinned image reference published to the configured team registry.
-	OutputImage OptString `json:"outputImage"`
-	Reason      OptString `json:"reason"`
-	Message     OptString `json:"message"`
+	Reason      OptString                   `json:"reason"`
+	Message     OptString                   `json:"message"`
 }
 
 // GetState returns the value of State.
@@ -23997,11 +22740,6 @@ func (s *TemplateCreationStatus) GetCapturedAt() OptDateTime {
 // GetCompletedAt returns the value of CompletedAt.
 func (s *TemplateCreationStatus) GetCompletedAt() OptDateTime {
 	return s.CompletedAt
-}
-
-// GetOutputImage returns the value of OutputImage.
-func (s *TemplateCreationStatus) GetOutputImage() OptString {
-	return s.OutputImage
 }
 
 // GetReason returns the value of Reason.
@@ -24039,11 +22777,6 @@ func (s *TemplateCreationStatus) SetCompletedAt(val OptDateTime) {
 	s.CompletedAt = val
 }
 
-// SetOutputImage sets the value of OutputImage.
-func (s *TemplateCreationStatus) SetOutputImage(val OptString) {
-	s.OutputImage = val
-}
-
 // SetReason sets the value of Reason.
 func (s *TemplateCreationStatus) SetReason(val OptString) {
 	s.Reason = val
@@ -24057,9 +22790,8 @@ func (s *TemplateCreationStatus) SetMessage(val OptString) {
 type TemplateCreationStatusStage string
 
 const (
-	TemplateCreationStatusStageCapturing   TemplateCreationStatusStage = "capturing"
-	TemplateCreationStatusStagePublishing  TemplateCreationStatusStage = "publishing"
-	TemplateCreationStatusStageReconciling TemplateCreationStatusStage = "reconciling"
+	TemplateCreationStatusStageCapturing  TemplateCreationStatusStage = "capturing"
+	TemplateCreationStatusStagePublishing TemplateCreationStatusStage = "publishing"
 )
 
 // AllValues returns all TemplateCreationStatusStage values.
@@ -24067,7 +22799,6 @@ func (TemplateCreationStatusStage) AllValues() []TemplateCreationStatusStage {
 	return []TemplateCreationStatusStage{
 		TemplateCreationStatusStageCapturing,
 		TemplateCreationStatusStagePublishing,
-		TemplateCreationStatusStageReconciling,
 	}
 }
 
@@ -24077,8 +22808,6 @@ func (s TemplateCreationStatusStage) MarshalText() ([]byte, error) {
 	case TemplateCreationStatusStageCapturing:
 		return []byte(s), nil
 	case TemplateCreationStatusStagePublishing:
-		return []byte(s), nil
-	case TemplateCreationStatusStageReconciling:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -24093,9 +22822,6 @@ func (s *TemplateCreationStatusStage) UnmarshalText(data []byte) error {
 		return nil
 	case TemplateCreationStatusStagePublishing:
 		*s = TemplateCreationStatusStagePublishing
-		return nil
-	case TemplateCreationStatusStageReconciling:
-		*s = TemplateCreationStatusStageReconciling
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -24188,15 +22914,13 @@ func (s *TemplateFromSandboxCreateRequest) SetSpecOverrides(val OptTemplateFromS
 	s.SpecOverrides = val
 }
 
-// Safe template fields that may override values inherited from the source
-// sandbox's originating template. Pool defaults to zero idle sandboxes
-// when omitted.
+// Safe template fields that may override values inherited from the source sandbox's originating
+// template.
 // Ref: #/components/schemas/TemplateFromSandboxSpecOverrides
 type TemplateFromSandboxSpecOverrides struct {
-	Description OptString       `json:"description"`
-	DisplayName OptString       `json:"displayName"`
-	Tags        []string        `json:"tags"`
-	Pool        OptPoolStrategy `json:"pool"`
+	Description OptString `json:"description"`
+	DisplayName OptString `json:"displayName"`
+	Tags        []string  `json:"tags"`
 }
 
 // GetDescription returns the value of Description.
@@ -24214,11 +22938,6 @@ func (s *TemplateFromSandboxSpecOverrides) GetTags() []string {
 	return s.Tags
 }
 
-// GetPool returns the value of Pool.
-func (s *TemplateFromSandboxSpecOverrides) GetPool() OptPoolStrategy {
-	return s.Pool
-}
-
 // SetDescription sets the value of Description.
 func (s *TemplateFromSandboxSpecOverrides) SetDescription(val OptString) {
 	s.Description = val
@@ -24234,11 +22953,6 @@ func (s *TemplateFromSandboxSpecOverrides) SetTags(val []string) {
 	s.Tags = val
 }
 
-// SetPool sets the value of Pool.
-func (s *TemplateFromSandboxSpecOverrides) SetPool(val OptPoolStrategy) {
-	s.Pool = val
-}
-
 // Ref: #/components/schemas/TemplateUpdateRequest
 type TemplateUpdateRequest struct {
 	Spec SandboxTemplateSpec `json:"spec"`
@@ -24252,54 +22966,6 @@ func (s *TemplateUpdateRequest) GetSpec() SandboxTemplateSpec {
 // SetSpec sets the value of Spec.
 func (s *TemplateUpdateRequest) SetSpec(val SandboxTemplateSpec) {
 	s.Spec = val
-}
-
-// Ref: #/components/schemas/Toleration
-type Toleration struct {
-	Key      OptString `json:"key"`
-	Operator OptString `json:"operator"`
-	Value    OptString `json:"value"`
-	Effect   OptString `json:"effect"`
-}
-
-// GetKey returns the value of Key.
-func (s *Toleration) GetKey() OptString {
-	return s.Key
-}
-
-// GetOperator returns the value of Operator.
-func (s *Toleration) GetOperator() OptString {
-	return s.Operator
-}
-
-// GetValue returns the value of Value.
-func (s *Toleration) GetValue() OptString {
-	return s.Value
-}
-
-// GetEffect returns the value of Effect.
-func (s *Toleration) GetEffect() OptString {
-	return s.Effect
-}
-
-// SetKey sets the value of Key.
-func (s *Toleration) SetKey(val OptString) {
-	s.Key = val
-}
-
-// SetOperator sets the value of Operator.
-func (s *Toleration) SetOperator(val OptString) {
-	s.Operator = val
-}
-
-// SetValue sets the value of Value.
-func (s *Toleration) SetValue(val OptString) {
-	s.Value = val
-}
-
-// SetEffect sets the value of Effect.
-func (s *Toleration) SetEffect(val OptString) {
-	s.Effect = val
 }
 
 // Ref: #/components/schemas/TrafficRule
@@ -25077,30 +23743,4 @@ func (s *WebhookConfig) SetSecret(val OptString) {
 // SetWatchDir sets the value of WatchDir.
 func (s *WebhookConfig) SetWatchDir(val OptString) {
 	s.WatchDir = val
-}
-
-// Ref: #/components/schemas/WeightedPodAffinityTerm
-type WeightedPodAffinityTerm struct {
-	Weight          int32           `json:"weight"`
-	PodAffinityTerm PodAffinityTerm `json:"podAffinityTerm"`
-}
-
-// GetWeight returns the value of Weight.
-func (s *WeightedPodAffinityTerm) GetWeight() int32 {
-	return s.Weight
-}
-
-// GetPodAffinityTerm returns the value of PodAffinityTerm.
-func (s *WeightedPodAffinityTerm) GetPodAffinityTerm() PodAffinityTerm {
-	return s.PodAffinityTerm
-}
-
-// SetWeight sets the value of Weight.
-func (s *WeightedPodAffinityTerm) SetWeight(val int32) {
-	s.Weight = val
-}
-
-// SetPodAffinityTerm sets the value of PodAffinityTerm.
-func (s *WeightedPodAffinityTerm) SetPodAffinityTerm(val PodAffinityTerm) {
-	s.PodAffinityTerm = val
 }

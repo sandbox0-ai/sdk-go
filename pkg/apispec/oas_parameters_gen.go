@@ -269,6 +269,11 @@ type APIV1SandboxesIDResumePostParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDRootfsRebasePutParams is parameters of PUT /api/v1/sandboxes/{id}/rootfs/rebase operation.
+type APIV1SandboxesIDRootfsRebasePutParams struct {
+	ID string
+}
+
 // APIV1SandboxesIDRootfsRestorePostParams is parameters of POST /api/v1/sandboxes/{id}/rootfs/restore operation.
 type APIV1SandboxesIDRootfsRestorePostParams struct {
 	ID string
@@ -384,7 +389,7 @@ type APIV1SandboxesIDStatusGetParams struct {
 
 // APIV1TemplatesFromSandboxPostParams is parameters of POST /api/v1/templates/from-sandbox operation.
 type APIV1TemplatesFromSandboxPostParams struct {
-	// Optional key for retrying creation without starting a duplicate image build.
+	// Optional key for retrying creation without starting a duplicate RootFS capture.
 	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 

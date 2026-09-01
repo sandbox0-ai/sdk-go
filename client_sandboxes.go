@@ -2,9 +2,26 @@ package sandbox0
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
+
+const (
+	defaultSandboxLifecycleTimeout      = 60 * time.Second
+	defaultSandboxLifecyclePollInterval = 500 * time.Millisecond
+)
+
+// SandboxLifecyclePredicate decides whether a committed sandbox projection has
+// reached the state required by a caller.
+type SandboxLifecyclePredicate func(*apispec.Sandbox) bool
+
+// SandboxLifecycleWaitOptions configures lifecycle projection polling.
+type SandboxLifecycleWaitOptions struct {
+	Timeout      time.Duration
+	PollInterval time.Duration
+}
 
 type sandboxOptions struct {
 	config     *apispec.SandboxConfig
@@ -162,7 +179,7 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 			ID:                data.SandboxID,
 			Template:          data.Template,
 			ClusterID:         clusterID,
-			PodName:           data.PodName,
+			RuntimeID:         data.RuntimeID,
 			Status:            string(data.Status),
 			client:            c,
 			replContextByLang: map[string]string{},
@@ -191,6 +208,70 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 	}
 }
 
+// WaitForSandboxLifecycle polls committed sandbox details until predicate
+// matches, the context is canceled, or the wait times out.
+func (c *Client) WaitForSandboxLifecycle(
+	ctx context.Context,
+	sandboxID string,
+	predicate SandboxLifecyclePredicate,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	if predicate == nil {
+		return nil, errors.New("sandbox lifecycle predicate is required")
+	}
+	timeout := defaultSandboxLifecycleTimeout
+	pollInterval := defaultSandboxLifecyclePollInterval
+	if options != nil {
+		if options.Timeout < 0 {
+			return nil, errors.New("sandbox lifecycle timeout cannot be negative")
+		}
+		if options.PollInterval < 0 {
+			return nil, errors.New("sandbox lifecycle poll interval cannot be negative")
+		}
+		if options.Timeout > 0 {
+			timeout = options.Timeout
+		}
+		if options.PollInterval > 0 {
+			pollInterval = options.PollInterval
+		}
+	}
+
+	deadline := time.Now().Add(timeout)
+	var lastSandbox *apispec.Sandbox
+	for {
+		sandbox, err := c.GetSandbox(ctx, sandboxID)
+		if err != nil {
+			return nil, err
+		}
+		lastSandbox = sandbox
+		if predicate(sandbox) {
+			return sandbox, nil
+		}
+
+		remaining := time.Until(deadline)
+		if remaining <= 0 {
+			return nil, &SandboxWaitTimeoutError{
+				SandboxID:   sandboxID,
+				Timeout:     timeout,
+				LastSandbox: lastSandbox,
+			}
+		}
+		wait := pollInterval
+		if remaining < wait {
+			wait = remaining
+		}
+		timer := time.NewTimer(wait)
+		select {
+		case <-ctx.Done():
+			if !timer.Stop() {
+				<-timer.C
+			}
+			return nil, ctx.Err()
+		case <-timer.C:
+		}
+	}
+}
+
 // UpdateSandbox updates sandbox configuration.
 func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request apispec.SandboxUpdateRequest) (*apispec.Sandbox, error) {
 	resp, err := c.api.APIV1SandboxesIDPut(ctx, &request, apispec.APIV1SandboxesIDPutParams{ID: sandboxID})
@@ -207,18 +288,6 @@ func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request ap
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
-}
-
-// UpdateSandboxMemory updates the sandbox memory limit. Sandbox0 derives CPU
-// from the platform memory-per-CPU ratio.
-func (c *Client) UpdateSandboxMemory(ctx context.Context, sandboxID, memory string) (*apispec.Sandbox, error) {
-	return c.UpdateSandbox(ctx, sandboxID, apispec.SandboxUpdateRequest{
-		Config: apispec.NewOptSandboxUpdateConfig(apispec.SandboxUpdateConfig{
-			Resources: apispec.NewOptSandboxResourceConfig(apispec.SandboxResourceConfig{
-				Memory: apispec.NewOptString(memory),
-			}),
-		}),
-	})
 }
 
 // DeleteSandbox terminates a sandbox.
@@ -271,6 +340,21 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 	}
 }
 
+// PauseSandboxAndWait requests a pause and waits for the committed paused
+// projection, including its durable checkpoint.
+func (c *Client) PauseSandboxAndWait(
+	ctx context.Context,
+	sandboxID string,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	if _, err := c.PauseSandbox(ctx, sandboxID); err != nil {
+		return nil, err
+	}
+	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.Status == apispec.SandboxLifecycleStatusPaused && sandbox.Paused
+	}, options)
+}
+
 // ResumeSandbox resumes a sandbox.
 func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.ResumeSandboxResponse, error) {
 	resp, err := c.api.APIV1SandboxesIDResumePost(ctx, apispec.APIV1SandboxesIDResumePostParams{ID: sandboxID})
@@ -287,6 +371,30 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
+}
+
+// ResumeSandboxAndWait requests a resume and waits for the committed running
+// runtime generation.
+func (c *Client) ResumeSandboxAndWait(
+	ctx context.Context,
+	sandboxID string,
+	options *SandboxLifecycleWaitOptions,
+) (*apispec.Sandbox, error) {
+	before, err := c.GetSandbox(ctx, sandboxID)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := c.ResumeSandbox(ctx, sandboxID); err != nil {
+		return nil, err
+	}
+	minimumGeneration := before.RuntimeGeneration
+	if before.Paused || before.Status == apispec.SandboxLifecycleStatusPaused {
+		minimumGeneration++
+	}
+	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.Status == apispec.SandboxLifecycleStatusRunning &&
+			!sandbox.Paused && sandbox.RuntimeGeneration >= minimumGeneration
+	}, options)
 }
 
 // RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.
@@ -320,7 +428,7 @@ func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *
 	}
 }
 
-// CreateSandboxRootFSSnapshot creates a root filesystem snapshot for a paused sandbox.
+// CreateSandboxRootFSSnapshot creates a root filesystem snapshot for a running or paused sandbox.
 func (c *Client) CreateSandboxRootFSSnapshot(ctx context.Context, sandboxID string, request *apispec.CreateSandboxRootFSSnapshotRequest) (*apispec.SandboxRootFSSnapshot, error) {
 	var req apispec.OptCreateSandboxRootFSSnapshotRequest
 	if request != nil {
@@ -392,6 +500,24 @@ func (c *Client) DeleteSandboxRootFSSnapshot(ctx context.Context, snapshotID str
 	}
 }
 
+// RebaseSandboxRootFS applies a paused sandbox's file-level changes to a new immutable base artifact.
+func (c *Client) RebaseSandboxRootFS(ctx context.Context, sandboxID string, request apispec.RebaseSandboxRootFSRequest) (*apispec.RebaseSandboxRootFSResponse, error) {
+	resp, err := c.api.APIV1SandboxesIDRootfsRebasePut(ctx, &request, apispec.APIV1SandboxesIDRootfsRebasePutParams{ID: sandboxID})
+	if err != nil {
+		return nil, err
+	}
+	switch response := resp.(type) {
+	case *apispec.SuccessRebaseSandboxRootFSResponse:
+		data, ok := response.Data.Get()
+		if !ok {
+			return nil, unexpectedResponseError(response)
+		}
+		return &data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
+}
+
 // RestoreSandboxRootFS restores a paused sandbox root filesystem from a rootfs snapshot.
 func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, request apispec.RestoreSandboxRootFSRequest) (*apispec.RestoreSandboxRootFSResponse, error) {
 	resp, err := c.api.APIV1SandboxesIDRootfsRestorePost(ctx, &request, apispec.APIV1SandboxesIDRootfsRestorePostParams{ID: sandboxID})
@@ -410,7 +536,7 @@ func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, req
 	}
 }
 
-// ForkSandbox creates a paused sandbox fork from a paused source sandbox root filesystem.
+// ForkSandbox creates a paused sandbox fork from a running or paused source sandbox root filesystem.
 func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {
