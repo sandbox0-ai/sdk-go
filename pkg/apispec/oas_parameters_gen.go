@@ -164,6 +164,8 @@ type APIV1SandboxesIDFilesWatchGetParams struct {
 // APIV1SandboxesIDForkPostParams is parameters of POST /api/v1/sandboxes/{id}/fork operation.
 type APIV1SandboxesIDForkPostParams struct {
 	ID string
+	// Optional key for retrying the fork without creating a duplicate child sandbox.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDGetParams is parameters of GET /api/v1/sandboxes/{id} operation.

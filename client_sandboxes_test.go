@@ -510,6 +510,9 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 		if r.URL.Path != "/api/v1/sandboxes/sb_source/fork" {
 			t.Fatalf("path = %s, want /api/v1/sandboxes/sb_source/fork", r.URL.Path)
 		}
+		if got := r.Header.Get("Idempotency-Key"); got != "fork-request-one" {
+			t.Fatalf("Idempotency-Key = %q, want fork-request-one", got)
+		}
 
 		var req apispec.ForkSandboxRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -538,12 +541,12 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 	})
 	defer server.Close()
 
-	forked, err := client.ForkSandbox(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
+	forked, err := client.ForkSandboxWithOptions(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
 		Config: apispec.NewOptForkSandboxConfig(apispec.ForkSandboxConfig{
 			TTL:     apispec.NewOptInt32(60),
 			HardTTL: apispec.NewOptInt32(120),
 		}),
-	})
+	}, &ForkSandboxOptions{IdempotencyKey: "fork-request-one"})
 	if err != nil {
 		t.Fatalf("ForkSandbox() error = %v", err)
 	}

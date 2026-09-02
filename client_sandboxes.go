@@ -536,13 +536,27 @@ func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, req
 	}
 }
 
+// ForkSandboxOptions configures a retry-safe sandbox fork request.
+type ForkSandboxOptions struct {
+	IdempotencyKey string
+}
+
 // ForkSandbox creates a paused sandbox fork from a running or paused source sandbox root filesystem.
 func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
+	return c.ForkSandboxWithOptions(ctx, sandboxID, request, nil)
+}
+
+// ForkSandboxWithOptions creates a fork with an optional stable retry key.
+func (c *Client) ForkSandboxWithOptions(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest, options *ForkSandboxOptions) (*apispec.ForkSandboxResponse, error) {
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {
 		body = apispec.NewOptForkSandboxRequest(*request)
 	}
-	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, body, apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID})
+	params := apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID}
+	if options != nil && options.IdempotencyKey != "" {
+		params.IdempotencyKey = apispec.NewOptString(options.IdempotencyKey)
+	}
+	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, body, params)
 	if err != nil {
 		return nil, err
 	}
