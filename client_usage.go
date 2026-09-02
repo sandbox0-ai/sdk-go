@@ -39,9 +39,6 @@ func (c *Client) ListUsageWindows(
 	if !ok {
 		return nil, apiErrorFromResponse(resp)
 	}
-	data, ok := success.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(success)
-	}
+	data := success.Data
 	return &data, nil
 }

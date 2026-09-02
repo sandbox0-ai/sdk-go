@@ -20,14 +20,11 @@ func (s *Sandbox) ListContext(ctx context.Context) ([]apispec.ContextResponse, e
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessContextListResponse](resp)
+	if err != nil {
+		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return data.Contexts, nil
+	return response.Data.Contexts, nil
 }
 
 // CreateContext creates a new context.
@@ -36,10 +33,11 @@ func (s *Sandbox) CreateContext(ctx context.Context, request apispec.CreateConte
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessContextResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }
 
@@ -52,10 +50,11 @@ func (s *Sandbox) GetContext(ctx context.Context, contextID string) (*apispec.Co
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessContextResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }
 
@@ -68,7 +67,7 @@ func (s *Sandbox) DeleteContext(ctx context.Context, contextID string) (*apispec
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessDeletedResponse](resp)
 }
 
 // RestartContext restarts a context.
@@ -80,10 +79,11 @@ func (s *Sandbox) RestartContext(ctx context.Context, contextID string) (*apispe
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessContextResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }
 
@@ -96,7 +96,7 @@ func (s *Sandbox) ContextInput(ctx context.Context, contextID string, input stri
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessWrittenResponse](resp)
 }
 
 // ContextExec sends input and waits for completion.
@@ -108,10 +108,11 @@ func (s *Sandbox) ContextExec(ctx context.Context, contextID string, input strin
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessContextExecResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }
 
@@ -127,7 +128,7 @@ func (s *Sandbox) ContextResize(ctx context.Context, contextID string, rows, col
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessResizedResponse](resp)
 }
 
 // ContextSignal sends a signal to a context.
@@ -139,7 +140,7 @@ func (s *Sandbox) ContextSignal(ctx context.Context, contextID, signal string) (
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessSignaledResponse](resp)
 }
 
 // ConnectWSContext opens a WebSocket stream for a context.

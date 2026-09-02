@@ -224,10 +224,7 @@ func TestClientCredentialSources(t *testing.T) {
 		if err != nil {
 			t.Fatalf("DeleteCredentialSource() error = %v", err)
 		}
-		data, ok := resp.Data.Get()
-		if !ok {
-			t.Fatal("response data not set")
-		}
+		data := resp.Data
 		message, ok := data.Message.Get()
 		if !ok || message != "deleted" {
 			t.Fatalf("message = %q, want deleted", message)

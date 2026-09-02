@@ -187,3 +187,11 @@ func unexpectedResponseError(res any) *APIError {
 		Message:    "unexpected response",
 	}
 }
+
+func expectResponse[T any](res any) (*T, error) {
+	response, ok := res.(*T)
+	if !ok {
+		return nil, apiErrorFromResponse(res)
+	}
+	return response, nil
+}

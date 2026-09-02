@@ -147,7 +147,7 @@ func (c *Client) ClaimSandbox(ctx context.Context, template string, opts ...Sand
 	}
 
 	req := apispec.ClaimRequest{
-		Template: apispec.NewOptString(template),
+		Template: template,
 	}
 	if options.config != nil {
 		req.Config = apispec.NewOptSandboxConfig(*options.config)
@@ -167,10 +167,7 @@ func (c *Client) ClaimSandboxRequest(ctx context.Context, req apispec.ClaimReque
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessClaimResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		var clusterID *string
 		if value, ok := data.ClusterID.Get(); ok {
 			clusterID = &value
@@ -198,10 +195,7 @@ func (c *Client) GetSandbox(ctx context.Context, sandboxID string) (*apispec.San
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -280,10 +274,7 @@ func (c *Client) UpdateSandbox(ctx context.Context, sandboxID string, request ap
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -312,10 +303,7 @@ func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxStatusResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -329,11 +317,11 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 		return nil, err
 	}
 	switch response := resp.(type) {
-	case *apispec.SuccessPauseSandboxResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+	case *apispec.APIV1SandboxesIDPausePostOK:
+		data := (*apispec.SuccessPauseSandboxResponse)(response).Data
+		return &data, nil
+	case *apispec.APIV1SandboxesIDPausePostAccepted:
+		data := (*apispec.SuccessPauseSandboxResponse)(response).Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -363,10 +351,7 @@ func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessResumeSandboxResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -413,13 +398,8 @@ func (c *Client) RefreshSandbox(ctx context.Context, sandboxID string, request *
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessRefreshResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
-	case *apispec.ErrorEnvelope:
-		return nil, apiErrorFromResponse(response)
 	default:
 		if err := apiErrorFromResponse(response); err != nil {
 			return nil, err
@@ -440,10 +420,7 @@ func (c *Client) CreateSandboxRootFSSnapshot(ctx context.Context, sandboxID stri
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxRootFSSnapshotResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -458,10 +435,7 @@ func (c *Client) ListSandboxRootFSSnapshots(ctx context.Context, sandboxID strin
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxRootFSSnapshotListResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -476,10 +450,7 @@ func (c *Client) GetSandboxRootFSSnapshot(ctx context.Context, snapshotID string
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxRootFSSnapshotResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -508,10 +479,7 @@ func (c *Client) RebaseSandboxRootFS(ctx context.Context, sandboxID string, requ
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessRebaseSandboxRootFSResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -526,32 +494,40 @@ func (c *Client) RestoreSandboxRootFS(ctx context.Context, sandboxID string, req
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessRestoreSandboxRootFSResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
 	}
 }
 
+// ForkSandboxOptions configures a retry-safe sandbox fork request.
+type ForkSandboxOptions struct {
+	IdempotencyKey string
+}
+
 // ForkSandbox creates a paused sandbox fork from a running or paused source sandbox root filesystem.
 func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest) (*apispec.ForkSandboxResponse, error) {
+	return c.ForkSandboxWithOptions(ctx, sandboxID, request, nil)
+}
+
+// ForkSandboxWithOptions creates a fork with an optional stable retry key.
+func (c *Client) ForkSandboxWithOptions(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest, options *ForkSandboxOptions) (*apispec.ForkSandboxResponse, error) {
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {
 		body = apispec.NewOptForkSandboxRequest(*request)
 	}
-	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, body, apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID})
+	params := apispec.APIV1SandboxesIDForkPostParams{ID: sandboxID}
+	if options != nil && options.IdempotencyKey != "" {
+		params.IdempotencyKey = apispec.NewOptString(options.IdempotencyKey)
+	}
+	resp, err := c.api.APIV1SandboxesIDForkPost(ctx, body, params)
 	if err != nil {
 		return nil, err
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessForkSandboxResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -602,17 +578,12 @@ func (c *Client) ListSandboxes(ctx context.Context, opts *ListSandboxesOptions) 
 
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxListResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &ListSandboxesResponse{
 			Sandboxes: data.Sandboxes,
 			Count:     data.Count,
 			HasMore:   data.HasMore,
 		}, nil
-	case *apispec.ErrorEnvelope:
-		return nil, apiErrorFromResponse(response)
 	default:
 		return nil, apiErrorFromResponse(response)
 	}

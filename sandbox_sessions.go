@@ -47,14 +47,11 @@ func (s *Sandbox) ListSessions(ctx context.Context) ([]apispec.ExecutionSession,
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionListResponse](resp)
+	if err != nil {
+		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
-	return data.Sessions, nil
+	return response.Data.Sessions, nil
 }
 
 // CreateSession creates a durable execution session.
@@ -85,7 +82,11 @@ func (s *Sandbox) GetSession(ctx context.Context, sessionID string) (*apispec.Ex
 	if err != nil {
 		return nil, err
 	}
-	return executionSessionData(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponse](resp)
+	if err != nil {
+		return nil, err
+	}
+	return executionSessionData(response)
 }
 
 // UpdateSession replaces a session specification.
@@ -96,14 +97,22 @@ func (s *Sandbox) UpdateSession(ctx context.Context, sessionID string, spec apis
 	if err != nil {
 		return nil, err
 	}
-	return executionSessionData(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponse](resp)
+	if err != nil {
+		return nil, err
+	}
+	return executionSessionData(response)
 }
 
 // DeleteSession stops and deletes a durable execution session and its journal.
 func (s *Sandbox) DeleteSession(ctx context.Context, sessionID string) (*apispec.SuccessDeletedResponse, error) {
-	return s.client.api.APIV1SandboxesIDSessionsSessionIDDelete(ctx, apispec.APIV1SandboxesIDSessionsSessionIDDeleteParams{
+	resp, err := s.client.api.APIV1SandboxesIDSessionsSessionIDDelete(ctx, apispec.APIV1SandboxesIDSessionsSessionIDDeleteParams{
 		ID: s.ID, SessionID: sessionID,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return expectResponse[apispec.SuccessDeletedResponse](resp)
 }
 
 // SetSessionDesiredState starts or stops a session without deleting its identity or journal.
@@ -114,7 +123,11 @@ func (s *Sandbox) SetSessionDesiredState(ctx context.Context, sessionID string, 
 	if err != nil {
 		return nil, err
 	}
-	return executionSessionData(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponse](resp)
+	if err != nil {
+		return nil, err
+	}
+	return executionSessionData(response)
 }
 
 // CreateSessionAttempt starts a new attempt. Set replaceCurrent to stop a running attempt first.
@@ -128,7 +141,11 @@ func (s *Sandbox) CreateSessionAttempt(ctx context.Context, sessionID string, re
 	if err != nil {
 		return nil, err
 	}
-	return executionSessionData(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponse](resp)
+	if err != nil {
+		return nil, err
+	}
+	return executionSessionData(response)
 }
 
 // WriteSessionInput writes bytes, an explicit EOF, or both to the current attempt.
@@ -139,28 +156,34 @@ func (s *Sandbox) WriteSessionInput(ctx context.Context, sessionID string, reque
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessExecutionSessionInputResponse](resp)
+	if err != nil {
+		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
+	data := response.Data
 	return &data, nil
 }
 
 // SendSessionSignal sends a signal to the current attempt.
 func (s *Sandbox) SendSessionSignal(ctx context.Context, sessionID string, request apispec.ExecutionSessionSignalRequest) (*apispec.SuccessAcceptedResponse, error) {
-	return s.client.api.APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx, &request, apispec.APIV1SandboxesIDSessionsSessionIDSignalsPostParams{
+	resp, err := s.client.api.APIV1SandboxesIDSessionsSessionIDSignalsPost(ctx, &request, apispec.APIV1SandboxesIDSessionsSessionIDSignalsPostParams{
 		ID: s.ID, SessionID: sessionID,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return expectResponse[apispec.SuccessAcceptedResponse](resp)
 }
 
 // ResizeSessionTerminal resizes a PTY session's current attempt.
 func (s *Sandbox) ResizeSessionTerminal(ctx context.Context, sessionID string, request apispec.ExecutionSessionTerminalResizeRequest) (*apispec.SuccessResizedResponse, error) {
-	return s.client.api.APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx, &request, apispec.APIV1SandboxesIDSessionsSessionIDTerminalPutParams{
+	resp, err := s.client.api.APIV1SandboxesIDSessionsSessionIDTerminalPut(ctx, &request, apispec.APIV1SandboxesIDSessionsSessionIDTerminalPutParams{
 		ID: s.ID, SessionID: sessionID,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return expectResponse[apispec.SuccessResizedResponse](resp)
 }
 
 // ListSessionEvents returns a replayable page from the durable event journal.
@@ -182,10 +205,7 @@ func (s *Sandbox) ListSessionEvents(ctx context.Context, sessionID string, opts 
 	if !ok {
 		return nil, apiErrorFromResponse(resp)
 	}
-	data, ok := value.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
+	data := value.Data
 	return &data, nil
 }
 
@@ -381,10 +401,7 @@ func executionSessionData(resp *apispec.SuccessExecutionSessionResponse) (*apisp
 	if resp == nil {
 		return nil, unexpectedResponseError(resp)
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
+	data := resp.Data
 	return &data, nil
 }
 

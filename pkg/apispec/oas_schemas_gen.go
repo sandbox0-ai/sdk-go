@@ -180,6 +180,10 @@ type APIKeysIDDeactivatePostNotFound ErrorEnvelope
 
 func (*APIKeysIDDeactivatePostNotFound) aPIKeysIDDeactivatePostRes() {}
 
+type APIKeysIDDeactivatePostUnauthorized ErrorEnvelope
+
+func (*APIKeysIDDeactivatePostUnauthorized) aPIKeysIDDeactivatePostRes() {}
+
 type APIKeysIDDeleteForbidden ErrorEnvelope
 
 func (*APIKeysIDDeleteForbidden) aPIKeysIDDeleteRes() {}
@@ -187,6 +191,10 @@ func (*APIKeysIDDeleteForbidden) aPIKeysIDDeleteRes() {}
 type APIKeysIDDeleteNotFound ErrorEnvelope
 
 func (*APIKeysIDDeleteNotFound) aPIKeysIDDeleteRes() {}
+
+type APIKeysIDDeleteUnauthorized ErrorEnvelope
+
+func (*APIKeysIDDeleteUnauthorized) aPIKeysIDDeleteRes() {}
 
 type APIKeysPostBadRequest ErrorEnvelope
 
@@ -196,6 +204,18 @@ type APIKeysPostForbidden ErrorEnvelope
 
 func (*APIKeysPostForbidden) aPIKeysPostRes() {}
 
+type APIKeysPostUnauthorized ErrorEnvelope
+
+func (*APIKeysPostUnauthorized) aPIKeysPostRes() {}
+
+type APIV1CredentialSourcesNameGetNotFound ErrorEnvelope
+
+func (*APIV1CredentialSourcesNameGetNotFound) aPIV1CredentialSourcesNameGetRes() {}
+
+type APIV1CredentialSourcesNameGetUnauthorized ErrorEnvelope
+
+func (*APIV1CredentialSourcesNameGetUnauthorized) aPIV1CredentialSourcesNameGetRes() {}
+
 type APIV1CredentialSourcesNamePutBadRequest ErrorEnvelope
 
 func (*APIV1CredentialSourcesNamePutBadRequest) aPIV1CredentialSourcesNamePutRes() {}
@@ -203,6 +223,26 @@ func (*APIV1CredentialSourcesNamePutBadRequest) aPIV1CredentialSourcesNamePutRes
 type APIV1CredentialSourcesNamePutNotFound ErrorEnvelope
 
 func (*APIV1CredentialSourcesNamePutNotFound) aPIV1CredentialSourcesNamePutRes() {}
+
+type APIV1CredentialSourcesNamePutUnauthorized ErrorEnvelope
+
+func (*APIV1CredentialSourcesNamePutUnauthorized) aPIV1CredentialSourcesNamePutRes() {}
+
+type APIV1CredentialSourcesPostConflict ErrorEnvelope
+
+func (*APIV1CredentialSourcesPostConflict) aPIV1CredentialSourcesPostRes() {}
+
+type APIV1CredentialSourcesPostUnauthorized ErrorEnvelope
+
+func (*APIV1CredentialSourcesPostUnauthorized) aPIV1CredentialSourcesPostRes() {}
+
+type APIV1QuotasDimensionGetBadRequest ErrorEnvelope
+
+func (*APIV1QuotasDimensionGetBadRequest) aPIV1QuotasDimensionGetRes() {}
+
+type APIV1QuotasDimensionGetUnauthorized ErrorEnvelope
+
+func (*APIV1QuotasDimensionGetUnauthorized) aPIV1QuotasDimensionGetRes() {}
 
 // Merged schema.
 type APIV1QuotasGetOK struct {
@@ -230,6 +270,8 @@ func (s *APIV1QuotasGetOK) SetSuccess(val APIV1QuotasGetOKSuccess) {
 func (s *APIV1QuotasGetOK) SetData(val []TeamQuota) {
 	s.Data = val
 }
+
+func (*APIV1QuotasGetOK) aPIV1QuotasGetRes() {}
 
 type APIV1QuotasGetOKSuccess bool
 
@@ -260,8 +302,39 @@ type APIV1RegistryCredentialsPostUnauthorized ErrorEnvelope
 
 func (*APIV1RegistryCredentialsPostUnauthorized) aPIV1RegistryCredentialsPostRes() {}
 
+type APIV1SandboxRootfsSnapshotsSnapshotIDDeleteNotFound ErrorEnvelope
+
+func (*APIV1SandboxRootfsSnapshotsSnapshotIDDeleteNotFound) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {
+}
+
+type APIV1SandboxRootfsSnapshotsSnapshotIDDeleteUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxRootfsSnapshotsSnapshotIDDeleteUnauthorized) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {
+}
+
+type APIV1SandboxRootfsSnapshotsSnapshotIDGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxRootfsSnapshotsSnapshotIDGetNotFound) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes() {
+}
+
+type APIV1SandboxRootfsSnapshotsSnapshotIDGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxRootfsSnapshotsSnapshotIDGetUnauthorized) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes() {
+}
+
+type APIV1SandboxesGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesGetBadRequest) aPIV1SandboxesGetRes() {}
+
+type APIV1SandboxesGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesGetUnauthorized) aPIV1SandboxesGetRes() {}
+
 // APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols is response for APIV1SandboxesIDContextsCtxIDWsGet operation.
 type APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxesIDContextsCtxIDWsGetSwitchingProtocols) aPIV1SandboxesIDContextsCtxIDWsGetRes() {
+}
 
 type APIV1SandboxesIDDeleteForbidden ErrorEnvelope
 
@@ -270,6 +343,10 @@ func (*APIV1SandboxesIDDeleteForbidden) aPIV1SandboxesIDDeleteRes() {}
 type APIV1SandboxesIDDeleteNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDDeleteNotFound) aPIV1SandboxesIDDeleteRes() {}
+
+type APIV1SandboxesIDDeleteUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDDeleteUnauthorized) aPIV1SandboxesIDDeleteRes() {}
 
 // Merged schema.
 type APIV1SandboxesIDFilesGetOKApplicationJSON struct {
@@ -346,6 +423,8 @@ func (s APIV1SandboxesIDFilesPostReq) Read(p []byte) (n int, err error) {
 // APIV1SandboxesIDFilesWatchGetSwitchingProtocols is response for APIV1SandboxesIDFilesWatchGet operation.
 type APIV1SandboxesIDFilesWatchGetSwitchingProtocols struct{}
 
+func (*APIV1SandboxesIDFilesWatchGetSwitchingProtocols) aPIV1SandboxesIDFilesWatchGetRes() {}
+
 type APIV1SandboxesIDForkPostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
@@ -358,6 +437,10 @@ type APIV1SandboxesIDForkPostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostServiceUnavailable) aPIV1SandboxesIDForkPostRes() {}
 
+type APIV1SandboxesIDForkPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDForkPostUnauthorized) aPIV1SandboxesIDForkPostRes() {}
+
 type APIV1SandboxesIDGetForbidden ErrorEnvelope
 
 func (*APIV1SandboxesIDGetForbidden) aPIV1SandboxesIDGetRes() {}
@@ -365,6 +448,18 @@ func (*APIV1SandboxesIDGetForbidden) aPIV1SandboxesIDGetRes() {}
 type APIV1SandboxesIDGetNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDGetNotFound) aPIV1SandboxesIDGetRes() {}
+
+type APIV1SandboxesIDGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDGetUnauthorized) aPIV1SandboxesIDGetRes() {}
+
+type APIV1SandboxesIDNetworkGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDNetworkGetNotFound) aPIV1SandboxesIDNetworkGetRes() {}
+
+type APIV1SandboxesIDNetworkGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDNetworkGetUnauthorized) aPIV1SandboxesIDNetworkGetRes() {}
 
 type APIV1SandboxesIDObservabilityEventsGetBadRequest ErrorEnvelope
 
@@ -380,6 +475,11 @@ type APIV1SandboxesIDObservabilityEventsGetServiceUnavailable ErrorEnvelope
 func (*APIV1SandboxesIDObservabilityEventsGetServiceUnavailable) aPIV1SandboxesIDObservabilityEventsGetRes() {
 }
 
+type APIV1SandboxesIDObservabilityEventsGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityEventsGetUnauthorized) aPIV1SandboxesIDObservabilityEventsGetRes() {
+}
+
 type APIV1SandboxesIDObservabilityLogsGetBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDObservabilityLogsGetBadRequest) aPIV1SandboxesIDObservabilityLogsGetRes() {}
@@ -393,6 +493,14 @@ type APIV1SandboxesIDObservabilityLogsGetServiceUnavailable ErrorEnvelope
 func (*APIV1SandboxesIDObservabilityLogsGetServiceUnavailable) aPIV1SandboxesIDObservabilityLogsGetRes() {
 }
 
+type APIV1SandboxesIDObservabilityLogsGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDObservabilityLogsGetUnauthorized) aPIV1SandboxesIDObservabilityLogsGetRes() {}
+
+type APIV1SandboxesIDPausePostAccepted SuccessPauseSandboxResponse
+
+func (*APIV1SandboxesIDPausePostAccepted) aPIV1SandboxesIDPausePostRes() {}
+
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostConflict) aPIV1SandboxesIDPausePostRes() {}
@@ -405,9 +513,17 @@ type APIV1SandboxesIDPausePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostNotFound) aPIV1SandboxesIDPausePostRes() {}
 
+type APIV1SandboxesIDPausePostOK SuccessPauseSandboxResponse
+
+func (*APIV1SandboxesIDPausePostOK) aPIV1SandboxesIDPausePostRes() {}
+
 type APIV1SandboxesIDPausePostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDPausePostServiceUnavailable) aPIV1SandboxesIDPausePostRes() {}
+
+type APIV1SandboxesIDPausePostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostUnauthorized) aPIV1SandboxesIDPausePostRes() {}
 
 type APIV1SandboxesIDPreviewsPostBadRequest ErrorEnvelope
 
@@ -425,6 +541,10 @@ type APIV1SandboxesIDPreviewsPostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDPreviewsPostServiceUnavailable) aPIV1SandboxesIDPreviewsPostRes() {}
 
+type APIV1SandboxesIDPreviewsPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPostUnauthorized) aPIV1SandboxesIDPreviewsPostRes() {}
+
 type APIV1SandboxesIDPreviewsPreviewIDDeleteNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPreviewsPreviewIDDeleteNotFound) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {
@@ -433,6 +553,11 @@ func (*APIV1SandboxesIDPreviewsPreviewIDDeleteNotFound) aPIV1SandboxesIDPreviews
 type APIV1SandboxesIDPreviewsPreviewIDDeleteServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDPreviewsPreviewIDDeleteServiceUnavailable) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {
+}
+
+type APIV1SandboxesIDPreviewsPreviewIDDeleteUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDDeleteUnauthorized) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {
 }
 
 type APIV1SandboxesIDPreviewsPreviewIDPutBadRequest ErrorEnvelope
@@ -452,6 +577,10 @@ type APIV1SandboxesIDPreviewsPreviewIDPutServiceUnavailable ErrorEnvelope
 func (*APIV1SandboxesIDPreviewsPreviewIDPutServiceUnavailable) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {
 }
 
+type APIV1SandboxesIDPreviewsPreviewIDPutUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDPreviewsPreviewIDPutUnauthorized) aPIV1SandboxesIDPreviewsPreviewIDPutRes() {}
+
 type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
@@ -459,6 +588,18 @@ func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
 type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
+
+type APIV1SandboxesIDPutUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDPutUnauthorized) aPIV1SandboxesIDPutRes() {}
+
+type APIV1SandboxesIDRefreshPostNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDRefreshPostNotFound) aPIV1SandboxesIDRefreshPostRes() {}
+
+type APIV1SandboxesIDRefreshPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDRefreshPostUnauthorized) aPIV1SandboxesIDRefreshPostRes() {}
 
 type APIV1SandboxesIDResumePostConflict ErrorEnvelope
 
@@ -480,6 +621,10 @@ type APIV1SandboxesIDResumePostTooManyRequests ErrorEnvelope
 
 func (*APIV1SandboxesIDResumePostTooManyRequests) aPIV1SandboxesIDResumePostRes() {}
 
+type APIV1SandboxesIDResumePostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostUnauthorized) aPIV1SandboxesIDResumePostRes() {}
+
 type APIV1SandboxesIDRootfsRebasePutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRebasePutBadRequest) aPIV1SandboxesIDRootfsRebasePutRes() {}
@@ -496,6 +641,10 @@ type APIV1SandboxesIDRootfsRebasePutServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRebasePutServiceUnavailable) aPIV1SandboxesIDRootfsRebasePutRes() {}
 
+type APIV1SandboxesIDRootfsRebasePutUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRebasePutUnauthorized) aPIV1SandboxesIDRootfsRebasePutRes() {}
+
 type APIV1SandboxesIDRootfsRestorePostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRestorePostConflict) aPIV1SandboxesIDRootfsRestorePostRes() {}
@@ -504,6 +653,26 @@ type APIV1SandboxesIDRootfsRestorePostNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDRootfsRestorePostNotFound) aPIV1SandboxesIDRootfsRestorePostRes() {}
 
+type APIV1SandboxesIDRootfsRestorePostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDRootfsRestorePostUnauthorized) aPIV1SandboxesIDRootfsRestorePostRes() {}
+
+type APIV1SandboxesIDServicesGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDServicesGetNotFound) aPIV1SandboxesIDServicesGetRes() {}
+
+type APIV1SandboxesIDServicesGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDServicesGetUnauthorized) aPIV1SandboxesIDServicesGetRes() {}
+
+type APIV1SandboxesIDServicesPutBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDServicesPutBadRequest) aPIV1SandboxesIDServicesPutRes() {}
+
+type APIV1SandboxesIDServicesPutUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDServicesPutUnauthorized) aPIV1SandboxesIDServicesPutRes() {}
+
 type APIV1SandboxesIDSessionsPostCreated SuccessExecutionSessionResponse
 
 func (*APIV1SandboxesIDSessionsPostCreated) aPIV1SandboxesIDSessionsPostRes() {}
@@ -511,6 +680,16 @@ func (*APIV1SandboxesIDSessionsPostCreated) aPIV1SandboxesIDSessionsPostRes() {}
 type APIV1SandboxesIDSessionsPostOK SuccessExecutionSessionResponse
 
 func (*APIV1SandboxesIDSessionsPostOK) aPIV1SandboxesIDSessionsPostRes() {}
+
+type APIV1SandboxesIDSessionsSessionIDEventsGetGone ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDEventsGetGone) aPIV1SandboxesIDSessionsSessionIDEventsGetRes() {
+}
+
+type APIV1SandboxesIDSessionsSessionIDEventsGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDEventsGetUnauthorized) aPIV1SandboxesIDSessionsSessionIDEventsGetRes() {
+}
 
 type APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK struct {
 	Data io.Reader
@@ -526,8 +705,22 @@ func (s APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK) Read(p []byte) (n in
 	return s.Data.Read(p)
 }
 
+func (*APIV1SandboxesIDSessionsSessionIDEventsStreamGetOK) aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes() {
+}
+
 // APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols is response for APIV1SandboxesIDSessionsSessionIDWsGet operation.
 type APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxesIDSessionsSessionIDWsGetSwitchingProtocols) aPIV1SandboxesIDSessionsSessionIDWsGetRes() {
+}
+
+type APIV1SandboxesIDSnapshotsGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsGetNotFound) aPIV1SandboxesIDSnapshotsGetRes() {}
+
+type APIV1SandboxesIDSnapshotsGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsGetUnauthorized) aPIV1SandboxesIDSnapshotsGetRes() {}
 
 type APIV1SandboxesIDSnapshotsPostConflict ErrorEnvelope
 
@@ -541,6 +734,22 @@ type APIV1SandboxesIDSnapshotsPostServiceUnavailable ErrorEnvelope
 
 func (*APIV1SandboxesIDSnapshotsPostServiceUnavailable) aPIV1SandboxesIDSnapshotsPostRes() {}
 
+type APIV1SandboxesIDSnapshotsPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSnapshotsPostUnauthorized) aPIV1SandboxesIDSnapshotsPostRes() {}
+
+type APIV1SandboxesIDStatusGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDStatusGetNotFound) aPIV1SandboxesIDStatusGetRes() {}
+
+type APIV1SandboxesIDStatusGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDStatusGetUnauthorized) aPIV1SandboxesIDStatusGetRes() {}
+
+type APIV1SandboxesPostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesPostBadRequest) aPIV1SandboxesPostRes() {}
+
 type APIV1SandboxesPostConflict ErrorEnvelopeHeaders
 
 func (*APIV1SandboxesPostConflict) aPIV1SandboxesPostRes() {}
@@ -552,6 +761,10 @@ func (*APIV1SandboxesPostServiceUnavailable) aPIV1SandboxesPostRes() {}
 type APIV1SandboxesPostTooManyRequests ErrorEnvelopeHeaders
 
 func (*APIV1SandboxesPostTooManyRequests) aPIV1SandboxesPostRes() {}
+
+type APIV1SandboxesPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesPostUnauthorized) aPIV1SandboxesPostRes() {}
 
 type APIV1TemplatesFromSandboxPostBadRequest ErrorEnvelope
 
@@ -580,6 +793,14 @@ func (*APIV1TemplatesFromSandboxPostServiceUnavailable) aPIV1TemplatesFromSandbo
 type APIV1TemplatesFromSandboxPostUnauthorized ErrorEnvelope
 
 func (*APIV1TemplatesFromSandboxPostUnauthorized) aPIV1TemplatesFromSandboxPostRes() {}
+
+type APIV1TemplatesIDGetNotFound ErrorEnvelope
+
+func (*APIV1TemplatesIDGetNotFound) aPIV1TemplatesIDGetRes() {}
+
+type APIV1TemplatesIDGetUnauthorized ErrorEnvelope
+
+func (*APIV1TemplatesIDGetUnauthorized) aPIV1TemplatesIDGetRes() {}
 
 type APIV1UsageWindowsGetBadRequest ErrorEnvelope
 
@@ -905,7 +1126,7 @@ func (s *ChangePasswordRequest) SetNewPassword(val string) {
 
 // Ref: #/components/schemas/ClaimRequest
 type ClaimRequest struct {
-	Template OptString `json:"template"`
+	Template string `json:"template"`
 	// Optional sandbox rootfs snapshot ID used to initialize the claimed sandbox writable root
 	// filesystem.
 	SnapshotID OptString        `json:"snapshot_id"`
@@ -913,7 +1134,7 @@ type ClaimRequest struct {
 }
 
 // GetTemplate returns the value of Template.
-func (s *ClaimRequest) GetTemplate() OptString {
+func (s *ClaimRequest) GetTemplate() string {
 	return s.Template
 }
 
@@ -928,7 +1149,7 @@ func (s *ClaimRequest) GetConfig() OptSandboxConfig {
 }
 
 // SetTemplate sets the value of Template.
-func (s *ClaimRequest) SetTemplate(val OptString) {
+func (s *ClaimRequest) SetTemplate(val string) {
 	s.Template = val
 }
 
@@ -1873,8 +2094,9 @@ type CreateTeamRequest struct {
 	// Display name. Team names are not unique.
 	Name string `json:"name"`
 	// Human-readable alias. Team slugs are not unique.
-	Slug         OptString    `json:"slug"`
-	HomeRegionID OptNilString `json:"home_region_id"`
+	Slug OptString `json:"slug"`
+	// Required when creating a team through the global gateway.
+	HomeRegionID string `json:"home_region_id"`
 }
 
 // GetName returns the value of Name.
@@ -1888,7 +2110,7 @@ func (s *CreateTeamRequest) GetSlug() OptString {
 }
 
 // GetHomeRegionID returns the value of HomeRegionID.
-func (s *CreateTeamRequest) GetHomeRegionID() OptNilString {
+func (s *CreateTeamRequest) GetHomeRegionID() string {
 	return s.HomeRegionID
 }
 
@@ -1903,7 +2125,7 @@ func (s *CreateTeamRequest) SetSlug(val OptString) {
 }
 
 // SetHomeRegionID sets the value of HomeRegionID.
-func (s *CreateTeamRequest) SetHomeRegionID(val OptNilString) {
+func (s *CreateTeamRequest) SetHomeRegionID(val string) {
 	s.HomeRegionID = val
 }
 
@@ -3013,35 +3235,55 @@ func (s *ErrorEnvelope) SetError(val Error) {
 	s.Error = val
 }
 
-func (*ErrorEnvelope) aPIKeysCurrentGetRes()                           {}
-func (*ErrorEnvelope) aPIKeysGetRes()                                  {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesNameGetRes()               {}
-func (*ErrorEnvelope) aPIV1CredentialSourcesPostRes()                  {}
-func (*ErrorEnvelope) aPIV1QuotasDimensionGetRes()                     {}
-func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
-func (*ErrorEnvelope) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes()    {}
-func (*ErrorEnvelope) aPIV1SandboxesGetRes()                           {}
-func (*ErrorEnvelope) aPIV1SandboxesIDNetworkGetRes()                  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDRefreshPostRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesGetRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDServicesPutRes()                 {}
-func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDEventsGetRes()  {}
-func (*ErrorEnvelope) aPIV1SandboxesIDSnapshotsGetRes()                {}
-func (*ErrorEnvelope) aPIV1SandboxesIDStatusGetRes()                   {}
-func (*ErrorEnvelope) aPIV1SandboxesPostRes()                          {}
-func (*ErrorEnvelope) aPIV1TemplatesIDGetRes()                         {}
-func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()             {}
-func (*ErrorEnvelope) authProvidersGetRes()                            {}
-func (*ErrorEnvelope) getSandboxRuntimeMetricsCatalogRes()             {}
-func (*ErrorEnvelope) healthzGetRes()                                  {}
-func (*ErrorEnvelope) readyzGetRes()                                   {}
-func (*ErrorEnvelope) regionsGetRes()                                  {}
-func (*ErrorEnvelope) teamsGetRes()                                    {}
-func (*ErrorEnvelope) teamsIDMembersGetRes()                           {}
-func (*ErrorEnvelope) teamsPostRes()                                   {}
-func (*ErrorEnvelope) usersMeGetRes()                                  {}
-func (*ErrorEnvelope) usersMeIdentitiesGetRes()                        {}
-func (*ErrorEnvelope) usersMeSSHKeysGetRes()                           {}
+func (*ErrorEnvelope) aPIKeysCurrentGetRes()                                {}
+func (*ErrorEnvelope) aPIKeysGetRes()                                       {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesGetRes()                        {}
+func (*ErrorEnvelope) aPIV1CredentialSourcesNameDeleteRes()                 {}
+func (*ErrorEnvelope) aPIV1QuotasGetRes()                                   {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDDeleteRes()              {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDExecPostRes()            {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDGetRes()                 {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDInputPostRes()           {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDResizePostRes()          {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDRestartPostRes()         {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDSignalPostRes()          {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsCtxIDWsGetRes()               {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsGetRes()                      {}
+func (*ErrorEnvelope) aPIV1SandboxesIDContextsPostRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesDeleteRes()                      {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesGetRes()                         {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesListGetRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesMovePostRes()                    {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesPostRes()                        {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesStatGetRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDFilesWatchGetRes()                    {}
+func (*ErrorEnvelope) aPIV1SandboxesIDNetworkPutRes()                       {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsGetRes()                      {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsPostRes()                     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()    {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDDeleteRes()          {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes() {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDEventsStreamGetRes() {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDInputsPostRes()      {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDSignalsPostRes()     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDTerminalPutRes()     {}
+func (*ErrorEnvelope) aPIV1SandboxesIDSessionsSessionIDWsGetRes()           {}
+func (*ErrorEnvelope) aPIV1TemplatesGetRes()                                {}
+func (*ErrorEnvelope) aPIV1TemplatesIDDeleteRes()                           {}
+func (*ErrorEnvelope) aPIV1TemplatesIDPutRes()                              {}
+func (*ErrorEnvelope) aPIV1TemplatesPostRes()                               {}
+func (*ErrorEnvelope) authLogoutPostRes()                                   {}
+func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()                  {}
+func (*ErrorEnvelope) authProvidersGetRes()                                 {}
+func (*ErrorEnvelope) healthzGetRes()                                       {}
+func (*ErrorEnvelope) readyzGetRes()                                        {}
+func (*ErrorEnvelope) regionsGetRes()                                       {}
+func (*ErrorEnvelope) teamsGetRes()                                         {}
+func (*ErrorEnvelope) usersMeGetRes()                                       {}
+func (*ErrorEnvelope) usersMeIdentitiesGetRes()                             {}
+func (*ErrorEnvelope) usersMeSSHKeysGetRes()                                {}
 
 // ErrorEnvelopeHeaders wraps ErrorEnvelope with response headers.
 type ErrorEnvelopeHeaders struct {
@@ -4758,6 +5000,14 @@ type GetSandboxRuntimeMetricsBadRequest ErrorEnvelope
 
 func (*GetSandboxRuntimeMetricsBadRequest) getSandboxRuntimeMetricsRes() {}
 
+type GetSandboxRuntimeMetricsCatalogForbidden ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsCatalogForbidden) getSandboxRuntimeMetricsCatalogRes() {}
+
+type GetSandboxRuntimeMetricsCatalogUnauthorized ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsCatalogUnauthorized) getSandboxRuntimeMetricsCatalogRes() {}
+
 type GetSandboxRuntimeMetricsForbidden ErrorEnvelope
 
 func (*GetSandboxRuntimeMetricsForbidden) getSandboxRuntimeMetricsRes() {}
@@ -4765,6 +5015,10 @@ func (*GetSandboxRuntimeMetricsForbidden) getSandboxRuntimeMetricsRes() {}
 type GetSandboxRuntimeMetricsServiceUnavailable ErrorEnvelope
 
 func (*GetSandboxRuntimeMetricsServiceUnavailable) getSandboxRuntimeMetricsRes() {}
+
+type GetSandboxRuntimeMetricsUnauthorized ErrorEnvelope
+
+func (*GetSandboxRuntimeMetricsUnauthorized) getSandboxRuntimeMetricsRes() {}
 
 // Ref: #/components/schemas/HTTPHeadersProjection
 type HTTPHeadersProjection struct {
@@ -5529,52 +5783,6 @@ func (o OptCachePolicySpec) Or(d CachePolicySpec) CachePolicySpec {
 	return d
 }
 
-// NewOptClaimResponse returns new OptClaimResponse with value set to v.
-func NewOptClaimResponse(v ClaimResponse) OptClaimResponse {
-	return OptClaimResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptClaimResponse is optional ClaimResponse.
-type OptClaimResponse struct {
-	Value ClaimResponse
-	Set   bool
-}
-
-// IsSet returns true if OptClaimResponse was set.
-func (o OptClaimResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptClaimResponse) Reset() {
-	var v ClaimResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptClaimResponse) SetTo(v ClaimResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptClaimResponse) Get() (v ClaimResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptClaimResponse) Or(d ClaimResponse) ClaimResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptContainerSpecSecurityClass returns new OptContainerSpecSecurityClass with value set to v.
 func NewOptContainerSpecSecurityClass(v ContainerSpecSecurityClass) OptContainerSpecSecurityClass {
 	return OptContainerSpecSecurityClass{
@@ -5621,98 +5829,6 @@ func (o OptContainerSpecSecurityClass) Or(d ContainerSpecSecurityClass) Containe
 	return d
 }
 
-// NewOptContextExecResponse returns new OptContextExecResponse with value set to v.
-func NewOptContextExecResponse(v ContextExecResponse) OptContextExecResponse {
-	return OptContextExecResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptContextExecResponse is optional ContextExecResponse.
-type OptContextExecResponse struct {
-	Value ContextExecResponse
-	Set   bool
-}
-
-// IsSet returns true if OptContextExecResponse was set.
-func (o OptContextExecResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptContextExecResponse) Reset() {
-	var v ContextExecResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptContextExecResponse) SetTo(v ContextExecResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptContextExecResponse) Get() (v ContextExecResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptContextExecResponse) Or(d ContextExecResponse) ContextExecResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptContextResponse returns new OptContextResponse with value set to v.
-func NewOptContextResponse(v ContextResponse) OptContextResponse {
-	return OptContextResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptContextResponse is optional ContextResponse.
-type OptContextResponse struct {
-	Value ContextResponse
-	Set   bool
-}
-
-// IsSet returns true if OptContextResponse was set.
-func (o OptContextResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptContextResponse) Reset() {
-	var v ContextResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptContextResponse) SetTo(v ContextResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptContextResponse) Get() (v ContextResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptContextResponse) Or(d ContextResponse) ContextResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptContextResponseEnvVars returns new OptContextResponseEnvVars with value set to v.
 func NewOptContextResponseEnvVars(v ContextResponseEnvVars) OptContextResponseEnvVars {
 	return OptContextResponseEnvVars{
@@ -5753,52 +5869,6 @@ func (o OptContextResponseEnvVars) Get() (v ContextResponseEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptContextResponseEnvVars) Or(d ContextResponseEnvVars) ContextResponseEnvVars {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptCreateAPIKeyResponse returns new OptCreateAPIKeyResponse with value set to v.
-func NewOptCreateAPIKeyResponse(v CreateAPIKeyResponse) OptCreateAPIKeyResponse {
-	return OptCreateAPIKeyResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptCreateAPIKeyResponse is optional CreateAPIKeyResponse.
-type OptCreateAPIKeyResponse struct {
-	Value CreateAPIKeyResponse
-	Set   bool
-}
-
-// IsSet returns true if OptCreateAPIKeyResponse was set.
-func (o OptCreateAPIKeyResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptCreateAPIKeyResponse) Reset() {
-	var v CreateAPIKeyResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptCreateAPIKeyResponse) SetTo(v CreateAPIKeyResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptCreateAPIKeyResponse) Get() (v CreateAPIKeyResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptCreateAPIKeyResponse) Or(d CreateAPIKeyResponse) CreateAPIKeyResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -6035,52 +6105,6 @@ func (o OptCreateSandboxRootFSSnapshotRequest) Or(d CreateSandboxRootFSSnapshotR
 	return d
 }
 
-// NewOptCredentialSourceMetadata returns new OptCredentialSourceMetadata with value set to v.
-func NewOptCredentialSourceMetadata(v CredentialSourceMetadata) OptCredentialSourceMetadata {
-	return OptCredentialSourceMetadata{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptCredentialSourceMetadata is optional CredentialSourceMetadata.
-type OptCredentialSourceMetadata struct {
-	Value CredentialSourceMetadata
-	Set   bool
-}
-
-// IsSet returns true if OptCredentialSourceMetadata was set.
-func (o OptCredentialSourceMetadata) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptCredentialSourceMetadata) Reset() {
-	var v CredentialSourceMetadata
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptCredentialSourceMetadata) SetTo(v CredentialSourceMetadata) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptCredentialSourceMetadata) Get() (v CredentialSourceMetadata, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptCredentialSourceMetadata) Or(d CredentialSourceMetadata) CredentialSourceMetadata {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptCurrentAPIKeyResponse returns new OptCurrentAPIKeyResponse with value set to v.
 func NewOptCurrentAPIKeyResponse(v CurrentAPIKeyResponse) OptCurrentAPIKeyResponse {
 	return OptCurrentAPIKeyResponse{
@@ -6167,98 +6191,6 @@ func (o OptDateTime) Get() (v time.Time, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDateTime) Or(d time.Time) time.Time {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptDeviceLoginPollResponse returns new OptDeviceLoginPollResponse with value set to v.
-func NewOptDeviceLoginPollResponse(v DeviceLoginPollResponse) OptDeviceLoginPollResponse {
-	return OptDeviceLoginPollResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptDeviceLoginPollResponse is optional DeviceLoginPollResponse.
-type OptDeviceLoginPollResponse struct {
-	Value DeviceLoginPollResponse
-	Set   bool
-}
-
-// IsSet returns true if OptDeviceLoginPollResponse was set.
-func (o OptDeviceLoginPollResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptDeviceLoginPollResponse) Reset() {
-	var v DeviceLoginPollResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptDeviceLoginPollResponse) SetTo(v DeviceLoginPollResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptDeviceLoginPollResponse) Get() (v DeviceLoginPollResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptDeviceLoginPollResponse) Or(d DeviceLoginPollResponse) DeviceLoginPollResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptDeviceLoginStartResponse returns new OptDeviceLoginStartResponse with value set to v.
-func NewOptDeviceLoginStartResponse(v DeviceLoginStartResponse) OptDeviceLoginStartResponse {
-	return OptDeviceLoginStartResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptDeviceLoginStartResponse is optional DeviceLoginStartResponse.
-type OptDeviceLoginStartResponse struct {
-	Value DeviceLoginStartResponse
-	Set   bool
-}
-
-// IsSet returns true if OptDeviceLoginStartResponse was set.
-func (o OptDeviceLoginStartResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptDeviceLoginStartResponse) Reset() {
-	var v DeviceLoginStartResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptDeviceLoginStartResponse) SetTo(v DeviceLoginStartResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptDeviceLoginStartResponse) Get() (v DeviceLoginStartResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptDeviceLoginStartResponse) Or(d DeviceLoginStartResponse) DeviceLoginStartResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -6495,52 +6427,6 @@ func (o OptEgressTLSMode) Or(d EgressTLSMode) EgressTLSMode {
 	return d
 }
 
-// NewOptExecutionSession returns new OptExecutionSession with value set to v.
-func NewOptExecutionSession(v ExecutionSession) OptExecutionSession {
-	return OptExecutionSession{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptExecutionSession is optional ExecutionSession.
-type OptExecutionSession struct {
-	Value ExecutionSession
-	Set   bool
-}
-
-// IsSet returns true if OptExecutionSession was set.
-func (o OptExecutionSession) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptExecutionSession) Reset() {
-	var v ExecutionSession
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptExecutionSession) SetTo(v ExecutionSession) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptExecutionSession) Get() (v ExecutionSession, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptExecutionSession) Or(d ExecutionSession) ExecutionSession {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptExecutionSessionAttempt returns new OptExecutionSessionAttempt with value set to v.
 func NewOptExecutionSessionAttempt(v ExecutionSessionAttempt) OptExecutionSessionAttempt {
 	return OptExecutionSessionAttempt{
@@ -6627,52 +6513,6 @@ func (o OptExecutionSessionDesiredState) Get() (v ExecutionSessionDesiredState, 
 
 // Or returns value if set, or given parameter if does not.
 func (o OptExecutionSessionDesiredState) Or(d ExecutionSessionDesiredState) ExecutionSessionDesiredState {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptExecutionSessionEventPage returns new OptExecutionSessionEventPage with value set to v.
-func NewOptExecutionSessionEventPage(v ExecutionSessionEventPage) OptExecutionSessionEventPage {
-	return OptExecutionSessionEventPage{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptExecutionSessionEventPage is optional ExecutionSessionEventPage.
-type OptExecutionSessionEventPage struct {
-	Value ExecutionSessionEventPage
-	Set   bool
-}
-
-// IsSet returns true if OptExecutionSessionEventPage was set.
-func (o OptExecutionSessionEventPage) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptExecutionSessionEventPage) Reset() {
-	var v ExecutionSessionEventPage
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptExecutionSessionEventPage) SetTo(v ExecutionSessionEventPage) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptExecutionSessionEventPage) Get() (v ExecutionSessionEventPage, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptExecutionSessionEventPage) Or(d ExecutionSessionEventPage) ExecutionSessionEventPage {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -6857,52 +6697,6 @@ func (o OptExecutionSessionIOSpec) Get() (v ExecutionSessionIOSpec, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptExecutionSessionIOSpec) Or(d ExecutionSessionIOSpec) ExecutionSessionIOSpec {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptExecutionSessionInputResponse returns new OptExecutionSessionInputResponse with value set to v.
-func NewOptExecutionSessionInputResponse(v ExecutionSessionInputResponse) OptExecutionSessionInputResponse {
-	return OptExecutionSessionInputResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptExecutionSessionInputResponse is optional ExecutionSessionInputResponse.
-type OptExecutionSessionInputResponse struct {
-	Value ExecutionSessionInputResponse
-	Set   bool
-}
-
-// IsSet returns true if OptExecutionSessionInputResponse was set.
-func (o OptExecutionSessionInputResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptExecutionSessionInputResponse) Reset() {
-	var v ExecutionSessionInputResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptExecutionSessionInputResponse) SetTo(v ExecutionSessionInputResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptExecutionSessionInputResponse) Get() (v ExecutionSessionInputResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptExecutionSessionInputResponse) Or(d ExecutionSessionInputResponse) ExecutionSessionInputResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -7369,52 +7163,6 @@ func (o OptFileContentResponseEncoding) Or(d FileContentResponseEncoding) FileCo
 	return d
 }
 
-// NewOptFileInfo returns new OptFileInfo with value set to v.
-func NewOptFileInfo(v FileInfo) OptFileInfo {
-	return OptFileInfo{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptFileInfo is optional FileInfo.
-type OptFileInfo struct {
-	Value FileInfo
-	Set   bool
-}
-
-// IsSet returns true if OptFileInfo was set.
-func (o OptFileInfo) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptFileInfo) Reset() {
-	var v FileInfo
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptFileInfo) SetTo(v FileInfo) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptFileInfo) Get() (v FileInfo, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptFileInfo) Or(d FileInfo) FileInfo {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptFileInfoType returns new OptFileInfoType with value set to v.
 func NewOptFileInfoType(v FileInfoType) OptFileInfoType {
 	return OptFileInfoType{
@@ -7593,98 +7341,6 @@ func (o OptForkSandboxRequest) Get() (v ForkSandboxRequest, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptForkSandboxRequest) Or(d ForkSandboxRequest) ForkSandboxRequest {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptForkSandboxResponse returns new OptForkSandboxResponse with value set to v.
-func NewOptForkSandboxResponse(v ForkSandboxResponse) OptForkSandboxResponse {
-	return OptForkSandboxResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptForkSandboxResponse is optional ForkSandboxResponse.
-type OptForkSandboxResponse struct {
-	Value ForkSandboxResponse
-	Set   bool
-}
-
-// IsSet returns true if OptForkSandboxResponse was set.
-func (o OptForkSandboxResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptForkSandboxResponse) Reset() {
-	var v ForkSandboxResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptForkSandboxResponse) SetTo(v ForkSandboxResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptForkSandboxResponse) Get() (v ForkSandboxResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptForkSandboxResponse) Or(d ForkSandboxResponse) ForkSandboxResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptGatewayMetadata returns new OptGatewayMetadata with value set to v.
-func NewOptGatewayMetadata(v GatewayMetadata) OptGatewayMetadata {
-	return OptGatewayMetadata{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptGatewayMetadata is optional GatewayMetadata.
-type OptGatewayMetadata struct {
-	Value GatewayMetadata
-	Set   bool
-}
-
-// IsSet returns true if OptGatewayMetadata was set.
-func (o OptGatewayMetadata) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptGatewayMetadata) Reset() {
-	var v GatewayMetadata
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptGatewayMetadata) SetTo(v GatewayMetadata) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptGatewayMetadata) Get() (v GatewayMetadata, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptGatewayMetadata) Or(d GatewayMetadata) GatewayMetadata {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8369,6 +8025,69 @@ func (o OptNilString) Or(d string) string {
 	return d
 }
 
+// NewOptNilUUID returns new OptNilUUID with value set to v.
+func NewOptNilUUID(v uuid.UUID) OptNilUUID {
+	return OptNilUUID{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilUUID is optional nullable uuid.UUID.
+type OptNilUUID struct {
+	Value uuid.UUID
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilUUID was set.
+func (o OptNilUUID) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilUUID) Reset() {
+	var v uuid.UUID
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilUUID) SetTo(v uuid.UUID) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilUUID) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilUUID) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v uuid.UUID
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilUUID) Get() (v uuid.UUID, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilUUID) Or(d uuid.UUID) uuid.UUID {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptObservabilityEventSource returns new OptObservabilityEventSource with value set to v.
 func NewOptObservabilityEventSource(v ObservabilityEventSource) OptObservabilityEventSource {
 	return OptObservabilityEventSource{
@@ -8455,52 +8174,6 @@ func (o OptPTYSize) Get() (v PTYSize, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPTYSize) Or(d PTYSize) PTYSize {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPauseSandboxResponse returns new OptPauseSandboxResponse with value set to v.
-func NewOptPauseSandboxResponse(v PauseSandboxResponse) OptPauseSandboxResponse {
-	return OptPauseSandboxResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPauseSandboxResponse is optional PauseSandboxResponse.
-type OptPauseSandboxResponse struct {
-	Value PauseSandboxResponse
-	Set   bool
-}
-
-// IsSet returns true if OptPauseSandboxResponse was set.
-func (o OptPauseSandboxResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPauseSandboxResponse) Reset() {
-	var v PauseSandboxResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPauseSandboxResponse) SetTo(v PauseSandboxResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPauseSandboxResponse) Get() (v PauseSandboxResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPauseSandboxResponse) Or(d PauseSandboxResponse) PauseSandboxResponse {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8783,190 +8456,6 @@ func (o OptREPLReadyMode) Or(d REPLReadyMode) REPLReadyMode {
 	return d
 }
 
-// NewOptRebaseSandboxRootFSResponse returns new OptRebaseSandboxRootFSResponse with value set to v.
-func NewOptRebaseSandboxRootFSResponse(v RebaseSandboxRootFSResponse) OptRebaseSandboxRootFSResponse {
-	return OptRebaseSandboxRootFSResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRebaseSandboxRootFSResponse is optional RebaseSandboxRootFSResponse.
-type OptRebaseSandboxRootFSResponse struct {
-	Value RebaseSandboxRootFSResponse
-	Set   bool
-}
-
-// IsSet returns true if OptRebaseSandboxRootFSResponse was set.
-func (o OptRebaseSandboxRootFSResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRebaseSandboxRootFSResponse) Reset() {
-	var v RebaseSandboxRootFSResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRebaseSandboxRootFSResponse) SetTo(v RebaseSandboxRootFSResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRebaseSandboxRootFSResponse) Get() (v RebaseSandboxRootFSResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRebaseSandboxRootFSResponse) Or(d RebaseSandboxRootFSResponse) RebaseSandboxRootFSResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptRefreshResponse returns new OptRefreshResponse with value set to v.
-func NewOptRefreshResponse(v RefreshResponse) OptRefreshResponse {
-	return OptRefreshResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRefreshResponse is optional RefreshResponse.
-type OptRefreshResponse struct {
-	Value RefreshResponse
-	Set   bool
-}
-
-// IsSet returns true if OptRefreshResponse was set.
-func (o OptRefreshResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRefreshResponse) Reset() {
-	var v RefreshResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRefreshResponse) SetTo(v RefreshResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRefreshResponse) Get() (v RefreshResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRefreshResponse) Or(d RefreshResponse) RefreshResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptRegion returns new OptRegion with value set to v.
-func NewOptRegion(v Region) OptRegion {
-	return OptRegion{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRegion is optional Region.
-type OptRegion struct {
-	Value Region
-	Set   bool
-}
-
-// IsSet returns true if OptRegion was set.
-func (o OptRegion) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRegion) Reset() {
-	var v Region
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRegion) SetTo(v Region) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRegion) Get() (v Region, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRegion) Or(d Region) Region {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptRegistryCredentials returns new OptRegistryCredentials with value set to v.
-func NewOptRegistryCredentials(v RegistryCredentials) OptRegistryCredentials {
-	return OptRegistryCredentials{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRegistryCredentials is optional RegistryCredentials.
-type OptRegistryCredentials struct {
-	Value RegistryCredentials
-	Set   bool
-}
-
-// IsSet returns true if OptRegistryCredentials was set.
-func (o OptRegistryCredentials) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRegistryCredentials) Reset() {
-	var v RegistryCredentials
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRegistryCredentials) SetTo(v RegistryCredentials) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRegistryCredentials) Get() (v RegistryCredentials, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRegistryCredentials) Or(d RegistryCredentials) RegistryCredentials {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptRegistryCredentialsRequest returns new OptRegistryCredentialsRequest with value set to v.
 func NewOptRegistryCredentialsRequest(v RegistryCredentialsRequest) OptRegistryCredentialsRequest {
 	return OptRegistryCredentialsRequest{
@@ -9059,98 +8548,6 @@ func (o OptResourceUsage) Or(d ResourceUsage) ResourceUsage {
 	return d
 }
 
-// NewOptRestoreSandboxRootFSResponse returns new OptRestoreSandboxRootFSResponse with value set to v.
-func NewOptRestoreSandboxRootFSResponse(v RestoreSandboxRootFSResponse) OptRestoreSandboxRootFSResponse {
-	return OptRestoreSandboxRootFSResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptRestoreSandboxRootFSResponse is optional RestoreSandboxRootFSResponse.
-type OptRestoreSandboxRootFSResponse struct {
-	Value RestoreSandboxRootFSResponse
-	Set   bool
-}
-
-// IsSet returns true if OptRestoreSandboxRootFSResponse was set.
-func (o OptRestoreSandboxRootFSResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptRestoreSandboxRootFSResponse) Reset() {
-	var v RestoreSandboxRootFSResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptRestoreSandboxRootFSResponse) SetTo(v RestoreSandboxRootFSResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptRestoreSandboxRootFSResponse) Get() (v RestoreSandboxRootFSResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptRestoreSandboxRootFSResponse) Or(d RestoreSandboxRootFSResponse) RestoreSandboxRootFSResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptResumeSandboxResponse returns new OptResumeSandboxResponse with value set to v.
-func NewOptResumeSandboxResponse(v ResumeSandboxResponse) OptResumeSandboxResponse {
-	return OptResumeSandboxResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptResumeSandboxResponse is optional ResumeSandboxResponse.
-type OptResumeSandboxResponse struct {
-	Value ResumeSandboxResponse
-	Set   bool
-}
-
-// IsSet returns true if OptResumeSandboxResponse was set.
-func (o OptResumeSandboxResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptResumeSandboxResponse) Reset() {
-	var v ResumeSandboxResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptResumeSandboxResponse) SetTo(v ResumeSandboxResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptResumeSandboxResponse) Get() (v ResumeSandboxResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptResumeSandboxResponse) Or(d ResumeSandboxResponse) ResumeSandboxResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSSHProxyProjection returns new OptSSHProxyProjection with value set to v.
 func NewOptSSHProxyProjection(v SSHProxyProjection) OptSSHProxyProjection {
 	return OptSSHProxyProjection{
@@ -9191,98 +8588,6 @@ func (o OptSSHProxyProjection) Get() (v SSHProxyProjection, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSSHProxyProjection) Or(d SSHProxyProjection) SSHProxyProjection {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSSHPublicKey returns new OptSSHPublicKey with value set to v.
-func NewOptSSHPublicKey(v SSHPublicKey) OptSSHPublicKey {
-	return OptSSHPublicKey{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSSHPublicKey is optional SSHPublicKey.
-type OptSSHPublicKey struct {
-	Value SSHPublicKey
-	Set   bool
-}
-
-// IsSet returns true if OptSSHPublicKey was set.
-func (o OptSSHPublicKey) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSSHPublicKey) Reset() {
-	var v SSHPublicKey
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSSHPublicKey) SetTo(v SSHPublicKey) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSSHPublicKey) Get() (v SSHPublicKey, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSSHPublicKey) Or(d SSHPublicKey) SSHPublicKey {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandbox returns new OptSandbox with value set to v.
-func NewOptSandbox(v Sandbox) OptSandbox {
-	return OptSandbox{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandbox is optional Sandbox.
-type OptSandbox struct {
-	Value Sandbox
-	Set   bool
-}
-
-// IsSet returns true if OptSandbox was set.
-func (o OptSandbox) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandbox) Reset() {
-	var v Sandbox
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandbox) SetTo(v Sandbox) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandbox) Get() (v Sandbox, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandbox) Or(d Sandbox) Sandbox {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -9979,52 +9284,6 @@ func (o OptSandboxObservabilityEventType) Or(d SandboxObservabilityEventType) Sa
 	return d
 }
 
-// NewOptSandboxObservabilityEventsResponse returns new OptSandboxObservabilityEventsResponse with value set to v.
-func NewOptSandboxObservabilityEventsResponse(v SandboxObservabilityEventsResponse) OptSandboxObservabilityEventsResponse {
-	return OptSandboxObservabilityEventsResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxObservabilityEventsResponse is optional SandboxObservabilityEventsResponse.
-type OptSandboxObservabilityEventsResponse struct {
-	Value SandboxObservabilityEventsResponse
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxObservabilityEventsResponse was set.
-func (o OptSandboxObservabilityEventsResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxObservabilityEventsResponse) Reset() {
-	var v SandboxObservabilityEventsResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxObservabilityEventsResponse) SetTo(v SandboxObservabilityEventsResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxObservabilityEventsResponse) Get() (v SandboxObservabilityEventsResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxObservabilityEventsResponse) Or(d SandboxObservabilityEventsResponse) SandboxObservabilityEventsResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxObservabilityLogEntryAttributes returns new OptSandboxObservabilityLogEntryAttributes with value set to v.
 func NewOptSandboxObservabilityLogEntryAttributes(v SandboxObservabilityLogEntryAttributes) OptSandboxObservabilityLogEntryAttributes {
 	return OptSandboxObservabilityLogEntryAttributes{
@@ -10117,52 +9376,6 @@ func (o OptSandboxObservabilityLogStream) Or(d SandboxObservabilityLogStream) Sa
 	return d
 }
 
-// NewOptSandboxObservabilityLogsResponse returns new OptSandboxObservabilityLogsResponse with value set to v.
-func NewOptSandboxObservabilityLogsResponse(v SandboxObservabilityLogsResponse) OptSandboxObservabilityLogsResponse {
-	return OptSandboxObservabilityLogsResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxObservabilityLogsResponse is optional SandboxObservabilityLogsResponse.
-type OptSandboxObservabilityLogsResponse struct {
-	Value SandboxObservabilityLogsResponse
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxObservabilityLogsResponse was set.
-func (o OptSandboxObservabilityLogsResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxObservabilityLogsResponse) Reset() {
-	var v SandboxObservabilityLogsResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxObservabilityLogsResponse) SetTo(v SandboxObservabilityLogsResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxObservabilityLogsResponse) Get() (v SandboxObservabilityLogsResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxObservabilityLogsResponse) Or(d SandboxObservabilityLogsResponse) SandboxObservabilityLogsResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxObservabilityOutcome returns new OptSandboxObservabilityOutcome with value set to v.
 func NewOptSandboxObservabilityOutcome(v SandboxObservabilityOutcome) OptSandboxObservabilityOutcome {
 	return OptSandboxObservabilityOutcome{
@@ -10249,52 +9462,6 @@ func (o OptSandboxPreviewCreateRequestProtocol) Get() (v SandboxPreviewCreateReq
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxPreviewCreateRequestProtocol) Or(d SandboxPreviewCreateRequestProtocol) SandboxPreviewCreateRequestProtocol {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxPreviewGrant returns new OptSandboxPreviewGrant with value set to v.
-func NewOptSandboxPreviewGrant(v SandboxPreviewGrant) OptSandboxPreviewGrant {
-	return OptSandboxPreviewGrant{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxPreviewGrant is optional SandboxPreviewGrant.
-type OptSandboxPreviewGrant struct {
-	Value SandboxPreviewGrant
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxPreviewGrant was set.
-func (o OptSandboxPreviewGrant) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxPreviewGrant) Reset() {
-	var v SandboxPreviewGrant
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxPreviewGrant) SetTo(v SandboxPreviewGrant) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxPreviewGrant) Get() (v SandboxPreviewGrant, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxPreviewGrant) Or(d SandboxPreviewGrant) SandboxPreviewGrant {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10439,98 +9606,6 @@ func (o OptSandboxResourceUsage) Or(d SandboxResourceUsage) SandboxResourceUsage
 	return d
 }
 
-// NewOptSandboxRootFSSnapshot returns new OptSandboxRootFSSnapshot with value set to v.
-func NewOptSandboxRootFSSnapshot(v SandboxRootFSSnapshot) OptSandboxRootFSSnapshot {
-	return OptSandboxRootFSSnapshot{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxRootFSSnapshot is optional SandboxRootFSSnapshot.
-type OptSandboxRootFSSnapshot struct {
-	Value SandboxRootFSSnapshot
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxRootFSSnapshot was set.
-func (o OptSandboxRootFSSnapshot) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxRootFSSnapshot) Reset() {
-	var v SandboxRootFSSnapshot
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxRootFSSnapshot) SetTo(v SandboxRootFSSnapshot) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxRootFSSnapshot) Get() (v SandboxRootFSSnapshot, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxRootFSSnapshot) Or(d SandboxRootFSSnapshot) SandboxRootFSSnapshot {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxRootFSSnapshotList returns new OptSandboxRootFSSnapshotList with value set to v.
-func NewOptSandboxRootFSSnapshotList(v SandboxRootFSSnapshotList) OptSandboxRootFSSnapshotList {
-	return OptSandboxRootFSSnapshotList{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxRootFSSnapshotList is optional SandboxRootFSSnapshotList.
-type OptSandboxRootFSSnapshotList struct {
-	Value SandboxRootFSSnapshotList
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxRootFSSnapshotList was set.
-func (o OptSandboxRootFSSnapshotList) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxRootFSSnapshotList) Reset() {
-	var v SandboxRootFSSnapshotList
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxRootFSSnapshotList) SetTo(v SandboxRootFSSnapshotList) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxRootFSSnapshotList) Get() (v SandboxRootFSSnapshotList, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxRootFSSnapshotList) Or(d SandboxRootFSSnapshotList) SandboxRootFSSnapshotList {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxRuntimeMetricGapDimensions returns new OptSandboxRuntimeMetricGapDimensions with value set to v.
 func NewOptSandboxRuntimeMetricGapDimensions(v SandboxRuntimeMetricGapDimensions) OptSandboxRuntimeMetricGapDimensions {
 	return OptSandboxRuntimeMetricGapDimensions{
@@ -10669,98 +9744,6 @@ func (o OptSandboxRuntimeMetricStatistic) Or(d SandboxRuntimeMetricStatistic) Sa
 	return d
 }
 
-// NewOptSandboxRuntimeMetricsCatalogResponse returns new OptSandboxRuntimeMetricsCatalogResponse with value set to v.
-func NewOptSandboxRuntimeMetricsCatalogResponse(v SandboxRuntimeMetricsCatalogResponse) OptSandboxRuntimeMetricsCatalogResponse {
-	return OptSandboxRuntimeMetricsCatalogResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxRuntimeMetricsCatalogResponse is optional SandboxRuntimeMetricsCatalogResponse.
-type OptSandboxRuntimeMetricsCatalogResponse struct {
-	Value SandboxRuntimeMetricsCatalogResponse
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxRuntimeMetricsCatalogResponse was set.
-func (o OptSandboxRuntimeMetricsCatalogResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxRuntimeMetricsCatalogResponse) Reset() {
-	var v SandboxRuntimeMetricsCatalogResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxRuntimeMetricsCatalogResponse) SetTo(v SandboxRuntimeMetricsCatalogResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxRuntimeMetricsCatalogResponse) Get() (v SandboxRuntimeMetricsCatalogResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxRuntimeMetricsCatalogResponse) Or(d SandboxRuntimeMetricsCatalogResponse) SandboxRuntimeMetricsCatalogResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxRuntimeMetricsResponse returns new OptSandboxRuntimeMetricsResponse with value set to v.
-func NewOptSandboxRuntimeMetricsResponse(v SandboxRuntimeMetricsResponse) OptSandboxRuntimeMetricsResponse {
-	return OptSandboxRuntimeMetricsResponse{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxRuntimeMetricsResponse is optional SandboxRuntimeMetricsResponse.
-type OptSandboxRuntimeMetricsResponse struct {
-	Value SandboxRuntimeMetricsResponse
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxRuntimeMetricsResponse was set.
-func (o OptSandboxRuntimeMetricsResponse) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxRuntimeMetricsResponse) Reset() {
-	var v SandboxRuntimeMetricsResponse
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxRuntimeMetricsResponse) SetTo(v SandboxRuntimeMetricsResponse) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxRuntimeMetricsResponse) Get() (v SandboxRuntimeMetricsResponse, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxRuntimeMetricsResponse) Or(d SandboxRuntimeMetricsResponse) SandboxRuntimeMetricsResponse {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptSandboxSSHConnection returns new OptSandboxSSHConnection with value set to v.
 func NewOptSandboxSSHConnection(v SandboxSSHConnection) OptSandboxSSHConnection {
 	return OptSandboxSSHConnection{
@@ -10801,52 +9784,6 @@ func (o OptSandboxSSHConnection) Get() (v SandboxSSHConnection, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxSSHConnection) Or(d SandboxSSHConnection) SandboxSSHConnection {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSandboxStatus returns new OptSandboxStatus with value set to v.
-func NewOptSandboxStatus(v SandboxStatus) OptSandboxStatus {
-	return OptSandboxStatus{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSandboxStatus is optional SandboxStatus.
-type OptSandboxStatus struct {
-	Value SandboxStatus
-	Set   bool
-}
-
-// IsSet returns true if OptSandboxStatus was set.
-func (o OptSandboxStatus) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSandboxStatus) Reset() {
-	var v SandboxStatus
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSandboxStatus) SetTo(v SandboxStatus) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSandboxStatus) Get() (v SandboxStatus, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSandboxStatus) Or(d SandboxStatus) SandboxStatus {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11267,1110 +10204,6 @@ func (o OptString) Or(d string) string {
 	return d
 }
 
-// NewOptSuccessAPIKeyListResponseData returns new OptSuccessAPIKeyListResponseData with value set to v.
-func NewOptSuccessAPIKeyListResponseData(v SuccessAPIKeyListResponseData) OptSuccessAPIKeyListResponseData {
-	return OptSuccessAPIKeyListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessAPIKeyListResponseData is optional SuccessAPIKeyListResponseData.
-type OptSuccessAPIKeyListResponseData struct {
-	Value SuccessAPIKeyListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessAPIKeyListResponseData was set.
-func (o OptSuccessAPIKeyListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessAPIKeyListResponseData) Reset() {
-	var v SuccessAPIKeyListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessAPIKeyListResponseData) SetTo(v SuccessAPIKeyListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessAPIKeyListResponseData) Get() (v SuccessAPIKeyListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessAPIKeyListResponseData) Or(d SuccessAPIKeyListResponseData) SuccessAPIKeyListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessAcceptedResponseData returns new OptSuccessAcceptedResponseData with value set to v.
-func NewOptSuccessAcceptedResponseData(v SuccessAcceptedResponseData) OptSuccessAcceptedResponseData {
-	return OptSuccessAcceptedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessAcceptedResponseData is optional SuccessAcceptedResponseData.
-type OptSuccessAcceptedResponseData struct {
-	Value SuccessAcceptedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessAcceptedResponseData was set.
-func (o OptSuccessAcceptedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessAcceptedResponseData) Reset() {
-	var v SuccessAcceptedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessAcceptedResponseData) SetTo(v SuccessAcceptedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessAcceptedResponseData) Get() (v SuccessAcceptedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessAcceptedResponseData) Or(d SuccessAcceptedResponseData) SuccessAcceptedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessAuthProvidersResponseData returns new OptSuccessAuthProvidersResponseData with value set to v.
-func NewOptSuccessAuthProvidersResponseData(v SuccessAuthProvidersResponseData) OptSuccessAuthProvidersResponseData {
-	return OptSuccessAuthProvidersResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessAuthProvidersResponseData is optional SuccessAuthProvidersResponseData.
-type OptSuccessAuthProvidersResponseData struct {
-	Value SuccessAuthProvidersResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessAuthProvidersResponseData was set.
-func (o OptSuccessAuthProvidersResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessAuthProvidersResponseData) Reset() {
-	var v SuccessAuthProvidersResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessAuthProvidersResponseData) SetTo(v SuccessAuthProvidersResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessAuthProvidersResponseData) Get() (v SuccessAuthProvidersResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessAuthProvidersResponseData) Or(d SuccessAuthProvidersResponseData) SuccessAuthProvidersResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessContextListResponseData returns new OptSuccessContextListResponseData with value set to v.
-func NewOptSuccessContextListResponseData(v SuccessContextListResponseData) OptSuccessContextListResponseData {
-	return OptSuccessContextListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessContextListResponseData is optional SuccessContextListResponseData.
-type OptSuccessContextListResponseData struct {
-	Value SuccessContextListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessContextListResponseData was set.
-func (o OptSuccessContextListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessContextListResponseData) Reset() {
-	var v SuccessContextListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessContextListResponseData) SetTo(v SuccessContextListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessContextListResponseData) Get() (v SuccessContextListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessContextListResponseData) Or(d SuccessContextListResponseData) SuccessContextListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessCreatedResponseData returns new OptSuccessCreatedResponseData with value set to v.
-func NewOptSuccessCreatedResponseData(v SuccessCreatedResponseData) OptSuccessCreatedResponseData {
-	return OptSuccessCreatedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessCreatedResponseData is optional SuccessCreatedResponseData.
-type OptSuccessCreatedResponseData struct {
-	Value SuccessCreatedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessCreatedResponseData was set.
-func (o OptSuccessCreatedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessCreatedResponseData) Reset() {
-	var v SuccessCreatedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessCreatedResponseData) SetTo(v SuccessCreatedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessCreatedResponseData) Get() (v SuccessCreatedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessCreatedResponseData) Or(d SuccessCreatedResponseData) SuccessCreatedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessCurrentAPIKeyResponseData returns new OptSuccessCurrentAPIKeyResponseData with value set to v.
-func NewOptSuccessCurrentAPIKeyResponseData(v SuccessCurrentAPIKeyResponseData) OptSuccessCurrentAPIKeyResponseData {
-	return OptSuccessCurrentAPIKeyResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessCurrentAPIKeyResponseData is optional SuccessCurrentAPIKeyResponseData.
-type OptSuccessCurrentAPIKeyResponseData struct {
-	Value SuccessCurrentAPIKeyResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessCurrentAPIKeyResponseData was set.
-func (o OptSuccessCurrentAPIKeyResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessCurrentAPIKeyResponseData) Reset() {
-	var v SuccessCurrentAPIKeyResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessCurrentAPIKeyResponseData) SetTo(v SuccessCurrentAPIKeyResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessCurrentAPIKeyResponseData) Get() (v SuccessCurrentAPIKeyResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessCurrentAPIKeyResponseData) Or(d SuccessCurrentAPIKeyResponseData) SuccessCurrentAPIKeyResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessDeletedResponseData returns new OptSuccessDeletedResponseData with value set to v.
-func NewOptSuccessDeletedResponseData(v SuccessDeletedResponseData) OptSuccessDeletedResponseData {
-	return OptSuccessDeletedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessDeletedResponseData is optional SuccessDeletedResponseData.
-type OptSuccessDeletedResponseData struct {
-	Value SuccessDeletedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessDeletedResponseData was set.
-func (o OptSuccessDeletedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessDeletedResponseData) Reset() {
-	var v SuccessDeletedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessDeletedResponseData) SetTo(v SuccessDeletedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessDeletedResponseData) Get() (v SuccessDeletedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessDeletedResponseData) Or(d SuccessDeletedResponseData) SuccessDeletedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessExecutionSessionListResponseData returns new OptSuccessExecutionSessionListResponseData with value set to v.
-func NewOptSuccessExecutionSessionListResponseData(v SuccessExecutionSessionListResponseData) OptSuccessExecutionSessionListResponseData {
-	return OptSuccessExecutionSessionListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessExecutionSessionListResponseData is optional SuccessExecutionSessionListResponseData.
-type OptSuccessExecutionSessionListResponseData struct {
-	Value SuccessExecutionSessionListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessExecutionSessionListResponseData was set.
-func (o OptSuccessExecutionSessionListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessExecutionSessionListResponseData) Reset() {
-	var v SuccessExecutionSessionListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessExecutionSessionListResponseData) SetTo(v SuccessExecutionSessionListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessExecutionSessionListResponseData) Get() (v SuccessExecutionSessionListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessExecutionSessionListResponseData) Or(d SuccessExecutionSessionListResponseData) SuccessExecutionSessionListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessFileListResponseData returns new OptSuccessFileListResponseData with value set to v.
-func NewOptSuccessFileListResponseData(v SuccessFileListResponseData) OptSuccessFileListResponseData {
-	return OptSuccessFileListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessFileListResponseData is optional SuccessFileListResponseData.
-type OptSuccessFileListResponseData struct {
-	Value SuccessFileListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessFileListResponseData was set.
-func (o OptSuccessFileListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessFileListResponseData) Reset() {
-	var v SuccessFileListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessFileListResponseData) SetTo(v SuccessFileListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessFileListResponseData) Get() (v SuccessFileListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessFileListResponseData) Or(d SuccessFileListResponseData) SuccessFileListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessHealthResponseData returns new OptSuccessHealthResponseData with value set to v.
-func NewOptSuccessHealthResponseData(v SuccessHealthResponseData) OptSuccessHealthResponseData {
-	return OptSuccessHealthResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessHealthResponseData is optional SuccessHealthResponseData.
-type OptSuccessHealthResponseData struct {
-	Value SuccessHealthResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessHealthResponseData was set.
-func (o OptSuccessHealthResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessHealthResponseData) Reset() {
-	var v SuccessHealthResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessHealthResponseData) SetTo(v SuccessHealthResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessHealthResponseData) Get() (v SuccessHealthResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessHealthResponseData) Or(d SuccessHealthResponseData) SuccessHealthResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessIdentityListResponseData returns new OptSuccessIdentityListResponseData with value set to v.
-func NewOptSuccessIdentityListResponseData(v SuccessIdentityListResponseData) OptSuccessIdentityListResponseData {
-	return OptSuccessIdentityListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessIdentityListResponseData is optional SuccessIdentityListResponseData.
-type OptSuccessIdentityListResponseData struct {
-	Value SuccessIdentityListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessIdentityListResponseData was set.
-func (o OptSuccessIdentityListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessIdentityListResponseData) Reset() {
-	var v SuccessIdentityListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessIdentityListResponseData) SetTo(v SuccessIdentityListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessIdentityListResponseData) Get() (v SuccessIdentityListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessIdentityListResponseData) Or(d SuccessIdentityListResponseData) SuccessIdentityListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessMessageResponseData returns new OptSuccessMessageResponseData with value set to v.
-func NewOptSuccessMessageResponseData(v SuccessMessageResponseData) OptSuccessMessageResponseData {
-	return OptSuccessMessageResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessMessageResponseData is optional SuccessMessageResponseData.
-type OptSuccessMessageResponseData struct {
-	Value SuccessMessageResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessMessageResponseData was set.
-func (o OptSuccessMessageResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessMessageResponseData) Reset() {
-	var v SuccessMessageResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessMessageResponseData) SetTo(v SuccessMessageResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessMessageResponseData) Get() (v SuccessMessageResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessMessageResponseData) Or(d SuccessMessageResponseData) SuccessMessageResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessMovedResponseData returns new OptSuccessMovedResponseData with value set to v.
-func NewOptSuccessMovedResponseData(v SuccessMovedResponseData) OptSuccessMovedResponseData {
-	return OptSuccessMovedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessMovedResponseData is optional SuccessMovedResponseData.
-type OptSuccessMovedResponseData struct {
-	Value SuccessMovedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessMovedResponseData was set.
-func (o OptSuccessMovedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessMovedResponseData) Reset() {
-	var v SuccessMovedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessMovedResponseData) SetTo(v SuccessMovedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessMovedResponseData) Get() (v SuccessMovedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessMovedResponseData) Or(d SuccessMovedResponseData) SuccessMovedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessRegionListResponseData returns new OptSuccessRegionListResponseData with value set to v.
-func NewOptSuccessRegionListResponseData(v SuccessRegionListResponseData) OptSuccessRegionListResponseData {
-	return OptSuccessRegionListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessRegionListResponseData is optional SuccessRegionListResponseData.
-type OptSuccessRegionListResponseData struct {
-	Value SuccessRegionListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessRegionListResponseData was set.
-func (o OptSuccessRegionListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessRegionListResponseData) Reset() {
-	var v SuccessRegionListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessRegionListResponseData) SetTo(v SuccessRegionListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessRegionListResponseData) Get() (v SuccessRegionListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessRegionListResponseData) Or(d SuccessRegionListResponseData) SuccessRegionListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessResizedResponseData returns new OptSuccessResizedResponseData with value set to v.
-func NewOptSuccessResizedResponseData(v SuccessResizedResponseData) OptSuccessResizedResponseData {
-	return OptSuccessResizedResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessResizedResponseData is optional SuccessResizedResponseData.
-type OptSuccessResizedResponseData struct {
-	Value SuccessResizedResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessResizedResponseData was set.
-func (o OptSuccessResizedResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessResizedResponseData) Reset() {
-	var v SuccessResizedResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessResizedResponseData) SetTo(v SuccessResizedResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessResizedResponseData) Get() (v SuccessResizedResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessResizedResponseData) Or(d SuccessResizedResponseData) SuccessResizedResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessSSHPublicKeyListResponseData returns new OptSuccessSSHPublicKeyListResponseData with value set to v.
-func NewOptSuccessSSHPublicKeyListResponseData(v SuccessSSHPublicKeyListResponseData) OptSuccessSSHPublicKeyListResponseData {
-	return OptSuccessSSHPublicKeyListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessSSHPublicKeyListResponseData is optional SuccessSSHPublicKeyListResponseData.
-type OptSuccessSSHPublicKeyListResponseData struct {
-	Value SuccessSSHPublicKeyListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessSSHPublicKeyListResponseData was set.
-func (o OptSuccessSSHPublicKeyListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessSSHPublicKeyListResponseData) Reset() {
-	var v SuccessSSHPublicKeyListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessSSHPublicKeyListResponseData) SetTo(v SuccessSSHPublicKeyListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessSSHPublicKeyListResponseData) Get() (v SuccessSSHPublicKeyListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessSSHPublicKeyListResponseData) Or(d SuccessSSHPublicKeyListResponseData) SuccessSSHPublicKeyListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessSandboxListResponseData returns new OptSuccessSandboxListResponseData with value set to v.
-func NewOptSuccessSandboxListResponseData(v SuccessSandboxListResponseData) OptSuccessSandboxListResponseData {
-	return OptSuccessSandboxListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessSandboxListResponseData is optional SuccessSandboxListResponseData.
-type OptSuccessSandboxListResponseData struct {
-	Value SuccessSandboxListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessSandboxListResponseData was set.
-func (o OptSuccessSandboxListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessSandboxListResponseData) Reset() {
-	var v SuccessSandboxListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessSandboxListResponseData) SetTo(v SuccessSandboxListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessSandboxListResponseData) Get() (v SuccessSandboxListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessSandboxListResponseData) Or(d SuccessSandboxListResponseData) SuccessSandboxListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessSandboxServicesResponseData returns new OptSuccessSandboxServicesResponseData with value set to v.
-func NewOptSuccessSandboxServicesResponseData(v SuccessSandboxServicesResponseData) OptSuccessSandboxServicesResponseData {
-	return OptSuccessSandboxServicesResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessSandboxServicesResponseData is optional SuccessSandboxServicesResponseData.
-type OptSuccessSandboxServicesResponseData struct {
-	Value SuccessSandboxServicesResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessSandboxServicesResponseData was set.
-func (o OptSuccessSandboxServicesResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessSandboxServicesResponseData) Reset() {
-	var v SuccessSandboxServicesResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessSandboxServicesResponseData) SetTo(v SuccessSandboxServicesResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessSandboxServicesResponseData) Get() (v SuccessSandboxServicesResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessSandboxServicesResponseData) Or(d SuccessSandboxServicesResponseData) SuccessSandboxServicesResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessSignaledResponseData returns new OptSuccessSignaledResponseData with value set to v.
-func NewOptSuccessSignaledResponseData(v SuccessSignaledResponseData) OptSuccessSignaledResponseData {
-	return OptSuccessSignaledResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessSignaledResponseData is optional SuccessSignaledResponseData.
-type OptSuccessSignaledResponseData struct {
-	Value SuccessSignaledResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessSignaledResponseData was set.
-func (o OptSuccessSignaledResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessSignaledResponseData) Reset() {
-	var v SuccessSignaledResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessSignaledResponseData) SetTo(v SuccessSignaledResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessSignaledResponseData) Get() (v SuccessSignaledResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessSignaledResponseData) Or(d SuccessSignaledResponseData) SuccessSignaledResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessTeamListResponseData returns new OptSuccessTeamListResponseData with value set to v.
-func NewOptSuccessTeamListResponseData(v SuccessTeamListResponseData) OptSuccessTeamListResponseData {
-	return OptSuccessTeamListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessTeamListResponseData is optional SuccessTeamListResponseData.
-type OptSuccessTeamListResponseData struct {
-	Value SuccessTeamListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessTeamListResponseData was set.
-func (o OptSuccessTeamListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessTeamListResponseData) Reset() {
-	var v SuccessTeamListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessTeamListResponseData) SetTo(v SuccessTeamListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessTeamListResponseData) Get() (v SuccessTeamListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessTeamListResponseData) Or(d SuccessTeamListResponseData) SuccessTeamListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessTeamMemberListResponseData returns new OptSuccessTeamMemberListResponseData with value set to v.
-func NewOptSuccessTeamMemberListResponseData(v SuccessTeamMemberListResponseData) OptSuccessTeamMemberListResponseData {
-	return OptSuccessTeamMemberListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessTeamMemberListResponseData is optional SuccessTeamMemberListResponseData.
-type OptSuccessTeamMemberListResponseData struct {
-	Value SuccessTeamMemberListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessTeamMemberListResponseData was set.
-func (o OptSuccessTeamMemberListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessTeamMemberListResponseData) Reset() {
-	var v SuccessTeamMemberListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessTeamMemberListResponseData) SetTo(v SuccessTeamMemberListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessTeamMemberListResponseData) Get() (v SuccessTeamMemberListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessTeamMemberListResponseData) Or(d SuccessTeamMemberListResponseData) SuccessTeamMemberListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessTemplateListResponseData returns new OptSuccessTemplateListResponseData with value set to v.
-func NewOptSuccessTemplateListResponseData(v SuccessTemplateListResponseData) OptSuccessTemplateListResponseData {
-	return OptSuccessTemplateListResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessTemplateListResponseData is optional SuccessTemplateListResponseData.
-type OptSuccessTemplateListResponseData struct {
-	Value SuccessTemplateListResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessTemplateListResponseData was set.
-func (o OptSuccessTemplateListResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessTemplateListResponseData) Reset() {
-	var v SuccessTemplateListResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessTemplateListResponseData) SetTo(v SuccessTemplateListResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessTemplateListResponseData) Get() (v SuccessTemplateListResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessTemplateListResponseData) Or(d SuccessTemplateListResponseData) SuccessTemplateListResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptSuccessWrittenResponseData returns new OptSuccessWrittenResponseData with value set to v.
-func NewOptSuccessWrittenResponseData(v SuccessWrittenResponseData) OptSuccessWrittenResponseData {
-	return OptSuccessWrittenResponseData{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptSuccessWrittenResponseData is optional SuccessWrittenResponseData.
-type OptSuccessWrittenResponseData struct {
-	Value SuccessWrittenResponseData
-	Set   bool
-}
-
-// IsSet returns true if OptSuccessWrittenResponseData was set.
-func (o OptSuccessWrittenResponseData) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptSuccessWrittenResponseData) Reset() {
-	var v SuccessWrittenResponseData
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptSuccessWrittenResponseData) SetTo(v SuccessWrittenResponseData) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptSuccessWrittenResponseData) Get() (v SuccessWrittenResponseData, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptSuccessWrittenResponseData) Or(d SuccessWrittenResponseData) SuccessWrittenResponseData {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptTeam returns new OptTeam with value set to v.
-func NewOptTeam(v Team) OptTeam {
-	return OptTeam{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTeam is optional Team.
-type OptTeam struct {
-	Value Team
-	Set   bool
-}
-
-// IsSet returns true if OptTeam was set.
-func (o OptTeam) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTeam) Reset() {
-	var v Team
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTeam) SetTo(v Team) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTeam) Get() (v Team, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTeam) Or(d Team) Team {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptTeamDeleteConflictDetails returns new OptTeamDeleteConflictDetails with value set to v.
 func NewOptTeamDeleteConflictDetails(v TeamDeleteConflictDetails) OptTeamDeleteConflictDetails {
 	return OptTeamDeleteConflictDetails{
@@ -12411,144 +10244,6 @@ func (o OptTeamDeleteConflictDetails) Get() (v TeamDeleteConflictDetails, ok boo
 
 // Or returns value if set, or given parameter if does not.
 func (o OptTeamDeleteConflictDetails) Or(d TeamDeleteConflictDetails) TeamDeleteConflictDetails {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptTeamMember returns new OptTeamMember with value set to v.
-func NewOptTeamMember(v TeamMember) OptTeamMember {
-	return OptTeamMember{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTeamMember is optional TeamMember.
-type OptTeamMember struct {
-	Value TeamMember
-	Set   bool
-}
-
-// IsSet returns true if OptTeamMember was set.
-func (o OptTeamMember) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTeamMember) Reset() {
-	var v TeamMember
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTeamMember) SetTo(v TeamMember) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTeamMember) Get() (v TeamMember, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTeamMember) Or(d TeamMember) TeamMember {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptTeamQuota returns new OptTeamQuota with value set to v.
-func NewOptTeamQuota(v TeamQuota) OptTeamQuota {
-	return OptTeamQuota{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTeamQuota is optional TeamQuota.
-type OptTeamQuota struct {
-	Value TeamQuota
-	Set   bool
-}
-
-// IsSet returns true if OptTeamQuota was set.
-func (o OptTeamQuota) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTeamQuota) Reset() {
-	var v TeamQuota
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTeamQuota) SetTo(v TeamQuota) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTeamQuota) Get() (v TeamQuota, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTeamQuota) Or(d TeamQuota) TeamQuota {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptTemplate returns new OptTemplate with value set to v.
-func NewOptTemplate(v Template) OptTemplate {
-	return OptTemplate{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptTemplate is optional Template.
-type OptTemplate struct {
-	Value Template
-	Set   bool
-}
-
-// IsSet returns true if OptTemplate was set.
-func (o OptTemplate) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptTemplate) Reset() {
-	var v Template
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptTemplate) SetTo(v Template) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptTemplate) Get() (v Template, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptTemplate) Or(d Template) Template {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -12687,98 +10382,6 @@ func (o OptUUID) Get() (v uuid.UUID, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptUUID) Or(d uuid.UUID) uuid.UUID {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptUsageWindowPage returns new OptUsageWindowPage with value set to v.
-func NewOptUsageWindowPage(v UsageWindowPage) OptUsageWindowPage {
-	return OptUsageWindowPage{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptUsageWindowPage is optional UsageWindowPage.
-type OptUsageWindowPage struct {
-	Value UsageWindowPage
-	Set   bool
-}
-
-// IsSet returns true if OptUsageWindowPage was set.
-func (o OptUsageWindowPage) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptUsageWindowPage) Reset() {
-	var v UsageWindowPage
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptUsageWindowPage) SetTo(v UsageWindowPage) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptUsageWindowPage) Get() (v UsageWindowPage, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptUsageWindowPage) Or(d UsageWindowPage) UsageWindowPage {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptUser returns new OptUser with value set to v.
-func NewOptUser(v User) OptUser {
-	return OptUser{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptUser is optional User.
-type OptUser struct {
-	Value User
-	Set   bool
-}
-
-// IsSet returns true if OptUser was set.
-func (o OptUser) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptUser) Reset() {
-	var v User
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptUser) SetTo(v User) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptUser) Get() (v User, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptUser) Or(d User) User {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -13898,7 +11501,7 @@ type RegisterRequest struct {
 	Password string `json:"password"`
 	Name     string `json:"name"`
 	// Required in global-gateway mode because registration creates the user's initial team.
-	HomeRegionID OptNilString `json:"home_region_id"`
+	HomeRegionID string `json:"home_region_id"`
 }
 
 // GetEmail returns the value of Email.
@@ -13917,7 +11520,7 @@ func (s *RegisterRequest) GetName() string {
 }
 
 // GetHomeRegionID returns the value of HomeRegionID.
-func (s *RegisterRequest) GetHomeRegionID() OptNilString {
+func (s *RegisterRequest) GetHomeRegionID() string {
 	return s.HomeRegionID
 }
 
@@ -13937,7 +11540,7 @@ func (s *RegisterRequest) SetName(val string) {
 }
 
 // SetHomeRegionID sets the value of HomeRegionID.
-func (s *RegisterRequest) SetHomeRegionID(val OptNilString) {
+func (s *RegisterRequest) SetHomeRegionID(val string) {
 	s.HomeRegionID = val
 }
 
@@ -18815,7 +16418,7 @@ func (s *StaticUsernamePasswordSourceSpec) SetPassword(val string) {
 type SuccessAPIKeyListResponse struct {
 	Success SuccessAPIKeyListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessAPIKeyListResponseData `json:"data"`
+	Data SuccessAPIKeyListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -18824,7 +16427,7 @@ func (s *SuccessAPIKeyListResponse) GetSuccess() SuccessAPIKeyListResponseSucces
 }
 
 // GetData returns the value of Data.
-func (s *SuccessAPIKeyListResponse) GetData() OptSuccessAPIKeyListResponseData {
+func (s *SuccessAPIKeyListResponse) GetData() SuccessAPIKeyListResponseData {
 	return s.Data
 }
 
@@ -18834,7 +16437,7 @@ func (s *SuccessAPIKeyListResponse) SetSuccess(val SuccessAPIKeyListResponseSucc
 }
 
 // SetData sets the value of Data.
-func (s *SuccessAPIKeyListResponse) SetData(val OptSuccessAPIKeyListResponseData) {
+func (s *SuccessAPIKeyListResponse) SetData(val SuccessAPIKeyListResponseData) {
 	s.Data = val
 }
 
@@ -18872,7 +16475,7 @@ func (SuccessAPIKeyListResponseSuccess) AllValues() []SuccessAPIKeyListResponseS
 type SuccessAcceptedResponse struct {
 	Success SuccessAcceptedResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessAcceptedResponseData `json:"data"`
+	Data SuccessAcceptedResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -18881,7 +16484,7 @@ func (s *SuccessAcceptedResponse) GetSuccess() SuccessAcceptedResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessAcceptedResponse) GetData() OptSuccessAcceptedResponseData {
+func (s *SuccessAcceptedResponse) GetData() SuccessAcceptedResponseData {
 	return s.Data
 }
 
@@ -18891,9 +16494,11 @@ func (s *SuccessAcceptedResponse) SetSuccess(val SuccessAcceptedResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessAcceptedResponse) SetData(val OptSuccessAcceptedResponseData) {
+func (s *SuccessAcceptedResponse) SetData(val SuccessAcceptedResponseData) {
 	s.Data = val
 }
+
+func (*SuccessAcceptedResponse) aPIV1SandboxesIDSessionsSessionIDSignalsPostRes() {}
 
 type SuccessAcceptedResponseData struct {
 	Accepted bool `json:"accepted"`
@@ -18927,7 +16532,7 @@ func (SuccessAcceptedResponseSuccess) AllValues() []SuccessAcceptedResponseSucce
 type SuccessAuthProvidersResponse struct {
 	Success SuccessAuthProvidersResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessAuthProvidersResponseData `json:"data"`
+	Data SuccessAuthProvidersResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -18936,7 +16541,7 @@ func (s *SuccessAuthProvidersResponse) GetSuccess() SuccessAuthProvidersResponse
 }
 
 // GetData returns the value of Data.
-func (s *SuccessAuthProvidersResponse) GetData() OptSuccessAuthProvidersResponseData {
+func (s *SuccessAuthProvidersResponse) GetData() SuccessAuthProvidersResponseData {
 	return s.Data
 }
 
@@ -18946,7 +16551,7 @@ func (s *SuccessAuthProvidersResponse) SetSuccess(val SuccessAuthProvidersRespon
 }
 
 // SetData sets the value of Data.
-func (s *SuccessAuthProvidersResponse) SetData(val OptSuccessAuthProvidersResponseData) {
+func (s *SuccessAuthProvidersResponse) SetData(val SuccessAuthProvidersResponseData) {
 	s.Data = val
 }
 
@@ -18984,7 +16589,7 @@ func (SuccessAuthProvidersResponseSuccess) AllValues() []SuccessAuthProvidersRes
 type SuccessClaimResponse struct {
 	Success SuccessClaimResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptClaimResponse `json:"data"`
+	Data ClaimResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -18993,7 +16598,7 @@ func (s *SuccessClaimResponse) GetSuccess() SuccessClaimResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessClaimResponse) GetData() OptClaimResponse {
+func (s *SuccessClaimResponse) GetData() ClaimResponse {
 	return s.Data
 }
 
@@ -19003,7 +16608,7 @@ func (s *SuccessClaimResponse) SetSuccess(val SuccessClaimResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessClaimResponse) SetData(val OptClaimResponse) {
+func (s *SuccessClaimResponse) SetData(val ClaimResponse) {
 	s.Data = val
 }
 
@@ -19027,7 +16632,7 @@ func (SuccessClaimResponseSuccess) AllValues() []SuccessClaimResponseSuccess {
 type SuccessContextExecResponse struct {
 	Success SuccessContextExecResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptContextExecResponse `json:"data"`
+	Data ContextExecResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19036,7 +16641,7 @@ func (s *SuccessContextExecResponse) GetSuccess() SuccessContextExecResponseSucc
 }
 
 // GetData returns the value of Data.
-func (s *SuccessContextExecResponse) GetData() OptContextExecResponse {
+func (s *SuccessContextExecResponse) GetData() ContextExecResponse {
 	return s.Data
 }
 
@@ -19046,9 +16651,11 @@ func (s *SuccessContextExecResponse) SetSuccess(val SuccessContextExecResponseSu
 }
 
 // SetData sets the value of Data.
-func (s *SuccessContextExecResponse) SetData(val OptContextExecResponse) {
+func (s *SuccessContextExecResponse) SetData(val ContextExecResponse) {
 	s.Data = val
 }
+
+func (*SuccessContextExecResponse) aPIV1SandboxesIDContextsCtxIDExecPostRes() {}
 
 type SuccessContextExecResponseSuccess bool
 
@@ -19068,7 +16675,7 @@ func (SuccessContextExecResponseSuccess) AllValues() []SuccessContextExecRespons
 type SuccessContextListResponse struct {
 	Success SuccessContextListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessContextListResponseData `json:"data"`
+	Data SuccessContextListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19077,7 +16684,7 @@ func (s *SuccessContextListResponse) GetSuccess() SuccessContextListResponseSucc
 }
 
 // GetData returns the value of Data.
-func (s *SuccessContextListResponse) GetData() OptSuccessContextListResponseData {
+func (s *SuccessContextListResponse) GetData() SuccessContextListResponseData {
 	return s.Data
 }
 
@@ -19087,9 +16694,11 @@ func (s *SuccessContextListResponse) SetSuccess(val SuccessContextListResponseSu
 }
 
 // SetData sets the value of Data.
-func (s *SuccessContextListResponse) SetData(val OptSuccessContextListResponseData) {
+func (s *SuccessContextListResponse) SetData(val SuccessContextListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessContextListResponse) aPIV1SandboxesIDContextsGetRes() {}
 
 type SuccessContextListResponseData struct {
 	Contexts []ContextResponse `json:"contexts"`
@@ -19123,7 +16732,7 @@ func (SuccessContextListResponseSuccess) AllValues() []SuccessContextListRespons
 type SuccessContextResponse struct {
 	Success SuccessContextResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptContextResponse `json:"data"`
+	Data ContextResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19132,7 +16741,7 @@ func (s *SuccessContextResponse) GetSuccess() SuccessContextResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessContextResponse) GetData() OptContextResponse {
+func (s *SuccessContextResponse) GetData() ContextResponse {
 	return s.Data
 }
 
@@ -19142,9 +16751,13 @@ func (s *SuccessContextResponse) SetSuccess(val SuccessContextResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessContextResponse) SetData(val OptContextResponse) {
+func (s *SuccessContextResponse) SetData(val ContextResponse) {
 	s.Data = val
 }
+
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsCtxIDGetRes()         {}
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsCtxIDRestartPostRes() {}
+func (*SuccessContextResponse) aPIV1SandboxesIDContextsPostRes()             {}
 
 type SuccessContextResponseSuccess bool
 
@@ -19164,7 +16777,7 @@ func (SuccessContextResponseSuccess) AllValues() []SuccessContextResponseSuccess
 type SuccessCreateAPIKeyResponse struct {
 	Success SuccessCreateAPIKeyResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptCreateAPIKeyResponse `json:"data"`
+	Data CreateAPIKeyResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19173,7 +16786,7 @@ func (s *SuccessCreateAPIKeyResponse) GetSuccess() SuccessCreateAPIKeyResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessCreateAPIKeyResponse) GetData() OptCreateAPIKeyResponse {
+func (s *SuccessCreateAPIKeyResponse) GetData() CreateAPIKeyResponse {
 	return s.Data
 }
 
@@ -19183,7 +16796,7 @@ func (s *SuccessCreateAPIKeyResponse) SetSuccess(val SuccessCreateAPIKeyResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessCreateAPIKeyResponse) SetData(val OptCreateAPIKeyResponse) {
+func (s *SuccessCreateAPIKeyResponse) SetData(val CreateAPIKeyResponse) {
 	s.Data = val
 }
 
@@ -19207,7 +16820,7 @@ func (SuccessCreateAPIKeyResponseSuccess) AllValues() []SuccessCreateAPIKeyRespo
 type SuccessCreatedResponse struct {
 	Success SuccessCreatedResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessCreatedResponseData `json:"data"`
+	Data SuccessCreatedResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19216,7 +16829,7 @@ func (s *SuccessCreatedResponse) GetSuccess() SuccessCreatedResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessCreatedResponse) GetData() OptSuccessCreatedResponseData {
+func (s *SuccessCreatedResponse) GetData() SuccessCreatedResponseData {
 	return s.Data
 }
 
@@ -19226,7 +16839,7 @@ func (s *SuccessCreatedResponse) SetSuccess(val SuccessCreatedResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessCreatedResponse) SetData(val OptSuccessCreatedResponseData) {
+func (s *SuccessCreatedResponse) SetData(val SuccessCreatedResponseData) {
 	s.Data = val
 }
 
@@ -19287,6 +16900,8 @@ func (s *SuccessCredentialSourceListResponse) SetData(val []CredentialSourceMeta
 	s.Data = val
 }
 
+func (*SuccessCredentialSourceListResponse) aPIV1CredentialSourcesGetRes() {}
+
 type SuccessCredentialSourceListResponseSuccess bool
 
 const (
@@ -19305,7 +16920,7 @@ func (SuccessCredentialSourceListResponseSuccess) AllValues() []SuccessCredentia
 type SuccessCredentialSourceResponse struct {
 	Success SuccessCredentialSourceResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptCredentialSourceMetadata `json:"data"`
+	Data CredentialSourceMetadata `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19314,7 +16929,7 @@ func (s *SuccessCredentialSourceResponse) GetSuccess() SuccessCredentialSourceRe
 }
 
 // GetData returns the value of Data.
-func (s *SuccessCredentialSourceResponse) GetData() OptCredentialSourceMetadata {
+func (s *SuccessCredentialSourceResponse) GetData() CredentialSourceMetadata {
 	return s.Data
 }
 
@@ -19324,7 +16939,7 @@ func (s *SuccessCredentialSourceResponse) SetSuccess(val SuccessCredentialSource
 }
 
 // SetData sets the value of Data.
-func (s *SuccessCredentialSourceResponse) SetData(val OptCredentialSourceMetadata) {
+func (s *SuccessCredentialSourceResponse) SetData(val CredentialSourceMetadata) {
 	s.Data = val
 }
 
@@ -19350,7 +16965,7 @@ func (SuccessCredentialSourceResponseSuccess) AllValues() []SuccessCredentialSou
 type SuccessCurrentAPIKeyResponse struct {
 	Success SuccessCurrentAPIKeyResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessCurrentAPIKeyResponseData `json:"data"`
+	Data SuccessCurrentAPIKeyResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19359,7 +16974,7 @@ func (s *SuccessCurrentAPIKeyResponse) GetSuccess() SuccessCurrentAPIKeyResponse
 }
 
 // GetData returns the value of Data.
-func (s *SuccessCurrentAPIKeyResponse) GetData() OptSuccessCurrentAPIKeyResponseData {
+func (s *SuccessCurrentAPIKeyResponse) GetData() SuccessCurrentAPIKeyResponseData {
 	return s.Data
 }
 
@@ -19369,7 +16984,7 @@ func (s *SuccessCurrentAPIKeyResponse) SetSuccess(val SuccessCurrentAPIKeyRespon
 }
 
 // SetData sets the value of Data.
-func (s *SuccessCurrentAPIKeyResponse) SetData(val OptSuccessCurrentAPIKeyResponseData) {
+func (s *SuccessCurrentAPIKeyResponse) SetData(val SuccessCurrentAPIKeyResponseData) {
 	s.Data = val
 }
 
@@ -19407,7 +17022,7 @@ func (SuccessCurrentAPIKeyResponseSuccess) AllValues() []SuccessCurrentAPIKeyRes
 type SuccessDeletedResponse struct {
 	Success SuccessDeletedResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessDeletedResponseData `json:"data"`
+	Data SuccessDeletedResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19416,7 +17031,7 @@ func (s *SuccessDeletedResponse) GetSuccess() SuccessDeletedResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessDeletedResponse) GetData() OptSuccessDeletedResponseData {
+func (s *SuccessDeletedResponse) GetData() SuccessDeletedResponseData {
 	return s.Data
 }
 
@@ -19426,11 +17041,14 @@ func (s *SuccessDeletedResponse) SetSuccess(val SuccessDeletedResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessDeletedResponse) SetData(val OptSuccessDeletedResponseData) {
+func (s *SuccessDeletedResponse) SetData(val SuccessDeletedResponseData) {
 	s.Data = val
 }
 
 func (*SuccessDeletedResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDDeleteRes() {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDContextsCtxIDDeleteRes()         {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDFilesDeleteRes()                 {}
+func (*SuccessDeletedResponse) aPIV1SandboxesIDSessionsSessionIDDeleteRes()     {}
 
 type SuccessDeletedResponseData struct {
 	Deleted OptBool `json:"deleted"`
@@ -19464,7 +17082,7 @@ func (SuccessDeletedResponseSuccess) AllValues() []SuccessDeletedResponseSuccess
 type SuccessDeviceLoginPollResponse struct {
 	Success SuccessDeviceLoginPollResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptDeviceLoginPollResponse `json:"data"`
+	Data DeviceLoginPollResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19473,7 +17091,7 @@ func (s *SuccessDeviceLoginPollResponse) GetSuccess() SuccessDeviceLoginPollResp
 }
 
 // GetData returns the value of Data.
-func (s *SuccessDeviceLoginPollResponse) GetData() OptDeviceLoginPollResponse {
+func (s *SuccessDeviceLoginPollResponse) GetData() DeviceLoginPollResponse {
 	return s.Data
 }
 
@@ -19483,7 +17101,7 @@ func (s *SuccessDeviceLoginPollResponse) SetSuccess(val SuccessDeviceLoginPollRe
 }
 
 // SetData sets the value of Data.
-func (s *SuccessDeviceLoginPollResponse) SetData(val OptDeviceLoginPollResponse) {
+func (s *SuccessDeviceLoginPollResponse) SetData(val DeviceLoginPollResponse) {
 	s.Data = val
 }
 
@@ -19507,7 +17125,7 @@ func (SuccessDeviceLoginPollResponseSuccess) AllValues() []SuccessDeviceLoginPol
 type SuccessDeviceLoginStartResponse struct {
 	Success SuccessDeviceLoginStartResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptDeviceLoginStartResponse `json:"data"`
+	Data DeviceLoginStartResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19516,7 +17134,7 @@ func (s *SuccessDeviceLoginStartResponse) GetSuccess() SuccessDeviceLoginStartRe
 }
 
 // GetData returns the value of Data.
-func (s *SuccessDeviceLoginStartResponse) GetData() OptDeviceLoginStartResponse {
+func (s *SuccessDeviceLoginStartResponse) GetData() DeviceLoginStartResponse {
 	return s.Data
 }
 
@@ -19526,7 +17144,7 @@ func (s *SuccessDeviceLoginStartResponse) SetSuccess(val SuccessDeviceLoginStart
 }
 
 // SetData sets the value of Data.
-func (s *SuccessDeviceLoginStartResponse) SetData(val OptDeviceLoginStartResponse) {
+func (s *SuccessDeviceLoginStartResponse) SetData(val DeviceLoginStartResponse) {
 	s.Data = val
 }
 
@@ -19550,7 +17168,7 @@ func (SuccessDeviceLoginStartResponseSuccess) AllValues() []SuccessDeviceLoginSt
 type SuccessExecutionSessionEventPageResponse struct {
 	Success SuccessExecutionSessionEventPageResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptExecutionSessionEventPage `json:"data"`
+	Data ExecutionSessionEventPage `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19559,7 +17177,7 @@ func (s *SuccessExecutionSessionEventPageResponse) GetSuccess() SuccessExecution
 }
 
 // GetData returns the value of Data.
-func (s *SuccessExecutionSessionEventPageResponse) GetData() OptExecutionSessionEventPage {
+func (s *SuccessExecutionSessionEventPageResponse) GetData() ExecutionSessionEventPage {
 	return s.Data
 }
 
@@ -19569,7 +17187,7 @@ func (s *SuccessExecutionSessionEventPageResponse) SetSuccess(val SuccessExecuti
 }
 
 // SetData sets the value of Data.
-func (s *SuccessExecutionSessionEventPageResponse) SetData(val OptExecutionSessionEventPage) {
+func (s *SuccessExecutionSessionEventPageResponse) SetData(val ExecutionSessionEventPage) {
 	s.Data = val
 }
 
@@ -19593,7 +17211,7 @@ func (SuccessExecutionSessionEventPageResponseSuccess) AllValues() []SuccessExec
 type SuccessExecutionSessionInputResponse struct {
 	Success SuccessExecutionSessionInputResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptExecutionSessionInputResponse `json:"data"`
+	Data ExecutionSessionInputResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19602,7 +17220,7 @@ func (s *SuccessExecutionSessionInputResponse) GetSuccess() SuccessExecutionSess
 }
 
 // GetData returns the value of Data.
-func (s *SuccessExecutionSessionInputResponse) GetData() OptExecutionSessionInputResponse {
+func (s *SuccessExecutionSessionInputResponse) GetData() ExecutionSessionInputResponse {
 	return s.Data
 }
 
@@ -19612,9 +17230,11 @@ func (s *SuccessExecutionSessionInputResponse) SetSuccess(val SuccessExecutionSe
 }
 
 // SetData sets the value of Data.
-func (s *SuccessExecutionSessionInputResponse) SetData(val OptExecutionSessionInputResponse) {
+func (s *SuccessExecutionSessionInputResponse) SetData(val ExecutionSessionInputResponse) {
 	s.Data = val
 }
+
+func (*SuccessExecutionSessionInputResponse) aPIV1SandboxesIDSessionsSessionIDInputsPostRes() {}
 
 type SuccessExecutionSessionInputResponseSuccess bool
 
@@ -19634,7 +17254,7 @@ func (SuccessExecutionSessionInputResponseSuccess) AllValues() []SuccessExecutio
 type SuccessExecutionSessionListResponse struct {
 	Success SuccessExecutionSessionListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessExecutionSessionListResponseData `json:"data"`
+	Data SuccessExecutionSessionListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19643,7 +17263,7 @@ func (s *SuccessExecutionSessionListResponse) GetSuccess() SuccessExecutionSessi
 }
 
 // GetData returns the value of Data.
-func (s *SuccessExecutionSessionListResponse) GetData() OptSuccessExecutionSessionListResponseData {
+func (s *SuccessExecutionSessionListResponse) GetData() SuccessExecutionSessionListResponseData {
 	return s.Data
 }
 
@@ -19653,9 +17273,11 @@ func (s *SuccessExecutionSessionListResponse) SetSuccess(val SuccessExecutionSes
 }
 
 // SetData sets the value of Data.
-func (s *SuccessExecutionSessionListResponse) SetData(val OptSuccessExecutionSessionListResponseData) {
+func (s *SuccessExecutionSessionListResponse) SetData(val SuccessExecutionSessionListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessExecutionSessionListResponse) aPIV1SandboxesIDSessionsGetRes() {}
 
 type SuccessExecutionSessionListResponseData struct {
 	Sessions []ExecutionSession `json:"sessions"`
@@ -19689,7 +17311,7 @@ func (SuccessExecutionSessionListResponseSuccess) AllValues() []SuccessExecution
 type SuccessExecutionSessionResponse struct {
 	Success SuccessExecutionSessionResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptExecutionSession `json:"data"`
+	Data ExecutionSession `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19698,7 +17320,7 @@ func (s *SuccessExecutionSessionResponse) GetSuccess() SuccessExecutionSessionRe
 }
 
 // GetData returns the value of Data.
-func (s *SuccessExecutionSessionResponse) GetData() OptExecutionSession {
+func (s *SuccessExecutionSessionResponse) GetData() ExecutionSession {
 	return s.Data
 }
 
@@ -19708,9 +17330,14 @@ func (s *SuccessExecutionSessionResponse) SetSuccess(val SuccessExecutionSession
 }
 
 // SetData sets the value of Data.
-func (s *SuccessExecutionSessionResponse) SetData(val OptExecutionSession) {
+func (s *SuccessExecutionSessionResponse) SetData(val ExecutionSession) {
 	s.Data = val
 }
+
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()    {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDDesiredStatePutRes() {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
+func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
 
 type SuccessExecutionSessionResponseSuccess bool
 
@@ -19730,7 +17357,7 @@ func (SuccessExecutionSessionResponseSuccess) AllValues() []SuccessExecutionSess
 type SuccessFileListResponse struct {
 	Success SuccessFileListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessFileListResponseData `json:"data"`
+	Data SuccessFileListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19739,7 +17366,7 @@ func (s *SuccessFileListResponse) GetSuccess() SuccessFileListResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessFileListResponse) GetData() OptSuccessFileListResponseData {
+func (s *SuccessFileListResponse) GetData() SuccessFileListResponseData {
 	return s.Data
 }
 
@@ -19749,9 +17376,11 @@ func (s *SuccessFileListResponse) SetSuccess(val SuccessFileListResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessFileListResponse) SetData(val OptSuccessFileListResponseData) {
+func (s *SuccessFileListResponse) SetData(val SuccessFileListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessFileListResponse) aPIV1SandboxesIDFilesListGetRes() {}
 
 type SuccessFileListResponseData struct {
 	Entries []FileInfo `json:"entries"`
@@ -19785,7 +17414,7 @@ func (SuccessFileListResponseSuccess) AllValues() []SuccessFileListResponseSucce
 type SuccessFileStatResponse struct {
 	Success SuccessFileStatResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptFileInfo `json:"data"`
+	Data FileInfo `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19794,7 +17423,7 @@ func (s *SuccessFileStatResponse) GetSuccess() SuccessFileStatResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessFileStatResponse) GetData() OptFileInfo {
+func (s *SuccessFileStatResponse) GetData() FileInfo {
 	return s.Data
 }
 
@@ -19804,9 +17433,11 @@ func (s *SuccessFileStatResponse) SetSuccess(val SuccessFileStatResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessFileStatResponse) SetData(val OptFileInfo) {
+func (s *SuccessFileStatResponse) SetData(val FileInfo) {
 	s.Data = val
 }
+
+func (*SuccessFileStatResponse) aPIV1SandboxesIDFilesStatGetRes() {}
 
 type SuccessFileStatResponseSuccess bool
 
@@ -19826,7 +17457,7 @@ func (SuccessFileStatResponseSuccess) AllValues() []SuccessFileStatResponseSucce
 type SuccessForkSandboxResponse struct {
 	Success SuccessForkSandboxResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptForkSandboxResponse `json:"data"`
+	Data ForkSandboxResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19835,7 +17466,7 @@ func (s *SuccessForkSandboxResponse) GetSuccess() SuccessForkSandboxResponseSucc
 }
 
 // GetData returns the value of Data.
-func (s *SuccessForkSandboxResponse) GetData() OptForkSandboxResponse {
+func (s *SuccessForkSandboxResponse) GetData() ForkSandboxResponse {
 	return s.Data
 }
 
@@ -19845,7 +17476,7 @@ func (s *SuccessForkSandboxResponse) SetSuccess(val SuccessForkSandboxResponseSu
 }
 
 // SetData sets the value of Data.
-func (s *SuccessForkSandboxResponse) SetData(val OptForkSandboxResponse) {
+func (s *SuccessForkSandboxResponse) SetData(val ForkSandboxResponse) {
 	s.Data = val
 }
 
@@ -19869,7 +17500,7 @@ func (SuccessForkSandboxResponseSuccess) AllValues() []SuccessForkSandboxRespons
 type SuccessGatewayMetadataResponse struct {
 	Success SuccessGatewayMetadataResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptGatewayMetadata `json:"data"`
+	Data GatewayMetadata `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19878,7 +17509,7 @@ func (s *SuccessGatewayMetadataResponse) GetSuccess() SuccessGatewayMetadataResp
 }
 
 // GetData returns the value of Data.
-func (s *SuccessGatewayMetadataResponse) GetData() OptGatewayMetadata {
+func (s *SuccessGatewayMetadataResponse) GetData() GatewayMetadata {
 	return s.Data
 }
 
@@ -19888,7 +17519,7 @@ func (s *SuccessGatewayMetadataResponse) SetSuccess(val SuccessGatewayMetadataRe
 }
 
 // SetData sets the value of Data.
-func (s *SuccessGatewayMetadataResponse) SetData(val OptGatewayMetadata) {
+func (s *SuccessGatewayMetadataResponse) SetData(val GatewayMetadata) {
 	s.Data = val
 }
 
@@ -19910,7 +17541,7 @@ func (SuccessGatewayMetadataResponseSuccess) AllValues() []SuccessGatewayMetadat
 type SuccessHealthResponse struct {
 	Success SuccessHealthResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessHealthResponseData `json:"data"`
+	Data SuccessHealthResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19919,7 +17550,7 @@ func (s *SuccessHealthResponse) GetSuccess() SuccessHealthResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessHealthResponse) GetData() OptSuccessHealthResponseData {
+func (s *SuccessHealthResponse) GetData() SuccessHealthResponseData {
 	return s.Data
 }
 
@@ -19929,7 +17560,7 @@ func (s *SuccessHealthResponse) SetSuccess(val SuccessHealthResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessHealthResponse) SetData(val OptSuccessHealthResponseData) {
+func (s *SuccessHealthResponse) SetData(val SuccessHealthResponseData) {
 	s.Data = val
 }
 
@@ -19979,7 +17610,7 @@ func (SuccessHealthResponseSuccess) AllValues() []SuccessHealthResponseSuccess {
 type SuccessIdentityListResponse struct {
 	Success SuccessIdentityListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessIdentityListResponseData `json:"data"`
+	Data SuccessIdentityListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -19988,7 +17619,7 @@ func (s *SuccessIdentityListResponse) GetSuccess() SuccessIdentityListResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessIdentityListResponse) GetData() OptSuccessIdentityListResponseData {
+func (s *SuccessIdentityListResponse) GetData() SuccessIdentityListResponseData {
 	return s.Data
 }
 
@@ -19998,7 +17629,7 @@ func (s *SuccessIdentityListResponse) SetSuccess(val SuccessIdentityListResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessIdentityListResponse) SetData(val OptSuccessIdentityListResponseData) {
+func (s *SuccessIdentityListResponse) SetData(val SuccessIdentityListResponseData) {
 	s.Data = val
 }
 
@@ -20036,7 +17667,7 @@ func (SuccessIdentityListResponseSuccess) AllValues() []SuccessIdentityListRespo
 type SuccessLoginResponse struct {
 	Success SuccessLoginResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptLoginResponse `json:"data"`
+	Data LoginResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20045,7 +17676,7 @@ func (s *SuccessLoginResponse) GetSuccess() SuccessLoginResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessLoginResponse) GetData() OptLoginResponse {
+func (s *SuccessLoginResponse) GetData() LoginResponse {
 	return s.Data
 }
 
@@ -20055,7 +17686,7 @@ func (s *SuccessLoginResponse) SetSuccess(val SuccessLoginResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessLoginResponse) SetData(val OptLoginResponse) {
+func (s *SuccessLoginResponse) SetData(val LoginResponse) {
 	s.Data = val
 }
 
@@ -20083,7 +17714,7 @@ func (SuccessLoginResponseSuccess) AllValues() []SuccessLoginResponseSuccess {
 type SuccessMessageResponse struct {
 	Success SuccessMessageResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessMessageResponseData `json:"data"`
+	Data SuccessMessageResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20092,7 +17723,7 @@ func (s *SuccessMessageResponse) GetSuccess() SuccessMessageResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessMessageResponse) GetData() OptSuccessMessageResponseData {
+func (s *SuccessMessageResponse) GetData() SuccessMessageResponseData {
 	return s.Data
 }
 
@@ -20102,15 +17733,18 @@ func (s *SuccessMessageResponse) SetSuccess(val SuccessMessageResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessMessageResponse) SetData(val OptSuccessMessageResponseData) {
+func (s *SuccessMessageResponse) SetData(val SuccessMessageResponseData) {
 	s.Data = val
 }
 
 func (*SuccessMessageResponse) aPIKeysIDDeactivatePostRes()                 {}
 func (*SuccessMessageResponse) aPIKeysIDDeleteRes()                         {}
+func (*SuccessMessageResponse) aPIV1CredentialSourcesNameDeleteRes()        {}
 func (*SuccessMessageResponse) aPIV1SandboxesIDDeleteRes()                  {}
 func (*SuccessMessageResponse) aPIV1SandboxesIDPreviewsPreviewIDDeleteRes() {}
+func (*SuccessMessageResponse) aPIV1TemplatesIDDeleteRes()                  {}
 func (*SuccessMessageResponse) authChangePasswordPostRes()                  {}
+func (*SuccessMessageResponse) authLogoutPostRes()                          {}
 func (*SuccessMessageResponse) regionsIDDeleteRes()                         {}
 func (*SuccessMessageResponse) teamsIDDeleteRes()                           {}
 func (*SuccessMessageResponse) teamsIDMembersUserIdDeleteRes()              {}
@@ -20150,7 +17784,7 @@ func (SuccessMessageResponseSuccess) AllValues() []SuccessMessageResponseSuccess
 type SuccessMovedResponse struct {
 	Success SuccessMovedResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessMovedResponseData `json:"data"`
+	Data SuccessMovedResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20159,7 +17793,7 @@ func (s *SuccessMovedResponse) GetSuccess() SuccessMovedResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessMovedResponse) GetData() OptSuccessMovedResponseData {
+func (s *SuccessMovedResponse) GetData() SuccessMovedResponseData {
 	return s.Data
 }
 
@@ -20169,9 +17803,11 @@ func (s *SuccessMovedResponse) SetSuccess(val SuccessMovedResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessMovedResponse) SetData(val OptSuccessMovedResponseData) {
+func (s *SuccessMovedResponse) SetData(val SuccessMovedResponseData) {
 	s.Data = val
 }
+
+func (*SuccessMovedResponse) aPIV1SandboxesIDFilesMovePostRes() {}
 
 type SuccessMovedResponseData struct {
 	Moved OptBool `json:"moved"`
@@ -20205,7 +17841,7 @@ func (SuccessMovedResponseSuccess) AllValues() []SuccessMovedResponseSuccess {
 type SuccessPauseSandboxResponse struct {
 	Success SuccessPauseSandboxResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptPauseSandboxResponse `json:"data"`
+	Data PauseSandboxResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20214,7 +17850,7 @@ func (s *SuccessPauseSandboxResponse) GetSuccess() SuccessPauseSandboxResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessPauseSandboxResponse) GetData() OptPauseSandboxResponse {
+func (s *SuccessPauseSandboxResponse) GetData() PauseSandboxResponse {
 	return s.Data
 }
 
@@ -20224,11 +17860,9 @@ func (s *SuccessPauseSandboxResponse) SetSuccess(val SuccessPauseSandboxResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessPauseSandboxResponse) SetData(val OptPauseSandboxResponse) {
+func (s *SuccessPauseSandboxResponse) SetData(val PauseSandboxResponse) {
 	s.Data = val
 }
-
-func (*SuccessPauseSandboxResponse) aPIV1SandboxesIDPausePostRes() {}
 
 type SuccessPauseSandboxResponseSuccess bool
 
@@ -20248,7 +17882,7 @@ func (SuccessPauseSandboxResponseSuccess) AllValues() []SuccessPauseSandboxRespo
 type SuccessRebaseSandboxRootFSResponse struct {
 	Success SuccessRebaseSandboxRootFSResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptRebaseSandboxRootFSResponse `json:"data"`
+	Data RebaseSandboxRootFSResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20257,7 +17891,7 @@ func (s *SuccessRebaseSandboxRootFSResponse) GetSuccess() SuccessRebaseSandboxRo
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRebaseSandboxRootFSResponse) GetData() OptRebaseSandboxRootFSResponse {
+func (s *SuccessRebaseSandboxRootFSResponse) GetData() RebaseSandboxRootFSResponse {
 	return s.Data
 }
 
@@ -20267,7 +17901,7 @@ func (s *SuccessRebaseSandboxRootFSResponse) SetSuccess(val SuccessRebaseSandbox
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRebaseSandboxRootFSResponse) SetData(val OptRebaseSandboxRootFSResponse) {
+func (s *SuccessRebaseSandboxRootFSResponse) SetData(val RebaseSandboxRootFSResponse) {
 	s.Data = val
 }
 
@@ -20291,7 +17925,7 @@ func (SuccessRebaseSandboxRootFSResponseSuccess) AllValues() []SuccessRebaseSand
 type SuccessRefreshResponse struct {
 	Success SuccessRefreshResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptRefreshResponse `json:"data"`
+	Data RefreshResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20300,7 +17934,7 @@ func (s *SuccessRefreshResponse) GetSuccess() SuccessRefreshResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRefreshResponse) GetData() OptRefreshResponse {
+func (s *SuccessRefreshResponse) GetData() RefreshResponse {
 	return s.Data
 }
 
@@ -20310,7 +17944,7 @@ func (s *SuccessRefreshResponse) SetSuccess(val SuccessRefreshResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRefreshResponse) SetData(val OptRefreshResponse) {
+func (s *SuccessRefreshResponse) SetData(val RefreshResponse) {
 	s.Data = val
 }
 
@@ -20334,7 +17968,7 @@ func (SuccessRefreshResponseSuccess) AllValues() []SuccessRefreshResponseSuccess
 type SuccessRegionListResponse struct {
 	Success SuccessRegionListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessRegionListResponseData `json:"data"`
+	Data SuccessRegionListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20343,7 +17977,7 @@ func (s *SuccessRegionListResponse) GetSuccess() SuccessRegionListResponseSucces
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRegionListResponse) GetData() OptSuccessRegionListResponseData {
+func (s *SuccessRegionListResponse) GetData() SuccessRegionListResponseData {
 	return s.Data
 }
 
@@ -20353,7 +17987,7 @@ func (s *SuccessRegionListResponse) SetSuccess(val SuccessRegionListResponseSucc
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRegionListResponse) SetData(val OptSuccessRegionListResponseData) {
+func (s *SuccessRegionListResponse) SetData(val SuccessRegionListResponseData) {
 	s.Data = val
 }
 
@@ -20391,7 +18025,7 @@ func (SuccessRegionListResponseSuccess) AllValues() []SuccessRegionListResponseS
 type SuccessRegionResponse struct {
 	Success SuccessRegionResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptRegion `json:"data"`
+	Data Region `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20400,7 +18034,7 @@ func (s *SuccessRegionResponse) GetSuccess() SuccessRegionResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRegionResponse) GetData() OptRegion {
+func (s *SuccessRegionResponse) GetData() Region {
 	return s.Data
 }
 
@@ -20410,7 +18044,7 @@ func (s *SuccessRegionResponse) SetSuccess(val SuccessRegionResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRegionResponse) SetData(val OptRegion) {
+func (s *SuccessRegionResponse) SetData(val Region) {
 	s.Data = val
 }
 
@@ -20436,7 +18070,7 @@ func (SuccessRegionResponseSuccess) AllValues() []SuccessRegionResponseSuccess {
 type SuccessRegistryCredentialsResponse struct {
 	Success SuccessRegistryCredentialsResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptRegistryCredentials `json:"data"`
+	Data RegistryCredentials `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20445,7 +18079,7 @@ func (s *SuccessRegistryCredentialsResponse) GetSuccess() SuccessRegistryCredent
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRegistryCredentialsResponse) GetData() OptRegistryCredentials {
+func (s *SuccessRegistryCredentialsResponse) GetData() RegistryCredentials {
 	return s.Data
 }
 
@@ -20455,7 +18089,7 @@ func (s *SuccessRegistryCredentialsResponse) SetSuccess(val SuccessRegistryCrede
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRegistryCredentialsResponse) SetData(val OptRegistryCredentials) {
+func (s *SuccessRegistryCredentialsResponse) SetData(val RegistryCredentials) {
 	s.Data = val
 }
 
@@ -20479,7 +18113,7 @@ func (SuccessRegistryCredentialsResponseSuccess) AllValues() []SuccessRegistryCr
 type SuccessResizedResponse struct {
 	Success SuccessResizedResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessResizedResponseData `json:"data"`
+	Data SuccessResizedResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20488,7 +18122,7 @@ func (s *SuccessResizedResponse) GetSuccess() SuccessResizedResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessResizedResponse) GetData() OptSuccessResizedResponseData {
+func (s *SuccessResizedResponse) GetData() SuccessResizedResponseData {
 	return s.Data
 }
 
@@ -20498,9 +18132,12 @@ func (s *SuccessResizedResponse) SetSuccess(val SuccessResizedResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessResizedResponse) SetData(val OptSuccessResizedResponseData) {
+func (s *SuccessResizedResponse) SetData(val SuccessResizedResponseData) {
 	s.Data = val
 }
+
+func (*SuccessResizedResponse) aPIV1SandboxesIDContextsCtxIDResizePostRes()      {}
+func (*SuccessResizedResponse) aPIV1SandboxesIDSessionsSessionIDTerminalPutRes() {}
 
 type SuccessResizedResponseData struct {
 	Resized OptBool `json:"resized"`
@@ -20534,7 +18171,7 @@ func (SuccessResizedResponseSuccess) AllValues() []SuccessResizedResponseSuccess
 type SuccessRestoreSandboxRootFSResponse struct {
 	Success SuccessRestoreSandboxRootFSResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptRestoreSandboxRootFSResponse `json:"data"`
+	Data RestoreSandboxRootFSResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20543,7 +18180,7 @@ func (s *SuccessRestoreSandboxRootFSResponse) GetSuccess() SuccessRestoreSandbox
 }
 
 // GetData returns the value of Data.
-func (s *SuccessRestoreSandboxRootFSResponse) GetData() OptRestoreSandboxRootFSResponse {
+func (s *SuccessRestoreSandboxRootFSResponse) GetData() RestoreSandboxRootFSResponse {
 	return s.Data
 }
 
@@ -20553,7 +18190,7 @@ func (s *SuccessRestoreSandboxRootFSResponse) SetSuccess(val SuccessRestoreSandb
 }
 
 // SetData sets the value of Data.
-func (s *SuccessRestoreSandboxRootFSResponse) SetData(val OptRestoreSandboxRootFSResponse) {
+func (s *SuccessRestoreSandboxRootFSResponse) SetData(val RestoreSandboxRootFSResponse) {
 	s.Data = val
 }
 
@@ -20577,7 +18214,7 @@ func (SuccessRestoreSandboxRootFSResponseSuccess) AllValues() []SuccessRestoreSa
 type SuccessResumeSandboxResponse struct {
 	Success SuccessResumeSandboxResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptResumeSandboxResponse `json:"data"`
+	Data ResumeSandboxResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20586,7 +18223,7 @@ func (s *SuccessResumeSandboxResponse) GetSuccess() SuccessResumeSandboxResponse
 }
 
 // GetData returns the value of Data.
-func (s *SuccessResumeSandboxResponse) GetData() OptResumeSandboxResponse {
+func (s *SuccessResumeSandboxResponse) GetData() ResumeSandboxResponse {
 	return s.Data
 }
 
@@ -20596,7 +18233,7 @@ func (s *SuccessResumeSandboxResponse) SetSuccess(val SuccessResumeSandboxRespon
 }
 
 // SetData sets the value of Data.
-func (s *SuccessResumeSandboxResponse) SetData(val OptResumeSandboxResponse) {
+func (s *SuccessResumeSandboxResponse) SetData(val ResumeSandboxResponse) {
 	s.Data = val
 }
 
@@ -20620,7 +18257,7 @@ func (SuccessResumeSandboxResponseSuccess) AllValues() []SuccessResumeSandboxRes
 type SuccessSSHPublicKeyListResponse struct {
 	Success SuccessSSHPublicKeyListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessSSHPublicKeyListResponseData `json:"data"`
+	Data SuccessSSHPublicKeyListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20629,7 +18266,7 @@ func (s *SuccessSSHPublicKeyListResponse) GetSuccess() SuccessSSHPublicKeyListRe
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSSHPublicKeyListResponse) GetData() OptSuccessSSHPublicKeyListResponseData {
+func (s *SuccessSSHPublicKeyListResponse) GetData() SuccessSSHPublicKeyListResponseData {
 	return s.Data
 }
 
@@ -20639,7 +18276,7 @@ func (s *SuccessSSHPublicKeyListResponse) SetSuccess(val SuccessSSHPublicKeyList
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSSHPublicKeyListResponse) SetData(val OptSuccessSSHPublicKeyListResponseData) {
+func (s *SuccessSSHPublicKeyListResponse) SetData(val SuccessSSHPublicKeyListResponseData) {
 	s.Data = val
 }
 
@@ -20677,7 +18314,7 @@ func (SuccessSSHPublicKeyListResponseSuccess) AllValues() []SuccessSSHPublicKeyL
 type SuccessSSHPublicKeyResponse struct {
 	Success SuccessSSHPublicKeyResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSSHPublicKey `json:"data"`
+	Data SSHPublicKey `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20686,7 +18323,7 @@ func (s *SuccessSSHPublicKeyResponse) GetSuccess() SuccessSSHPublicKeyResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSSHPublicKeyResponse) GetData() OptSSHPublicKey {
+func (s *SuccessSSHPublicKeyResponse) GetData() SSHPublicKey {
 	return s.Data
 }
 
@@ -20696,7 +18333,7 @@ func (s *SuccessSSHPublicKeyResponse) SetSuccess(val SuccessSSHPublicKeyResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSSHPublicKeyResponse) SetData(val OptSSHPublicKey) {
+func (s *SuccessSSHPublicKeyResponse) SetData(val SSHPublicKey) {
 	s.Data = val
 }
 
@@ -20720,7 +18357,7 @@ func (SuccessSSHPublicKeyResponseSuccess) AllValues() []SuccessSSHPublicKeyRespo
 type SuccessSandboxListResponse struct {
 	Success SuccessSandboxListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessSandboxListResponseData `json:"data"`
+	Data SuccessSandboxListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20729,7 +18366,7 @@ func (s *SuccessSandboxListResponse) GetSuccess() SuccessSandboxListResponseSucc
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxListResponse) GetData() OptSuccessSandboxListResponseData {
+func (s *SuccessSandboxListResponse) GetData() SuccessSandboxListResponseData {
 	return s.Data
 }
 
@@ -20739,7 +18376,7 @@ func (s *SuccessSandboxListResponse) SetSuccess(val SuccessSandboxListResponseSu
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxListResponse) SetData(val OptSuccessSandboxListResponseData) {
+func (s *SuccessSandboxListResponse) SetData(val SuccessSandboxListResponseData) {
 	s.Data = val
 }
 
@@ -20801,7 +18438,7 @@ func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListRespons
 type SuccessSandboxNetworkPolicyResponse struct {
 	Success SuccessSandboxNetworkPolicyResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxNetworkPolicy `json:"data"`
+	Data SandboxNetworkPolicy `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20810,7 +18447,7 @@ func (s *SuccessSandboxNetworkPolicyResponse) GetSuccess() SuccessSandboxNetwork
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxNetworkPolicyResponse) GetData() OptSandboxNetworkPolicy {
+func (s *SuccessSandboxNetworkPolicyResponse) GetData() SandboxNetworkPolicy {
 	return s.Data
 }
 
@@ -20820,11 +18457,12 @@ func (s *SuccessSandboxNetworkPolicyResponse) SetSuccess(val SuccessSandboxNetwo
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxNetworkPolicyResponse) SetData(val OptSandboxNetworkPolicy) {
+func (s *SuccessSandboxNetworkPolicyResponse) SetData(val SandboxNetworkPolicy) {
 	s.Data = val
 }
 
 func (*SuccessSandboxNetworkPolicyResponse) aPIV1SandboxesIDNetworkGetRes() {}
+func (*SuccessSandboxNetworkPolicyResponse) aPIV1SandboxesIDNetworkPutRes() {}
 
 type SuccessSandboxNetworkPolicyResponseSuccess bool
 
@@ -20844,7 +18482,7 @@ func (SuccessSandboxNetworkPolicyResponseSuccess) AllValues() []SuccessSandboxNe
 type SuccessSandboxObservabilityEventsResponse struct {
 	Success SuccessSandboxObservabilityEventsResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxObservabilityEventsResponse `json:"data"`
+	Data SandboxObservabilityEventsResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20853,7 +18491,7 @@ func (s *SuccessSandboxObservabilityEventsResponse) GetSuccess() SuccessSandboxO
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxObservabilityEventsResponse) GetData() OptSandboxObservabilityEventsResponse {
+func (s *SuccessSandboxObservabilityEventsResponse) GetData() SandboxObservabilityEventsResponse {
 	return s.Data
 }
 
@@ -20863,7 +18501,7 @@ func (s *SuccessSandboxObservabilityEventsResponse) SetSuccess(val SuccessSandbo
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxObservabilityEventsResponse) SetData(val OptSandboxObservabilityEventsResponse) {
+func (s *SuccessSandboxObservabilityEventsResponse) SetData(val SandboxObservabilityEventsResponse) {
 	s.Data = val
 }
 
@@ -20887,7 +18525,7 @@ func (SuccessSandboxObservabilityEventsResponseSuccess) AllValues() []SuccessSan
 type SuccessSandboxObservabilityLogsResponse struct {
 	Success SuccessSandboxObservabilityLogsResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxObservabilityLogsResponse `json:"data"`
+	Data SandboxObservabilityLogsResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20896,7 +18534,7 @@ func (s *SuccessSandboxObservabilityLogsResponse) GetSuccess() SuccessSandboxObs
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxObservabilityLogsResponse) GetData() OptSandboxObservabilityLogsResponse {
+func (s *SuccessSandboxObservabilityLogsResponse) GetData() SandboxObservabilityLogsResponse {
 	return s.Data
 }
 
@@ -20906,7 +18544,7 @@ func (s *SuccessSandboxObservabilityLogsResponse) SetSuccess(val SuccessSandboxO
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxObservabilityLogsResponse) SetData(val OptSandboxObservabilityLogsResponse) {
+func (s *SuccessSandboxObservabilityLogsResponse) SetData(val SandboxObservabilityLogsResponse) {
 	s.Data = val
 }
 
@@ -20930,7 +18568,7 @@ func (SuccessSandboxObservabilityLogsResponseSuccess) AllValues() []SuccessSandb
 type SuccessSandboxPreviewResponse struct {
 	Success SuccessSandboxPreviewResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxPreviewGrant `json:"data"`
+	Data SandboxPreviewGrant `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20939,7 +18577,7 @@ func (s *SuccessSandboxPreviewResponse) GetSuccess() SuccessSandboxPreviewRespon
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxPreviewResponse) GetData() OptSandboxPreviewGrant {
+func (s *SuccessSandboxPreviewResponse) GetData() SandboxPreviewGrant {
 	return s.Data
 }
 
@@ -20949,7 +18587,7 @@ func (s *SuccessSandboxPreviewResponse) SetSuccess(val SuccessSandboxPreviewResp
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxPreviewResponse) SetData(val OptSandboxPreviewGrant) {
+func (s *SuccessSandboxPreviewResponse) SetData(val SandboxPreviewGrant) {
 	s.Data = val
 }
 
@@ -20974,7 +18612,7 @@ func (SuccessSandboxPreviewResponseSuccess) AllValues() []SuccessSandboxPreviewR
 type SuccessSandboxResponse struct {
 	Success SuccessSandboxResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandbox `json:"data"`
+	Data Sandbox `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -20983,7 +18621,7 @@ func (s *SuccessSandboxResponse) GetSuccess() SuccessSandboxResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxResponse) GetData() OptSandbox {
+func (s *SuccessSandboxResponse) GetData() Sandbox {
 	return s.Data
 }
 
@@ -20993,7 +18631,7 @@ func (s *SuccessSandboxResponse) SetSuccess(val SuccessSandboxResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxResponse) SetData(val OptSandbox) {
+func (s *SuccessSandboxResponse) SetData(val Sandbox) {
 	s.Data = val
 }
 
@@ -21018,7 +18656,7 @@ func (SuccessSandboxResponseSuccess) AllValues() []SuccessSandboxResponseSuccess
 type SuccessSandboxRootFSSnapshotListResponse struct {
 	Success SuccessSandboxRootFSSnapshotListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxRootFSSnapshotList `json:"data"`
+	Data SandboxRootFSSnapshotList `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21027,7 +18665,7 @@ func (s *SuccessSandboxRootFSSnapshotListResponse) GetSuccess() SuccessSandboxRo
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxRootFSSnapshotListResponse) GetData() OptSandboxRootFSSnapshotList {
+func (s *SuccessSandboxRootFSSnapshotListResponse) GetData() SandboxRootFSSnapshotList {
 	return s.Data
 }
 
@@ -21037,7 +18675,7 @@ func (s *SuccessSandboxRootFSSnapshotListResponse) SetSuccess(val SuccessSandbox
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxRootFSSnapshotListResponse) SetData(val OptSandboxRootFSSnapshotList) {
+func (s *SuccessSandboxRootFSSnapshotListResponse) SetData(val SandboxRootFSSnapshotList) {
 	s.Data = val
 }
 
@@ -21061,7 +18699,7 @@ func (SuccessSandboxRootFSSnapshotListResponseSuccess) AllValues() []SuccessSand
 type SuccessSandboxRootFSSnapshotResponse struct {
 	Success SuccessSandboxRootFSSnapshotResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxRootFSSnapshot `json:"data"`
+	Data SandboxRootFSSnapshot `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21070,7 +18708,7 @@ func (s *SuccessSandboxRootFSSnapshotResponse) GetSuccess() SuccessSandboxRootFS
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxRootFSSnapshotResponse) GetData() OptSandboxRootFSSnapshot {
+func (s *SuccessSandboxRootFSSnapshotResponse) GetData() SandboxRootFSSnapshot {
 	return s.Data
 }
 
@@ -21080,7 +18718,7 @@ func (s *SuccessSandboxRootFSSnapshotResponse) SetSuccess(val SuccessSandboxRoot
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxRootFSSnapshotResponse) SetData(val OptSandboxRootFSSnapshot) {
+func (s *SuccessSandboxRootFSSnapshotResponse) SetData(val SandboxRootFSSnapshot) {
 	s.Data = val
 }
 
@@ -21105,7 +18743,7 @@ func (SuccessSandboxRootFSSnapshotResponseSuccess) AllValues() []SuccessSandboxR
 type SuccessSandboxRuntimeMetricsCatalogResponse struct {
 	Success SuccessSandboxRuntimeMetricsCatalogResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxRuntimeMetricsCatalogResponse `json:"data"`
+	Data SandboxRuntimeMetricsCatalogResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21114,7 +18752,7 @@ func (s *SuccessSandboxRuntimeMetricsCatalogResponse) GetSuccess() SuccessSandbo
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxRuntimeMetricsCatalogResponse) GetData() OptSandboxRuntimeMetricsCatalogResponse {
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) GetData() SandboxRuntimeMetricsCatalogResponse {
 	return s.Data
 }
 
@@ -21124,7 +18762,7 @@ func (s *SuccessSandboxRuntimeMetricsCatalogResponse) SetSuccess(val SuccessSand
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxRuntimeMetricsCatalogResponse) SetData(val OptSandboxRuntimeMetricsCatalogResponse) {
+func (s *SuccessSandboxRuntimeMetricsCatalogResponse) SetData(val SandboxRuntimeMetricsCatalogResponse) {
 	s.Data = val
 }
 
@@ -21148,7 +18786,7 @@ func (SuccessSandboxRuntimeMetricsCatalogResponseSuccess) AllValues() []SuccessS
 type SuccessSandboxRuntimeMetricsResponse struct {
 	Success SuccessSandboxRuntimeMetricsResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxRuntimeMetricsResponse `json:"data"`
+	Data SandboxRuntimeMetricsResponse `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21157,7 +18795,7 @@ func (s *SuccessSandboxRuntimeMetricsResponse) GetSuccess() SuccessSandboxRuntim
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxRuntimeMetricsResponse) GetData() OptSandboxRuntimeMetricsResponse {
+func (s *SuccessSandboxRuntimeMetricsResponse) GetData() SandboxRuntimeMetricsResponse {
 	return s.Data
 }
 
@@ -21167,7 +18805,7 @@ func (s *SuccessSandboxRuntimeMetricsResponse) SetSuccess(val SuccessSandboxRunt
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxRuntimeMetricsResponse) SetData(val OptSandboxRuntimeMetricsResponse) {
+func (s *SuccessSandboxRuntimeMetricsResponse) SetData(val SandboxRuntimeMetricsResponse) {
 	s.Data = val
 }
 
@@ -21191,7 +18829,7 @@ func (SuccessSandboxRuntimeMetricsResponseSuccess) AllValues() []SuccessSandboxR
 type SuccessSandboxServicesResponse struct {
 	Success SuccessSandboxServicesResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessSandboxServicesResponseData `json:"data"`
+	Data SuccessSandboxServicesResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21200,7 +18838,7 @@ func (s *SuccessSandboxServicesResponse) GetSuccess() SuccessSandboxServicesResp
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxServicesResponse) GetData() OptSuccessSandboxServicesResponseData {
+func (s *SuccessSandboxServicesResponse) GetData() SuccessSandboxServicesResponseData {
 	return s.Data
 }
 
@@ -21210,7 +18848,7 @@ func (s *SuccessSandboxServicesResponse) SetSuccess(val SuccessSandboxServicesRe
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxServicesResponse) SetData(val OptSuccessSandboxServicesResponseData) {
+func (s *SuccessSandboxServicesResponse) SetData(val SuccessSandboxServicesResponseData) {
 	s.Data = val
 }
 
@@ -21271,7 +18909,7 @@ func (SuccessSandboxServicesResponseSuccess) AllValues() []SuccessSandboxService
 type SuccessSandboxStatusResponse struct {
 	Success SuccessSandboxStatusResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSandboxStatus `json:"data"`
+	Data SandboxStatus `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21280,7 +18918,7 @@ func (s *SuccessSandboxStatusResponse) GetSuccess() SuccessSandboxStatusResponse
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSandboxStatusResponse) GetData() OptSandboxStatus {
+func (s *SuccessSandboxStatusResponse) GetData() SandboxStatus {
 	return s.Data
 }
 
@@ -21290,7 +18928,7 @@ func (s *SuccessSandboxStatusResponse) SetSuccess(val SuccessSandboxStatusRespon
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSandboxStatusResponse) SetData(val OptSandboxStatus) {
+func (s *SuccessSandboxStatusResponse) SetData(val SandboxStatus) {
 	s.Data = val
 }
 
@@ -21314,7 +18952,7 @@ func (SuccessSandboxStatusResponseSuccess) AllValues() []SuccessSandboxStatusRes
 type SuccessSignaledResponse struct {
 	Success SuccessSignaledResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessSignaledResponseData `json:"data"`
+	Data SuccessSignaledResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21323,7 +18961,7 @@ func (s *SuccessSignaledResponse) GetSuccess() SuccessSignaledResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessSignaledResponse) GetData() OptSuccessSignaledResponseData {
+func (s *SuccessSignaledResponse) GetData() SuccessSignaledResponseData {
 	return s.Data
 }
 
@@ -21333,9 +18971,11 @@ func (s *SuccessSignaledResponse) SetSuccess(val SuccessSignaledResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessSignaledResponse) SetData(val OptSuccessSignaledResponseData) {
+func (s *SuccessSignaledResponse) SetData(val SuccessSignaledResponseData) {
 	s.Data = val
 }
+
+func (*SuccessSignaledResponse) aPIV1SandboxesIDContextsCtxIDSignalPostRes() {}
 
 type SuccessSignaledResponseData struct {
 	Signaled OptBool `json:"signaled"`
@@ -21369,7 +19009,7 @@ func (SuccessSignaledResponseSuccess) AllValues() []SuccessSignaledResponseSucce
 type SuccessTeamListResponse struct {
 	Success SuccessTeamListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessTeamListResponseData `json:"data"`
+	Data SuccessTeamListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21378,7 +19018,7 @@ func (s *SuccessTeamListResponse) GetSuccess() SuccessTeamListResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamListResponse) GetData() OptSuccessTeamListResponseData {
+func (s *SuccessTeamListResponse) GetData() SuccessTeamListResponseData {
 	return s.Data
 }
 
@@ -21388,7 +19028,7 @@ func (s *SuccessTeamListResponse) SetSuccess(val SuccessTeamListResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamListResponse) SetData(val OptSuccessTeamListResponseData) {
+func (s *SuccessTeamListResponse) SetData(val SuccessTeamListResponseData) {
 	s.Data = val
 }
 
@@ -21426,7 +19066,7 @@ func (SuccessTeamListResponseSuccess) AllValues() []SuccessTeamListResponseSucce
 type SuccessTeamMemberListResponse struct {
 	Success SuccessTeamMemberListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessTeamMemberListResponseData `json:"data"`
+	Data SuccessTeamMemberListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21435,7 +19075,7 @@ func (s *SuccessTeamMemberListResponse) GetSuccess() SuccessTeamMemberListRespon
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamMemberListResponse) GetData() OptSuccessTeamMemberListResponseData {
+func (s *SuccessTeamMemberListResponse) GetData() SuccessTeamMemberListResponseData {
 	return s.Data
 }
 
@@ -21445,7 +19085,7 @@ func (s *SuccessTeamMemberListResponse) SetSuccess(val SuccessTeamMemberListResp
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamMemberListResponse) SetData(val OptSuccessTeamMemberListResponseData) {
+func (s *SuccessTeamMemberListResponse) SetData(val SuccessTeamMemberListResponseData) {
 	s.Data = val
 }
 
@@ -21483,7 +19123,7 @@ func (SuccessTeamMemberListResponseSuccess) AllValues() []SuccessTeamMemberListR
 type SuccessTeamMemberResponse struct {
 	Success SuccessTeamMemberResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTeamMember `json:"data"`
+	Data TeamMember `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21492,7 +19132,7 @@ func (s *SuccessTeamMemberResponse) GetSuccess() SuccessTeamMemberResponseSucces
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamMemberResponse) GetData() OptTeamMember {
+func (s *SuccessTeamMemberResponse) GetData() TeamMember {
 	return s.Data
 }
 
@@ -21502,7 +19142,7 @@ func (s *SuccessTeamMemberResponse) SetSuccess(val SuccessTeamMemberResponseSucc
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamMemberResponse) SetData(val OptTeamMember) {
+func (s *SuccessTeamMemberResponse) SetData(val TeamMember) {
 	s.Data = val
 }
 
@@ -21526,7 +19166,7 @@ func (SuccessTeamMemberResponseSuccess) AllValues() []SuccessTeamMemberResponseS
 type SuccessTeamQuotaResponse struct {
 	Success SuccessTeamQuotaResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTeamQuota `json:"data"`
+	Data TeamQuota `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21535,7 +19175,7 @@ func (s *SuccessTeamQuotaResponse) GetSuccess() SuccessTeamQuotaResponseSuccess 
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamQuotaResponse) GetData() OptTeamQuota {
+func (s *SuccessTeamQuotaResponse) GetData() TeamQuota {
 	return s.Data
 }
 
@@ -21545,7 +19185,7 @@ func (s *SuccessTeamQuotaResponse) SetSuccess(val SuccessTeamQuotaResponseSucces
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamQuotaResponse) SetData(val OptTeamQuota) {
+func (s *SuccessTeamQuotaResponse) SetData(val TeamQuota) {
 	s.Data = val
 }
 
@@ -21569,7 +19209,7 @@ func (SuccessTeamQuotaResponseSuccess) AllValues() []SuccessTeamQuotaResponseSuc
 type SuccessTeamResponse struct {
 	Success SuccessTeamResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTeam `json:"data"`
+	Data Team `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21578,7 +19218,7 @@ func (s *SuccessTeamResponse) GetSuccess() SuccessTeamResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTeamResponse) GetData() OptTeam {
+func (s *SuccessTeamResponse) GetData() Team {
 	return s.Data
 }
 
@@ -21588,7 +19228,7 @@ func (s *SuccessTeamResponse) SetSuccess(val SuccessTeamResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTeamResponse) SetData(val OptTeam) {
+func (s *SuccessTeamResponse) SetData(val Team) {
 	s.Data = val
 }
 
@@ -21615,7 +19255,7 @@ func (SuccessTeamResponseSuccess) AllValues() []SuccessTeamResponseSuccess {
 type SuccessTemplateListResponse struct {
 	Success SuccessTemplateListResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessTemplateListResponseData `json:"data"`
+	Data SuccessTemplateListResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21624,7 +19264,7 @@ func (s *SuccessTemplateListResponse) GetSuccess() SuccessTemplateListResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTemplateListResponse) GetData() OptSuccessTemplateListResponseData {
+func (s *SuccessTemplateListResponse) GetData() SuccessTemplateListResponseData {
 	return s.Data
 }
 
@@ -21634,9 +19274,11 @@ func (s *SuccessTemplateListResponse) SetSuccess(val SuccessTemplateListResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTemplateListResponse) SetData(val OptSuccessTemplateListResponseData) {
+func (s *SuccessTemplateListResponse) SetData(val SuccessTemplateListResponseData) {
 	s.Data = val
 }
+
+func (*SuccessTemplateListResponse) aPIV1TemplatesGetRes() {}
 
 type SuccessTemplateListResponseData struct {
 	Templates []Template `json:"templates"`
@@ -21681,7 +19323,7 @@ func (SuccessTemplateListResponseSuccess) AllValues() []SuccessTemplateListRespo
 type SuccessTemplateResponse struct {
 	Success SuccessTemplateResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptTemplate `json:"data"`
+	Data Template `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21690,7 +19332,7 @@ func (s *SuccessTemplateResponse) GetSuccess() SuccessTemplateResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessTemplateResponse) GetData() OptTemplate {
+func (s *SuccessTemplateResponse) GetData() Template {
 	return s.Data
 }
 
@@ -21700,12 +19342,13 @@ func (s *SuccessTemplateResponse) SetSuccess(val SuccessTemplateResponseSuccess)
 }
 
 // SetData sets the value of Data.
-func (s *SuccessTemplateResponse) SetData(val OptTemplate) {
+func (s *SuccessTemplateResponse) SetData(val Template) {
 	s.Data = val
 }
 
 func (*SuccessTemplateResponse) aPIV1TemplatesIDGetRes() {}
 func (*SuccessTemplateResponse) aPIV1TemplatesIDPutRes() {}
+func (*SuccessTemplateResponse) aPIV1TemplatesPostRes()  {}
 
 // SuccessTemplateResponseHeaders wraps SuccessTemplateResponse with response headers.
 type SuccessTemplateResponseHeaders struct {
@@ -21764,7 +19407,7 @@ func (SuccessTemplateResponseSuccess) AllValues() []SuccessTemplateResponseSucce
 type SuccessUsageWindowsResponse struct {
 	Success SuccessUsageWindowsResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptUsageWindowPage `json:"data"`
+	Data UsageWindowPage `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21773,7 +19416,7 @@ func (s *SuccessUsageWindowsResponse) GetSuccess() SuccessUsageWindowsResponseSu
 }
 
 // GetData returns the value of Data.
-func (s *SuccessUsageWindowsResponse) GetData() OptUsageWindowPage {
+func (s *SuccessUsageWindowsResponse) GetData() UsageWindowPage {
 	return s.Data
 }
 
@@ -21783,7 +19426,7 @@ func (s *SuccessUsageWindowsResponse) SetSuccess(val SuccessUsageWindowsResponse
 }
 
 // SetData sets the value of Data.
-func (s *SuccessUsageWindowsResponse) SetData(val OptUsageWindowPage) {
+func (s *SuccessUsageWindowsResponse) SetData(val UsageWindowPage) {
 	s.Data = val
 }
 
@@ -21807,7 +19450,7 @@ func (SuccessUsageWindowsResponseSuccess) AllValues() []SuccessUsageWindowsRespo
 type SuccessUserResponse struct {
 	Success SuccessUserResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptUser `json:"data"`
+	Data User `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21816,7 +19459,7 @@ func (s *SuccessUserResponse) GetSuccess() SuccessUserResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessUserResponse) GetData() OptUser {
+func (s *SuccessUserResponse) GetData() User {
 	return s.Data
 }
 
@@ -21826,7 +19469,7 @@ func (s *SuccessUserResponse) SetSuccess(val SuccessUserResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessUserResponse) SetData(val OptUser) {
+func (s *SuccessUserResponse) SetData(val User) {
 	s.Data = val
 }
 
@@ -21851,7 +19494,7 @@ func (SuccessUserResponseSuccess) AllValues() []SuccessUserResponseSuccess {
 type SuccessWrittenResponse struct {
 	Success SuccessWrittenResponseSuccess `json:"success"`
 	// Merged property.
-	Data OptSuccessWrittenResponseData `json:"data"`
+	Data SuccessWrittenResponseData `json:"data"`
 }
 
 // GetSuccess returns the value of Success.
@@ -21860,7 +19503,7 @@ func (s *SuccessWrittenResponse) GetSuccess() SuccessWrittenResponseSuccess {
 }
 
 // GetData returns the value of Data.
-func (s *SuccessWrittenResponse) GetData() OptSuccessWrittenResponseData {
+func (s *SuccessWrittenResponse) GetData() SuccessWrittenResponseData {
 	return s.Data
 }
 
@@ -21870,11 +19513,12 @@ func (s *SuccessWrittenResponse) SetSuccess(val SuccessWrittenResponseSuccess) {
 }
 
 // SetData sets the value of Data.
-func (s *SuccessWrittenResponse) SetData(val OptSuccessWrittenResponseData) {
+func (s *SuccessWrittenResponse) SetData(val SuccessWrittenResponseData) {
 	s.Data = val
 }
 
-func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes() {}
+func (*SuccessWrittenResponse) aPIV1SandboxesIDContextsCtxIDInputPostRes() {}
+func (*SuccessWrittenResponse) aPIV1SandboxesIDFilesPostRes()              {}
 
 type SuccessWrittenResponseData struct {
 	Written OptBool `json:"written"`
@@ -21909,19 +19553,19 @@ type TLSClientCertificateProjection struct{}
 
 // Ref: #/components/schemas/Team
 type Team struct {
-	ID string `json:"id"`
+	ID uuid.UUID `json:"id"`
 	// Display name. Team names are not unique; use the team ID as the canonical identifier.
 	Name string `json:"name"`
 	// Human-readable alias. Team slugs are not unique; use the team ID as the canonical identifier.
 	Slug         string       `json:"slug"`
-	OwnerID      OptNilString `json:"owner_id"`
+	OwnerID      OptNilUUID   `json:"owner_id"`
 	HomeRegionID OptNilString `json:"home_region_id"`
 	CreatedAt    time.Time    `json:"created_at"`
 	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
 // GetID returns the value of ID.
-func (s *Team) GetID() string {
+func (s *Team) GetID() uuid.UUID {
 	return s.ID
 }
 
@@ -21936,7 +19580,7 @@ func (s *Team) GetSlug() string {
 }
 
 // GetOwnerID returns the value of OwnerID.
-func (s *Team) GetOwnerID() OptNilString {
+func (s *Team) GetOwnerID() OptNilUUID {
 	return s.OwnerID
 }
 
@@ -21956,7 +19600,7 @@ func (s *Team) GetUpdatedAt() time.Time {
 }
 
 // SetID sets the value of ID.
-func (s *Team) SetID(val string) {
+func (s *Team) SetID(val uuid.UUID) {
 	s.ID = val
 }
 
@@ -21971,7 +19615,7 @@ func (s *Team) SetSlug(val string) {
 }
 
 // SetOwnerID sets the value of OwnerID.
-func (s *Team) SetOwnerID(val OptNilString) {
+func (s *Team) SetOwnerID(val OptNilUUID) {
 	s.OwnerID = val
 }
 
@@ -22135,9 +19779,9 @@ func (s *TeamDeleteResourceCount) SetCount(val int64) {
 
 // Ref: #/components/schemas/TeamMember
 type TeamMember struct {
-	ID       string    `json:"id"`
-	TeamID   string    `json:"team_id"`
-	UserID   string    `json:"user_id"`
+	ID       uuid.UUID `json:"id"`
+	TeamID   uuid.UUID `json:"team_id"`
+	UserID   uuid.UUID `json:"user_id"`
 	Role     string    `json:"role"`
 	JoinedAt time.Time `json:"joined_at"`
 	// User email address. Present in team member list responses.
@@ -22149,17 +19793,17 @@ type TeamMember struct {
 }
 
 // GetID returns the value of ID.
-func (s *TeamMember) GetID() string {
+func (s *TeamMember) GetID() uuid.UUID {
 	return s.ID
 }
 
 // GetTeamID returns the value of TeamID.
-func (s *TeamMember) GetTeamID() string {
+func (s *TeamMember) GetTeamID() uuid.UUID {
 	return s.TeamID
 }
 
 // GetUserID returns the value of UserID.
-func (s *TeamMember) GetUserID() string {
+func (s *TeamMember) GetUserID() uuid.UUID {
 	return s.UserID
 }
 
@@ -22189,17 +19833,17 @@ func (s *TeamMember) GetAvatarURL() OptString {
 }
 
 // SetID sets the value of ID.
-func (s *TeamMember) SetID(val string) {
+func (s *TeamMember) SetID(val uuid.UUID) {
 	s.ID = val
 }
 
 // SetTeamID sets the value of TeamID.
-func (s *TeamMember) SetTeamID(val string) {
+func (s *TeamMember) SetTeamID(val uuid.UUID) {
 	s.TeamID = val
 }
 
 // SetUserID sets the value of UserID.
-func (s *TeamMember) SetUserID(val string) {
+func (s *TeamMember) SetUserID(val uuid.UUID) {
 	s.UserID = val
 }
 
@@ -22504,6 +20148,10 @@ func (s *TeamQuotaUnit) UnmarshalText(data []byte) error {
 	}
 }
 
+type TeamsIDDeleteBadRequest ErrorEnvelope
+
+func (*TeamsIDDeleteBadRequest) teamsIDDeleteRes() {}
+
 type TeamsIDDeleteForbidden ErrorEnvelope
 
 func (*TeamsIDDeleteForbidden) teamsIDDeleteRes() {}
@@ -22512,6 +20160,14 @@ type TeamsIDDeleteNotFound ErrorEnvelope
 
 func (*TeamsIDDeleteNotFound) teamsIDDeleteRes() {}
 
+type TeamsIDDeleteUnauthorized ErrorEnvelope
+
+func (*TeamsIDDeleteUnauthorized) teamsIDDeleteRes() {}
+
+type TeamsIDGetBadRequest ErrorEnvelope
+
+func (*TeamsIDGetBadRequest) teamsIDGetRes() {}
+
 type TeamsIDGetForbidden ErrorEnvelope
 
 func (*TeamsIDGetForbidden) teamsIDGetRes() {}
@@ -22519,6 +20175,26 @@ func (*TeamsIDGetForbidden) teamsIDGetRes() {}
 type TeamsIDGetNotFound ErrorEnvelope
 
 func (*TeamsIDGetNotFound) teamsIDGetRes() {}
+
+type TeamsIDGetUnauthorized ErrorEnvelope
+
+func (*TeamsIDGetUnauthorized) teamsIDGetRes() {}
+
+type TeamsIDMembersGetBadRequest ErrorEnvelope
+
+func (*TeamsIDMembersGetBadRequest) teamsIDMembersGetRes() {}
+
+type TeamsIDMembersGetForbidden ErrorEnvelope
+
+func (*TeamsIDMembersGetForbidden) teamsIDMembersGetRes() {}
+
+type TeamsIDMembersGetUnauthorized ErrorEnvelope
+
+func (*TeamsIDMembersGetUnauthorized) teamsIDMembersGetRes() {}
+
+type TeamsIDMembersPostBadRequest ErrorEnvelope
+
+func (*TeamsIDMembersPostBadRequest) teamsIDMembersPostRes() {}
 
 type TeamsIDMembersPostConflict ErrorEnvelope
 
@@ -22532,6 +20208,10 @@ type TeamsIDMembersPostNotFound ErrorEnvelope
 
 func (*TeamsIDMembersPostNotFound) teamsIDMembersPostRes() {}
 
+type TeamsIDMembersPostUnauthorized ErrorEnvelope
+
+func (*TeamsIDMembersPostUnauthorized) teamsIDMembersPostRes() {}
+
 type TeamsIDMembersUserIdDeleteBadRequest ErrorEnvelope
 
 func (*TeamsIDMembersUserIdDeleteBadRequest) teamsIDMembersUserIdDeleteRes() {}
@@ -22543,6 +20223,10 @@ func (*TeamsIDMembersUserIdDeleteForbidden) teamsIDMembersUserIdDeleteRes() {}
 type TeamsIDMembersUserIdDeleteNotFound ErrorEnvelope
 
 func (*TeamsIDMembersUserIdDeleteNotFound) teamsIDMembersUserIdDeleteRes() {}
+
+type TeamsIDMembersUserIdDeleteUnauthorized ErrorEnvelope
+
+func (*TeamsIDMembersUserIdDeleteUnauthorized) teamsIDMembersUserIdDeleteRes() {}
 
 type TeamsIDMembersUserIdPutBadRequest ErrorEnvelope
 
@@ -22556,6 +20240,10 @@ type TeamsIDMembersUserIdPutNotFound ErrorEnvelope
 
 func (*TeamsIDMembersUserIdPutNotFound) teamsIDMembersUserIdPutRes() {}
 
+type TeamsIDMembersUserIdPutUnauthorized ErrorEnvelope
+
+func (*TeamsIDMembersUserIdPutUnauthorized) teamsIDMembersUserIdPutRes() {}
+
 type TeamsIDOwnerPutBadRequest ErrorEnvelope
 
 func (*TeamsIDOwnerPutBadRequest) teamsIDOwnerPutRes() {}
@@ -22567,6 +20255,10 @@ func (*TeamsIDOwnerPutForbidden) teamsIDOwnerPutRes() {}
 type TeamsIDOwnerPutNotFound ErrorEnvelope
 
 func (*TeamsIDOwnerPutNotFound) teamsIDOwnerPutRes() {}
+
+type TeamsIDOwnerPutUnauthorized ErrorEnvelope
+
+func (*TeamsIDOwnerPutUnauthorized) teamsIDOwnerPutRes() {}
 
 type TeamsIDPutBadRequest ErrorEnvelope
 
@@ -22583,6 +20275,18 @@ func (*TeamsIDPutForbidden) teamsIDPutRes() {}
 type TeamsIDPutNotFound ErrorEnvelope
 
 func (*TeamsIDPutNotFound) teamsIDPutRes() {}
+
+type TeamsIDPutUnauthorized ErrorEnvelope
+
+func (*TeamsIDPutUnauthorized) teamsIDPutRes() {}
+
+type TeamsPostBadRequest ErrorEnvelope
+
+func (*TeamsPostBadRequest) teamsPostRes() {}
+
+type TeamsPostUnauthorized ErrorEnvelope
+
+func (*TeamsPostUnauthorized) teamsPostRes() {}
 
 // Ref: #/components/schemas/Template
 type Template struct {
@@ -23185,16 +20889,16 @@ func (s *TrafficRuleAppProtocol) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/TransferTeamOwnerRequest
 type TransferTeamOwnerRequest struct {
-	UserID string `json:"user_id"`
+	UserID uuid.UUID `json:"user_id"`
 }
 
 // GetUserID returns the value of UserID.
-func (s *TransferTeamOwnerRequest) GetUserID() string {
+func (s *TransferTeamOwnerRequest) GetUserID() uuid.UUID {
 	return s.UserID
 }
 
 // SetUserID sets the value of UserID.
-func (s *TransferTeamOwnerRequest) SetUserID(val string) {
+func (s *TransferTeamOwnerRequest) SetUserID(val uuid.UUID) {
 	s.UserID = val
 }
 
@@ -23322,6 +21026,8 @@ type UpdateTeamRequest struct {
 	Name OptString `json:"name"`
 	// Human-readable alias. Team slugs are not unique.
 	Slug OptString `json:"slug"`
+	// Optional immutable home region assertion. A different value is rejected.
+	HomeRegionID OptNilString `json:"home_region_id"`
 }
 
 // GetName returns the value of Name.
@@ -23334,6 +21040,11 @@ func (s *UpdateTeamRequest) GetSlug() OptString {
 	return s.Slug
 }
 
+// GetHomeRegionID returns the value of HomeRegionID.
+func (s *UpdateTeamRequest) GetHomeRegionID() OptNilString {
+	return s.HomeRegionID
+}
+
 // SetName sets the value of Name.
 func (s *UpdateTeamRequest) SetName(val OptString) {
 	s.Name = val
@@ -23342,6 +21053,11 @@ func (s *UpdateTeamRequest) SetName(val OptString) {
 // SetSlug sets the value of Slug.
 func (s *UpdateTeamRequest) SetSlug(val OptString) {
 	s.Slug = val
+}
+
+// SetHomeRegionID sets the value of HomeRegionID.
+func (s *UpdateTeamRequest) SetHomeRegionID(val OptNilString) {
+	s.HomeRegionID = val
 }
 
 // Ref: #/components/schemas/UpdateUserRequest
