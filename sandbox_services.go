@@ -49,10 +49,7 @@ func (s *Sandbox) ClearServices(ctx context.Context) (*SandboxServicesResponse, 
 }
 
 func sandboxServicesResponseFromAPI(resp *apispec.SuccessSandboxServicesResponse) (*SandboxServicesResponse, error) {
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
-	}
+	data := resp.Data
 	return &SandboxServicesResponse{
 		SandboxID: data.SandboxID,
 		Services:  append([]apispec.SandboxAppServiceView(nil), data.Services...),

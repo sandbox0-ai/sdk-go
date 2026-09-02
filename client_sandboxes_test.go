@@ -23,9 +23,8 @@ func TestClaimSandboxWithOptions(t *testing.T) {
 
 		body := decodeClaimRequest(t, r)
 
-		template, ok := body.Template.Get()
-		if !ok || template != "default" {
-			t.Fatalf("template = %q, want default", template)
+		if body.Template != "default" {
+			t.Fatalf("template = %q, want default", body.Template)
 		}
 		config, ok := body.Config.Get()
 		if !ok {
@@ -362,7 +361,10 @@ func TestSandboxRootFSOperationsUseGeneratedAPI(t *testing.T) {
 				"data":    sandboxRootFSSnapshotJSON("snap_1", "sb_1"),
 			})
 		case "DELETE /api/v1/sandbox-rootfs-snapshots/snap_1":
-			writeJSON(t, w, http.StatusOK, map[string]any{"success": true})
+			writeJSON(t, w, http.StatusOK, map[string]any{
+				"success": true,
+				"data":    map[string]any{"deleted": true},
+			})
 		case "POST /api/v1/sandboxes/sb_1/rootfs/restore":
 			var req apispec.RestoreSandboxRootFSRequest
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -510,6 +512,9 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 		if r.URL.Path != "/api/v1/sandboxes/sb_source/fork" {
 			t.Fatalf("path = %s, want /api/v1/sandboxes/sb_source/fork", r.URL.Path)
 		}
+		if got := r.Header.Get("Idempotency-Key"); got != "fork-request-one" {
+			t.Fatalf("Idempotency-Key = %q, want fork-request-one", got)
+		}
 
 		var req apispec.ForkSandboxRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -538,12 +543,12 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 	})
 	defer server.Close()
 
-	forked, err := client.ForkSandbox(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
+	forked, err := client.ForkSandboxWithOptions(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
 		Config: apispec.NewOptForkSandboxConfig(apispec.ForkSandboxConfig{
 			TTL:     apispec.NewOptInt32(60),
 			HardTTL: apispec.NewOptInt32(120),
 		}),
-	})
+	}, &ForkSandboxOptions{IdempotencyKey: "fork-request-one"})
 	if err != nil {
 		t.Fatalf("ForkSandbox() error = %v", err)
 	}

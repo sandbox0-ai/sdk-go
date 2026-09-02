@@ -14,10 +14,7 @@ func (s *Sandbox) GetNetworkPolicy(ctx context.Context) (*apispec.SandboxNetwork
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxNetworkPolicyResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -30,9 +27,10 @@ func (s *Sandbox) UpdateNetworkPolicy(ctx context.Context, policy apispec.Sandbo
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessSandboxNetworkPolicyResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }

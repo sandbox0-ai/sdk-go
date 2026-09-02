@@ -12,10 +12,12 @@ func (c *Client) ListTeamQuotas(ctx context.Context) ([]apispec.TeamQuota, error
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.APIV1QuotasGetOK:
+		return response.Data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return resp.Data, nil
 }
 
 // GetTeamQuota returns one quota policy and status for the current team.
@@ -30,10 +32,7 @@ func (c *Client) GetTeamQuota(ctx context.Context, dimension apispec.QuotaDimens
 
 	switch response := resp.(type) {
 	case *apispec.SuccessTeamQuotaResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)

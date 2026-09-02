@@ -90,10 +90,7 @@ func (c *Client) ListSandboxObservabilityEvents(ctx context.Context, sandboxID s
 		return nil, err
 	}
 	if response, ok := resp.(*apispec.SuccessSandboxObservabilityEventsResponse); ok {
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
+		data := response.Data
 		return &data, nil
 	}
 	return nil, apiErrorFromResponse(resp)
@@ -107,10 +104,7 @@ func (c *Client) ListSandboxObservabilityLogs(ctx context.Context, sandboxID str
 		return nil, err
 	}
 	if response, ok := resp.(*apispec.SuccessSandboxObservabilityLogsResponse); ok {
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
+		data := response.Data
 		return &data, nil
 	}
 	return nil, apiErrorFromResponse(resp)
@@ -124,10 +118,7 @@ func (c *Client) GetSandboxRuntimeMetrics(ctx context.Context, sandboxID string,
 		return nil, err
 	}
 	if response, ok := resp.(*apispec.SuccessSandboxRuntimeMetricsResponse); ok {
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
+		data := response.Data
 		return &data, nil
 	}
 	return nil, apiErrorFromResponse(resp)
@@ -140,10 +131,7 @@ func (c *Client) GetSandboxRuntimeMetricsCatalog(ctx context.Context, sandboxID 
 		return nil, err
 	}
 	if response, ok := resp.(*apispec.SuccessSandboxRuntimeMetricsCatalogResponse); ok {
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(resp)
-		}
+		data := response.Data
 		return &data, nil
 	}
 	return nil, apiErrorFromResponse(resp)

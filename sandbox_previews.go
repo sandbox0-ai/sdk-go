@@ -14,10 +14,7 @@ func (s *Sandbox) CreatePreview(ctx context.Context, request apispec.SandboxPrev
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxPreviewResponse:
-		grant, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		grant := response.Data
 		return &grant, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -35,10 +32,7 @@ func (s *Sandbox) RenewPreview(ctx context.Context, previewID string, request ap
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessSandboxPreviewResponse:
-		grant, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		grant := response.Data
 		return &grant, nil
 	default:
 		return nil, apiErrorFromResponse(response)

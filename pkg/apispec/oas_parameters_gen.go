@@ -2,6 +2,10 @@
 
 package apispec
 
+import (
+	"github.com/google/uuid"
+)
+
 // APIKeysIDDeactivatePostParams is parameters of POST /api-keys/{id}/deactivate operation.
 type APIKeysIDDeactivatePostParams struct {
 	ID string
@@ -164,6 +168,8 @@ type APIV1SandboxesIDFilesWatchGetParams struct {
 // APIV1SandboxesIDForkPostParams is parameters of POST /api/v1/sandboxes/{id}/fork operation.
 type APIV1SandboxesIDForkPostParams struct {
 	ID string
+	// Optional key for retrying the fork without creating a duplicate child sandbox.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDGetParams is parameters of GET /api/v1/sandboxes/{id} operation.
@@ -485,46 +491,46 @@ type RegionsIDPutParams struct {
 
 // TeamsIDDeleteParams is parameters of DELETE /teams/{id} operation.
 type TeamsIDDeleteParams struct {
-	ID string
+	ID uuid.UUID
 }
 
 // TeamsIDGetParams is parameters of GET /teams/{id} operation.
 type TeamsIDGetParams struct {
-	ID string
+	ID uuid.UUID
 }
 
 // TeamsIDMembersGetParams is parameters of GET /teams/{id}/members operation.
 type TeamsIDMembersGetParams struct {
-	ID string
+	ID uuid.UUID
 	// Search by member email, display name, or user ID.
 	Query OptString `json:",omitempty,omitzero"`
 }
 
 // TeamsIDMembersPostParams is parameters of POST /teams/{id}/members operation.
 type TeamsIDMembersPostParams struct {
-	ID string
+	ID uuid.UUID
 }
 
 // TeamsIDMembersUserIdDeleteParams is parameters of DELETE /teams/{id}/members/{userId} operation.
 type TeamsIDMembersUserIdDeleteParams struct {
-	ID     string
-	UserId string
+	ID     uuid.UUID
+	UserId uuid.UUID
 }
 
 // TeamsIDMembersUserIdPutParams is parameters of PUT /teams/{id}/members/{userId} operation.
 type TeamsIDMembersUserIdPutParams struct {
-	ID     string
-	UserId string
+	ID     uuid.UUID
+	UserId uuid.UUID
 }
 
 // TeamsIDOwnerPutParams is parameters of PUT /teams/{id}/owner operation.
 type TeamsIDOwnerPutParams struct {
-	ID string
+	ID uuid.UUID
 }
 
 // TeamsIDPutParams is parameters of PUT /teams/{id} operation.
 type TeamsIDPutParams struct {
-	ID string
+	ID uuid.UUID
 }
 
 // UsersMeIdentitiesIDDeleteParams is parameters of DELETE /users/me/identities/{id} operation.

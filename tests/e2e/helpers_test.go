@@ -102,8 +102,8 @@ func loginOnce(ctx context.Context, apiClient *apispec.Client, email, password s
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessLoginResponse:
-		data, ok := response.Data.Get()
-		if !ok || strings.TrimSpace(data.AccessToken) == "" {
+		data := response.Data
+		if strings.TrimSpace(data.AccessToken) == "" {
 			return "", errors.New("login response missing token")
 		}
 		return data.AccessToken, nil

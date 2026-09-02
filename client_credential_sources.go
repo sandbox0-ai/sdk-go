@@ -12,10 +12,12 @@ func (c *Client) ListCredentialSources(ctx context.Context) ([]apispec.Credentia
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil {
-		return nil, unexpectedResponseError(resp)
+	switch response := resp.(type) {
+	case *apispec.SuccessCredentialSourceListResponse:
+		return response.Data, nil
+	default:
+		return nil, apiErrorFromResponse(response)
 	}
-	return resp.Data, nil
 }
 
 // GetCredentialSource retrieves one credential source by name.
@@ -27,10 +29,7 @@ func (c *Client) GetCredentialSource(ctx context.Context, name string) (*apispec
 
 	switch response := resp.(type) {
 	case *apispec.SuccessCredentialSourceResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -45,10 +44,7 @@ func (c *Client) CreateCredentialSource(ctx context.Context, request apispec.Cre
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessCredentialSourceResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -65,10 +61,7 @@ func (c *Client) UpdateCredentialSource(ctx context.Context, name string, reques
 	}
 	switch response := resp.(type) {
 	case *apispec.SuccessCredentialSourceResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -81,5 +74,10 @@ func (c *Client) DeleteCredentialSource(ctx context.Context, name string) (*apis
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch response := resp.(type) {
+	case *apispec.SuccessMessageResponse:
+		return response, nil
+	default:
+		return nil, apiErrorFromResponse(response)
+	}
 }

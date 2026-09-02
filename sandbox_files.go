@@ -86,10 +86,11 @@ func (s *Sandbox) StatFile(ctx context.Context, path string) (*apispec.FileInfo,
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessFileStatResponse](resp)
+	if err != nil {
+		return nil, err
 	}
+	data := response.Data
 	return &data, nil
 }
 
@@ -103,11 +104,11 @@ func (s *Sandbox) ListFiles(ctx context.Context, path string) ([]apispec.FileInf
 	if err != nil {
 		return nil, err
 	}
-	data, ok := resp.Data.Get()
-	if !ok {
-		return nil, unexpectedResponseError(resp)
+	response, err := expectResponse[apispec.SuccessFileListResponse](resp)
+	if err != nil {
+		return nil, err
 	}
-	return data.Entries, nil
+	return response.Data.Entries, nil
 }
 
 // WriteFile writes a file.
@@ -163,7 +164,7 @@ func (s *Sandbox) DeleteFile(ctx context.Context, path string) (*apispec.Success
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessDeletedResponse](resp)
 }
 
 // MoveFile moves a file or directory.
@@ -175,7 +176,7 @@ func (s *Sandbox) MoveFile(ctx context.Context, source, destination string) (*ap
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return expectResponse[apispec.SuccessMovedResponse](resp)
 }
 
 // ConnectWatchFile opens a WebSocket stream for file watch events.

@@ -15,10 +15,7 @@ func (c *Client) ListUserSSHPublicKeys(ctx context.Context) ([]apispec.SSHPublic
 
 	switch response := resp.(type) {
 	case *apispec.SuccessSSHPublicKeyListResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return data.SSHKeys, nil
 	default:
 		return nil, apiErrorFromResponse(response)
@@ -34,10 +31,7 @@ func (c *Client) CreateUserSSHPublicKey(ctx context.Context, request apispec.Cre
 
 	switch response := resp.(type) {
 	case *apispec.SuccessSSHPublicKeyResponse:
-		data, ok := response.Data.Get()
-		if !ok {
-			return nil, unexpectedResponseError(response)
-		}
+		data := response.Data
 		return &data, nil
 	default:
 		return nil, apiErrorFromResponse(response)
