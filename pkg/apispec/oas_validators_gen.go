@@ -1216,6 +1216,14 @@ func (s *AuthOidcProviderCallbackGetBadRequest) Validate() error {
 	return nil
 }
 
+func (s *AuthOidcProviderCallbackGetForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *AuthOidcProviderCallbackGetUnauthorized) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -1225,6 +1233,14 @@ func (s *AuthOidcProviderCallbackGetUnauthorized) Validate() error {
 }
 
 func (s *AuthOidcProviderDevicePollPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthOidcProviderDevicePollPostForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -1248,7 +1264,31 @@ func (s *AuthOidcProviderDevicePollPostUnauthorized) Validate() error {
 	return nil
 }
 
+func (s *AuthOidcProviderDeviceStartPostForbidden) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthOidcProviderDeviceStartPostNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *AuthOidcProviderLoginGetBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AuthOidcProviderLoginGetForbidden) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err

@@ -923,6 +923,10 @@ type AuthOidcProviderCallbackGetBadRequest ErrorEnvelope
 
 func (*AuthOidcProviderCallbackGetBadRequest) authOidcProviderCallbackGetRes() {}
 
+type AuthOidcProviderCallbackGetForbidden ErrorEnvelope
+
+func (*AuthOidcProviderCallbackGetForbidden) authOidcProviderCallbackGetRes() {}
+
 // AuthOidcProviderCallbackGetFound is response for AuthOidcProviderCallbackGet operation.
 type AuthOidcProviderCallbackGetFound struct{}
 
@@ -936,6 +940,10 @@ type AuthOidcProviderDevicePollPostBadRequest ErrorEnvelope
 
 func (*AuthOidcProviderDevicePollPostBadRequest) authOidcProviderDevicePollPostRes() {}
 
+type AuthOidcProviderDevicePollPostForbidden ErrorEnvelope
+
+func (*AuthOidcProviderDevicePollPostForbidden) authOidcProviderDevicePollPostRes() {}
+
 type AuthOidcProviderDevicePollPostNotFound ErrorEnvelope
 
 func (*AuthOidcProviderDevicePollPostNotFound) authOidcProviderDevicePollPostRes() {}
@@ -944,9 +952,21 @@ type AuthOidcProviderDevicePollPostUnauthorized ErrorEnvelope
 
 func (*AuthOidcProviderDevicePollPostUnauthorized) authOidcProviderDevicePollPostRes() {}
 
+type AuthOidcProviderDeviceStartPostForbidden ErrorEnvelope
+
+func (*AuthOidcProviderDeviceStartPostForbidden) authOidcProviderDeviceStartPostRes() {}
+
+type AuthOidcProviderDeviceStartPostNotFound ErrorEnvelope
+
+func (*AuthOidcProviderDeviceStartPostNotFound) authOidcProviderDeviceStartPostRes() {}
+
 type AuthOidcProviderLoginGetBadRequest ErrorEnvelope
 
 func (*AuthOidcProviderLoginGetBadRequest) authOidcProviderLoginGetRes() {}
+
+type AuthOidcProviderLoginGetForbidden ErrorEnvelope
+
+func (*AuthOidcProviderLoginGetForbidden) authOidcProviderLoginGetRes() {}
 
 // AuthOidcProviderLoginGetFound is response for AuthOidcProviderLoginGet operation.
 type AuthOidcProviderLoginGetFound struct{}
@@ -3275,7 +3295,6 @@ func (*ErrorEnvelope) aPIV1TemplatesIDDeleteRes()                           {}
 func (*ErrorEnvelope) aPIV1TemplatesIDPutRes()                              {}
 func (*ErrorEnvelope) aPIV1TemplatesPostRes()                               {}
 func (*ErrorEnvelope) authLogoutPostRes()                                   {}
-func (*ErrorEnvelope) authOidcProviderDeviceStartPostRes()                  {}
 func (*ErrorEnvelope) authProvidersGetRes()                                 {}
 func (*ErrorEnvelope) healthzGetRes()                                       {}
 func (*ErrorEnvelope) readyzGetRes()                                        {}
