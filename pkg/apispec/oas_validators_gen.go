@@ -387,6 +387,14 @@ func (s APIV1SandboxesIDFilesGetOKApplicationJSONSuccess) Validate() error {
 	}
 }
 
+func (s *APIV1SandboxesIDForkPostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *APIV1SandboxesIDForkPostConflict) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
@@ -525,6 +533,14 @@ func (s *APIV1SandboxesIDObservabilityLogsGetUnauthorized) Validate() error {
 
 func (s *APIV1SandboxesIDPausePostAccepted) Validate() error {
 	alias := (*SuccessPauseSandboxResponse)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDPausePostBadRequest) Validate() error {
+	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
 	}
@@ -716,6 +732,14 @@ func (s *APIV1SandboxesIDRefreshPostNotFound) Validate() error {
 }
 
 func (s *APIV1SandboxesIDRefreshPostUnauthorized) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDResumePostBadRequest) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
