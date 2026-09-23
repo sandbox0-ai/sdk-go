@@ -5,7 +5,7 @@ package apispec
 // setDefaults set default value of fields.
 func (s *ContainerSpec) setDefaults() {
 	{
-		val := ContainerSpecSecurityClass("standard")
+		val := ContainerSpecSecurityClass("privileged")
 		s.SecurityClass.SetTo(val)
 	}
 }
