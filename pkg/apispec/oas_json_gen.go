@@ -7128,8 +7128,6 @@ func (s *ContainerSpecSecurityClass) Decode(d *jx.Decoder) error {
 	}
 	// Try to use constant string.
 	switch ContainerSpecSecurityClass(v) {
-	case ContainerSpecSecurityClassStandard:
-		*s = ContainerSpecSecurityClassStandard
 	case ContainerSpecSecurityClassPrivileged:
 		*s = ContainerSpecSecurityClassPrivileged
 	default:
