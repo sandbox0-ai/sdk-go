@@ -5,7 +5,7 @@ package apispec
 // setDefaults set default value of fields.
 func (s *ContainerSpec) setDefaults() {
 	{
-		val := ContainerSpecSecurityClass("standard")
+		val := ContainerSpecSecurityClass("privileged")
 		s.SecurityClass.SetTo(val)
 	}
 }
@@ -123,6 +123,14 @@ func (s *ExecutionSessionTerminalSpec) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *ForkSandboxRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.Memory.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxAppServiceRouteAuth) setDefaults() {
 	{
 		val := SandboxAppServiceRouteAuthMode("none")
@@ -135,6 +143,14 @@ func (s *SandboxConfig) setDefaults() {
 	{
 		val := bool(true)
 		s.AutoResume.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *SandboxExecutionStateRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.Memory.SetTo(val)
 	}
 }
 

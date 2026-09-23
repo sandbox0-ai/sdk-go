@@ -25,6 +25,17 @@ func (e *SandboxWaitTimeoutError) Error() string {
 	return fmt.Sprintf("timed out waiting for sandbox %s after %s", e.SandboxID, e.Timeout)
 }
 
+// SandboxLifecycleFailedError reports an explicit terminal failure while waiting.
+type SandboxLifecycleFailedError struct {
+	SandboxID   string
+	Action      string
+	LastSandbox *apispec.Sandbox
+}
+
+func (e *SandboxLifecycleFailedError) Error() string {
+	return fmt.Sprintf("sandbox %s %s reached failed status", e.SandboxID, e.Action)
+}
+
 // APIError represents a structured error returned by the Sandbox0 API.
 type APIError struct {
 	StatusCode        int

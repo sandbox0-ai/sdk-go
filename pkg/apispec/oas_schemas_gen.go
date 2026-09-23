@@ -425,6 +425,10 @@ type APIV1SandboxesIDFilesWatchGetSwitchingProtocols struct{}
 
 func (*APIV1SandboxesIDFilesWatchGetSwitchingProtocols) aPIV1SandboxesIDFilesWatchGetRes() {}
 
+type APIV1SandboxesIDForkPostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDForkPostBadRequest) aPIV1SandboxesIDForkPostRes() {}
+
 type APIV1SandboxesIDForkPostConflict ErrorEnvelope
 
 func (*APIV1SandboxesIDForkPostConflict) aPIV1SandboxesIDForkPostRes() {}
@@ -500,6 +504,10 @@ func (*APIV1SandboxesIDObservabilityLogsGetUnauthorized) aPIV1SandboxesIDObserva
 type APIV1SandboxesIDPausePostAccepted SuccessPauseSandboxResponse
 
 func (*APIV1SandboxesIDPausePostAccepted) aPIV1SandboxesIDPausePostRes() {}
+
+type APIV1SandboxesIDPausePostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDPausePostBadRequest) aPIV1SandboxesIDPausePostRes() {}
 
 type APIV1SandboxesIDPausePostConflict ErrorEnvelope
 
@@ -600,6 +608,10 @@ func (*APIV1SandboxesIDRefreshPostNotFound) aPIV1SandboxesIDRefreshPostRes() {}
 type APIV1SandboxesIDRefreshPostUnauthorized ErrorEnvelope
 
 func (*APIV1SandboxesIDRefreshPostUnauthorized) aPIV1SandboxesIDRefreshPostRes() {}
+
+type APIV1SandboxesIDResumePostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDResumePostBadRequest) aPIV1SandboxesIDResumePostRes() {}
 
 type APIV1SandboxesIDResumePostConflict ErrorEnvelope
 
@@ -1249,8 +1261,8 @@ type ContainerSpec struct {
 	Image     string        `json:"image"`
 	Env       []EnvVar      `json:"env"`
 	Resources ResourceQuota `json:"resources"`
-	// Immutable gVisor guest privilege class. Privileged capabilities remain confined by runsc and do
-	// not expose host devices.
+	// New templates and sandboxes use privileged. Standard remains valid for existing sandbox records
+	// and resume. Privileged capabilities remain confined by runsc and do not expose host devices.
 	SecurityClass OptContainerSpecSecurityClass `json:"securityClass"`
 }
 
@@ -1294,8 +1306,8 @@ func (s *ContainerSpec) SetSecurityClass(val OptContainerSpecSecurityClass) {
 	s.SecurityClass = val
 }
 
-// Immutable gVisor guest privilege class. Privileged capabilities remain confined by runsc and do
-// not expose host devices.
+// New templates and sandboxes use privileged. Standard remains valid for existing sandbox records
+// and resume. Privileged capabilities remain confined by runsc and do not expose host devices.
 type ContainerSpecSecurityClass string
 
 const (
@@ -4909,12 +4921,26 @@ func (s *ForkSandboxConfig) SetHardTTL(val OptInt32) {
 // before the paused child sandbox is created.
 // Ref: #/components/schemas/ForkSandboxRequest
 type ForkSandboxRequest struct {
+	// Preserve process execution state together with RootFS. Requires Idempotency-Key. A paused source
+	// must have a retained memory image; a running source is captured and resumed before completion.
+	// Unsupported or unavailable memory never falls back to filesystem-only.
+	Memory OptBool              `json:"memory"`
 	Config OptForkSandboxConfig `json:"config"`
+}
+
+// GetMemory returns the value of Memory.
+func (s *ForkSandboxRequest) GetMemory() OptBool {
+	return s.Memory
 }
 
 // GetConfig returns the value of Config.
 func (s *ForkSandboxRequest) GetConfig() OptForkSandboxConfig {
 	return s.Config
+}
+
+// SetMemory sets the value of Memory.
+func (s *ForkSandboxRequest) SetMemory(val OptBool) {
+	s.Memory = val
 }
 
 // SetConfig sets the value of Config.
@@ -9067,6 +9093,52 @@ func (o OptSandboxConfigEnvVars) Get() (v SandboxConfigEnvVars, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxConfigEnvVars) Or(d SandboxConfigEnvVars) SandboxConfigEnvVars {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxExecutionStateRequest returns new OptSandboxExecutionStateRequest with value set to v.
+func NewOptSandboxExecutionStateRequest(v SandboxExecutionStateRequest) OptSandboxExecutionStateRequest {
+	return OptSandboxExecutionStateRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxExecutionStateRequest is optional SandboxExecutionStateRequest.
+type OptSandboxExecutionStateRequest struct {
+	Value SandboxExecutionStateRequest
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxExecutionStateRequest was set.
+func (o OptSandboxExecutionStateRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxExecutionStateRequest) Reset() {
+	var v SandboxExecutionStateRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxExecutionStateRequest) SetTo(v SandboxExecutionStateRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxExecutionStateRequest) Get() (v SandboxExecutionStateRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxExecutionStateRequest) Or(d SandboxExecutionStateRequest) SandboxExecutionStateRequest {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -13522,6 +13594,23 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 		*s = m
 	}
 	return m
+}
+
+// Ref: #/components/schemas/SandboxExecutionStateRequest
+type SandboxExecutionStateRequest struct {
+	// Explicitly preserve or restore process memory and execution state. Omitted or false retains the
+	// existing filesystem-only behavior. Memory failures are reported without a cold fallback.
+	Memory OptBool `json:"memory"`
+}
+
+// GetMemory returns the value of Memory.
+func (s *SandboxExecutionStateRequest) GetMemory() OptBool {
+	return s.Memory
+}
+
+// SetMemory sets the value of Memory.
+func (s *SandboxExecutionStateRequest) SetMemory(val OptBool) {
+	s.Memory = val
 }
 
 // Function code executed by procd for a sandbox service request. cluster-gateway owns public ingress

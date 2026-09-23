@@ -227,6 +227,10 @@ func TestPauseSandboxAndWaitPollsCommittedProjection(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method + " " + r.URL.Path {
 		case "POST /api/v1/sandboxes/sb_123/pause":
+			var body map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body["memory"] != true {
+				t.Fatalf("memory wait body = %v, error = %v", body, err)
+			}
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
 				"data": map[string]any{
@@ -250,6 +254,7 @@ func TestPauseSandboxAndWaitPollsCommittedProjection(t *testing.T) {
 	defer server.Close()
 
 	sandbox, err := client.PauseSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Memory:       true,
 		Timeout:      time.Second,
 		PollInterval: time.Millisecond,
 	})
@@ -269,6 +274,10 @@ func TestResumeSandboxAndWaitRequiresNextRuntimeGeneration(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method + " " + r.URL.Path {
 		case "POST /api/v1/sandboxes/sb_123/resume":
+			var body map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body["memory"] != true {
+				t.Fatalf("memory wait body = %v, error = %v", body, err)
+			}
 			writeJSON(t, w, http.StatusOK, map[string]any{
 				"success": true,
 				"data": map[string]any{
@@ -292,6 +301,7 @@ func TestResumeSandboxAndWaitRequiresNextRuntimeGeneration(t *testing.T) {
 	defer server.Close()
 
 	sandbox, err := client.ResumeSandboxAndWait(context.Background(), "sb_123", &SandboxLifecycleWaitOptions{
+		Memory:       true,
 		Timeout:      time.Second,
 		PollInterval: time.Millisecond,
 	})

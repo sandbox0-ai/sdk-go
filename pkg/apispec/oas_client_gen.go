@@ -315,7 +315,10 @@ type Invoker interface {
 	// Forks the source sandbox writable rootfs into a new paused sandbox. A paused
 	// source is forked from its current rootfs head. A running source is briefly
 	// barriered and checkpointed first; the source sandbox remains running after
-	// the fork operation completes.
+	// the fork operation completes. Set memory=true to retain execution state as
+	// well. Memory forks require a stable Idempotency-Key. While capture or parent
+	// restoration is pending, retry 503 responses with that same key and request.
+	// A successful response always contains a committed paused child.
 	//
 	// POST /api/v1/sandboxes/{id}/fork
 	APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error)
@@ -355,10 +358,12 @@ type Invoker interface {
 	APIV1SandboxesIDObservabilityLogsGet(ctx context.Context, params APIV1SandboxesIDObservabilityLogsGetParams, options ...RequestOption) (APIV1SandboxesIDObservabilityLogsGetRes, error)
 	// APIV1SandboxesIDPausePost invokes POST /api/v1/sandboxes/{id}/pause operation.
 	//
-	// Pause a sandbox.
+	// The default checkpoints only the writable RootFS. Set memory=true to also retain process execution
+	// state before releasing the runtime. A 202 response means checkpoint publication and cleanup are
+	// still pending.
 	//
 	// POST /api/v1/sandboxes/{id}/pause
-	APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
 	// APIV1SandboxesIDPreviewsPost invokes POST /api/v1/sandboxes/{id}/previews operation.
 	//
 	// Creates a short-lived, sandbox-runtime-bound authorization for previewing a loopback HTTP
@@ -394,10 +399,12 @@ type Invoker interface {
 	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
 	// APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 	//
-	// Resume a sandbox.
+	// The default starts a new process runtime from the committed RootFS. Set memory=true to restore a
+	// retained execution image. Missing or incompatible memory is an error; it never falls back to a
+	// filesystem-only resume. A disconnected request may continue through background recovery.
 	//
 	// POST /api/v1/sandboxes/{id}/resume
-	APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
+	APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
 	// APIV1SandboxesIDRootfsRebasePut invokes PUT /api/v1/sandboxes/{id}/rootfs/rebase operation.
 	//
 	// Applies the paused sandbox's file-level changes to an already-attested
@@ -5009,7 +5016,10 @@ func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params A
 // Forks the source sandbox writable rootfs into a new paused sandbox. A paused
 // source is forked from its current rootfs head. A running source is briefly
 // barriered and checkpointed first; the source sandbox remains running after
-// the fork operation completes.
+// the fork operation completes. Set memory=true to retain execution state as
+// well. Memory forks require a stable Idempotency-Key. While capture or parent
+// restoration is pending, retry 503 responses with that same key and request.
+// A successful response always contains a committed paused child.
 //
 // POST /api/v1/sandboxes/{id}/fork
 func (c *Client) APIV1SandboxesIDForkPost(ctx context.Context, request OptForkSandboxRequest, params APIV1SandboxesIDForkPostParams, options ...RequestOption) (APIV1SandboxesIDForkPostRes, error) {
@@ -6081,15 +6091,17 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityLogsGet(ctx context.Context, p
 
 // APIV1SandboxesIDPausePost invokes POST /api/v1/sandboxes/{id}/pause operation.
 //
-// Pause a sandbox.
+// The default checkpoints only the writable RootFS. Set memory=true to also retain process execution
+// state before releasing the runtime. A 202 response means checkpoint publication and cleanup are
+// still pending.
 //
 // POST /api/v1/sandboxes/{id}/pause
-func (c *Client) APIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error) {
-	res, err := c.sendAPIV1SandboxesIDPausePost(ctx, params, options...)
+func (c *Client) APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDPausePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1SandboxesIDPausePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPausePostRes, err error) {
+func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPausePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -6128,6 +6140,9 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, params APIV1
 	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDPausePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	{
@@ -6815,15 +6830,17 @@ func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request Op
 
 // APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 //
-// Resume a sandbox.
+// The default starts a new process runtime from the committed RootFS. Set memory=true to restore a
+// retained execution image. Missing or incompatible memory is an error; it never falls back to a
+// filesystem-only resume. A disconnected request may continue through background recovery.
 //
 // POST /api/v1/sandboxes/{id}/resume
-func (c *Client) APIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error) {
-	res, err := c.sendAPIV1SandboxesIDResumePost(ctx, params, options...)
+func (c *Client) APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDResumePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, params APIV1SandboxesIDResumePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDResumePostRes, err error) {
+func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDResumePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -6862,6 +6879,9 @@ func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, params APIV
 	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDResumePostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	{

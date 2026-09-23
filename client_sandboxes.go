@@ -3,6 +3,7 @@ package sandbox0
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -19,6 +20,9 @@ type SandboxLifecyclePredicate func(*apispec.Sandbox) bool
 
 // SandboxLifecycleWaitOptions configures lifecycle projection polling.
 type SandboxLifecycleWaitOptions struct {
+	// Memory selects execution-state preservation for PauseSandboxAndWait and
+	// ResumeSandboxAndWait. It has no effect on projection-only wait helpers.
+	Memory       bool
 	Timeout      time.Duration
 	PollInterval time.Duration
 }
@@ -310,9 +314,27 @@ func (c *Client) StatusSandbox(ctx context.Context, sandboxID string) (*apispec.
 	}
 }
 
-// PauseSandbox suspends a sandbox.
+// SandboxExecutionStateOptions explicitly selects memory preservation. The
+// zero value retains the existing filesystem-only lifecycle behavior.
+type SandboxExecutionStateOptions struct {
+	Memory bool
+}
+
+func sandboxExecutionStateBody(options *SandboxExecutionStateOptions) apispec.OptSandboxExecutionStateRequest {
+	if options == nil {
+		return apispec.OptSandboxExecutionStateRequest{}
+	}
+	return apispec.NewOptSandboxExecutionStateRequest(apispec.SandboxExecutionStateRequest{Memory: apispec.NewOptBool(options.Memory)})
+}
+
+// PauseSandbox suspends a sandbox with a filesystem-only checkpoint.
 func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.PauseSandboxResponse, error) {
-	resp, err := c.api.APIV1SandboxesIDPausePost(ctx, apispec.APIV1SandboxesIDPausePostParams{ID: sandboxID})
+	return c.PauseSandboxWithOptions(ctx, sandboxID, nil)
+}
+
+// PauseSandboxWithOptions explicitly opts into retaining process memory.
+func (c *Client) PauseSandboxWithOptions(ctx context.Context, sandboxID string, options *SandboxExecutionStateOptions) (*apispec.PauseSandboxResponse, error) {
+	resp, err := c.api.APIV1SandboxesIDPausePost(ctx, sandboxExecutionStateBody(options), apispec.APIV1SandboxesIDPausePostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
@@ -335,17 +357,35 @@ func (c *Client) PauseSandboxAndWait(
 	sandboxID string,
 	options *SandboxLifecycleWaitOptions,
 ) (*apispec.Sandbox, error) {
-	if _, err := c.PauseSandbox(ctx, sandboxID); err != nil {
+	var execution *SandboxExecutionStateOptions
+	if options != nil {
+		execution = &SandboxExecutionStateOptions{Memory: options.Memory}
+	}
+	if _, err := c.PauseSandboxWithOptions(ctx, sandboxID, execution); err != nil {
 		return nil, err
 	}
-	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
-		return sandbox.Status == apispec.SandboxLifecycleStatusPaused && sandbox.Paused
+	memory := execution != nil && execution.Memory
+	sandbox, err := c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.Status == apispec.SandboxLifecycleStatusPaused && sandbox.Paused ||
+			memory && sandbox.Status == apispec.SandboxLifecycleStatusFailed
 	}, options)
+	if err != nil {
+		return nil, err
+	}
+	if memory && sandbox.Status == apispec.SandboxLifecycleStatusFailed {
+		return nil, &SandboxLifecycleFailedError{SandboxID: sandboxID, Action: "memory pause", LastSandbox: sandbox}
+	}
+	return sandbox, nil
 }
 
 // ResumeSandbox resumes a sandbox.
 func (c *Client) ResumeSandbox(ctx context.Context, sandboxID string) (*apispec.ResumeSandboxResponse, error) {
-	resp, err := c.api.APIV1SandboxesIDResumePost(ctx, apispec.APIV1SandboxesIDResumePostParams{ID: sandboxID})
+	return c.ResumeSandboxWithOptions(ctx, sandboxID, nil)
+}
+
+// ResumeSandboxWithOptions restores retained memory only when explicitly selected.
+func (c *Client) ResumeSandboxWithOptions(ctx context.Context, sandboxID string, options *SandboxExecutionStateOptions) (*apispec.ResumeSandboxResponse, error) {
+	resp, err := c.api.APIV1SandboxesIDResumePost(ctx, sandboxExecutionStateBody(options), apispec.APIV1SandboxesIDResumePostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
@@ -369,17 +409,30 @@ func (c *Client) ResumeSandboxAndWait(
 	if err != nil {
 		return nil, err
 	}
-	if _, err := c.ResumeSandbox(ctx, sandboxID); err != nil {
+	var execution *SandboxExecutionStateOptions
+	if options != nil {
+		execution = &SandboxExecutionStateOptions{Memory: options.Memory}
+	}
+	if _, err := c.ResumeSandboxWithOptions(ctx, sandboxID, execution); err != nil {
 		return nil, err
 	}
 	minimumGeneration := before.RuntimeGeneration
 	if before.Paused || before.Status == apispec.SandboxLifecycleStatusPaused {
 		minimumGeneration++
 	}
-	return c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
-		return sandbox.Status == apispec.SandboxLifecycleStatusRunning &&
-			!sandbox.Paused && sandbox.RuntimeGeneration >= minimumGeneration
+	memory := execution != nil && execution.Memory
+	sandbox, err := c.WaitForSandboxLifecycle(ctx, sandboxID, func(sandbox *apispec.Sandbox) bool {
+		return sandbox.RuntimeGeneration >= minimumGeneration &&
+			(sandbox.Status == apispec.SandboxLifecycleStatusRunning && !sandbox.Paused ||
+				memory && sandbox.Status == apispec.SandboxLifecycleStatusFailed)
 	}, options)
+	if err != nil {
+		return nil, err
+	}
+	if memory && sandbox.Status == apispec.SandboxLifecycleStatusFailed {
+		return nil, &SandboxLifecycleFailedError{SandboxID: sandboxID, Action: "memory resume", LastSandbox: sandbox}
+	}
+	return sandbox, nil
 }
 
 // RefreshSandbox refreshes sandbox TTL. If request is nil, an empty body is sent.
@@ -513,6 +566,9 @@ func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *api
 
 // ForkSandboxWithOptions creates a fork with an optional stable retry key.
 func (c *Client) ForkSandboxWithOptions(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest, options *ForkSandboxOptions) (*apispec.ForkSandboxResponse, error) {
+	if request != nil && request.Memory.Or(false) && (options == nil || strings.TrimSpace(options.IdempotencyKey) == "" || len(options.IdempotencyKey) > 255) {
+		return nil, errors.New("memory fork requires ForkSandboxOptions.IdempotencyKey for exact retry")
+	}
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {
 		body = apispec.NewOptForkSandboxRequest(*request)
