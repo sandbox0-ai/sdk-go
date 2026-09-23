@@ -1527,8 +1527,6 @@ func (s *ContainerSpec) Validate() error {
 
 func (s ContainerSpecSecurityClass) Validate() error {
 	switch s {
-	case "standard":
-		return nil
 	case "privileged":
 		return nil
 	default:

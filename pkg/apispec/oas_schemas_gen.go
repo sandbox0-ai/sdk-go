@@ -1261,8 +1261,8 @@ type ContainerSpec struct {
 	Image     string        `json:"image"`
 	Env       []EnvVar      `json:"env"`
 	Resources ResourceQuota `json:"resources"`
-	// New templates and sandboxes use privileged. Standard remains valid for existing sandbox records
-	// and resume. Privileged capabilities remain confined by runsc and do not expose host devices.
+	// Sandboxes use privileged capabilities inside the gVisor guest. This does not bypass runsc or
+	// expose host devices.
 	SecurityClass OptContainerSpecSecurityClass `json:"securityClass"`
 }
 
@@ -1306,19 +1306,17 @@ func (s *ContainerSpec) SetSecurityClass(val OptContainerSpecSecurityClass) {
 	s.SecurityClass = val
 }
 
-// New templates and sandboxes use privileged. Standard remains valid for existing sandbox records
-// and resume. Privileged capabilities remain confined by runsc and do not expose host devices.
+// Sandboxes use privileged capabilities inside the gVisor guest. This does not bypass runsc or
+// expose host devices.
 type ContainerSpecSecurityClass string
 
 const (
-	ContainerSpecSecurityClassStandard   ContainerSpecSecurityClass = "standard"
 	ContainerSpecSecurityClassPrivileged ContainerSpecSecurityClass = "privileged"
 )
 
 // AllValues returns all ContainerSpecSecurityClass values.
 func (ContainerSpecSecurityClass) AllValues() []ContainerSpecSecurityClass {
 	return []ContainerSpecSecurityClass{
-		ContainerSpecSecurityClassStandard,
 		ContainerSpecSecurityClassPrivileged,
 	}
 }
@@ -1326,8 +1324,6 @@ func (ContainerSpecSecurityClass) AllValues() []ContainerSpecSecurityClass {
 // MarshalText implements encoding.TextMarshaler.
 func (s ContainerSpecSecurityClass) MarshalText() ([]byte, error) {
 	switch s {
-	case ContainerSpecSecurityClassStandard:
-		return []byte(s), nil
 	case ContainerSpecSecurityClassPrivileged:
 		return []byte(s), nil
 	default:
@@ -1338,9 +1334,6 @@ func (s ContainerSpecSecurityClass) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *ContainerSpecSecurityClass) UnmarshalText(data []byte) error {
 	switch ContainerSpecSecurityClass(data) {
-	case ContainerSpecSecurityClassStandard:
-		*s = ContainerSpecSecurityClassStandard
-		return nil
 	case ContainerSpecSecurityClassPrivileged:
 		*s = ContainerSpecSecurityClassPrivileged
 		return nil
