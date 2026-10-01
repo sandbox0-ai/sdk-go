@@ -399,9 +399,11 @@ type Invoker interface {
 	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
 	// APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 	//
-	// The default starts a new process runtime from the committed RootFS. Set memory=true to restore a
-	// retained execution image. Missing or incompatible memory is an error; it never falls back to a
-	// filesystem-only resume. A disconnected request may continue through background recovery.
+	// The default starts a new process runtime from the committed RootFS. Set memory=true to prefer a
+	// retained execution image. Missing or incompatible memory falls back to the committed RootFS. A
+	// failed memory target is physically reclaimed before a filesystem-only replacement starts. A
+	// response with resumed=false means durable fallback is pending; poll sandbox status until running.
+	// A disconnected request may continue through background recovery.
 	//
 	// POST /api/v1/sandboxes/{id}/resume
 	APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
@@ -6830,9 +6832,11 @@ func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request Op
 
 // APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 //
-// The default starts a new process runtime from the committed RootFS. Set memory=true to restore a
-// retained execution image. Missing or incompatible memory is an error; it never falls back to a
-// filesystem-only resume. A disconnected request may continue through background recovery.
+// The default starts a new process runtime from the committed RootFS. Set memory=true to prefer a
+// retained execution image. Missing or incompatible memory falls back to the committed RootFS. A
+// failed memory target is physically reclaimed before a filesystem-only replacement starts. A
+// response with resumed=false means durable fallback is pending; poll sandbox status until running.
+// A disconnected request may continue through background recovery.
 //
 // POST /api/v1/sandboxes/{id}/resume
 func (c *Client) APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error) {
