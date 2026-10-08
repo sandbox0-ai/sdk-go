@@ -24,7 +24,7 @@ func TestListTeamQuotas(t *testing.T) {
 			"data": []map[string]any{
 				{
 					"team_id":     "team-1",
-					"dimension":   "active_sandboxes",
+					"dimension":   "paused_sandboxes",
 					"kind":        "capacity",
 					"limit_value": 10,
 					"interval_ms": nil,
@@ -60,8 +60,8 @@ func TestListTeamQuotas(t *testing.T) {
 	if len(quotas) != 2 {
 		t.Fatalf("len(quotas) = %d, want 2", len(quotas))
 	}
-	if got := quotas[0].Dimension; got != apispec.QuotaDimensionActiveSandboxes {
-		t.Fatalf("first dimension = %q, want active_sandboxes", got)
+	if got := quotas[0].Dimension; got != apispec.QuotaDimensionPausedSandboxes {
+		t.Fatalf("first dimension = %q, want paused_sandboxes", got)
 	}
 	if current, ok := quotas[0].Current.Get(); !ok || current != 3 {
 		t.Fatalf("first current = %d, %v, want 3, true", current, ok)

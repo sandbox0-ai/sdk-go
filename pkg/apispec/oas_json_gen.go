@@ -22244,6 +22244,8 @@ func (s *QuotaDimension) Decode(d *jx.Decoder) error {
 	switch QuotaDimension(v) {
 	case QuotaDimensionActiveSandboxes:
 		*s = QuotaDimensionActiveSandboxes
+	case QuotaDimensionPausedSandboxes:
+		*s = QuotaDimensionPausedSandboxes
 	case QuotaDimensionSandboxClaims:
 		*s = QuotaDimensionSandboxClaims
 	case QuotaDimensionAPIRequests:
