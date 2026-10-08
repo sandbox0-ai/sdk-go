@@ -11050,6 +11050,7 @@ type QuotaDimension string
 
 const (
 	QuotaDimensionActiveSandboxes     QuotaDimension = "active_sandboxes"
+	QuotaDimensionPausedSandboxes     QuotaDimension = "paused_sandboxes"
 	QuotaDimensionSandboxClaims       QuotaDimension = "sandbox_claims"
 	QuotaDimensionAPIRequests         QuotaDimension = "api_requests"
 	QuotaDimensionNetworkEgressBytes  QuotaDimension = "network_egress_bytes"
@@ -11060,6 +11061,7 @@ const (
 func (QuotaDimension) AllValues() []QuotaDimension {
 	return []QuotaDimension{
 		QuotaDimensionActiveSandboxes,
+		QuotaDimensionPausedSandboxes,
 		QuotaDimensionSandboxClaims,
 		QuotaDimensionAPIRequests,
 		QuotaDimensionNetworkEgressBytes,
@@ -11071,6 +11073,8 @@ func (QuotaDimension) AllValues() []QuotaDimension {
 func (s QuotaDimension) MarshalText() ([]byte, error) {
 	switch s {
 	case QuotaDimensionActiveSandboxes:
+		return []byte(s), nil
+	case QuotaDimensionPausedSandboxes:
 		return []byte(s), nil
 	case QuotaDimensionSandboxClaims:
 		return []byte(s), nil
@@ -11090,6 +11094,9 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 	switch QuotaDimension(data) {
 	case QuotaDimensionActiveSandboxes:
 		*s = QuotaDimensionActiveSandboxes
+		return nil
+	case QuotaDimensionPausedSandboxes:
+		*s = QuotaDimensionPausedSandboxes
 		return nil
 	case QuotaDimensionSandboxClaims:
 		*s = QuotaDimensionSandboxClaims

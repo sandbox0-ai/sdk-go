@@ -3880,6 +3880,8 @@ func (s QuotaDimension) Validate() error {
 	switch s {
 	case "active_sandboxes":
 		return nil
+	case "paused_sandboxes":
+		return nil
 	case "sandbox_claims":
 		return nil
 	case "api_requests":
