@@ -3882,6 +3882,8 @@ func (s QuotaDimension) Validate() error {
 		return nil
 	case "paused_sandboxes":
 		return nil
+	case "snapshots_per_sandbox":
+		return nil
 	case "sandbox_claims":
 		return nil
 	case "api_requests":

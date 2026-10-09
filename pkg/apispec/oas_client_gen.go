@@ -529,6 +529,9 @@ type Invoker interface {
 	// rootfs. A paused source is snapshotted from its current rootfs head. A
 	// running source is briefly barriered and checkpointed first; the source
 	// sandbox remains running after the snapshot operation completes.
+	// Each sandbox retains at most its team's snapshots_per_sandbox quota
+	// (default 10). Creating a snapshot automatically removes the oldest
+	// excess public snapshots. Internal template-build snapshots are excluded.
 	//
 	// POST /api/v1/sandboxes/{id}/snapshots
 	APIV1SandboxesIDSnapshotsPost(ctx context.Context, request OptCreateSandboxRootFSSnapshotRequest, params APIV1SandboxesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxesIDSnapshotsPostRes, error)
@@ -9362,6 +9365,9 @@ func (c *Client) sendAPIV1SandboxesIDSnapshotsGet(ctx context.Context, params AP
 // rootfs. A paused source is snapshotted from its current rootfs head. A
 // running source is briefly barriered and checkpointed first; the source
 // sandbox remains running after the snapshot operation completes.
+// Each sandbox retains at most its team's snapshots_per_sandbox quota
+// (default 10). Creating a snapshot automatically removes the oldest
+// excess public snapshots. Internal template-build snapshots are excluded.
 //
 // POST /api/v1/sandboxes/{id}/snapshots
 func (c *Client) APIV1SandboxesIDSnapshotsPost(ctx context.Context, request OptCreateSandboxRootFSSnapshotRequest, params APIV1SandboxesIDSnapshotsPostParams, options ...RequestOption) (APIV1SandboxesIDSnapshotsPostRes, error) {

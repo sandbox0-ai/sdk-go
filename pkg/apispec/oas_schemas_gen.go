@@ -11045,12 +11045,17 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	}
 }
 
+// Snapshots_per_sandbox limits retained public snapshots independently on
+// each sandbox (default 10). Excess snapshots are automatically removed,
+// oldest first. Its capacity current value is the highest snapshot count
+// on any sandbox in the team, rather than the team's total snapshot count.
 // Ref: #/components/schemas/QuotaDimension
 type QuotaDimension string
 
 const (
 	QuotaDimensionActiveSandboxes     QuotaDimension = "active_sandboxes"
 	QuotaDimensionPausedSandboxes     QuotaDimension = "paused_sandboxes"
+	QuotaDimensionSnapshotsPerSandbox QuotaDimension = "snapshots_per_sandbox"
 	QuotaDimensionSandboxClaims       QuotaDimension = "sandbox_claims"
 	QuotaDimensionAPIRequests         QuotaDimension = "api_requests"
 	QuotaDimensionNetworkEgressBytes  QuotaDimension = "network_egress_bytes"
@@ -11062,6 +11067,7 @@ func (QuotaDimension) AllValues() []QuotaDimension {
 	return []QuotaDimension{
 		QuotaDimensionActiveSandboxes,
 		QuotaDimensionPausedSandboxes,
+		QuotaDimensionSnapshotsPerSandbox,
 		QuotaDimensionSandboxClaims,
 		QuotaDimensionAPIRequests,
 		QuotaDimensionNetworkEgressBytes,
@@ -11075,6 +11081,8 @@ func (s QuotaDimension) MarshalText() ([]byte, error) {
 	case QuotaDimensionActiveSandboxes:
 		return []byte(s), nil
 	case QuotaDimensionPausedSandboxes:
+		return []byte(s), nil
+	case QuotaDimensionSnapshotsPerSandbox:
 		return []byte(s), nil
 	case QuotaDimensionSandboxClaims:
 		return []byte(s), nil
@@ -11097,6 +11105,9 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 		return nil
 	case QuotaDimensionPausedSandboxes:
 		*s = QuotaDimensionPausedSandboxes
+		return nil
+	case QuotaDimensionSnapshotsPerSandbox:
+		*s = QuotaDimensionSnapshotsPerSandbox
 		return nil
 	case QuotaDimensionSandboxClaims:
 		*s = QuotaDimensionSandboxClaims

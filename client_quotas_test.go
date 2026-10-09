@@ -8,6 +8,30 @@ import (
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
 )
 
+func TestGetSnapshotsPerSandboxQuota(t *testing.T) {
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/quotas/snapshots_per_sandbox" {
+			t.Fatalf("unexpected quota path %q", r.URL.Path)
+		}
+		writeJSON(t, w, http.StatusOK, map[string]any{"success": true, "data": map[string]any{
+			"team_id": "team-1", "dimension": "snapshots_per_sandbox", "kind": "capacity",
+			"limit_value": 10, "current": 7, "remaining": 3, "unlimited": false,
+			"interval_ms": nil, "burst_value": nil, "unit": "count", "source": "region_default",
+		}})
+	})
+	defer server.Close()
+	status, err := client.GetTeamQuota(context.Background(), apispec.QuotaDimensionSnapshotsPerSandbox)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status.Dimension != apispec.QuotaDimensionSnapshotsPerSandbox {
+		t.Fatalf("unexpected quota dimension %q", status.Dimension)
+	}
+	if current, ok := status.Current.Get(); !ok || current != 7 {
+		t.Fatalf("current = %d, %v, want 7, true", current, ok)
+	}
+}
+
 func TestListTeamQuotas(t *testing.T) {
 	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
