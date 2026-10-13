@@ -593,9 +593,17 @@ type APIV1SandboxesIDPutBadRequest ErrorEnvelope
 
 func (*APIV1SandboxesIDPutBadRequest) aPIV1SandboxesIDPutRes() {}
 
+type APIV1SandboxesIDPutConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDPutConflict) aPIV1SandboxesIDPutRes() {}
+
 type APIV1SandboxesIDPutNotFound ErrorEnvelope
 
 func (*APIV1SandboxesIDPutNotFound) aPIV1SandboxesIDPutRes() {}
+
+type APIV1SandboxesIDPutServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDPutServiceUnavailable) aPIV1SandboxesIDPutRes() {}
 
 type APIV1SandboxesIDPutUnauthorized ErrorEnvelope
 
@@ -11037,11 +11045,17 @@ func (s *ProtocolRuleProtocol) UnmarshalText(data []byte) error {
 	}
 }
 
+// Snapshots_per_sandbox limits retained public snapshots independently on
+// each sandbox (default 10). Excess snapshots are automatically removed,
+// oldest first. Its capacity current value is the highest snapshot count
+// on any sandbox in the team, rather than the team's total snapshot count.
 // Ref: #/components/schemas/QuotaDimension
 type QuotaDimension string
 
 const (
 	QuotaDimensionActiveSandboxes     QuotaDimension = "active_sandboxes"
+	QuotaDimensionPausedSandboxes     QuotaDimension = "paused_sandboxes"
+	QuotaDimensionSnapshotsPerSandbox QuotaDimension = "snapshots_per_sandbox"
 	QuotaDimensionSandboxClaims       QuotaDimension = "sandbox_claims"
 	QuotaDimensionAPIRequests         QuotaDimension = "api_requests"
 	QuotaDimensionNetworkEgressBytes  QuotaDimension = "network_egress_bytes"
@@ -11052,6 +11066,8 @@ const (
 func (QuotaDimension) AllValues() []QuotaDimension {
 	return []QuotaDimension{
 		QuotaDimensionActiveSandboxes,
+		QuotaDimensionPausedSandboxes,
+		QuotaDimensionSnapshotsPerSandbox,
 		QuotaDimensionSandboxClaims,
 		QuotaDimensionAPIRequests,
 		QuotaDimensionNetworkEgressBytes,
@@ -11063,6 +11079,10 @@ func (QuotaDimension) AllValues() []QuotaDimension {
 func (s QuotaDimension) MarshalText() ([]byte, error) {
 	switch s {
 	case QuotaDimensionActiveSandboxes:
+		return []byte(s), nil
+	case QuotaDimensionPausedSandboxes:
+		return []byte(s), nil
+	case QuotaDimensionSnapshotsPerSandbox:
 		return []byte(s), nil
 	case QuotaDimensionSandboxClaims:
 		return []byte(s), nil
@@ -11082,6 +11102,12 @@ func (s *QuotaDimension) UnmarshalText(data []byte) error {
 	switch QuotaDimension(data) {
 	case QuotaDimensionActiveSandboxes:
 		*s = QuotaDimensionActiveSandboxes
+		return nil
+	case QuotaDimensionPausedSandboxes:
+		*s = QuotaDimensionPausedSandboxes
+		return nil
+	case QuotaDimensionSnapshotsPerSandbox:
+		*s = QuotaDimensionSnapshotsPerSandbox
 		return nil
 	case QuotaDimensionSandboxClaims:
 		*s = QuotaDimensionSandboxClaims
@@ -11977,7 +12003,9 @@ func (s *RestoreSandboxRootFSResponse) SetStatus(val SandboxLifecycleStatus) {
 
 // Ref: #/components/schemas/ResumeSandboxResponse
 type ResumeSandboxResponse struct {
-	SandboxID      string    `json:"sandbox_id"`
+	SandboxID string `json:"sandbox_id"`
+	// True after a command-ready runtime has committed. False means an accepted durable resume is still
+	// pending (memory retry, cleanup, or RootFS fallback); poll sandbox status until running.
 	Resumed        bool      `json:"resumed"`
 	RestoredMemory OptString `json:"restored_memory"`
 }
@@ -13593,8 +13621,9 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 
 // Ref: #/components/schemas/SandboxExecutionStateRequest
 type SandboxExecutionStateRequest struct {
-	// Explicitly preserve or restore process memory and execution state. Omitted or false retains the
-	// existing filesystem-only behavior. Memory failures are reported without a cold fallback.
+	// On pause, retain process memory and execution state; capture failures remain errors. On resume,
+	// prefer retained memory and fall back to the committed RootFS if memory is missing, incompatible,
+	// or cannot be restored. Omitted or false uses filesystem-only behavior.
 	Memory OptBool `json:"memory"`
 }
 
@@ -16311,11 +16340,17 @@ func (s *SandboxTemplateStatus) SetCreation(val OptTemplateCreationStatus) {
 	s.Creation = val
 }
 
-// Durable lifecycle and service fields that can be updated without replacing
-// the current runtime allocation. Network policy uses the dedicated network
-// endpoint. Environment, resource, and webhook changes require a new runtime.
+// Durable lifecycle and service fields, or a standalone resources.memory change.
+// Resource changes preserve the sandbox ID and durable files but restart processes
+// through filesystem pause and a fresh CPU/memory lease. Paused sandboxes stay
+// paused with the new next-start configuration; retained memory is discarded.
+// Submit resources separately from lifecycle and service fields. The operation
+// survives request timeout and manager restart. Retry the same limit after 503;
+// an already-applied limit is a no-op. Network policy uses its dedicated endpoint.
+// Environment and webhook changes require a new runtime.
 // Ref: #/components/schemas/SandboxUpdateConfig
 type SandboxUpdateConfig struct {
+	Resources OptSandboxResourceConfig `json:"resources"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
@@ -16329,6 +16364,11 @@ type SandboxUpdateConfig struct {
 	// `503 sandbox_resume_failed` when that resume attempt has ended unsuccessfully.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
+}
+
+// GetResources returns the value of Resources.
+func (s *SandboxUpdateConfig) GetResources() OptSandboxResourceConfig {
+	return s.Resources
 }
 
 // GetTTL returns the value of TTL.
@@ -16349,6 +16389,11 @@ func (s *SandboxUpdateConfig) GetAutoResume() OptBool {
 // GetServices returns the value of Services.
 func (s *SandboxUpdateConfig) GetServices() []SandboxAppService {
 	return s.Services
+}
+
+// SetResources sets the value of Resources.
+func (s *SandboxUpdateConfig) SetResources(val OptSandboxResourceConfig) {
+	s.Resources = val
 }
 
 // SetTTL sets the value of TTL.

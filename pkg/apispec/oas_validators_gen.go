@@ -707,7 +707,23 @@ func (s *APIV1SandboxesIDPutBadRequest) Validate() error {
 	return nil
 }
 
+func (s *APIV1SandboxesIDPutConflict) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *APIV1SandboxesIDPutNotFound) Validate() error {
+	alias := (*ErrorEnvelope)(s)
+	if err := alias.Validate(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *APIV1SandboxesIDPutServiceUnavailable) Validate() error {
 	alias := (*ErrorEnvelope)(s)
 	if err := alias.Validate(); err != nil {
 		return err
@@ -3863,6 +3879,10 @@ func (s ProtocolRuleProtocol) Validate() error {
 func (s QuotaDimension) Validate() error {
 	switch s {
 	case "active_sandboxes":
+		return nil
+	case "paused_sandboxes":
+		return nil
+	case "snapshots_per_sandbox":
 		return nil
 	case "sandbox_claims":
 		return nil
