@@ -168,8 +168,9 @@ type APIV1SandboxesIDFilesWatchGetParams struct {
 // APIV1SandboxesIDForkPostParams is parameters of POST /api/v1/sandboxes/{id}/fork operation.
 type APIV1SandboxesIDForkPostParams struct {
 	ID string
-	// Key for retrying the fork without creating a duplicate child sandbox. Required when memory=true;
-	// reuse it across pending responses and transport failures.
+	// Key for retrying the fork without creating a duplicate child sandbox. Required when memory=true or
+	// expected_runtime_generation is supplied; reuse it and the original generation across pending
+	// responses and transport failures.
 	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 
@@ -242,6 +243,9 @@ type APIV1SandboxesIDObservabilityLogsGetParams struct {
 // APIV1SandboxesIDPausePostParams is parameters of POST /api/v1/sandboxes/{id}/pause operation.
 type APIV1SandboxesIDPausePostParams struct {
 	ID string
+	// Required with expected_runtime_generation for conditional memory pause. Reuse the same key for
+	// retries; a new attempt after a safe cancellation requires a new key.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDPreviewsPostParams is parameters of POST /api/v1/sandboxes/{id}/previews operation.
@@ -274,6 +278,10 @@ type APIV1SandboxesIDRefreshPostParams struct {
 // APIV1SandboxesIDResumePostParams is parameters of POST /api/v1/sandboxes/{id}/resume operation.
 type APIV1SandboxesIDResumePostParams struct {
 	ID string
+	// Required with expected_runtime_generation and checkpoint_id for conditional memory resume. Reuse
+	// the same key on retries. A new attempt after safe terminal cleanup requires a new explicit key and
+	// the exact then-current paused generation.
+	IdempotencyKey OptString `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDRootfsRebasePutParams is parameters of PUT /api/v1/sandboxes/{id}/rootfs/rebase operation.
@@ -296,6 +304,24 @@ type APIV1SandboxesIDServicesPutParams struct {
 	ID string
 }
 
+// APIV1SandboxesIDSessionsConditionalLookupGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/conditional/lookup operation.
+type APIV1SandboxesIDSessionsConditionalLookupGetParams struct {
+	// Explicit origin for a restored original attempt; must be less than runtime_generation. Omit for
+	// ordinary same-generation lookup or attachment.
+	CreationRuntimeGeneration OptInt64 `json:",omitempty,omitzero"`
+	ID                        string
+	RuntimeGeneration         int64
+	// The original conditional creation key; lookup does not submit it.
+	IdempotencyKey string
+}
+
+// APIV1SandboxesIDSessionsConditionalPostParams is parameters of POST /api/v1/sandboxes/{id}/sessions/conditional operation.
+type APIV1SandboxesIDSessionsConditionalPostParams struct {
+	ID string
+	// Stable creation identity; reuse only with the exact request.
+	IdempotencyKey string
+}
+
 // APIV1SandboxesIDSessionsGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions operation.
 type APIV1SandboxesIDSessionsGetParams struct {
 	ID string
@@ -312,6 +338,20 @@ type APIV1SandboxesIDSessionsPostParams struct {
 type APIV1SandboxesIDSessionsSessionIDAttemptsPostParams struct {
 	ID        string
 	SessionID string
+}
+
+// APIV1SandboxesIDSessionsSessionIDConditionalWsGetParams is parameters of GET /api/v1/sandboxes/{id}/sessions/{session_id}/conditional/ws operation.
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetParams struct {
+	// Explicit origin for a restored original attempt; must be less than runtime_generation. Omit for
+	// ordinary same-generation lookup or attachment.
+	CreationRuntimeGeneration OptInt64 `json:",omitempty,omitzero"`
+	ID                        string
+	SessionID                 string
+	// Original conditional creation key.
+	IdempotencyKey    string
+	RuntimeGeneration int64
+	AttemptID         string
+	After             OptInt64 `json:",omitempty,omitzero"`
 }
 
 // APIV1SandboxesIDSessionsSessionIDDeleteParams is parameters of DELETE /api/v1/sandboxes/{id}/sessions/{session_id} operation.
@@ -425,6 +465,18 @@ type APIV1UsageWindowsGetParams struct {
 	WindowType OptString `json:",omitempty,omitzero"`
 }
 
+// AcknowledgeSandboxRestartFinalCaptureParams is parameters of acknowledgeSandboxRestartFinalCapture operation.
+type AcknowledgeSandboxRestartFinalCaptureParams struct {
+	ID          string
+	OperationID string
+}
+
+// AcknowledgeSandboxSnapshotRestoreFinalCaptureParams is parameters of acknowledgeSandboxSnapshotRestoreFinalCapture operation.
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureParams struct {
+	ID          string
+	OperationID string
+}
+
 // AuthOidcProviderCallbackGetParams is parameters of GET /auth/oidc/{provider}/callback operation.
 type AuthOidcProviderCallbackGetParams struct {
 	Provider string
@@ -451,6 +503,104 @@ type AuthOidcProviderLoginGetParams struct {
 	WebLogin OptBool `json:",omitempty,omitzero"`
 }
 
+// CaptureSandboxRootFSSnapshotParams is parameters of captureSandboxRootFSSnapshot operation.
+type CaptureSandboxRootFSSnapshotParams struct {
+	ID             string
+	IdempotencyKey string
+}
+
+// DeleteSandboxManagedFileParams is parameters of deleteSandboxManagedFile operation.
+type DeleteSandboxManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name                     string
+	ExpectedMutationSequence ManagedFileMutationSequence
+}
+
+// DeleteSandboxNamespacedManagedFileParams is parameters of deleteSandboxNamespacedManagedFile operation.
+type DeleteSandboxNamespacedManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name string
+	// Single directory within the runtime projection. Writes create a missing directory on the same
+	// tmpfs; reads never create it. Names must be ASCII, excluding dot, dot-dot and the reserved .
+	// s0-write- prefix. Symlinks, submounts and directory replacement during access fail closed.
+	// Requires a namespace-capable node; never falls back to the root directory. The mutation sequence
+	// is shared across all directories.
+	Namespace                string
+	ExpectedMutationSequence ManagedFileMutationSequence
+}
+
+// FindSandboxRestartOperationParams is parameters of findSandboxRestartOperation operation.
+type FindSandboxRestartOperationParams struct {
+	ID         string
+	RequestKey string
+}
+
+// FindSandboxSnapshotRestoreOperationParams is parameters of findSandboxSnapshotRestoreOperation operation.
+type FindSandboxSnapshotRestoreOperationParams struct {
+	ID         string
+	RequestKey string
+}
+
+// GetCapturedSandboxRootFSSnapshotParams is parameters of getCapturedSandboxRootFSSnapshot operation.
+type GetCapturedSandboxRootFSSnapshotParams struct {
+	ID                        string
+	IdempotencyKey            string
+	ExpectedRuntimeGeneration int64
+}
+
+// GetSandboxHealthParams is parameters of getSandboxHealth operation.
+type GetSandboxHealthParams struct {
+	ID string
+}
+
+// GetSandboxMemoryRestorationParams is parameters of getSandboxMemoryRestoration operation.
+type GetSandboxMemoryRestorationParams struct {
+	ID                string
+	RuntimeGeneration int64
+}
+
+// GetSandboxRestartFinalCaptureParams is parameters of getSandboxRestartFinalCapture operation.
+type GetSandboxRestartFinalCaptureParams struct {
+	ID          string
+	OperationID string
+}
+
+// GetSandboxRestartOperationParams is parameters of getSandboxRestartOperation operation.
+type GetSandboxRestartOperationParams struct {
+	ID          string
+	OperationID string
+}
+
+// GetSandboxRootFSForkParams is parameters of getSandboxRootFSFork operation.
+type GetSandboxRootFSForkParams struct {
+	ID                        string
+	IdempotencyKey            string
+	ExpectedRuntimeGeneration int64
+}
+
+// GetSandboxRootFSForkLaunchParams is parameters of getSandboxRootFSForkLaunch operation.
+type GetSandboxRootFSForkLaunchParams struct {
+	ID               string
+	IdempotencyKey   string
+	ForkOperationID  string
+	FilesystemID     string
+	HeadGenerationID string
+	WriterEpoch      int64
+}
+
+// GetSandboxRootFSIdentityParams is parameters of getSandboxRootFSIdentity operation.
+type GetSandboxRootFSIdentityParams struct {
+	ID string
+}
+
 // GetSandboxRuntimeMetricsParams is parameters of getSandboxRuntimeMetrics operation.
 type GetSandboxRuntimeMetricsParams struct {
 	ID string
@@ -475,6 +625,101 @@ type GetSandboxRuntimeMetricsCatalogParams struct {
 	ID string
 }
 
+// GetSandboxSnapshotRestoreFinalCaptureParams is parameters of getSandboxSnapshotRestoreFinalCapture operation.
+type GetSandboxSnapshotRestoreFinalCaptureParams struct {
+	ID          string
+	OperationID string
+}
+
+// GetSandboxSnapshotRestoreOperationParams is parameters of getSandboxSnapshotRestoreOperation operation.
+type GetSandboxSnapshotRestoreOperationParams struct {
+	ID          string
+	OperationID string
+}
+
+// InspectSandboxManagedFilesParams is parameters of inspectSandboxManagedFiles operation.
+type InspectSandboxManagedFilesParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+}
+
+// LaunchSandboxRootFSForkParams is parameters of launchSandboxRootFSFork operation.
+type LaunchSandboxRootFSForkParams struct {
+	ID             string
+	IdempotencyKey string
+}
+
+// LookupSandboxMemoryOperationParams is parameters of lookupSandboxMemoryOperation operation.
+type LookupSandboxMemoryOperationParams struct {
+	ID             string
+	IdempotencyKey string
+	Action         LookupSandboxMemoryOperationAction
+	// Original source generation. Pause requires at least 1; resume accepts 0 for a never-run fork and
+	// must be below the maximum.
+	ExpectedRuntimeGeneration int64
+	// Required for resume and forbidden for pause. Must equal the original retained checkpoint.
+	CheckpointID OptString `json:",omitempty,omitzero"`
+}
+
+// ReadSandboxManagedFileParams is parameters of readSandboxManagedFile operation.
+type ReadSandboxManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name string
+}
+
+// ReadSandboxNamespacedManagedFileParams is parameters of readSandboxNamespacedManagedFile operation.
+type ReadSandboxNamespacedManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name string
+	// Single directory within the runtime projection. Writes create a missing directory on the same
+	// tmpfs; reads never create it. Names must be ASCII, excluding dot, dot-dot and the reserved .
+	// s0-write- prefix. Symlinks, submounts and directory replacement during access fail closed.
+	// Requires a namespace-capable node; never falls back to the root directory. The mutation sequence
+	// is shared across all directories.
+	Namespace string
+}
+
+// ReadSandboxRestartFinalCaptureFileParams is parameters of readSandboxRestartFinalCaptureFile operation.
+type ReadSandboxRestartFinalCaptureFileParams struct {
+	ID          string
+	OperationID string
+	// Single directory within the runtime projection. Writes create a missing directory on the same
+	// tmpfs; reads never create it. Names must be ASCII, excluding dot, dot-dot and the reserved .
+	// s0-write- prefix. Symlinks, submounts and directory replacement during access fail closed.
+	// Requires a namespace-capable node; never falls back to the root directory. The mutation sequence
+	// is shared across all directories.
+	Namespace string
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name      string
+	CaptureID string
+}
+
+// ReadSandboxSnapshotRestoreFinalCaptureFileParams is parameters of readSandboxSnapshotRestoreFinalCaptureFile operation.
+type ReadSandboxSnapshotRestoreFinalCaptureFileParams struct {
+	ID          string
+	OperationID string
+	// Single directory within the runtime projection. Writes create a missing directory on the same
+	// tmpfs; reads never create it. Names must be ASCII, excluding dot, dot-dot and the reserved .
+	// s0-write- prefix. Symlinks, submounts and directory replacement during access fail closed.
+	// Requires a namespace-capable node; never falls back to the root directory. The mutation sequence
+	// is shared across all directories.
+	Namespace string
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name      string
+	CaptureID string
+}
+
 // RegionsIDDeleteParams is parameters of DELETE /regions/{id} operation.
 type RegionsIDDeleteParams struct {
 	ID string
@@ -488,6 +733,18 @@ type RegionsIDGetParams struct {
 // RegionsIDPutParams is parameters of PUT /regions/{id} operation.
 type RegionsIDPutParams struct {
 	ID string
+}
+
+// RestartSandboxParams is parameters of restartSandbox operation.
+type RestartSandboxParams struct {
+	ID             string
+	IdempotencyKey string
+}
+
+// RestoreSandboxSnapshotParams is parameters of restoreSandboxSnapshot operation.
+type RestoreSandboxSnapshotParams struct {
+	ID             string
+	IdempotencyKey string
 }
 
 // TeamsIDDeleteParams is parameters of DELETE /teams/{id} operation.
@@ -542,4 +799,30 @@ type UsersMeIdentitiesIDDeleteParams struct {
 // UsersMeSSHKeysIDDeleteParams is parameters of DELETE /users/me/ssh-keys/{id} operation.
 type UsersMeSSHKeysIDDeleteParams struct {
 	ID string
+}
+
+// WriteSandboxManagedFileParams is parameters of writeSandboxManagedFile operation.
+type WriteSandboxManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name string
+}
+
+// WriteSandboxNamespacedManagedFileParams is parameters of writeSandboxNamespacedManagedFile operation.
+type WriteSandboxNamespacedManagedFileParams struct {
+	ID string
+	// Exact current runtime generation to access; never auto-resumes a sandbox.
+	RuntimeGeneration int64
+	// One ASCII file name; dot, dot-dot and the reserved .s0-write- prefix are rejected. No guest or
+	// host paths are accepted.
+	Name string
+	// Single directory within the runtime projection. Writes create a missing directory on the same
+	// tmpfs; reads never create it. Names must be ASCII, excluding dot, dot-dot and the reserved .
+	// s0-write- prefix. Symlinks, submounts and directory replacement during access fail closed.
+	// Requires a namespace-capable node; never falls back to the root directory. The mutation sequence
+	// is shared across all directories.
+	Namespace string
 }

@@ -22,6 +22,9 @@ import (
 type CreateSessionOptions struct {
 	// IdempotencyKey lets callers safely retry a create request.
 	IdempotencyKey string
+	// RuntimeGeneration requires an exact running generation and IdempotencyKey.
+	// The conditional route never auto-resumes or falls back on older servers.
+	RuntimeGeneration *int64
 }
 
 // SessionEventOptions selects a page from a session event journal.
@@ -56,6 +59,25 @@ func (s *Sandbox) ListSessions(ctx context.Context) ([]apispec.ExecutionSession,
 
 // CreateSession creates a durable execution session.
 func (s *Sandbox) CreateSession(ctx context.Context, spec apispec.ExecutionSessionSpec, opts *CreateSessionOptions) (*apispec.ExecutionSession, error) {
+	if opts != nil && opts.RuntimeGeneration != nil {
+		if *opts.RuntimeGeneration <= 0 || strings.TrimSpace(opts.IdempotencyKey) == "" || len(opts.IdempotencyKey) > 255 {
+			return nil, errors.New("conditional session creation requires positive runtime generation and idempotency key")
+		}
+		resp, err := s.client.api.APIV1SandboxesIDSessionsConditionalPost(ctx, &apispec.ConditionalExecutionSessionRequest{
+			SandboxID: s.ID, RuntimeGeneration: *opts.RuntimeGeneration, Spec: spec,
+		}, apispec.APIV1SandboxesIDSessionsConditionalPostParams{ID: s.ID, IdempotencyKey: opts.IdempotencyKey})
+		if err != nil {
+			return nil, err
+		}
+		switch value := resp.(type) {
+		case *apispec.APIV1SandboxesIDSessionsConditionalPostCreated:
+			return conditionalExecutionSessionData((*apispec.SuccessExecutionSessionResponse)(value), *opts.RuntimeGeneration)
+		case *apispec.APIV1SandboxesIDSessionsConditionalPostOK:
+			return conditionalExecutionSessionData((*apispec.SuccessExecutionSessionResponse)(value), *opts.RuntimeGeneration)
+		default:
+			return nil, apiErrorFromResponse(resp)
+		}
+	}
 	params := apispec.APIV1SandboxesIDSessionsPostParams{ID: s.ID}
 	if opts != nil && strings.TrimSpace(opts.IdempotencyKey) != "" {
 		params.IdempotencyKey = apispec.NewOptString(opts.IdempotencyKey)
@@ -72,6 +94,67 @@ func (s *Sandbox) CreateSession(ctx context.Context, spec apispec.ExecutionSessi
 	default:
 		return nil, apiErrorFromResponse(resp)
 	}
+}
+
+func conditionalExecutionSessionData(response *apispec.SuccessExecutionSessionResponse, generation int64) (*apispec.ExecutionSession, error) {
+	value, err := executionSessionData(response)
+	if err != nil {
+		return nil, err
+	}
+	if value.RuntimeGeneration != generation {
+		return nil, errors.New("conditional session response has a different runtime generation; reconcile before retrying")
+	}
+	return value, nil
+}
+
+// FindConditionalSession observes an original creation receipt in an exact
+// running generation. It never auto-resumes, creates or falls back to GetSession.
+// Not found does not authorize replay: an earlier create may still be in flight.
+func (s *Sandbox) FindConditionalSession(ctx context.Context, creationKey string, generation int64) (*apispec.ExecutionSession, error) {
+	if generation <= 0 || strings.TrimSpace(creationKey) == "" || len(creationKey) > 255 {
+		return nil, errors.New("conditional session lookup requires positive runtime generation and original creation key")
+	}
+	resp, err := s.client.api.APIV1SandboxesIDSessionsConditionalLookupGet(ctx, apispec.APIV1SandboxesIDSessionsConditionalLookupGetParams{
+		ID: s.ID, RuntimeGeneration: generation, IdempotencyKey: creationKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponseHeaders](resp)
+	if err != nil {
+		return nil, err
+	}
+	return conditionalExecutionSessionData(&response.Response, generation)
+}
+
+// FindRestoredConditionalSession observes the original attempt after explicit memory handover.
+// Independently verify external restoration and credential authority before adoption.
+func (s *Sandbox) FindRestoredConditionalSession(ctx context.Context, creationKey string, generation, creationGeneration int64) (*apispec.ExecutionSession, error) {
+	if creationGeneration <= 0 || creationGeneration >= generation {
+		return nil, errors.New("restored lookup requires an earlier positive creation generation")
+	}
+	if generation <= 0 || strings.TrimSpace(creationKey) == "" || len(creationKey) > 255 {
+		return nil, errors.New("conditional session lookup requires positive runtime generation and original creation key")
+	}
+	resp, err := s.client.api.APIV1SandboxesIDSessionsConditionalLookupGet(ctx, apispec.APIV1SandboxesIDSessionsConditionalLookupGetParams{
+		ID: s.ID, RuntimeGeneration: generation, CreationRuntimeGeneration: apispec.NewOptInt64(creationGeneration), IdempotencyKey: creationKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+	response, err := expectResponse[apispec.SuccessExecutionSessionResponseHeaders](resp)
+	if err != nil {
+		return nil, err
+	}
+	value, err := conditionalExecutionSessionData(&response.Response, generation)
+	if err != nil {
+		return nil, err
+	}
+	attempt, ok := value.Attempt.Get()
+	if !ok || value.Phase != apispec.ExecutionSessionPhaseRunning || attempt.RuntimeGeneration != creationGeneration || attempt.FinishedAt.Set {
+		return nil, errors.New("restored lookup requires the running original attempt")
+	}
+	return value, nil
 }
 
 // GetSession returns a durable execution session by ID.
@@ -358,7 +441,39 @@ func (s *Sandbox) ConnectSession(ctx context.Context, sessionID string, opts *Se
 	if opts != nil && opts.After > 0 {
 		values.Set("after", strconv.FormatInt(opts.After, 10))
 	}
-	httpURL, err := s.sessionURL(sessionID, "/ws", values)
+	return s.connectSession(ctx, sessionID, "/ws", values, "")
+}
+
+// ConnectConditionalSession binds every control message to one original creation
+// and attempt. It never retries, auto-resumes or falls back to ordinary control.
+func (s *Sandbox) ConnectConditionalSession(ctx context.Context, sessionID, creationKey string, generation int64, attemptID string, opts *SessionWebSocketOptions) (*SessionConnection, *http.Response, error) {
+	if sessionID == "" || attemptID == "" || strings.TrimSpace(creationKey) == "" || len(creationKey) > 255 || generation <= 0 || (opts != nil && opts.After < 0) {
+		return nil, nil, errors.New("conditional attachment requires session, creation key, positive generation, attempt and nonnegative cursor")
+	}
+	values := url.Values{"runtime_generation": {strconv.FormatInt(generation, 10)}, "attempt_id": {attemptID}}
+	if opts != nil {
+		values.Set("after", strconv.FormatInt(opts.After, 10))
+	}
+	return s.connectSession(ctx, sessionID, "/conditional/ws", values, creationKey)
+}
+
+// ConnectRestoredConditionalSession attaches to the original still-running attempt.
+func (s *Sandbox) ConnectRestoredConditionalSession(ctx context.Context, sessionID, creationKey string, generation, creationGeneration int64, attemptID string, opts *SessionWebSocketOptions) (*SessionConnection, *http.Response, error) {
+	if creationGeneration <= 0 || creationGeneration >= generation {
+		return nil, nil, errors.New("restored attachment requires an earlier positive creation generation")
+	}
+	if sessionID == "" || attemptID == "" || strings.TrimSpace(creationKey) == "" || len(creationKey) > 255 || generation <= 0 || (opts != nil && opts.After < 0) {
+		return nil, nil, errors.New("conditional attachment requires session, creation key, positive generation, attempt and nonnegative cursor")
+	}
+	values := url.Values{"creation_runtime_generation": {strconv.FormatInt(creationGeneration, 10)}, "runtime_generation": {strconv.FormatInt(generation, 10)}, "attempt_id": {attemptID}}
+	if opts != nil {
+		values.Set("after", strconv.FormatInt(opts.After, 10))
+	}
+	return s.connectSession(ctx, sessionID, "/conditional/ws", values, creationKey)
+}
+
+func (s *Sandbox) connectSession(ctx context.Context, sessionID, suffix string, values url.Values, creationKey string) (*SessionConnection, *http.Response, error) {
+	httpURL, err := s.sessionURL(sessionID, suffix, values)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -379,6 +494,9 @@ func (s *Sandbox) ConnectSession(ctx context.Context, sessionID string, opts *Se
 	}
 	if err := s.client.applyRequestEditors(ctx, req); err != nil {
 		return nil, nil, err
+	}
+	if creationKey != "" {
+		req.Header.Set("Idempotency-Key", creationKey)
 	}
 	conn, resp, err := websocket.DefaultDialer.DialContext(ctx, req.URL.String(), req.Header)
 	if err != nil {

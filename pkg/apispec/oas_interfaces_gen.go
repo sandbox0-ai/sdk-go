@@ -205,6 +205,14 @@ type APIV1SandboxesIDServicesPutRes interface {
 	aPIV1SandboxesIDServicesPutRes()
 }
 
+type APIV1SandboxesIDSessionsConditionalLookupGetRes interface {
+	aPIV1SandboxesIDSessionsConditionalLookupGetRes()
+}
+
+type APIV1SandboxesIDSessionsConditionalPostRes interface {
+	aPIV1SandboxesIDSessionsConditionalPostRes()
+}
+
 type APIV1SandboxesIDSessionsGetRes interface {
 	aPIV1SandboxesIDSessionsGetRes()
 }
@@ -215,6 +223,10 @@ type APIV1SandboxesIDSessionsPostRes interface {
 
 type APIV1SandboxesIDSessionsSessionIDAttemptsPostRes interface {
 	aPIV1SandboxesIDSessionsSessionIDAttemptsPostRes()
+}
+
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetRes interface {
+	aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes()
 }
 
 type APIV1SandboxesIDSessionsSessionIDDeleteRes interface {
@@ -301,6 +313,14 @@ type APIV1UsageWindowsGetRes interface {
 	aPIV1UsageWindowsGetRes()
 }
 
+type AcknowledgeSandboxRestartFinalCaptureRes interface {
+	acknowledgeSandboxRestartFinalCaptureRes()
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureRes interface {
+	acknowledgeSandboxSnapshotRestoreFinalCaptureRes()
+}
+
 type AuthChangePasswordPostRes interface {
 	authChangePasswordPostRes()
 }
@@ -345,6 +365,58 @@ type AuthWebLoginExchangePostRes interface {
 	authWebLoginExchangePostRes()
 }
 
+type CaptureSandboxRootFSSnapshotRes interface {
+	captureSandboxRootFSSnapshotRes()
+}
+
+type DeleteSandboxManagedFileRes interface {
+	deleteSandboxManagedFileRes()
+}
+
+type DeleteSandboxNamespacedManagedFileRes interface {
+	deleteSandboxNamespacedManagedFileRes()
+}
+
+type FindSandboxRestartOperationRes interface {
+	findSandboxRestartOperationRes()
+}
+
+type FindSandboxSnapshotRestoreOperationRes interface {
+	findSandboxSnapshotRestoreOperationRes()
+}
+
+type GetCapturedSandboxRootFSSnapshotRes interface {
+	getCapturedSandboxRootFSSnapshotRes()
+}
+
+type GetSandboxHealthRes interface {
+	getSandboxHealthRes()
+}
+
+type GetSandboxMemoryRestorationRes interface {
+	getSandboxMemoryRestorationRes()
+}
+
+type GetSandboxRestartFinalCaptureRes interface {
+	getSandboxRestartFinalCaptureRes()
+}
+
+type GetSandboxRestartOperationRes interface {
+	getSandboxRestartOperationRes()
+}
+
+type GetSandboxRootFSForkLaunchRes interface {
+	getSandboxRootFSForkLaunchRes()
+}
+
+type GetSandboxRootFSForkRes interface {
+	getSandboxRootFSForkRes()
+}
+
+type GetSandboxRootFSIdentityRes interface {
+	getSandboxRootFSIdentityRes()
+}
+
 type GetSandboxRuntimeMetricsCatalogRes interface {
 	getSandboxRuntimeMetricsCatalogRes()
 }
@@ -353,8 +425,44 @@ type GetSandboxRuntimeMetricsRes interface {
 	getSandboxRuntimeMetricsRes()
 }
 
+type GetSandboxSnapshotRestoreFinalCaptureRes interface {
+	getSandboxSnapshotRestoreFinalCaptureRes()
+}
+
+type GetSandboxSnapshotRestoreOperationRes interface {
+	getSandboxSnapshotRestoreOperationRes()
+}
+
 type HealthzGetRes interface {
 	healthzGetRes()
+}
+
+type InspectSandboxManagedFilesRes interface {
+	inspectSandboxManagedFilesRes()
+}
+
+type LaunchSandboxRootFSForkRes interface {
+	launchSandboxRootFSForkRes()
+}
+
+type LookupSandboxMemoryOperationRes interface {
+	lookupSandboxMemoryOperationRes()
+}
+
+type ReadSandboxManagedFileRes interface {
+	readSandboxManagedFileRes()
+}
+
+type ReadSandboxNamespacedManagedFileRes interface {
+	readSandboxNamespacedManagedFileRes()
+}
+
+type ReadSandboxRestartFinalCaptureFileRes interface {
+	readSandboxRestartFinalCaptureFileRes()
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileRes interface {
+	readSandboxSnapshotRestoreFinalCaptureFileRes()
 }
 
 type ReadyzGetRes interface {
@@ -379,6 +487,14 @@ type RegionsIDPutRes interface {
 
 type RegionsPostRes interface {
 	regionsPostRes()
+}
+
+type RestartSandboxRes interface {
+	restartSandboxRes()
+}
+
+type RestoreSandboxSnapshotRes interface {
+	restoreSandboxSnapshotRes()
 }
 
 type TeamsGetRes interface {
@@ -447,4 +563,12 @@ type UsersMeSSHKeysIDDeleteRes interface {
 
 type UsersMeSSHKeysPostRes interface {
 	usersMeSSHKeysPostRes()
+}
+
+type WriteSandboxManagedFileRes interface {
+	writeSandboxManagedFileRes()
+}
+
+type WriteSandboxNamespacedManagedFileRes interface {
+	writeSandboxNamespacedManagedFileRes()
 }

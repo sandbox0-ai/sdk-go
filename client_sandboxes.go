@@ -334,7 +334,11 @@ func (c *Client) PauseSandbox(ctx context.Context, sandboxID string) (*apispec.P
 
 // PauseSandboxWithOptions explicitly opts into retaining process memory.
 func (c *Client) PauseSandboxWithOptions(ctx context.Context, sandboxID string, options *SandboxExecutionStateOptions) (*apispec.PauseSandboxResponse, error) {
-	resp, err := c.api.APIV1SandboxesIDPausePost(ctx, sandboxExecutionStateBody(options), apispec.APIV1SandboxesIDPausePostParams{ID: sandboxID})
+	body := apispec.OptSandboxPauseRequest{}
+	if options != nil {
+		body = apispec.NewOptSandboxPauseRequest(apispec.SandboxPauseRequest{Memory: apispec.NewOptBool(options.Memory)})
+	}
+	resp, err := c.api.APIV1SandboxesIDPausePost(ctx, body, apispec.APIV1SandboxesIDPausePostParams{ID: sandboxID})
 	if err != nil {
 		return nil, err
 	}
@@ -566,8 +570,14 @@ func (c *Client) ForkSandbox(ctx context.Context, sandboxID string, request *api
 
 // ForkSandboxWithOptions creates a fork with an optional stable retry key.
 func (c *Client) ForkSandboxWithOptions(ctx context.Context, sandboxID string, request *apispec.ForkSandboxRequest, options *ForkSandboxOptions) (*apispec.ForkSandboxResponse, error) {
-	if request != nil && request.Memory.Or(false) && (options == nil || strings.TrimSpace(options.IdempotencyKey) == "" || len(options.IdempotencyKey) > 255) {
-		return nil, errors.New("memory fork requires ForkSandboxOptions.IdempotencyKey for exact retry")
+	if request != nil {
+		generation, conditional := request.ExpectedRuntimeGeneration.Get()
+		if conditional && (generation < 0 || generation > 9007199254740991 || (request.Memory.Or(false) && generation == 9007199254740991)) {
+			return nil, errors.New("invalid expected runtime generation for fork")
+		}
+		if (request.Memory.Or(false) || conditional) && (options == nil || strings.TrimSpace(options.IdempotencyKey) == "" || len(options.IdempotencyKey) > 255) {
+			return nil, errors.New("conditional or memory fork requires ForkSandboxOptions.IdempotencyKey for exact retry")
+		}
 	}
 	body := apispec.NewOptForkSandboxRequest(apispec.ForkSandboxRequest{})
 	if request != nil {
