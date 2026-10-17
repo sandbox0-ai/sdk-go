@@ -258,7 +258,8 @@ type Invoker interface {
 	APIV1SandboxesIDDelete(ctx context.Context, params APIV1SandboxesIDDeleteParams, options ...RequestOption) (APIV1SandboxesIDDeleteRes, error)
 	// APIV1SandboxesIDFilesDelete invokes DELETE /api/v1/sandboxes/{id}/files operation.
 	//
-	// Delete file or directory.
+	// Works during filesystem-only pauses without starting compute. Offline deletion returns 409
+	// conflict while a memory checkpoint is retained.
 	//
 	// DELETE /api/v1/sandboxes/{id}/files
 	APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxesIDFilesDeleteRes, error)
@@ -267,38 +268,46 @@ type Invoker interface {
 	// Use query params:
 	// - path=/tmp/a.txt: target file path
 	// When `Accept` or `Content-Type` is `application/json`, returns a base64 JSON payload.
+	// Reads the persistent RootFS while paused without starting or resuming compute, including
+	// memory-paused sandboxes.
 	//
 	// GET /api/v1/sandboxes/{id}/files
 	APIV1SandboxesIDFilesGet(ctx context.Context, params APIV1SandboxesIDFilesGetParams, options ...RequestOption) (APIV1SandboxesIDFilesGetRes, error)
 	// APIV1SandboxesIDFilesListGet invokes GET /api/v1/sandboxes/{id}/files/list operation.
 	//
 	// Use query params:
-	// - path=/tmp: target directory path.
+	// - path=/workspace: target directory path
+	// Also works on the committed RootFS while paused, without resuming compute.
 	//
 	// GET /api/v1/sandboxes/{id}/files/list
 	APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxesIDFilesListGetRes, error)
 	// APIV1SandboxesIDFilesMovePost invokes POST /api/v1/sandboxes/{id}/files/move operation.
 	//
-	// Move a file or directory.
+	// Works during a filesystem-only pause without starting compute. A retained memory checkpoint
+	// prevents offline mutations (409 conflict).
 	//
 	// POST /api/v1/sandboxes/{id}/files/move
 	APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxesIDFilesMovePostRes, error)
 	// APIV1SandboxesIDFilesPost invokes POST /api/v1/sandboxes/{id}/files operation.
 	//
-	// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
+	// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content
+	// (maximum 100 MiB). Works during filesystem-only pauses without starting compute. Offline mutations
+	// return 409 conflict while a memory checkpoint is retained.
 	//
 	// POST /api/v1/sandboxes/{id}/files
 	APIV1SandboxesIDFilesPost(ctx context.Context, request APIV1SandboxesIDFilesPostReq, params APIV1SandboxesIDFilesPostParams, options ...RequestOption) (APIV1SandboxesIDFilesPostRes, error)
 	// APIV1SandboxesIDFilesStatGet invokes GET /api/v1/sandboxes/{id}/files/stat operation.
 	//
 	// Use query params:
-	// - path=/tmp/a.txt: target file path.
+	// - path=/workspace/a.txt: target file path
+	// Also works on the committed RootFS while paused, without resuming compute.
 	//
 	// GET /api/v1/sandboxes/{id}/files/stat
 	APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxesIDFilesStatGetRes, error)
 	// APIV1SandboxesIDFilesWatchGet invokes GET /api/v1/sandboxes/{id}/files/watch operation.
 	//
-	// Upgrades to WebSocket for file watch events.
+	// Upgrades to WebSocket for file watch events. Requires a running guest and follows auto_resume;
+	// offline file access does not provide watch events.
 	// Client messages:
 	// - { "action": "subscribe", "path": "/tmp", "recursive": false }
 	// - { "action": "unsubscribe", "watch_id": "watch-id" }
@@ -4424,7 +4433,8 @@ func (c *Client) sendAPIV1SandboxesIDDelete(ctx context.Context, params APIV1San
 
 // APIV1SandboxesIDFilesDelete invokes DELETE /api/v1/sandboxes/{id}/files operation.
 //
-// Delete file or directory.
+// Works during filesystem-only pauses without starting compute. Offline deletion returns 409
+// conflict while a memory checkpoint is retained.
 //
 // DELETE /api/v1/sandboxes/{id}/files
 func (c *Client) APIV1SandboxesIDFilesDelete(ctx context.Context, params APIV1SandboxesIDFilesDeleteParams, options ...RequestOption) (APIV1SandboxesIDFilesDeleteRes, error) {
@@ -4558,6 +4568,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesDelete(ctx context.Context, params API
 // Use query params:
 // - path=/tmp/a.txt: target file path
 // When `Accept` or `Content-Type` is `application/json`, returns a base64 JSON payload.
+// Reads the persistent RootFS while paused without starting or resuming compute, including
+// memory-paused sandboxes.
 //
 // GET /api/v1/sandboxes/{id}/files
 func (c *Client) APIV1SandboxesIDFilesGet(ctx context.Context, params APIV1SandboxesIDFilesGetParams, options ...RequestOption) (APIV1SandboxesIDFilesGetRes, error) {
@@ -4689,7 +4701,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesGet(ctx context.Context, params APIV1S
 // APIV1SandboxesIDFilesListGet invokes GET /api/v1/sandboxes/{id}/files/list operation.
 //
 // Use query params:
-// - path=/tmp: target directory path.
+// - path=/workspace: target directory path
+// Also works on the committed RootFS while paused, without resuming compute.
 //
 // GET /api/v1/sandboxes/{id}/files/list
 func (c *Client) APIV1SandboxesIDFilesListGet(ctx context.Context, params APIV1SandboxesIDFilesListGetParams, options ...RequestOption) (APIV1SandboxesIDFilesListGetRes, error) {
@@ -4820,7 +4833,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesListGet(ctx context.Context, params AP
 
 // APIV1SandboxesIDFilesMovePost invokes POST /api/v1/sandboxes/{id}/files/move operation.
 //
-// Move a file or directory.
+// Works during a filesystem-only pause without starting compute. A retained memory checkpoint
+// prevents offline mutations (409 conflict).
 //
 // POST /api/v1/sandboxes/{id}/files/move
 func (c *Client) APIV1SandboxesIDFilesMovePost(ctx context.Context, request *MoveFileRequest, params APIV1SandboxesIDFilesMovePostParams, options ...RequestOption) (APIV1SandboxesIDFilesMovePostRes, error) {
@@ -4937,7 +4951,9 @@ func (c *Client) sendAPIV1SandboxesIDFilesMovePost(ctx context.Context, request 
 
 // APIV1SandboxesIDFilesPost invokes POST /api/v1/sandboxes/{id}/files operation.
 //
-// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content.
+// Use `path` query param and `mkdir=true` to create directories, otherwise writes file content
+// (maximum 100 MiB). Works during filesystem-only pauses without starting compute. Offline mutations
+// return 409 conflict while a memory checkpoint is retained.
 //
 // POST /api/v1/sandboxes/{id}/files
 func (c *Client) APIV1SandboxesIDFilesPost(ctx context.Context, request APIV1SandboxesIDFilesPostReq, params APIV1SandboxesIDFilesPostParams, options ...RequestOption) (APIV1SandboxesIDFilesPostRes, error) {
@@ -5106,7 +5122,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesPost(ctx context.Context, request APIV
 // APIV1SandboxesIDFilesStatGet invokes GET /api/v1/sandboxes/{id}/files/stat operation.
 //
 // Use query params:
-// - path=/tmp/a.txt: target file path.
+// - path=/workspace/a.txt: target file path
+// Also works on the committed RootFS while paused, without resuming compute.
 //
 // GET /api/v1/sandboxes/{id}/files/stat
 func (c *Client) APIV1SandboxesIDFilesStatGet(ctx context.Context, params APIV1SandboxesIDFilesStatGetParams, options ...RequestOption) (APIV1SandboxesIDFilesStatGetRes, error) {
@@ -5237,7 +5254,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesStatGet(ctx context.Context, params AP
 
 // APIV1SandboxesIDFilesWatchGet invokes GET /api/v1/sandboxes/{id}/files/watch operation.
 //
-// Upgrades to WebSocket for file watch events.
+// Upgrades to WebSocket for file watch events. Requires a running guest and follows auto_resume;
+// offline file access does not provide watch events.
 // Client messages:
 // - { "action": "subscribe", "path": "/tmp", "recursive": false }
 // - { "action": "unsubscribe", "watch_id": "watch-id" }
