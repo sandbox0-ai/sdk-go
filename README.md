@@ -17,6 +17,23 @@ go get github.com/sandbox0-ai/sdk-go
 
 - Go 1.25 or later
 
+## Files while compute is paused
+
+Use the existing file methods without starting or resuming compute:
+
+```go
+sandbox := client.Sandbox(sandboxID)
+content, err := sandbox.ReadFile(ctx, "/workspace/output.txt")
+_, err = sandbox.WriteFile(ctx, "/workspace/input.txt", []byte("next task"))
+```
+
+Read, stat, and list work during filesystem-only and memory pauses. Write,
+mkdir, move, and delete work during filesystem-only pauses; retained memory
+checkpoints reject offline edits with a conflict. File calls do not trigger
+`auto_resume`, and no SDK upgrade or new endpoint is needed. Watch and SSH
+still require a running runtime. See [file access](https://sandbox0.ai/docs/sandbox/files).
+
+
 ## RootFS capacity
 
 Template `resources.ephemeralStorage` sets the initial RootFS filesystem capacity
