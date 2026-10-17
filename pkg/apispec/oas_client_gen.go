@@ -316,7 +316,8 @@ type Invoker interface {
 	// source is forked from its current rootfs head. A running source is briefly
 	// barriered and checkpointed first; the source sandbox remains running after
 	// the fork operation completes. Set memory=true to retain execution state as
-	// well. Memory forks require a stable Idempotency-Key. While capture or parent
+	// well. Memory forks and requests with expected_runtime_generation require a stable Idempotency-Key.
+	// While capture or parent
 	// restoration is pending, retry 503 responses with that same key and request.
 	// A successful response always contains a committed paused child.
 	//
@@ -360,10 +361,12 @@ type Invoker interface {
 	//
 	// The default checkpoints only the writable RootFS. Set memory=true to also retain process execution
 	// state before releasing the runtime. A 202 response means checkpoint publication and cleanup are
-	// still pending.
+	// still pending. For conditional memory pause, send expected_runtime_generation and Idempotency-Key
+	// together with memory=true. Retries bind the same source generation and checkpoint operation;
+	// mismatched or aborted operations conflict.
 	//
 	// POST /api/v1/sandboxes/{id}/pause
-	APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
+	APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxPauseRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error)
 	// APIV1SandboxesIDPreviewsPost invokes POST /api/v1/sandboxes/{id}/previews operation.
 	//
 	// Creates a short-lived, sandbox-runtime-bound authorization for previewing a loopback HTTP
@@ -399,11 +402,14 @@ type Invoker interface {
 	APIV1SandboxesIDRefreshPost(ctx context.Context, request OptSandboxRefreshRequest, params APIV1SandboxesIDRefreshPostParams, options ...RequestOption) (APIV1SandboxesIDRefreshPostRes, error)
 	// APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 	//
-	// The default starts a new process runtime from the committed RootFS. Set memory=true to prefer a
-	// retained execution image. Missing or incompatible memory falls back to the committed RootFS. A
-	// failed memory target is physically reclaimed before a filesystem-only replacement starts. A
-	// response with resumed=false means durable fallback is pending; poll sandbox status until running.
-	// A disconnected request may continue through background recovery.
+	// The default starts a new process runtime from the committed RootFS. Set memory=true to require a
+	// retained execution image. Missing, incompatible, or failed memory restoration returns an error and
+	// never authorizes a filesystem-only replacement. Accepted memory operations may continue through
+	// background recovery after a disconnected request. For conditional memory resume, send memory=true,
+	// expected_runtime_generation, checkpoint_id and Idempotency-Key together. Keep the same
+	// authenticated identity, key, checkpoint and source generation on retries. A successful conditional
+	// response proves this request committed its exact restore; unrelated running state or a later
+	// lifecycle conflicts. An aborted request cannot create a new restore attempt.
 	//
 	// POST /api/v1/sandboxes/{id}/resume
 	APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error)
@@ -434,6 +440,34 @@ type Invoker interface {
 	//
 	// PUT /api/v1/sandboxes/{id}/services
 	APIV1SandboxesIDServicesPut(ctx context.Context, request *SandboxServicesUpdateRequest, params APIV1SandboxesIDServicesPutParams, options ...RequestOption) (APIV1SandboxesIDServicesPutRes, error)
+	// APIV1SandboxesIDSessionsConditionalLookupGet invokes GET /api/v1/sandboxes/{id}/sessions/conditional/lookup operation.
+	//
+	// Read-only receipt lookup in an exact currently running generation. Never auto-resumes, creates a
+	// session, starts an attempt or repairs state. Both the gateway and supervisor verify the sandbox
+	// and runtime generation. Only conditional creations are eligible. A session_not_found response
+	// means that key was absent at observation time, not permission to create or proof that an earlier
+	// request cannot still finish. Other 404 replies may indicate unsupported servers. Clients must not
+	// fall back to ordinary queries or creation. The returned receipt is not lifecycle/storage authority,
+	//  current credential admission, or permission to attach later. For a memory-restored original
+	// attempt, explicitly supply an earlier creation_runtime_generation. Omission retains
+	// same-generation semantics. The supervisor requires the exact original conditional creation and a
+	// still-running attempt from that origin in the requested current runtime. This does not verify
+	// external memory lineage or credential qualification; applications must verify those independently
+	// before adoption. Never use failure as permission to create a new attempt or fall back to cold
+	// restart.
+	//
+	// GET /api/v1/sandboxes/{id}/sessions/conditional/lookup
+	APIV1SandboxesIDSessionsConditionalLookupGet(ctx context.Context, params APIV1SandboxesIDSessionsConditionalLookupGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsConditionalLookupGetRes, error)
+	// APIV1SandboxesIDSessionsConditionalPost invokes POST /api/v1/sandboxes/{id}/sessions/conditional operation.
+	//
+	// Requires a currently running sandbox with the exact sandbox identity and runtime generation. Never
+	// auto-resumes. The gateway checks regional state and the supervisor checks identity atomically
+	// through initial process startup. A stale idempotent retry fails after runtime replacement. This
+	// condition governs creation; the session lifecycle policy still governs later attempts and recovery.
+	//  Older servers return an unsupported route; clients must not fall back to unconditional creation.
+	//
+	// POST /api/v1/sandboxes/{id}/sessions/conditional
+	APIV1SandboxesIDSessionsConditionalPost(ctx context.Context, request *ConditionalExecutionSessionRequest, params APIV1SandboxesIDSessionsConditionalPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsConditionalPostRes, error)
 	// APIV1SandboxesIDSessionsGet invokes GET /api/v1/sandboxes/{id}/sessions operation.
 	//
 	// Lists durable process-backed sessions in the sandbox.
@@ -452,6 +486,23 @@ type Invoker interface {
 	//
 	// POST /api/v1/sandboxes/{id}/sessions/{session_id}/attempts
 	APIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.Context, request OptCreateExecutionSessionAttemptRequest, params APIV1SandboxesIDSessionsSessionIDAttemptsPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDAttemptsPostRes, error)
+	// APIV1SandboxesIDSessionsSessionIDConditionalWsGet invokes GET /api/v1/sandboxes/{id}/sessions/{session_id}/conditional/ws operation.
+	//
+	// Requires the original conditional creation key, exact runtime generation and attempt.
+	// Never resumes, creates or falls back to an ordinary attachment. A generation change
+	// revokes the connection; every control message rechecks identity. Replay excludes
+	// other attempts. Closing the socket does not stop the process or close its input.
+	// This is process control, not lifecycle, storage or credential admission.
+	// For a memory-restored original attempt, explicitly supply an earlier
+	// creation_runtime_generation. Omission retains same-generation semantics.
+	// The supervisor requires the exact original conditional creation and a
+	// still-running attempt from that origin in the requested current runtime.
+	// This does not verify external memory lineage or credential qualification;
+	// applications must verify those independently before adoption. Never use
+	// failure as permission to create a new attempt or fall back to cold restart.
+	//
+	// GET /api/v1/sandboxes/{id}/sessions/{session_id}/conditional/ws
+	APIV1SandboxesIDSessionsSessionIDConditionalWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDConditionalWsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDConditionalWsGetRes, error)
 	// APIV1SandboxesIDSessionsSessionIDDelete invokes DELETE /api/v1/sandboxes/{id}/sessions/{session_id} operation.
 	//
 	// Delete an execution session.
@@ -600,6 +651,24 @@ type Invoker interface {
 	//
 	// GET /api/v1/usage/windows
 	APIV1UsageWindowsGet(ctx context.Context, params APIV1UsageWindowsGetParams, options ...RequestOption) (APIV1UsageWindowsGetRes, error)
+	// AcknowledgeSandboxRestartFinalCapture invokes acknowledgeSandboxRestartFinalCapture operation.
+	//
+	// Requires sandbox:write. Submit only after final credential or authenticated logout custody is
+	// durably committed by the owner. This permits irreversible cleanup of the old projection. Retry the
+	// same capture_id and receipt_id after a lost reply; another receipt conflicts. This schedules
+	// retirement, not immediate replacement success.
+	//
+	// POST /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture/acknowledgement
+	AcknowledgeSandboxRestartFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxRestartFinalCaptureParams, options ...RequestOption) (AcknowledgeSandboxRestartFinalCaptureRes, error)
+	// AcknowledgeSandboxSnapshotRestoreFinalCapture invokes acknowledgeSandboxSnapshotRestoreFinalCapture operation.
+	//
+	// Requires sandbox:write. Submit only after final credential or authenticated logout custody is
+	// durably committed by the owner. This permits irreversible cleanup of the old projection. Retry the
+	// same capture_id and receipt_id after a lost reply; another receipt conflicts. This schedules
+	// retirement, not immediate replacement success.
+	//
+	// POST /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture/acknowledgement
+	AcknowledgeSandboxSnapshotRestoreFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxSnapshotRestoreFinalCaptureParams, options ...RequestOption) (AcknowledgeSandboxSnapshotRestoreFinalCaptureRes, error)
 	// AuthChangePasswordPost invokes POST /auth/change-password operation.
 	//
 	// Change password.
@@ -666,6 +735,146 @@ type Invoker interface {
 	//
 	// POST /auth/web-login/exchange
 	AuthWebLoginExchangePost(ctx context.Context, request *WebLoginExchangeRequest, options ...RequestOption) (AuthWebLoginExchangePostRes, error)
+	// CaptureSandboxRootFSSnapshot invokes captureSandboxRootFSSnapshot operation.
+	//
+	// Captures one immutable RootFS snapshot from the expected running runtime
+	// generation without stopping its processes. Admission checks the generation
+	// while locking the external source and exact writer. Reuse the same key,
+	// generation and metadata after uncertainty: an accepted capture retains its
+	// original transaction and returns its original snapshot when completed,
+	// even if the source subsequently changes generation or pauses. A new capture
+	// of a paused or mismatched source is rejected. No guest execution, automatic
+	// resume, process restart or memory checkpoint fallback is performed.
+	// This distinct endpoint fails closed on servers without conditional capture.
+	//
+	// POST /api/v1/sandboxes/{id}/snapshots/capture
+	CaptureSandboxRootFSSnapshot(ctx context.Context, request *CaptureSandboxRootFSSnapshotRequest, params CaptureSandboxRootFSSnapshotParams, options ...RequestOption) (CaptureSandboxRootFSSnapshotRes, error)
+	// DeleteSandboxManagedFile invokes deleteSandboxManagedFile operation.
+	//
+	// Deletion consumes the expected sequence before I/O, including when the reply is lost. Inspect/read
+	// to reconcile ambiguous results before issuing a new mutation.
+	//
+	// DELETE /api/v1/sandboxes/{id}/managed-files/{name}
+	DeleteSandboxManagedFile(ctx context.Context, params DeleteSandboxManagedFileParams, options ...RequestOption) (DeleteSandboxManagedFileRes, error)
+	// DeleteSandboxNamespacedManagedFile invokes deleteSandboxNamespacedManagedFile operation.
+	//
+	// Deletion consumes the expected sequence before I/O, including when the reply is lost. Inspect/read
+	// to reconcile ambiguous results before issuing a new mutation.
+	//
+	// DELETE /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+	DeleteSandboxNamespacedManagedFile(ctx context.Context, params DeleteSandboxNamespacedManagedFileParams, options ...RequestOption) (DeleteSandboxNamespacedManagedFileRes, error)
+	// FindSandboxRestartOperation invokes findSandboxRestartOperation operation.
+	//
+	// Read-only acknowledgement recovery. Requires sandbox:read. Does not execute in the guest or submit
+	// a new restart.
+	//
+	// GET /api/v1/sandboxes/{id}/restart-operations
+	FindSandboxRestartOperation(ctx context.Context, params FindSandboxRestartOperationParams, options ...RequestOption) (FindSandboxRestartOperationRes, error)
+	// FindSandboxSnapshotRestoreOperation invokes findSandboxSnapshotRestoreOperation operation.
+	//
+	// Read-only acknowledgement recovery. Requires sandbox:read. Does not execute in the guest or submit
+	// a new snapshot restore.
+	//
+	// GET /api/v1/sandboxes/{id}/snapshot-restore-operations
+	FindSandboxSnapshotRestoreOperation(ctx context.Context, params FindSandboxSnapshotRestoreOperationParams, options ...RequestOption) (FindSandboxSnapshotRestoreOperationRes, error)
+	// GetCapturedSandboxRootFSSnapshot invokes getCapturedSandboxRootFSSnapshot operation.
+	//
+	// Reads only the capture identified by the authenticated caller, original
+	// Idempotency-Key and expected runtime generation. Does not admit, dispatch,
+	// retry, cancel or repair work. Completed receipts can be read after the
+	// source changes generation or pauses. A 404 is not proof of cancellation
+	// and must not clear an outstanding operation fence. A missing, expired or
+	// deleted retained snapshot is never replaced with a new capture.
+	//
+	// GET /api/v1/sandboxes/{id}/snapshots/capture
+	GetCapturedSandboxRootFSSnapshot(ctx context.Context, params GetCapturedSandboxRootFSSnapshotParams, options ...RequestOption) (GetCapturedSandboxRootFSSnapshotRes, error)
+	// GetSandboxHealth invokes getSandboxHealth operation.
+	//
+	// Requires sandbox:read. Reads owner-scoped regional authority and bounded independent node and
+	// guest diagnostics without automatic resume, restart or credential preparation. Guest diagnostics
+	// may execute a fixed short shell command and allocate a temporary PTY; they create no platform
+	// session. No probe runs for a paused runtime or a pending lifecycle. Each observation has its own
+	// source and time. Guest results are advisory and cannot establish runtime or storage authority.
+	// Unknown means insufficient evidence, not success. A valid launch receipt is not current process
+	// liveness; RootFS identity and writer lease are not successful storage IO or a guarantee of
+	// uncommitted-write durability. Storage IO currently remains unknown. Authority is rechecked after
+	// probes so a changed generation or lifecycle cannot inherit a successful old-runtime observation.
+	//
+	// GET /api/v1/sandboxes/{id}/health
+	GetSandboxHealth(ctx context.Context, params GetSandboxHealthParams, options ...RequestOption) (GetSandboxHealthRes, error)
+	// GetSandboxMemoryRestoration invokes getSandboxMemoryRestoration operation.
+	//
+	// Requires sandbox:read. Returns external checkpoint/migration restore lineage for the exact current
+	// runtime generation after physical retirement commits. No guest execution or lifecycle mutation.
+	// This is not a session-health or credential-clean attestation. Missing, pending or incompatible
+	// authority is an error; never authorizes cold launch or key re-publication.
+	//
+	// GET /api/v1/sandboxes/{id}/memory-restoration
+	GetSandboxMemoryRestoration(ctx context.Context, params GetSandboxMemoryRestorationParams, options ...RequestOption) (GetSandboxMemoryRestorationRes, error)
+	// GetSandboxRestartFinalCapture invokes getSandboxRestartFinalCapture operation.
+	//
+	// Requires sandbox:read. Reads durable metadata independently of procd. Pending has no capture ID.
+	// Stopped identifies one immutable externally stopped source. Acknowledged means the owner receipt
+	// is durable; released permits ordinary retirement. This is not a completed restart or a
+	// credential-content digest.
+	//
+	// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture
+	GetSandboxRestartFinalCapture(ctx context.Context, params GetSandboxRestartFinalCaptureParams, options ...RequestOption) (GetSandboxRestartFinalCaptureRes, error)
+	// GetSandboxRestartOperation invokes getSandboxRestartOperation operation.
+	//
+	// Requires sandbox:read. Available independently of procd. A succeeded operation reports its
+	// historical replacement generation; later lifecycle activity does not cause another restart or make
+	// this an application-health report.
+	//
+	// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}
+	GetSandboxRestartOperation(ctx context.Context, params GetSandboxRestartOperationParams, options ...RequestOption) (GetSandboxRestartOperationRes, error)
+	// GetSandboxRootFSFork invokes getSandboxRootFSFork operation.
+	//
+	// Reads one external database observation for the original authenticated
+	// caller, Idempotency-Key and source runtime generation, including zero.
+	// Does not submit, retry, cancel or repair work, contact the guest or resume
+	// a runtime. Requires sandbox:read. A 404 is not proof of cancellation.
+	// Only RootFS forks qualify: memory forks are rejected. The child must
+	// remain paused, never run, and retain its original claim and durable head.
+	// Configuration must match birth or the one externally committed
+	// credential-free network isolation preparation; other changes are rejected.
+	// Running-source forks must retain their checkpoint
+	// proof; paused-source forks must retain the source filesystem binding.
+	// Later source generations or a retained source tombstone do not create
+	// a new capture. This is not a credential-safety attestation or a state
+	// reservation; subsequent mutations require their own identity conditions.
+	//
+	// GET /api/v1/sandboxes/{id}/fork
+	GetSandboxRootFSFork(ctx context.Context, params GetSandboxRootFSForkParams, options ...RequestOption) (GetSandboxRootFSForkRes, error)
+	// GetSandboxRootFSForkLaunch invokes getSandboxRootFSForkLaunch operation.
+	//
+	// Binds the original authenticated caller and Idempotency-Key to a first
+	// cold launch of the child at generation zero. Supply the original fork
+	// operation and the child's observed filesystem, head and writer epoch.
+	// The child must retain its original birth configuration, or its one
+	// externally committed credential-free network isolation preparation;
+	// all other fields and automatic-wake disablement must remain unchanged.
+	// Memory forks and ordinary resumes are excluded. Retries must
+	// keep the same key and conditions; never refresh them after uncertainty.
+	// Requires sandbox:read. This is a read-only historical lookup and never
+	// admits, retries, wakes or contacts a guest. A 404 is not cancellation.
+	// Completed history survives later lifecycles. Current only compares
+	// the owner/lifecycle snapshot, not runtime health or a lease. Aborted
+	// does not prove physical absence. This is not credential admission.
+	//
+	// GET /api/v1/sandboxes/{id}/fork-launch
+	GetSandboxRootFSForkLaunch(ctx context.Context, params GetSandboxRootFSForkLaunchParams, options ...RequestOption) (GetSandboxRootFSForkLaunchRes, error)
+	// GetSandboxRootFSIdentity invokes getSandboxRootFSIdentity operation.
+	//
+	// Requires sandbox:read. Reads one owner-scoped control-plane database snapshot without guest
+	// execution, node probing or automatic resume. Binds runtime coordinates to the durable filesystem,
+	// committed head and immutable image digest. This is provenance, not current storage liveness, an
+	// uncommitted-write guarantee or credential-clean attestation. A later lifecycle can invalidate the
+	// observation; mutations must still condition on the expected runtime generation and their own
+	// admission evidence.
+	//
+	// GET /api/v1/sandboxes/{id}/rootfs/identity
+	GetSandboxRootFSIdentity(ctx context.Context, params GetSandboxRootFSIdentityParams, options ...RequestOption) (GetSandboxRootFSIdentityRes, error)
 	// GetSandboxRuntimeMetrics invokes getSandboxRuntimeMetrics operation.
 	//
 	// Returns bounded, downsampled sandbox-wide runtime series. When timestamps are
@@ -683,12 +892,70 @@ type Invoker interface {
 	//
 	// GET /api/v1/sandboxes/{id}/metrics/catalog
 	GetSandboxRuntimeMetricsCatalog(ctx context.Context, params GetSandboxRuntimeMetricsCatalogParams, options ...RequestOption) (GetSandboxRuntimeMetricsCatalogRes, error)
+	// GetSandboxSnapshotRestoreFinalCapture invokes getSandboxSnapshotRestoreFinalCapture operation.
+	//
+	// Requires sandbox:read. Reads durable metadata independently of procd. Pending has no capture ID.
+	// Stopped identifies one immutable externally stopped source. Acknowledged means the owner receipt
+	// is durable; released permits ordinary retirement. This is not a completed restart or a
+	// credential-content digest.
+	//
+	// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture
+	GetSandboxSnapshotRestoreFinalCapture(ctx context.Context, params GetSandboxSnapshotRestoreFinalCaptureParams, options ...RequestOption) (GetSandboxSnapshotRestoreFinalCaptureRes, error)
+	// GetSandboxSnapshotRestoreOperation invokes getSandboxSnapshotRestoreOperation operation.
+	//
+	// Requires sandbox:read. Available independently of procd. A succeeded operation reports its
+	// historical replacement generation; later lifecycle activity does not cause another restart or make
+	// this an application-health report.
+	//
+	// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}
+	GetSandboxSnapshotRestoreOperation(ctx context.Context, params GetSandboxSnapshotRestoreOperationParams, options ...RequestOption) (GetSandboxSnapshotRestoreOperationRes, error)
 	// HealthzGet invokes GET /healthz operation.
 	//
 	// Health check.
 	//
 	// GET /healthz
 	HealthzGet(ctx context.Context, options ...RequestOption) (HealthzGetRes, error)
+	// InspectSandboxManagedFiles invokes inspectSandboxManagedFiles operation.
+	//
+	// Uses node-owned storage outside persistent RootFS without executing in the guest. This describes
+	// only managed files and does not attest that historical or user-created RootFS files contain no
+	// credentials.
+	//
+	// GET /api/v1/sandboxes/{id}/managed-files
+	InspectSandboxManagedFiles(ctx context.Context, params InspectSandboxManagedFilesParams, options ...RequestOption) (InspectSandboxManagedFilesRes, error)
+	// LaunchSandboxRootFSFork invokes launchSandboxRootFSFork operation.
+	//
+	// Binds the original authenticated caller and Idempotency-Key to a first
+	// cold launch of the child at generation zero. Supply the original fork
+	// operation and the child's observed filesystem, head and writer epoch.
+	// The child must retain its original birth configuration, or its one
+	// externally committed credential-free network isolation preparation;
+	// all other fields and automatic-wake disablement must remain unchanged.
+	// Memory forks and ordinary resumes are excluded. Retries must
+	// keep the same key and conditions; never refresh them after uncertainty.
+	// Requires sandbox:write. Admission is durable before node dispatch;
+	// manager recovery continues the exact lifecycle after a timeout or lost
+	// reply. No guest command or terminal is required. A 503 does not prove
+	// that admission failed; use GET with the original key and conditions.
+	// Completed history survives later lifecycles. Current only compares
+	// the owner/lifecycle snapshot, not runtime health or a lease. Aborted
+	// does not prove physical absence. This is not credential admission.
+	//
+	// POST /api/v1/sandboxes/{id}/fork-launch
+	LaunchSandboxRootFSFork(ctx context.Context, request *SandboxRootFSForkLaunchRequest, params LaunchSandboxRootFSForkParams, options ...RequestOption) (LaunchSandboxRootFSForkRes, error)
+	// LookupSandboxMemoryOperation invokes lookupSandboxMemoryOperation operation.
+	//
+	// Requires sandbox:read and the original caller's Idempotency-Key. The authenticated team, user,
+	// sandbox and action derive the same request identity as conditional pause or resume. Performs no
+	// lifecycle mutation, guest access, quota admission or retry. A missing request returns 404 and
+	// never proves cancellation. Historical terminal results remain readable while their evidence is
+	// retained, including after later lifecycles; current only compares the owner snapshot and is not a
+	// lease or permission to mutate it. Source process health is not implied. A physically resolved
+	// failed restore consumes result_runtime_generation while retaining the checkpoint; it must never be
+	// retried as a new intent implicitly.
+	//
+	// GET /api/v1/sandboxes/{id}/memory-operations/lookup
+	LookupSandboxMemoryOperation(ctx context.Context, params LookupSandboxMemoryOperationParams, options ...RequestOption) (LookupSandboxMemoryOperationRes, error)
 	// MetadataGet invokes GET /metadata operation.
 	//
 	// Gateway metadata.
@@ -701,6 +968,36 @@ type Invoker interface {
 	//
 	// GET /metrics
 	MetricsGet(ctx context.Context, options ...RequestOption) (MetricsGetOK, error)
+	// ReadSandboxManagedFile invokes readSandboxManagedFile operation.
+	//
+	// Read a managed runtime file.
+	//
+	// GET /api/v1/sandboxes/{id}/managed-files/{name}
+	ReadSandboxManagedFile(ctx context.Context, params ReadSandboxManagedFileParams, options ...RequestOption) (ReadSandboxManagedFileRes, error)
+	// ReadSandboxNamespacedManagedFile invokes readSandboxNamespacedManagedFile operation.
+	//
+	// Read a namespaced managed runtime file.
+	//
+	// GET /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+	ReadSandboxNamespacedManagedFile(ctx context.Context, params ReadSandboxNamespacedManagedFileParams, options ...RequestOption) (ReadSandboxNamespacedManagedFileRes, error)
+	// ReadSandboxRestartFinalCaptureFile invokes readSandboxRestartFinalCaptureFile operation.
+	//
+	// Requires sandbox:read and the exact capture_id from status. Never reads live or guest storage,
+	// creates files, or resumes execution. found=false attests an absent file only after retained
+	// backing and external absence are verified. Missing journals, mounts, authority and routes are
+	// errors, never logout. Read closes after acknowledgement. Responses must not be logged or cached.
+	//
+	// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture/namespaces/{namespace}/{name}
+	ReadSandboxRestartFinalCaptureFile(ctx context.Context, params ReadSandboxRestartFinalCaptureFileParams, options ...RequestOption) (ReadSandboxRestartFinalCaptureFileRes, error)
+	// ReadSandboxSnapshotRestoreFinalCaptureFile invokes readSandboxSnapshotRestoreFinalCaptureFile operation.
+	//
+	// Requires sandbox:read and the exact capture_id from status. Never reads live or guest storage,
+	// creates files, or resumes execution. found=false attests an absent file only after retained
+	// backing and external absence are verified. Missing journals, mounts, authority and routes are
+	// errors, never logout. Read closes after acknowledgement. Responses must not be logged or cached.
+	//
+	// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture/namespaces/{namespace}/{name}
+	ReadSandboxSnapshotRestoreFinalCaptureFile(ctx context.Context, params ReadSandboxSnapshotRestoreFinalCaptureFileParams, options ...RequestOption) (ReadSandboxSnapshotRestoreFinalCaptureFileRes, error)
 	// ReadyzGet invokes GET /readyz operation.
 	//
 	// Readiness check.
@@ -737,6 +1034,34 @@ type Invoker interface {
 	//
 	// POST /regions
 	RegionsPost(ctx context.Context, request *CreateRegionRequest, options ...RequestOption) (RegionsPostRes, error)
+	// RestartSandbox invokes restartSandbox operation.
+	//
+	// Preserves the writable RootFS through external publication and writer fencing,
+	// ends the old processes, and starts a fresh runtime. This is not a reconnect,
+	// memory restore, or snapshot rollback. Requires sandbox:write and a stable
+	// Idempotency-Key bound to expected_runtime_generation. A duplicate returns
+	// the original operation and never restarts a newer generation. Request
+	// timeout does not cancel committed work. Find the operation by request_key
+	// if its acknowledgement was lost. Completion proves runtime replacement,
+	// not guest application health. Never use this as an automatic memory fallback.
+	//
+	// POST /api/v1/sandboxes/{id}/restart
+	RestartSandbox(ctx context.Context, request *SandboxRestartRequest, params RestartSandboxParams, options ...RequestOption) (RestartSandboxRes, error)
+	// RestoreSandboxSnapshot invokes restoreSandboxSnapshot operation.
+	//
+	// Explicitly discards source process state and replaces its writable RootFS
+	// with the exact selected snapshot generation. Requires sandbox:write,
+	// discard_process_state=true and a stable Idempotency-Key bound to the source
+	// runtime generation and snapshot identity. Admission pins the selected data,
+	// including across later snapshot expiry or deletion. External final capture
+	// retains projected credential custody before source retirement. Head replacement
+	// and cold resume admission commit together. A duplicate returns the original
+	// operation and cannot restore again. Request timeout does not cancel accepted
+	// work; recover its acknowledgement by request_key. Completion proves external
+	// runtime launch, not guest application health. Never use as a memory fallback.
+	//
+	// POST /api/v1/sandboxes/{id}/snapshot-restore
+	RestoreSandboxSnapshot(ctx context.Context, request *SandboxSnapshotRestoreRequest, params RestoreSandboxSnapshotParams, options ...RequestOption) (RestoreSandboxSnapshotRes, error)
 	// TeamsGet invokes GET /teams operation.
 	//
 	// List teams.
@@ -839,6 +1164,22 @@ type Invoker interface {
 	//
 	// POST /users/me/ssh-keys
 	UsersMeSSHKeysPost(ctx context.Context, request *CreateSSHPublicKeyRequest, options ...RequestOption) (UsersMeSSHKeysPostRes, error)
+	// WriteSandboxManagedFile invokes writeSandboxManagedFile operation.
+	//
+	// The expected mutation sequence is consumed before file I/O. An ambiguous response must be
+	// reconciled with inspect/read; never automatically retry with a newly fetched sequence. The
+	// sequence orders platform requests, not native guest refreshes.
+	//
+	// PUT /api/v1/sandboxes/{id}/managed-files/{name}
+	WriteSandboxManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxManagedFileParams, options ...RequestOption) (WriteSandboxManagedFileRes, error)
+	// WriteSandboxNamespacedManagedFile invokes writeSandboxNamespacedManagedFile operation.
+	//
+	// The expected mutation sequence is consumed before file I/O. An ambiguous response must be
+	// reconciled with inspect/read; never automatically retry with a newly fetched sequence. The
+	// sequence orders platform requests, not native guest refreshes.
+	//
+	// PUT /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+	WriteSandboxNamespacedManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxNamespacedManagedFileParams, options ...RequestOption) (WriteSandboxNamespacedManagedFileRes, error)
 }
 
 // Client implements OAS client.
@@ -5022,7 +5363,8 @@ func (c *Client) sendAPIV1SandboxesIDFilesWatchGet(ctx context.Context, params A
 // source is forked from its current rootfs head. A running source is briefly
 // barriered and checkpointed first; the source sandbox remains running after
 // the fork operation completes. Set memory=true to retain execution state as
-// well. Memory forks require a stable Idempotency-Key. While capture or parent
+// well. Memory forks and requests with expected_runtime_generation require a stable Idempotency-Key.
+// While capture or parent
 // restoration is pending, retry 503 responses with that same key and request.
 // A successful response always contains a committed paused child.
 //
@@ -6098,15 +6440,17 @@ func (c *Client) sendAPIV1SandboxesIDObservabilityLogsGet(ctx context.Context, p
 //
 // The default checkpoints only the writable RootFS. Set memory=true to also retain process execution
 // state before releasing the runtime. A 202 response means checkpoint publication and cleanup are
-// still pending.
+// still pending. For conditional memory pause, send expected_runtime_generation and Idempotency-Key
+// together with memory=true. Retries bind the same source generation and checkpoint operation;
+// mismatched or aborted operations conflict.
 //
 // POST /api/v1/sandboxes/{id}/pause
-func (c *Client) APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error) {
+func (c *Client) APIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxPauseRequest, params APIV1SandboxesIDPausePostParams, options ...RequestOption) (APIV1SandboxesIDPausePostRes, error) {
 	res, err := c.sendAPIV1SandboxesIDPausePost(ctx, request, params, options...)
 	return res, err
 }
 
-func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDPausePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPausePostRes, err error) {
+func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, request OptSandboxPauseRequest, params APIV1SandboxesIDPausePostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDPausePostRes, err error) {
 
 	var reqCfg requestConfig
 	reqCfg.setDefaults(c.baseClient)
@@ -6148,6 +6492,22 @@ func (c *Client) sendAPIV1SandboxesIDPausePost(ctx context.Context, request OptS
 	}
 	if err := encodeAPIV1SandboxesIDPausePostRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.IdempotencyKey.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	{
@@ -6835,11 +7195,14 @@ func (c *Client) sendAPIV1SandboxesIDRefreshPost(ctx context.Context, request Op
 
 // APIV1SandboxesIDResumePost invokes POST /api/v1/sandboxes/{id}/resume operation.
 //
-// The default starts a new process runtime from the committed RootFS. Set memory=true to prefer a
-// retained execution image. Missing or incompatible memory falls back to the committed RootFS. A
-// failed memory target is physically reclaimed before a filesystem-only replacement starts. A
-// response with resumed=false means durable fallback is pending; poll sandbox status until running.
-// A disconnected request may continue through background recovery.
+// The default starts a new process runtime from the committed RootFS. Set memory=true to require a
+// retained execution image. Missing, incompatible, or failed memory restoration returns an error and
+// never authorizes a filesystem-only replacement. Accepted memory operations may continue through
+// background recovery after a disconnected request. For conditional memory resume, send memory=true,
+// expected_runtime_generation, checkpoint_id and Idempotency-Key together. Keep the same
+// authenticated identity, key, checkpoint and source generation on retries. A successful conditional
+// response proves this request committed its exact restore; unrelated running state or a later
+// lifecycle conflicts. An aborted request cannot create a new restore attempt.
 //
 // POST /api/v1/sandboxes/{id}/resume
 func (c *Client) APIV1SandboxesIDResumePost(ctx context.Context, request OptSandboxExecutionStateRequest, params APIV1SandboxesIDResumePostParams, options ...RequestOption) (APIV1SandboxesIDResumePostRes, error) {
@@ -6889,6 +7252,22 @@ func (c *Client) sendAPIV1SandboxesIDResumePost(ctx context.Context, request Opt
 	}
 	if err := encodeAPIV1SandboxesIDResumePostRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.IdempotencyKey.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	{
@@ -7422,6 +7801,316 @@ func (c *Client) sendAPIV1SandboxesIDServicesPut(ctx context.Context, request *S
 	return result, nil
 }
 
+// APIV1SandboxesIDSessionsConditionalLookupGet invokes GET /api/v1/sandboxes/{id}/sessions/conditional/lookup operation.
+//
+// Read-only receipt lookup in an exact currently running generation. Never auto-resumes, creates a
+// session, starts an attempt or repairs state. Both the gateway and supervisor verify the sandbox
+// and runtime generation. Only conditional creations are eligible. A session_not_found response
+// means that key was absent at observation time, not permission to create or proof that an earlier
+// request cannot still finish. Other 404 replies may indicate unsupported servers. Clients must not
+// fall back to ordinary queries or creation. The returned receipt is not lifecycle/storage authority,
+//
+//	current credential admission, or permission to attach later. For a memory-restored original
+//
+// attempt, explicitly supply an earlier creation_runtime_generation. Omission retains
+// same-generation semantics. The supervisor requires the exact original conditional creation and a
+// still-running attempt from that origin in the requested current runtime. This does not verify
+// external memory lineage or credential qualification; applications must verify those independently
+// before adoption. Never use failure as permission to create a new attempt or fall back to cold
+// restart.
+//
+// GET /api/v1/sandboxes/{id}/sessions/conditional/lookup
+func (c *Client) APIV1SandboxesIDSessionsConditionalLookupGet(ctx context.Context, params APIV1SandboxesIDSessionsConditionalLookupGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsConditionalLookupGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDSessionsConditionalLookupGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDSessionsConditionalLookupGet(ctx context.Context, params APIV1SandboxesIDSessionsConditionalLookupGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsConditionalLookupGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sessions/conditional/lookup"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "creation_runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "creation_runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.CreationRuntimeGeneration.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSessionsConditionalLookupGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDSessionsConditionalLookupGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDSessionsConditionalPost invokes POST /api/v1/sandboxes/{id}/sessions/conditional operation.
+//
+// Requires a currently running sandbox with the exact sandbox identity and runtime generation. Never
+// auto-resumes. The gateway checks regional state and the supervisor checks identity atomically
+// through initial process startup. A stale idempotent retry fails after runtime replacement. This
+// condition governs creation; the session lifecycle policy still governs later attempts and recovery.
+//
+//	Older servers return an unsupported route; clients must not fall back to unconditional creation.
+//
+// POST /api/v1/sandboxes/{id}/sessions/conditional
+func (c *Client) APIV1SandboxesIDSessionsConditionalPost(ctx context.Context, request *ConditionalExecutionSessionRequest, params APIV1SandboxesIDSessionsConditionalPostParams, options ...RequestOption) (APIV1SandboxesIDSessionsConditionalPostRes, error) {
+	res, err := c.sendAPIV1SandboxesIDSessionsConditionalPost(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDSessionsConditionalPost(ctx context.Context, request *ConditionalExecutionSessionRequest, params APIV1SandboxesIDSessionsConditionalPostParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsConditionalPostRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sessions/conditional"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAPIV1SandboxesIDSessionsConditionalPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSessionsConditionalPostOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDSessionsConditionalPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // APIV1SandboxesIDSessionsGet invokes GET /api/v1/sandboxes/{id}/sessions operation.
 //
 // Lists durable process-backed sessions in the sandbox.
@@ -7798,6 +8487,228 @@ func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDAttemptsPost(ctx context.C
 	}
 
 	result, err := decodeAPIV1SandboxesIDSessionsSessionIDAttemptsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// APIV1SandboxesIDSessionsSessionIDConditionalWsGet invokes GET /api/v1/sandboxes/{id}/sessions/{session_id}/conditional/ws operation.
+//
+// Requires the original conditional creation key, exact runtime generation and attempt.
+// Never resumes, creates or falls back to an ordinary attachment. A generation change
+// revokes the connection; every control message rechecks identity. Replay excludes
+// other attempts. Closing the socket does not stop the process or close its input.
+// This is process control, not lifecycle, storage or credential admission.
+// For a memory-restored original attempt, explicitly supply an earlier
+// creation_runtime_generation. Omission retains same-generation semantics.
+// The supervisor requires the exact original conditional creation and a
+// still-running attempt from that origin in the requested current runtime.
+// This does not verify external memory lineage or credential qualification;
+// applications must verify those independently before adoption. Never use
+// failure as permission to create a new attempt or fall back to cold restart.
+//
+// GET /api/v1/sandboxes/{id}/sessions/{session_id}/conditional/ws
+func (c *Client) APIV1SandboxesIDSessionsSessionIDConditionalWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDConditionalWsGetParams, options ...RequestOption) (APIV1SandboxesIDSessionsSessionIDConditionalWsGetRes, error) {
+	res, err := c.sendAPIV1SandboxesIDSessionsSessionIDConditionalWsGet(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAPIV1SandboxesIDSessionsSessionIDConditionalWsGet(ctx context.Context, params APIV1SandboxesIDSessionsSessionIDConditionalWsGetParams, requestOptions ...RequestOption) (res APIV1SandboxesIDSessionsSessionIDConditionalWsGetRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sessions/"
+	{
+		// Encode "session_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "session_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.SessionID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/conditional/ws"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "creation_runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "creation_runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.CreationRuntimeGeneration.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "attempt_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "attempt_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.AttemptID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "after" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "after",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.After.Get(); ok {
+				return e.EncodeValue(conv.Int64ToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, APIV1SandboxesIDSessionsSessionIDConditionalWsGetOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAPIV1SandboxesIDSessionsSessionIDConditionalWsGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -10503,6 +11414,284 @@ func (c *Client) sendAPIV1UsageWindowsGet(ctx context.Context, params APIV1Usage
 	return result, nil
 }
 
+// AcknowledgeSandboxRestartFinalCapture invokes acknowledgeSandboxRestartFinalCapture operation.
+//
+// Requires sandbox:write. Submit only after final credential or authenticated logout custody is
+// durably committed by the owner. This permits irreversible cleanup of the old projection. Retry the
+// same capture_id and receipt_id after a lost reply; another receipt conflicts. This schedules
+// retirement, not immediate replacement success.
+//
+// POST /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture/acknowledgement
+func (c *Client) AcknowledgeSandboxRestartFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxRestartFinalCaptureParams, options ...RequestOption) (AcknowledgeSandboxRestartFinalCaptureRes, error) {
+	res, err := c.sendAcknowledgeSandboxRestartFinalCapture(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAcknowledgeSandboxRestartFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxRestartFinalCaptureParams, requestOptions ...RequestOption) (res AcknowledgeSandboxRestartFinalCaptureRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture/acknowledgement"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAcknowledgeSandboxRestartFinalCaptureRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, AcknowledgeSandboxRestartFinalCaptureOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAcknowledgeSandboxRestartFinalCaptureResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AcknowledgeSandboxSnapshotRestoreFinalCapture invokes acknowledgeSandboxSnapshotRestoreFinalCapture operation.
+//
+// Requires sandbox:write. Submit only after final credential or authenticated logout custody is
+// durably committed by the owner. This permits irreversible cleanup of the old projection. Retry the
+// same capture_id and receipt_id after a lost reply; another receipt conflicts. This schedules
+// retirement, not immediate replacement success.
+//
+// POST /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture/acknowledgement
+func (c *Client) AcknowledgeSandboxSnapshotRestoreFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxSnapshotRestoreFinalCaptureParams, options ...RequestOption) (AcknowledgeSandboxSnapshotRestoreFinalCaptureRes, error) {
+	res, err := c.sendAcknowledgeSandboxSnapshotRestoreFinalCapture(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendAcknowledgeSandboxSnapshotRestoreFinalCapture(ctx context.Context, request *SandboxRestartFinalCaptureAcknowledgement, params AcknowledgeSandboxSnapshotRestoreFinalCaptureParams, requestOptions ...RequestOption) (res AcknowledgeSandboxSnapshotRestoreFinalCaptureRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture/acknowledgement"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAcknowledgeSandboxSnapshotRestoreFinalCaptureRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, AcknowledgeSandboxSnapshotRestoreFinalCaptureOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeAcknowledgeSandboxSnapshotRestoreFinalCaptureResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // AuthChangePasswordPost invokes POST /auth/change-password operation.
 //
 // Change password.
@@ -11413,6 +12602,1909 @@ func (c *Client) sendAuthWebLoginExchangePost(ctx context.Context, request *WebL
 	return result, nil
 }
 
+// CaptureSandboxRootFSSnapshot invokes captureSandboxRootFSSnapshot operation.
+//
+// Captures one immutable RootFS snapshot from the expected running runtime
+// generation without stopping its processes. Admission checks the generation
+// while locking the external source and exact writer. Reuse the same key,
+// generation and metadata after uncertainty: an accepted capture retains its
+// original transaction and returns its original snapshot when completed,
+// even if the source subsequently changes generation or pauses. A new capture
+// of a paused or mismatched source is rejected. No guest execution, automatic
+// resume, process restart or memory checkpoint fallback is performed.
+// This distinct endpoint fails closed on servers without conditional capture.
+//
+// POST /api/v1/sandboxes/{id}/snapshots/capture
+func (c *Client) CaptureSandboxRootFSSnapshot(ctx context.Context, request *CaptureSandboxRootFSSnapshotRequest, params CaptureSandboxRootFSSnapshotParams, options ...RequestOption) (CaptureSandboxRootFSSnapshotRes, error) {
+	res, err := c.sendCaptureSandboxRootFSSnapshot(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendCaptureSandboxRootFSSnapshot(ctx context.Context, request *CaptureSandboxRootFSSnapshotRequest, params CaptureSandboxRootFSSnapshotParams, requestOptions ...RequestOption) (res CaptureSandboxRootFSSnapshotRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots/capture"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeCaptureSandboxRootFSSnapshotRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, CaptureSandboxRootFSSnapshotOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeCaptureSandboxRootFSSnapshotResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DeleteSandboxManagedFile invokes deleteSandboxManagedFile operation.
+//
+// Deletion consumes the expected sequence before I/O, including when the reply is lost. Inspect/read
+// to reconcile ambiguous results before issuing a new mutation.
+//
+// DELETE /api/v1/sandboxes/{id}/managed-files/{name}
+func (c *Client) DeleteSandboxManagedFile(ctx context.Context, params DeleteSandboxManagedFileParams, options ...RequestOption) (DeleteSandboxManagedFileRes, error) {
+	res, err := c.sendDeleteSandboxManagedFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendDeleteSandboxManagedFile(ctx context.Context, params DeleteSandboxManagedFileParams, requestOptions ...RequestOption) (res DeleteSandboxManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-files/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "expected_mutation_sequence" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "expected_mutation_sequence",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if unwrapped := string(params.ExpectedMutationSequence); true {
+				return e.EncodeValue(conv.StringToString(unwrapped))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, DeleteSandboxManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeDeleteSandboxManagedFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DeleteSandboxNamespacedManagedFile invokes deleteSandboxNamespacedManagedFile operation.
+//
+// Deletion consumes the expected sequence before I/O, including when the reply is lost. Inspect/read
+// to reconcile ambiguous results before issuing a new mutation.
+//
+// DELETE /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+func (c *Client) DeleteSandboxNamespacedManagedFile(ctx context.Context, params DeleteSandboxNamespacedManagedFileParams, options ...RequestOption) (DeleteSandboxNamespacedManagedFileRes, error) {
+	res, err := c.sendDeleteSandboxNamespacedManagedFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendDeleteSandboxNamespacedManagedFile(ctx context.Context, params DeleteSandboxNamespacedManagedFileParams, requestOptions ...RequestOption) (res DeleteSandboxNamespacedManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [6]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-file-namespaces/"
+	{
+		// Encode "namespace" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "namespace",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Namespace))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "expected_mutation_sequence" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "expected_mutation_sequence",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if unwrapped := string(params.ExpectedMutationSequence); true {
+				return e.EncodeValue(conv.StringToString(unwrapped))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, DeleteSandboxNamespacedManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeDeleteSandboxNamespacedManagedFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// FindSandboxRestartOperation invokes findSandboxRestartOperation operation.
+//
+// Read-only acknowledgement recovery. Requires sandbox:read. Does not execute in the guest or submit
+// a new restart.
+//
+// GET /api/v1/sandboxes/{id}/restart-operations
+func (c *Client) FindSandboxRestartOperation(ctx context.Context, params FindSandboxRestartOperationParams, options ...RequestOption) (FindSandboxRestartOperationRes, error) {
+	res, err := c.sendFindSandboxRestartOperation(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendFindSandboxRestartOperation(ctx context.Context, params FindSandboxRestartOperationParams, requestOptions ...RequestOption) (res FindSandboxRestartOperationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart-operations"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "request_key" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "request_key",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.RequestKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, FindSandboxRestartOperationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeFindSandboxRestartOperationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// FindSandboxSnapshotRestoreOperation invokes findSandboxSnapshotRestoreOperation operation.
+//
+// Read-only acknowledgement recovery. Requires sandbox:read. Does not execute in the guest or submit
+// a new snapshot restore.
+//
+// GET /api/v1/sandboxes/{id}/snapshot-restore-operations
+func (c *Client) FindSandboxSnapshotRestoreOperation(ctx context.Context, params FindSandboxSnapshotRestoreOperationParams, options ...RequestOption) (FindSandboxSnapshotRestoreOperationRes, error) {
+	res, err := c.sendFindSandboxSnapshotRestoreOperation(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendFindSandboxSnapshotRestoreOperation(ctx context.Context, params FindSandboxSnapshotRestoreOperationParams, requestOptions ...RequestOption) (res FindSandboxSnapshotRestoreOperationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore-operations"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "request_key" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "request_key",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.RequestKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, FindSandboxSnapshotRestoreOperationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeFindSandboxSnapshotRestoreOperationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetCapturedSandboxRootFSSnapshot invokes getCapturedSandboxRootFSSnapshot operation.
+//
+// Reads only the capture identified by the authenticated caller, original
+// Idempotency-Key and expected runtime generation. Does not admit, dispatch,
+// retry, cancel or repair work. Completed receipts can be read after the
+// source changes generation or pauses. A 404 is not proof of cancellation
+// and must not clear an outstanding operation fence. A missing, expired or
+// deleted retained snapshot is never replaced with a new capture.
+//
+// GET /api/v1/sandboxes/{id}/snapshots/capture
+func (c *Client) GetCapturedSandboxRootFSSnapshot(ctx context.Context, params GetCapturedSandboxRootFSSnapshotParams, options ...RequestOption) (GetCapturedSandboxRootFSSnapshotRes, error) {
+	res, err := c.sendGetCapturedSandboxRootFSSnapshot(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetCapturedSandboxRootFSSnapshot(ctx context.Context, params GetCapturedSandboxRootFSSnapshotParams, requestOptions ...RequestOption) (res GetCapturedSandboxRootFSSnapshotRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshots/capture"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "expected_runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "expected_runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.ExpectedRuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetCapturedSandboxRootFSSnapshotOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetCapturedSandboxRootFSSnapshotResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxHealth invokes getSandboxHealth operation.
+//
+// Requires sandbox:read. Reads owner-scoped regional authority and bounded independent node and
+// guest diagnostics without automatic resume, restart or credential preparation. Guest diagnostics
+// may execute a fixed short shell command and allocate a temporary PTY; they create no platform
+// session. No probe runs for a paused runtime or a pending lifecycle. Each observation has its own
+// source and time. Guest results are advisory and cannot establish runtime or storage authority.
+// Unknown means insufficient evidence, not success. A valid launch receipt is not current process
+// liveness; RootFS identity and writer lease are not successful storage IO or a guarantee of
+// uncommitted-write durability. Storage IO currently remains unknown. Authority is rechecked after
+// probes so a changed generation or lifecycle cannot inherit a successful old-runtime observation.
+//
+// GET /api/v1/sandboxes/{id}/health
+func (c *Client) GetSandboxHealth(ctx context.Context, params GetSandboxHealthParams, options ...RequestOption) (GetSandboxHealthRes, error) {
+	res, err := c.sendGetSandboxHealth(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxHealth(ctx context.Context, params GetSandboxHealthParams, requestOptions ...RequestOption) (res GetSandboxHealthRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/health"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxHealthOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxHealthResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxMemoryRestoration invokes getSandboxMemoryRestoration operation.
+//
+// Requires sandbox:read. Returns external checkpoint/migration restore lineage for the exact current
+// runtime generation after physical retirement commits. No guest execution or lifecycle mutation.
+// This is not a session-health or credential-clean attestation. Missing, pending or incompatible
+// authority is an error; never authorizes cold launch or key re-publication.
+//
+// GET /api/v1/sandboxes/{id}/memory-restoration
+func (c *Client) GetSandboxMemoryRestoration(ctx context.Context, params GetSandboxMemoryRestorationParams, options ...RequestOption) (GetSandboxMemoryRestorationRes, error) {
+	res, err := c.sendGetSandboxMemoryRestoration(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxMemoryRestoration(ctx context.Context, params GetSandboxMemoryRestorationParams, requestOptions ...RequestOption) (res GetSandboxMemoryRestorationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/memory-restoration"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxMemoryRestorationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxMemoryRestorationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxRestartFinalCapture invokes getSandboxRestartFinalCapture operation.
+//
+// Requires sandbox:read. Reads durable metadata independently of procd. Pending has no capture ID.
+// Stopped identifies one immutable externally stopped source. Acknowledged means the owner receipt
+// is durable; released permits ordinary retirement. This is not a completed restart or a
+// credential-content digest.
+//
+// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture
+func (c *Client) GetSandboxRestartFinalCapture(ctx context.Context, params GetSandboxRestartFinalCaptureParams, options ...RequestOption) (GetSandboxRestartFinalCaptureRes, error) {
+	res, err := c.sendGetSandboxRestartFinalCapture(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxRestartFinalCapture(ctx context.Context, params GetSandboxRestartFinalCaptureParams, requestOptions ...RequestOption) (res GetSandboxRestartFinalCaptureRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxRestartFinalCaptureOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxRestartFinalCaptureResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxRestartOperation invokes getSandboxRestartOperation operation.
+//
+// Requires sandbox:read. Available independently of procd. A succeeded operation reports its
+// historical replacement generation; later lifecycle activity does not cause another restart or make
+// this an application-health report.
+//
+// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}
+func (c *Client) GetSandboxRestartOperation(ctx context.Context, params GetSandboxRestartOperationParams, options ...RequestOption) (GetSandboxRestartOperationRes, error) {
+	res, err := c.sendGetSandboxRestartOperation(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxRestartOperation(ctx context.Context, params GetSandboxRestartOperationParams, requestOptions ...RequestOption) (res GetSandboxRestartOperationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxRestartOperationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxRestartOperationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxRootFSFork invokes getSandboxRootFSFork operation.
+//
+// Reads one external database observation for the original authenticated
+// caller, Idempotency-Key and source runtime generation, including zero.
+// Does not submit, retry, cancel or repair work, contact the guest or resume
+// a runtime. Requires sandbox:read. A 404 is not proof of cancellation.
+// Only RootFS forks qualify: memory forks are rejected. The child must
+// remain paused, never run, and retain its original claim and durable head.
+// Configuration must match birth or the one externally committed
+// credential-free network isolation preparation; other changes are rejected.
+// Running-source forks must retain their checkpoint
+// proof; paused-source forks must retain the source filesystem binding.
+// Later source generations or a retained source tombstone do not create
+// a new capture. This is not a credential-safety attestation or a state
+// reservation; subsequent mutations require their own identity conditions.
+//
+// GET /api/v1/sandboxes/{id}/fork
+func (c *Client) GetSandboxRootFSFork(ctx context.Context, params GetSandboxRootFSForkParams, options ...RequestOption) (GetSandboxRootFSForkRes, error) {
+	res, err := c.sendGetSandboxRootFSFork(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxRootFSFork(ctx context.Context, params GetSandboxRootFSForkParams, requestOptions ...RequestOption) (res GetSandboxRootFSForkRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/fork"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "expected_runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "expected_runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.ExpectedRuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxRootFSForkOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxRootFSForkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxRootFSForkLaunch invokes getSandboxRootFSForkLaunch operation.
+//
+// Binds the original authenticated caller and Idempotency-Key to a first
+// cold launch of the child at generation zero. Supply the original fork
+// operation and the child's observed filesystem, head and writer epoch.
+// The child must retain its original birth configuration, or its one
+// externally committed credential-free network isolation preparation;
+// all other fields and automatic-wake disablement must remain unchanged.
+// Memory forks and ordinary resumes are excluded. Retries must
+// keep the same key and conditions; never refresh them after uncertainty.
+// Requires sandbox:read. This is a read-only historical lookup and never
+// admits, retries, wakes or contacts a guest. A 404 is not cancellation.
+// Completed history survives later lifecycles. Current only compares
+// the owner/lifecycle snapshot, not runtime health or a lease. Aborted
+// does not prove physical absence. This is not credential admission.
+//
+// GET /api/v1/sandboxes/{id}/fork-launch
+func (c *Client) GetSandboxRootFSForkLaunch(ctx context.Context, params GetSandboxRootFSForkLaunchParams, options ...RequestOption) (GetSandboxRootFSForkLaunchRes, error) {
+	res, err := c.sendGetSandboxRootFSForkLaunch(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxRootFSForkLaunch(ctx context.Context, params GetSandboxRootFSForkLaunchParams, requestOptions ...RequestOption) (res GetSandboxRootFSForkLaunchRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/fork-launch"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "fork_operation_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "fork_operation_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.ForkOperationID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "filesystem_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "filesystem_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.FilesystemID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "head_generation_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "head_generation_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.HeadGenerationID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "writer_epoch" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "writer_epoch",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.WriterEpoch))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxRootFSForkLaunchOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxRootFSForkLaunchResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxRootFSIdentity invokes getSandboxRootFSIdentity operation.
+//
+// Requires sandbox:read. Reads one owner-scoped control-plane database snapshot without guest
+// execution, node probing or automatic resume. Binds runtime coordinates to the durable filesystem,
+// committed head and immutable image digest. This is provenance, not current storage liveness, an
+// uncommitted-write guarantee or credential-clean attestation. A later lifecycle can invalidate the
+// observation; mutations must still condition on the expected runtime generation and their own
+// admission evidence.
+//
+// GET /api/v1/sandboxes/{id}/rootfs/identity
+func (c *Client) GetSandboxRootFSIdentity(ctx context.Context, params GetSandboxRootFSIdentityParams, options ...RequestOption) (GetSandboxRootFSIdentityRes, error) {
+	res, err := c.sendGetSandboxRootFSIdentity(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxRootFSIdentity(ctx context.Context, params GetSandboxRootFSIdentityParams, requestOptions ...RequestOption) (res GetSandboxRootFSIdentityRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/rootfs/identity"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxRootFSIdentityOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxRootFSIdentityResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // GetSandboxRuntimeMetrics invokes getSandboxRuntimeMetrics operation.
 //
 // Returns bounded, downsampled sandbox-wide runtime series. When timestamps are
@@ -11751,6 +14843,276 @@ func (c *Client) sendGetSandboxRuntimeMetricsCatalog(ctx context.Context, params
 	return result, nil
 }
 
+// GetSandboxSnapshotRestoreFinalCapture invokes getSandboxSnapshotRestoreFinalCapture operation.
+//
+// Requires sandbox:read. Reads durable metadata independently of procd. Pending has no capture ID.
+// Stopped identifies one immutable externally stopped source. Acknowledged means the owner receipt
+// is durable; released permits ordinary retirement. This is not a completed restart or a
+// credential-content digest.
+//
+// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture
+func (c *Client) GetSandboxSnapshotRestoreFinalCapture(ctx context.Context, params GetSandboxSnapshotRestoreFinalCaptureParams, options ...RequestOption) (GetSandboxSnapshotRestoreFinalCaptureRes, error) {
+	res, err := c.sendGetSandboxSnapshotRestoreFinalCapture(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxSnapshotRestoreFinalCapture(ctx context.Context, params GetSandboxSnapshotRestoreFinalCaptureParams, requestOptions ...RequestOption) (res GetSandboxSnapshotRestoreFinalCaptureRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [5]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxSnapshotRestoreFinalCaptureOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxSnapshotRestoreFinalCaptureResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetSandboxSnapshotRestoreOperation invokes getSandboxSnapshotRestoreOperation operation.
+//
+// Requires sandbox:read. Available independently of procd. A succeeded operation reports its
+// historical replacement generation; later lifecycle activity does not cause another restart or make
+// this an application-health report.
+//
+// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}
+func (c *Client) GetSandboxSnapshotRestoreOperation(ctx context.Context, params GetSandboxSnapshotRestoreOperationParams, options ...RequestOption) (GetSandboxSnapshotRestoreOperationRes, error) {
+	res, err := c.sendGetSandboxSnapshotRestoreOperation(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendGetSandboxSnapshotRestoreOperation(ctx context.Context, params GetSandboxSnapshotRestoreOperationParams, requestOptions ...RequestOption) (res GetSandboxSnapshotRestoreOperationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, GetSandboxSnapshotRestoreOperationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeGetSandboxSnapshotRestoreOperationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // HealthzGet invokes GET /healthz operation.
 //
 // Health check.
@@ -11806,6 +15168,465 @@ func (c *Client) sendHealthzGet(ctx context.Context, requestOptions ...RequestOp
 	}
 
 	result, err := decodeHealthzGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// InspectSandboxManagedFiles invokes inspectSandboxManagedFiles operation.
+//
+// Uses node-owned storage outside persistent RootFS without executing in the guest. This describes
+// only managed files and does not attest that historical or user-created RootFS files contain no
+// credentials.
+//
+// GET /api/v1/sandboxes/{id}/managed-files
+func (c *Client) InspectSandboxManagedFiles(ctx context.Context, params InspectSandboxManagedFilesParams, options ...RequestOption) (InspectSandboxManagedFilesRes, error) {
+	res, err := c.sendInspectSandboxManagedFiles(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendInspectSandboxManagedFiles(ctx context.Context, params InspectSandboxManagedFilesParams, requestOptions ...RequestOption) (res InspectSandboxManagedFilesRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-files"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, InspectSandboxManagedFilesOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeInspectSandboxManagedFilesResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// LaunchSandboxRootFSFork invokes launchSandboxRootFSFork operation.
+//
+// Binds the original authenticated caller and Idempotency-Key to a first
+// cold launch of the child at generation zero. Supply the original fork
+// operation and the child's observed filesystem, head and writer epoch.
+// The child must retain its original birth configuration, or its one
+// externally committed credential-free network isolation preparation;
+// all other fields and automatic-wake disablement must remain unchanged.
+// Memory forks and ordinary resumes are excluded. Retries must
+// keep the same key and conditions; never refresh them after uncertainty.
+// Requires sandbox:write. Admission is durable before node dispatch;
+// manager recovery continues the exact lifecycle after a timeout or lost
+// reply. No guest command or terminal is required. A 503 does not prove
+// that admission failed; use GET with the original key and conditions.
+// Completed history survives later lifecycles. Current only compares
+// the owner/lifecycle snapshot, not runtime health or a lease. Aborted
+// does not prove physical absence. This is not credential admission.
+//
+// POST /api/v1/sandboxes/{id}/fork-launch
+func (c *Client) LaunchSandboxRootFSFork(ctx context.Context, request *SandboxRootFSForkLaunchRequest, params LaunchSandboxRootFSForkParams, options ...RequestOption) (LaunchSandboxRootFSForkRes, error) {
+	res, err := c.sendLaunchSandboxRootFSFork(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendLaunchSandboxRootFSFork(ctx context.Context, request *SandboxRootFSForkLaunchRequest, params LaunchSandboxRootFSForkParams, requestOptions ...RequestOption) (res LaunchSandboxRootFSForkRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/fork-launch"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeLaunchSandboxRootFSForkRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, LaunchSandboxRootFSForkOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeLaunchSandboxRootFSForkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// LookupSandboxMemoryOperation invokes lookupSandboxMemoryOperation operation.
+//
+// Requires sandbox:read and the original caller's Idempotency-Key. The authenticated team, user,
+// sandbox and action derive the same request identity as conditional pause or resume. Performs no
+// lifecycle mutation, guest access, quota admission or retry. A missing request returns 404 and
+// never proves cancellation. Historical terminal results remain readable while their evidence is
+// retained, including after later lifecycles; current only compares the owner snapshot and is not a
+// lease or permission to mutate it. Source process health is not implied. A physically resolved
+// failed restore consumes result_runtime_generation while retaining the checkpoint; it must never be
+// retried as a new intent implicitly.
+//
+// GET /api/v1/sandboxes/{id}/memory-operations/lookup
+func (c *Client) LookupSandboxMemoryOperation(ctx context.Context, params LookupSandboxMemoryOperationParams, options ...RequestOption) (LookupSandboxMemoryOperationRes, error) {
+	res, err := c.sendLookupSandboxMemoryOperation(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendLookupSandboxMemoryOperation(ctx context.Context, params LookupSandboxMemoryOperationParams, requestOptions ...RequestOption) (res LookupSandboxMemoryOperationRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/memory-operations/lookup"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "action" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "action",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(string(params.Action)))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "expected_runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "expected_runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.ExpectedRuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "checkpoint_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "checkpoint_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.CheckpointID.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, LookupSandboxMemoryOperationOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeLookupSandboxMemoryOperationResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -11930,6 +15751,703 @@ func (c *Client) sendMetricsGet(ctx context.Context, requestOptions ...RequestOp
 	}
 
 	result, err := decodeMetricsGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadSandboxManagedFile invokes readSandboxManagedFile operation.
+//
+// Read a managed runtime file.
+//
+// GET /api/v1/sandboxes/{id}/managed-files/{name}
+func (c *Client) ReadSandboxManagedFile(ctx context.Context, params ReadSandboxManagedFileParams, options ...RequestOption) (ReadSandboxManagedFileRes, error) {
+	res, err := c.sendReadSandboxManagedFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendReadSandboxManagedFile(ctx context.Context, params ReadSandboxManagedFileParams, requestOptions ...RequestOption) (res ReadSandboxManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-files/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, ReadSandboxManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeReadSandboxManagedFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadSandboxNamespacedManagedFile invokes readSandboxNamespacedManagedFile operation.
+//
+// Read a namespaced managed runtime file.
+//
+// GET /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+func (c *Client) ReadSandboxNamespacedManagedFile(ctx context.Context, params ReadSandboxNamespacedManagedFileParams, options ...RequestOption) (ReadSandboxNamespacedManagedFileRes, error) {
+	res, err := c.sendReadSandboxNamespacedManagedFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendReadSandboxNamespacedManagedFile(ctx context.Context, params ReadSandboxNamespacedManagedFileParams, requestOptions ...RequestOption) (res ReadSandboxNamespacedManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [6]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-file-namespaces/"
+	{
+		// Encode "namespace" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "namespace",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Namespace))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, ReadSandboxNamespacedManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeReadSandboxNamespacedManagedFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadSandboxRestartFinalCaptureFile invokes readSandboxRestartFinalCaptureFile operation.
+//
+// Requires sandbox:read and the exact capture_id from status. Never reads live or guest storage,
+// creates files, or resumes execution. found=false attests an absent file only after retained
+// backing and external absence are verified. Missing journals, mounts, authority and routes are
+// errors, never logout. Read closes after acknowledgement. Responses must not be logged or cached.
+//
+// GET /api/v1/sandboxes/{id}/restart-operations/{operation_id}/final-capture/namespaces/{namespace}/{name}
+func (c *Client) ReadSandboxRestartFinalCaptureFile(ctx context.Context, params ReadSandboxRestartFinalCaptureFileParams, options ...RequestOption) (ReadSandboxRestartFinalCaptureFileRes, error) {
+	res, err := c.sendReadSandboxRestartFinalCaptureFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendReadSandboxRestartFinalCaptureFile(ctx context.Context, params ReadSandboxRestartFinalCaptureFileParams, requestOptions ...RequestOption) (res ReadSandboxRestartFinalCaptureFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [8]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture/namespaces/"
+	{
+		// Encode "namespace" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "namespace",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Namespace))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	pathParts[6] = "/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[7] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "capture_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "capture_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.CaptureID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, ReadSandboxRestartFinalCaptureFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeReadSandboxRestartFinalCaptureFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadSandboxSnapshotRestoreFinalCaptureFile invokes readSandboxSnapshotRestoreFinalCaptureFile operation.
+//
+// Requires sandbox:read and the exact capture_id from status. Never reads live or guest storage,
+// creates files, or resumes execution. found=false attests an absent file only after retained
+// backing and external absence are verified. Missing journals, mounts, authority and routes are
+// errors, never logout. Read closes after acknowledgement. Responses must not be logged or cached.
+//
+// GET /api/v1/sandboxes/{id}/snapshot-restore-operations/{operation_id}/final-capture/namespaces/{namespace}/{name}
+func (c *Client) ReadSandboxSnapshotRestoreFinalCaptureFile(ctx context.Context, params ReadSandboxSnapshotRestoreFinalCaptureFileParams, options ...RequestOption) (ReadSandboxSnapshotRestoreFinalCaptureFileRes, error) {
+	res, err := c.sendReadSandboxSnapshotRestoreFinalCaptureFile(ctx, params, options...)
+	return res, err
+}
+
+func (c *Client) sendReadSandboxSnapshotRestoreFinalCaptureFile(ctx context.Context, params ReadSandboxSnapshotRestoreFinalCaptureFileParams, requestOptions ...RequestOption) (res ReadSandboxSnapshotRestoreFinalCaptureFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [8]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore-operations/"
+	{
+		// Encode "operation_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "operation_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.OperationID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/final-capture/namespaces/"
+	{
+		// Encode "namespace" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "namespace",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Namespace))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	pathParts[6] = "/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[7] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "capture_id" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "capture_id",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.CaptureID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, ReadSandboxSnapshotRestoreFinalCaptureFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeReadSandboxSnapshotRestoreFinalCaptureFileResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -12527,6 +17045,282 @@ func (c *Client) sendRegionsPost(ctx context.Context, request *CreateRegionReque
 	}
 
 	result, err := decodeRegionsPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RestartSandbox invokes restartSandbox operation.
+//
+// Preserves the writable RootFS through external publication and writer fencing,
+// ends the old processes, and starts a fresh runtime. This is not a reconnect,
+// memory restore, or snapshot rollback. Requires sandbox:write and a stable
+// Idempotency-Key bound to expected_runtime_generation. A duplicate returns
+// the original operation and never restarts a newer generation. Request
+// timeout does not cancel committed work. Find the operation by request_key
+// if its acknowledgement was lost. Completion proves runtime replacement,
+// not guest application health. Never use this as an automatic memory fallback.
+//
+// POST /api/v1/sandboxes/{id}/restart
+func (c *Client) RestartSandbox(ctx context.Context, request *SandboxRestartRequest, params RestartSandboxParams, options ...RequestOption) (RestartSandboxRes, error) {
+	res, err := c.sendRestartSandbox(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendRestartSandbox(ctx context.Context, request *SandboxRestartRequest, params RestartSandboxParams, requestOptions ...RequestOption) (res RestartSandboxRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/restart"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeRestartSandboxRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RestartSandboxOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRestartSandboxResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// RestoreSandboxSnapshot invokes restoreSandboxSnapshot operation.
+//
+// Explicitly discards source process state and replaces its writable RootFS
+// with the exact selected snapshot generation. Requires sandbox:write,
+// discard_process_state=true and a stable Idempotency-Key bound to the source
+// runtime generation and snapshot identity. Admission pins the selected data,
+// including across later snapshot expiry or deletion. External final capture
+// retains projected credential custody before source retirement. Head replacement
+// and cold resume admission commit together. A duplicate returns the original
+// operation and cannot restore again. Request timeout does not cancel accepted
+// work; recover its acknowledgement by request_key. Completion proves external
+// runtime launch, not guest application health. Never use as a memory fallback.
+//
+// POST /api/v1/sandboxes/{id}/snapshot-restore
+func (c *Client) RestoreSandboxSnapshot(ctx context.Context, request *SandboxSnapshotRestoreRequest, params RestoreSandboxSnapshotParams, options ...RequestOption) (RestoreSandboxSnapshotRes, error) {
+	res, err := c.sendRestoreSandboxSnapshot(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendRestoreSandboxSnapshot(ctx context.Context, request *SandboxSnapshotRestoreRequest, params RestoreSandboxSnapshotParams, requestOptions ...RequestOption) (res RestoreSandboxSnapshotRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [3]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/snapshot-restore"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeRestoreSandboxSnapshotRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "Idempotency-Key",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.IdempotencyKey))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, RestoreSandboxSnapshotOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeRestoreSandboxSnapshotResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -14404,6 +19198,333 @@ func (c *Client) sendUsersMeSSHKeysPost(ctx context.Context, request *CreateSSHP
 	}
 
 	result, err := decodeUsersMeSSHKeysPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// WriteSandboxManagedFile invokes writeSandboxManagedFile operation.
+//
+// The expected mutation sequence is consumed before file I/O. An ambiguous response must be
+// reconciled with inspect/read; never automatically retry with a newly fetched sequence. The
+// sequence orders platform requests, not native guest refreshes.
+//
+// PUT /api/v1/sandboxes/{id}/managed-files/{name}
+func (c *Client) WriteSandboxManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxManagedFileParams, options ...RequestOption) (WriteSandboxManagedFileRes, error) {
+	res, err := c.sendWriteSandboxManagedFile(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendWriteSandboxManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxManagedFileParams, requestOptions ...RequestOption) (res WriteSandboxManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [4]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-files/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeWriteSandboxManagedFileRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, WriteSandboxManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeWriteSandboxManagedFileResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// WriteSandboxNamespacedManagedFile invokes writeSandboxNamespacedManagedFile operation.
+//
+// The expected mutation sequence is consumed before file I/O. An ambiguous response must be
+// reconciled with inspect/read; never automatically retry with a newly fetched sequence. The
+// sequence orders platform requests, not native guest refreshes.
+//
+// PUT /api/v1/sandboxes/{id}/managed-file-namespaces/{namespace}/{name}
+func (c *Client) WriteSandboxNamespacedManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxNamespacedManagedFileParams, options ...RequestOption) (WriteSandboxNamespacedManagedFileRes, error) {
+	res, err := c.sendWriteSandboxNamespacedManagedFile(ctx, request, params, options...)
+	return res, err
+}
+
+func (c *Client) sendWriteSandboxNamespacedManagedFile(ctx context.Context, request *ManagedFileWriteRequest, params WriteSandboxNamespacedManagedFileParams, requestOptions ...RequestOption) (res WriteSandboxNamespacedManagedFileRes, err error) {
+
+	var reqCfg requestConfig
+	reqCfg.setDefaults(c.baseClient)
+	for _, o := range requestOptions {
+		o(&reqCfg)
+	}
+
+	u := c.serverURL
+	if override := reqCfg.ServerURL; override != nil {
+		u = override
+	}
+	u = uri.Clone(u)
+	var pathParts [6]string
+	pathParts[0] = "/api/v1/sandboxes/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/managed-file-namespaces/"
+	{
+		// Encode "namespace" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "namespace",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Namespace))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[3] = encoded
+	}
+	pathParts[4] = "/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[5] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "runtime_generation" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "runtime_generation",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.Int64ToString(params.RuntimeGeneration))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeWriteSandboxNamespacedManagedFileRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+
+			switch err := c.securityBearerAuth(ctx, WriteSandboxNamespacedManagedFileOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	if err := c.onRequest(ctx, r); err != nil {
+		return res, errors.Wrap(err, "client edit request")
+	}
+
+	if err := reqCfg.onRequest(r); err != nil {
+		return res, errors.Wrap(err, "edit request")
+	}
+
+	resp, err := reqCfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	if err := c.onResponse(ctx, resp); err != nil {
+		return res, errors.Wrap(err, "client edit response")
+	}
+
+	if err := reqCfg.onResponse(resp); err != nil {
+		return res, errors.Wrap(err, "edit response")
+	}
+
+	result, err := decodeWriteSandboxNamespacedManagedFileResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

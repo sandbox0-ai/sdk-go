@@ -155,6 +155,14 @@ func (s *SandboxExecutionStateRequest) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *SandboxPauseRequest) setDefaults() {
+	{
+		val := bool(false)
+		s.Memory.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *SandboxPreviewCreateRequest) setDefaults() {
 	{
 		val := SandboxPreviewCreateRequestProtocol("http")

@@ -693,6 +693,93 @@ type APIV1SandboxesIDServicesPutUnauthorized ErrorEnvelope
 
 func (*APIV1SandboxesIDServicesPutUnauthorized) aPIV1SandboxesIDServicesPutRes() {}
 
+type APIV1SandboxesIDSessionsConditionalLookupGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetBadRequest) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetConflict) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetForbidden ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetForbidden) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetNotFound) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl string
+
+const (
+	APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControlNoStore APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl = "no-store"
+)
+
+// AllValues returns all APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl values.
+func (APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) AllValues() []APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl {
+	return []APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl{
+		APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControlNoStore,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) MarshalText() ([]byte, error) {
+	switch s {
+	case APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControlNoStore:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) UnmarshalText(data []byte) error {
+	switch APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl(data) {
+	case APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControlNoStore:
+		*s = APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControlNoStore
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetServiceUnavailable ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetServiceUnavailable) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalLookupGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalLookupGetUnauthorized) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalPostBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalPostBadRequest) aPIV1SandboxesIDSessionsConditionalPostRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalPostConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalPostConflict) aPIV1SandboxesIDSessionsConditionalPostRes() {
+}
+
+type APIV1SandboxesIDSessionsConditionalPostCreated SuccessExecutionSessionResponse
+
+func (*APIV1SandboxesIDSessionsConditionalPostCreated) aPIV1SandboxesIDSessionsConditionalPostRes() {}
+
+type APIV1SandboxesIDSessionsConditionalPostOK SuccessExecutionSessionResponse
+
+func (*APIV1SandboxesIDSessionsConditionalPostOK) aPIV1SandboxesIDSessionsConditionalPostRes() {}
+
+type APIV1SandboxesIDSessionsConditionalPostUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsConditionalPostUnauthorized) aPIV1SandboxesIDSessionsConditionalPostRes() {
+}
+
 type APIV1SandboxesIDSessionsPostCreated SuccessExecutionSessionResponse
 
 func (*APIV1SandboxesIDSessionsPostCreated) aPIV1SandboxesIDSessionsPostRes() {}
@@ -700,6 +787,32 @@ func (*APIV1SandboxesIDSessionsPostCreated) aPIV1SandboxesIDSessionsPostRes() {}
 type APIV1SandboxesIDSessionsPostOK SuccessExecutionSessionResponse
 
 func (*APIV1SandboxesIDSessionsPostOK) aPIV1SandboxesIDSessionsPostRes() {}
+
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetBadRequest ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDConditionalWsGetBadRequest) aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes() {
+}
+
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetConflict ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDConditionalWsGetConflict) aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes() {
+}
+
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetNotFound ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDConditionalWsGetNotFound) aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes() {
+}
+
+// APIV1SandboxesIDSessionsSessionIDConditionalWsGetSwitchingProtocols is response for APIV1SandboxesIDSessionsSessionIDConditionalWsGet operation.
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetSwitchingProtocols struct{}
+
+func (*APIV1SandboxesIDSessionsSessionIDConditionalWsGetSwitchingProtocols) aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes() {
+}
+
+type APIV1SandboxesIDSessionsSessionIDConditionalWsGetUnauthorized ErrorEnvelope
+
+func (*APIV1SandboxesIDSessionsSessionIDConditionalWsGetUnauthorized) aPIV1SandboxesIDSessionsSessionIDConditionalWsGetRes() {
+}
 
 type APIV1SandboxesIDSessionsSessionIDEventsGetGone ErrorEnvelope
 
@@ -837,6 +950,62 @@ func (*APIV1UsageWindowsGetServiceUnavailable) aPIV1UsageWindowsGetRes() {}
 type APIV1UsageWindowsGetUnauthorized ErrorEnvelope
 
 func (*APIV1UsageWindowsGetUnauthorized) aPIV1UsageWindowsGetRes() {}
+
+type AcknowledgeSandboxRestartFinalCaptureBadRequest ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureBadRequest) acknowledgeSandboxRestartFinalCaptureRes() {}
+
+type AcknowledgeSandboxRestartFinalCaptureConflict ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureConflict) acknowledgeSandboxRestartFinalCaptureRes() {}
+
+type AcknowledgeSandboxRestartFinalCaptureForbidden ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureForbidden) acknowledgeSandboxRestartFinalCaptureRes() {}
+
+type AcknowledgeSandboxRestartFinalCaptureNotFound ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureNotFound) acknowledgeSandboxRestartFinalCaptureRes() {}
+
+type AcknowledgeSandboxRestartFinalCaptureServiceUnavailable ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureServiceUnavailable) acknowledgeSandboxRestartFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxRestartFinalCaptureUnauthorized ErrorEnvelope
+
+func (*AcknowledgeSandboxRestartFinalCaptureUnauthorized) acknowledgeSandboxRestartFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureBadRequest ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureBadRequest) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureConflict ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureConflict) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureForbidden ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureForbidden) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureNotFound ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureNotFound) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureServiceUnavailable ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureServiceUnavailable) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type AcknowledgeSandboxSnapshotRestoreFinalCaptureUnauthorized ErrorEnvelope
+
+func (*AcknowledgeSandboxSnapshotRestoreFinalCaptureUnauthorized) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
 
 // Ref: #/components/schemas/AddTeamMemberRequest
 type AddTeamMemberRequest struct {
@@ -1138,6 +1307,75 @@ func (s *CachePolicySpec) SetTTL(val OptString) {
 	s.TTL = val
 }
 
+type CaptureSandboxRootFSSnapshotBadRequest ErrorEnvelope
+
+func (*CaptureSandboxRootFSSnapshotBadRequest) captureSandboxRootFSSnapshotRes() {}
+
+type CaptureSandboxRootFSSnapshotConflict ErrorEnvelope
+
+func (*CaptureSandboxRootFSSnapshotConflict) captureSandboxRootFSSnapshotRes() {}
+
+type CaptureSandboxRootFSSnapshotNotFound ErrorEnvelope
+
+func (*CaptureSandboxRootFSSnapshotNotFound) captureSandboxRootFSSnapshotRes() {}
+
+// Ref: #/components/schemas/CaptureSandboxRootFSSnapshotRequest
+type CaptureSandboxRootFSSnapshotRequest struct {
+	// Exact source runtime generation; retries bind the originally admitted generation.
+	ExpectedRuntimeGeneration int64       `json:"expected_runtime_generation"`
+	Name                      OptString   `json:"name"`
+	Description               OptString   `json:"description"`
+	ExpiresAt                 OptDateTime `json:"expires_at"`
+}
+
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *CaptureSandboxRootFSSnapshotRequest) GetExpectedRuntimeGeneration() int64 {
+	return s.ExpectedRuntimeGeneration
+}
+
+// GetName returns the value of Name.
+func (s *CaptureSandboxRootFSSnapshotRequest) GetName() OptString {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *CaptureSandboxRootFSSnapshotRequest) GetDescription() OptString {
+	return s.Description
+}
+
+// GetExpiresAt returns the value of ExpiresAt.
+func (s *CaptureSandboxRootFSSnapshotRequest) GetExpiresAt() OptDateTime {
+	return s.ExpiresAt
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *CaptureSandboxRootFSSnapshotRequest) SetExpectedRuntimeGeneration(val int64) {
+	s.ExpectedRuntimeGeneration = val
+}
+
+// SetName sets the value of Name.
+func (s *CaptureSandboxRootFSSnapshotRequest) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *CaptureSandboxRootFSSnapshotRequest) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetExpiresAt sets the value of ExpiresAt.
+func (s *CaptureSandboxRootFSSnapshotRequest) SetExpiresAt(val OptDateTime) {
+	s.ExpiresAt = val
+}
+
+type CaptureSandboxRootFSSnapshotServiceUnavailable ErrorEnvelope
+
+func (*CaptureSandboxRootFSSnapshotServiceUnavailable) captureSandboxRootFSSnapshotRes() {}
+
+type CaptureSandboxRootFSSnapshotUnauthorized ErrorEnvelope
+
+func (*CaptureSandboxRootFSSnapshotUnauthorized) captureSandboxRootFSSnapshotRes() {}
+
 // Ref: #/components/schemas/ChangePasswordRequest
 type ChangePasswordRequest struct {
 	OldPassword string `json:"old_password"`
@@ -1261,6 +1499,45 @@ func (s *ClaimResponse) SetTemplate(val string) {
 // SetClusterID sets the value of ClusterID.
 func (s *ClaimResponse) SetClusterID(val OptNilString) {
 	s.ClusterID = val
+}
+
+// Ref: #/components/schemas/ConditionalExecutionSessionRequest
+type ConditionalExecutionSessionRequest struct {
+	// Must equal the sandbox path identity and active supervisor owner.
+	SandboxID string `json:"sandbox_id"`
+	// Exact current runtime generation; never interpreted as a minimum.
+	RuntimeGeneration int64                `json:"runtime_generation"`
+	Spec              ExecutionSessionSpec `json:"spec"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *ConditionalExecutionSessionRequest) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ConditionalExecutionSessionRequest) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetSpec returns the value of Spec.
+func (s *ConditionalExecutionSessionRequest) GetSpec() ExecutionSessionSpec {
+	return s.Spec
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *ConditionalExecutionSessionRequest) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ConditionalExecutionSessionRequest) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetSpec sets the value of Spec.
+func (s *ConditionalExecutionSessionRequest) SetSpec(val ExecutionSessionSpec) {
+	s.Spec = val
 }
 
 // Ref: #/components/schemas/ContainerSpec
@@ -2577,6 +2854,55 @@ func (s *CurrentAPIKeyResponse) SetIsActive(val bool) {
 func (s *CurrentAPIKeyResponse) SetExpiresAt(val time.Time) {
 	s.ExpiresAt = val
 }
+
+type DeleteSandboxManagedFileBadRequest ErrorEnvelope
+
+func (*DeleteSandboxManagedFileBadRequest) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxManagedFileConflict ErrorEnvelope
+
+func (*DeleteSandboxManagedFileConflict) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxManagedFileForbidden ErrorEnvelope
+
+func (*DeleteSandboxManagedFileForbidden) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxManagedFileNotFound ErrorEnvelope
+
+func (*DeleteSandboxManagedFileNotFound) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxManagedFileServiceUnavailable ErrorEnvelope
+
+func (*DeleteSandboxManagedFileServiceUnavailable) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxManagedFileUnauthorized ErrorEnvelope
+
+func (*DeleteSandboxManagedFileUnauthorized) deleteSandboxManagedFileRes() {}
+
+type DeleteSandboxNamespacedManagedFileBadRequest ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileBadRequest) deleteSandboxNamespacedManagedFileRes() {}
+
+type DeleteSandboxNamespacedManagedFileConflict ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileConflict) deleteSandboxNamespacedManagedFileRes() {}
+
+type DeleteSandboxNamespacedManagedFileForbidden ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileForbidden) deleteSandboxNamespacedManagedFileRes() {}
+
+type DeleteSandboxNamespacedManagedFileNotFound ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileNotFound) deleteSandboxNamespacedManagedFileRes() {}
+
+type DeleteSandboxNamespacedManagedFileServiceUnavailable ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileServiceUnavailable) deleteSandboxNamespacedManagedFileRes() {
+}
+
+type DeleteSandboxNamespacedManagedFileUnauthorized ErrorEnvelope
+
+func (*DeleteSandboxNamespacedManagedFileUnauthorized) deleteSandboxNamespacedManagedFileRes() {}
 
 // Ref: #/components/schemas/DeviceLoginPollRequest
 type DeviceLoginPollRequest struct {
@@ -4887,14 +5213,72 @@ func (s *FileInfoType) UnmarshalText(data []byte) error {
 	}
 }
 
+type FindSandboxRestartOperationBadRequest ErrorEnvelope
+
+func (*FindSandboxRestartOperationBadRequest) findSandboxRestartOperationRes() {}
+
+type FindSandboxRestartOperationConflict ErrorEnvelope
+
+func (*FindSandboxRestartOperationConflict) findSandboxRestartOperationRes() {}
+
+type FindSandboxRestartOperationForbidden ErrorEnvelope
+
+func (*FindSandboxRestartOperationForbidden) findSandboxRestartOperationRes() {}
+
+type FindSandboxRestartOperationNotFound ErrorEnvelope
+
+func (*FindSandboxRestartOperationNotFound) findSandboxRestartOperationRes() {}
+
+type FindSandboxRestartOperationServiceUnavailable ErrorEnvelope
+
+func (*FindSandboxRestartOperationServiceUnavailable) findSandboxRestartOperationRes() {}
+
+type FindSandboxRestartOperationUnauthorized ErrorEnvelope
+
+func (*FindSandboxRestartOperationUnauthorized) findSandboxRestartOperationRes() {}
+
+type FindSandboxSnapshotRestoreOperationBadRequest ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationBadRequest) findSandboxSnapshotRestoreOperationRes() {}
+
+type FindSandboxSnapshotRestoreOperationConflict ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationConflict) findSandboxSnapshotRestoreOperationRes() {}
+
+type FindSandboxSnapshotRestoreOperationForbidden ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationForbidden) findSandboxSnapshotRestoreOperationRes() {}
+
+type FindSandboxSnapshotRestoreOperationNotFound ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationNotFound) findSandboxSnapshotRestoreOperationRes() {}
+
+type FindSandboxSnapshotRestoreOperationServiceUnavailable ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationServiceUnavailable) findSandboxSnapshotRestoreOperationRes() {
+}
+
+type FindSandboxSnapshotRestoreOperationUnauthorized ErrorEnvelope
+
+func (*FindSandboxSnapshotRestoreOperationUnauthorized) findSandboxSnapshotRestoreOperationRes() {}
+
 // Ref: #/components/schemas/ForkSandboxConfig
 type ForkSandboxConfig struct {
+	// Override automatic resume for the child at creation. Omit to inherit the source setting. False
+	// also disables resume on all inherited ingress routes atomically; the child still permits an
+	// explicit resume. Retries with the same Idempotency-Key must retain any explicit override.
+	AutoResume OptBool `json:"auto_resume"`
 	// Runtime soft time-to-live in seconds for the forked sandbox. Omit to inherit the source setting.
 	// Set 0 to disable soft expiration.
 	TTL OptInt32 `json:"ttl"`
 	// Sandbox hard time-to-live in seconds for the forked sandbox. Omit to inherit the source setting.
 	// Set 0 to disable hard expiration.
 	HardTTL OptInt32 `json:"hard_ttl"`
+}
+
+// GetAutoResume returns the value of AutoResume.
+func (s *ForkSandboxConfig) GetAutoResume() OptBool {
+	return s.AutoResume
 }
 
 // GetTTL returns the value of TTL.
@@ -4905,6 +5289,11 @@ func (s *ForkSandboxConfig) GetTTL() OptInt32 {
 // GetHardTTL returns the value of HardTTL.
 func (s *ForkSandboxConfig) GetHardTTL() OptInt32 {
 	return s.HardTTL
+}
+
+// SetAutoResume sets the value of AutoResume.
+func (s *ForkSandboxConfig) SetAutoResume(val OptBool) {
+	s.AutoResume = val
 }
 
 // SetTTL sets the value of TTL.
@@ -4922,11 +5311,21 @@ func (s *ForkSandboxConfig) SetHardTTL(val OptInt32) {
 // before the paused child sandbox is created.
 // Ref: #/components/schemas/ForkSandboxRequest
 type ForkSandboxRequest struct {
+	// Optional exact source runtime generation. Requires a stable Idempotency-Key. First admission
+	// checks the source under its lifecycle lock; retries compare the original accepted capture, even
+	// after the parent resumes. Zero is valid for a never-run paused source. With memory=true the value
+	// must be below the maximum. Keep the original value and key after an uncertain response.
+	ExpectedRuntimeGeneration OptInt64 `json:"expected_runtime_generation"`
 	// Preserve process execution state together with RootFS. Requires Idempotency-Key. A paused source
 	// must have a retained memory image; a running source is captured and resumed before completion.
 	// Unsupported or unavailable memory never falls back to filesystem-only.
 	Memory OptBool              `json:"memory"`
 	Config OptForkSandboxConfig `json:"config"`
+}
+
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *ForkSandboxRequest) GetExpectedRuntimeGeneration() OptInt64 {
+	return s.ExpectedRuntimeGeneration
 }
 
 // GetMemory returns the value of Memory.
@@ -4937,6 +5336,11 @@ func (s *ForkSandboxRequest) GetMemory() OptBool {
 // GetConfig returns the value of Config.
 func (s *ForkSandboxRequest) GetConfig() OptForkSandboxConfig {
 	return s.Config
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *ForkSandboxRequest) SetExpectedRuntimeGeneration(val OptInt64) {
+	s.ExpectedRuntimeGeneration = val
 }
 
 // SetMemory sets the value of Memory.
@@ -5042,6 +5446,198 @@ func (s *GatewayMetadataGatewayMode) UnmarshalText(data []byte) error {
 	}
 }
 
+type GetCapturedSandboxRootFSSnapshotBadRequest ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotBadRequest) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetCapturedSandboxRootFSSnapshotConflict ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotConflict) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetCapturedSandboxRootFSSnapshotForbidden ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotForbidden) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetCapturedSandboxRootFSSnapshotNotFound ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotNotFound) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetCapturedSandboxRootFSSnapshotServiceUnavailable ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotServiceUnavailable) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetCapturedSandboxRootFSSnapshotUnauthorized ErrorEnvelope
+
+func (*GetCapturedSandboxRootFSSnapshotUnauthorized) getCapturedSandboxRootFSSnapshotRes() {}
+
+type GetSandboxHealthBadRequest ErrorEnvelope
+
+func (*GetSandboxHealthBadRequest) getSandboxHealthRes() {}
+
+type GetSandboxHealthForbidden ErrorEnvelope
+
+func (*GetSandboxHealthForbidden) getSandboxHealthRes() {}
+
+type GetSandboxHealthNotFound ErrorEnvelope
+
+func (*GetSandboxHealthNotFound) getSandboxHealthRes() {}
+
+type GetSandboxHealthServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxHealthServiceUnavailable) getSandboxHealthRes() {}
+
+type GetSandboxHealthUnauthorized ErrorEnvelope
+
+func (*GetSandboxHealthUnauthorized) getSandboxHealthRes() {}
+
+type GetSandboxMemoryRestorationBadRequest ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationBadRequest) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxMemoryRestorationConflict ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationConflict) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxMemoryRestorationForbidden ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationForbidden) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxMemoryRestorationNotFound ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationNotFound) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxMemoryRestorationServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationServiceUnavailable) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxMemoryRestorationUnauthorized ErrorEnvelope
+
+func (*GetSandboxMemoryRestorationUnauthorized) getSandboxMemoryRestorationRes() {}
+
+type GetSandboxRestartFinalCaptureBadRequest ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureBadRequest) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartFinalCaptureConflict ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureConflict) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartFinalCaptureForbidden ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureForbidden) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartFinalCaptureNotFound ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureNotFound) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartFinalCaptureServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureServiceUnavailable) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartFinalCaptureUnauthorized ErrorEnvelope
+
+func (*GetSandboxRestartFinalCaptureUnauthorized) getSandboxRestartFinalCaptureRes() {}
+
+type GetSandboxRestartOperationBadRequest ErrorEnvelope
+
+func (*GetSandboxRestartOperationBadRequest) getSandboxRestartOperationRes() {}
+
+type GetSandboxRestartOperationConflict ErrorEnvelope
+
+func (*GetSandboxRestartOperationConflict) getSandboxRestartOperationRes() {}
+
+type GetSandboxRestartOperationForbidden ErrorEnvelope
+
+func (*GetSandboxRestartOperationForbidden) getSandboxRestartOperationRes() {}
+
+type GetSandboxRestartOperationNotFound ErrorEnvelope
+
+func (*GetSandboxRestartOperationNotFound) getSandboxRestartOperationRes() {}
+
+type GetSandboxRestartOperationServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRestartOperationServiceUnavailable) getSandboxRestartOperationRes() {}
+
+type GetSandboxRestartOperationUnauthorized ErrorEnvelope
+
+func (*GetSandboxRestartOperationUnauthorized) getSandboxRestartOperationRes() {}
+
+type GetSandboxRootFSForkBadRequest ErrorEnvelope
+
+func (*GetSandboxRootFSForkBadRequest) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSForkConflict ErrorEnvelope
+
+func (*GetSandboxRootFSForkConflict) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSForkForbidden ErrorEnvelope
+
+func (*GetSandboxRootFSForkForbidden) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSForkLaunchBadRequest ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchBadRequest) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchConflict ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchConflict) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchForbidden ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchForbidden) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchNotFound ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchNotFound) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchServiceUnavailable) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchTooManyRequests ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchTooManyRequests) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkLaunchUnauthorized ErrorEnvelope
+
+func (*GetSandboxRootFSForkLaunchUnauthorized) getSandboxRootFSForkLaunchRes() {}
+
+type GetSandboxRootFSForkNotFound ErrorEnvelope
+
+func (*GetSandboxRootFSForkNotFound) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSForkServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRootFSForkServiceUnavailable) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSForkUnauthorized ErrorEnvelope
+
+func (*GetSandboxRootFSForkUnauthorized) getSandboxRootFSForkRes() {}
+
+type GetSandboxRootFSIdentityBadRequest ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityBadRequest) getSandboxRootFSIdentityRes() {}
+
+type GetSandboxRootFSIdentityConflict ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityConflict) getSandboxRootFSIdentityRes() {}
+
+type GetSandboxRootFSIdentityForbidden ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityForbidden) getSandboxRootFSIdentityRes() {}
+
+type GetSandboxRootFSIdentityNotFound ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityNotFound) getSandboxRootFSIdentityRes() {}
+
+type GetSandboxRootFSIdentityServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityServiceUnavailable) getSandboxRootFSIdentityRes() {}
+
+type GetSandboxRootFSIdentityUnauthorized ErrorEnvelope
+
+func (*GetSandboxRootFSIdentityUnauthorized) getSandboxRootFSIdentityRes() {}
+
 type GetSandboxRuntimeMetricsBadRequest ErrorEnvelope
 
 func (*GetSandboxRuntimeMetricsBadRequest) getSandboxRuntimeMetricsRes() {}
@@ -5065,6 +5661,57 @@ func (*GetSandboxRuntimeMetricsServiceUnavailable) getSandboxRuntimeMetricsRes()
 type GetSandboxRuntimeMetricsUnauthorized ErrorEnvelope
 
 func (*GetSandboxRuntimeMetricsUnauthorized) getSandboxRuntimeMetricsRes() {}
+
+type GetSandboxSnapshotRestoreFinalCaptureBadRequest ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureBadRequest) getSandboxSnapshotRestoreFinalCaptureRes() {}
+
+type GetSandboxSnapshotRestoreFinalCaptureConflict ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureConflict) getSandboxSnapshotRestoreFinalCaptureRes() {}
+
+type GetSandboxSnapshotRestoreFinalCaptureForbidden ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureForbidden) getSandboxSnapshotRestoreFinalCaptureRes() {}
+
+type GetSandboxSnapshotRestoreFinalCaptureNotFound ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureNotFound) getSandboxSnapshotRestoreFinalCaptureRes() {}
+
+type GetSandboxSnapshotRestoreFinalCaptureServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureServiceUnavailable) getSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type GetSandboxSnapshotRestoreFinalCaptureUnauthorized ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreFinalCaptureUnauthorized) getSandboxSnapshotRestoreFinalCaptureRes() {
+}
+
+type GetSandboxSnapshotRestoreOperationBadRequest ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationBadRequest) getSandboxSnapshotRestoreOperationRes() {}
+
+type GetSandboxSnapshotRestoreOperationConflict ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationConflict) getSandboxSnapshotRestoreOperationRes() {}
+
+type GetSandboxSnapshotRestoreOperationForbidden ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationForbidden) getSandboxSnapshotRestoreOperationRes() {}
+
+type GetSandboxSnapshotRestoreOperationNotFound ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationNotFound) getSandboxSnapshotRestoreOperationRes() {}
+
+type GetSandboxSnapshotRestoreOperationServiceUnavailable ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationServiceUnavailable) getSandboxSnapshotRestoreOperationRes() {
+}
+
+type GetSandboxSnapshotRestoreOperationUnauthorized ErrorEnvelope
+
+func (*GetSandboxSnapshotRestoreOperationUnauthorized) getSandboxSnapshotRestoreOperationRes() {}
 
 // Ref: #/components/schemas/HTTPHeadersProjection
 type HTTPHeadersProjection struct {
@@ -5333,6 +5980,66 @@ func (s *Identity) SetCreatedAt(val int64) {
 	s.CreatedAt = val
 }
 
+type InspectSandboxManagedFilesBadRequest ErrorEnvelope
+
+func (*InspectSandboxManagedFilesBadRequest) inspectSandboxManagedFilesRes() {}
+
+type InspectSandboxManagedFilesConflict ErrorEnvelope
+
+func (*InspectSandboxManagedFilesConflict) inspectSandboxManagedFilesRes() {}
+
+type InspectSandboxManagedFilesForbidden ErrorEnvelope
+
+func (*InspectSandboxManagedFilesForbidden) inspectSandboxManagedFilesRes() {}
+
+type InspectSandboxManagedFilesNotFound ErrorEnvelope
+
+func (*InspectSandboxManagedFilesNotFound) inspectSandboxManagedFilesRes() {}
+
+type InspectSandboxManagedFilesServiceUnavailable ErrorEnvelope
+
+func (*InspectSandboxManagedFilesServiceUnavailable) inspectSandboxManagedFilesRes() {}
+
+type InspectSandboxManagedFilesUnauthorized ErrorEnvelope
+
+func (*InspectSandboxManagedFilesUnauthorized) inspectSandboxManagedFilesRes() {}
+
+type LaunchSandboxRootFSForkAccepted SuccessSandboxRootFSForkLaunchResponse
+
+func (*LaunchSandboxRootFSForkAccepted) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkBadRequest ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkBadRequest) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkConflict ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkConflict) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkForbidden ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkForbidden) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkNotFound ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkNotFound) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkOK SuccessSandboxRootFSForkLaunchResponse
+
+func (*LaunchSandboxRootFSForkOK) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkServiceUnavailable ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkServiceUnavailable) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkTooManyRequests ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkTooManyRequests) launchSandboxRootFSForkRes() {}
+
+type LaunchSandboxRootFSForkUnauthorized ErrorEnvelope
+
+func (*LaunchSandboxRootFSForkUnauthorized) launchSandboxRootFSForkRes() {}
+
 // Ref: #/components/schemas/LoginRequest
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -5407,6 +6114,71 @@ func (s *LoginResponse) SetUser(val User) {
 	s.User = val
 }
 
+type LookupSandboxMemoryOperationAction string
+
+const (
+	LookupSandboxMemoryOperationActionPause  LookupSandboxMemoryOperationAction = "pause"
+	LookupSandboxMemoryOperationActionResume LookupSandboxMemoryOperationAction = "resume"
+)
+
+// AllValues returns all LookupSandboxMemoryOperationAction values.
+func (LookupSandboxMemoryOperationAction) AllValues() []LookupSandboxMemoryOperationAction {
+	return []LookupSandboxMemoryOperationAction{
+		LookupSandboxMemoryOperationActionPause,
+		LookupSandboxMemoryOperationActionResume,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s LookupSandboxMemoryOperationAction) MarshalText() ([]byte, error) {
+	switch s {
+	case LookupSandboxMemoryOperationActionPause:
+		return []byte(s), nil
+	case LookupSandboxMemoryOperationActionResume:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *LookupSandboxMemoryOperationAction) UnmarshalText(data []byte) error {
+	switch LookupSandboxMemoryOperationAction(data) {
+	case LookupSandboxMemoryOperationActionPause:
+		*s = LookupSandboxMemoryOperationActionPause
+		return nil
+	case LookupSandboxMemoryOperationActionResume:
+		*s = LookupSandboxMemoryOperationActionResume
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type LookupSandboxMemoryOperationBadRequest ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationBadRequest) lookupSandboxMemoryOperationRes() {}
+
+type LookupSandboxMemoryOperationConflict ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationConflict) lookupSandboxMemoryOperationRes() {}
+
+type LookupSandboxMemoryOperationForbidden ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationForbidden) lookupSandboxMemoryOperationRes() {}
+
+type LookupSandboxMemoryOperationNotFound ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationNotFound) lookupSandboxMemoryOperationRes() {}
+
+type LookupSandboxMemoryOperationServiceUnavailable ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationServiceUnavailable) lookupSandboxMemoryOperationRes() {}
+
+type LookupSandboxMemoryOperationUnauthorized ErrorEnvelope
+
+func (*LookupSandboxMemoryOperationUnauthorized) lookupSandboxMemoryOperationRes() {}
+
 // Model Context Protocol operation policy.
 // Ref: #/components/schemas/MCPProtocolRule
 type MCPProtocolRule struct {
@@ -5450,6 +6222,120 @@ func (s *MCPToolPolicy) SetAllowed(val []string) {
 // SetDenied sets the value of Denied.
 func (s *MCPToolPolicy) SetDenied(val []string) {
 	s.Denied = val
+}
+
+type ManagedFileMutationSequence string
+
+// Ref: #/components/schemas/ManagedFileWriteRequest
+type ManagedFileWriteRequest struct {
+	ExpectedMutationSequence ManagedFileMutationSequence `json:"expected_mutation_sequence"`
+	// Base64-encoded file bytes, at most 4 MiB decoded. Empty content is permitted.
+	Content []byte `json:"content"`
+}
+
+// GetExpectedMutationSequence returns the value of ExpectedMutationSequence.
+func (s *ManagedFileWriteRequest) GetExpectedMutationSequence() ManagedFileMutationSequence {
+	return s.ExpectedMutationSequence
+}
+
+// GetContent returns the value of Content.
+func (s *ManagedFileWriteRequest) GetContent() []byte {
+	return s.Content
+}
+
+// SetExpectedMutationSequence sets the value of ExpectedMutationSequence.
+func (s *ManagedFileWriteRequest) SetExpectedMutationSequence(val ManagedFileMutationSequence) {
+	s.ExpectedMutationSequence = val
+}
+
+// SetContent sets the value of Content.
+func (s *ManagedFileWriteRequest) SetContent(val []byte) {
+	s.Content = val
+}
+
+// Ref: #/components/schemas/ManagedFilesState
+type ManagedFilesState struct {
+	RuntimeGeneration int64                       `json:"runtime_generation"`
+	MutationSequence  ManagedFileMutationSequence `json:"mutation_sequence"`
+	// Capacity of this runtime's node-owned noswap tmpfs; excluded from durable RootFS.
+	SizeBytes int64 `json:"size_bytes"`
+	// Initial guest bind path. Guest pivot or mount changes do not redirect platform writes.
+	GuestPath ManagedFilesStateGuestPath `json:"guest_path"`
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ManagedFilesState) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetMutationSequence returns the value of MutationSequence.
+func (s *ManagedFilesState) GetMutationSequence() ManagedFileMutationSequence {
+	return s.MutationSequence
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *ManagedFilesState) GetSizeBytes() int64 {
+	return s.SizeBytes
+}
+
+// GetGuestPath returns the value of GuestPath.
+func (s *ManagedFilesState) GetGuestPath() ManagedFilesStateGuestPath {
+	return s.GuestPath
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ManagedFilesState) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetMutationSequence sets the value of MutationSequence.
+func (s *ManagedFilesState) SetMutationSequence(val ManagedFileMutationSequence) {
+	s.MutationSequence = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *ManagedFilesState) SetSizeBytes(val int64) {
+	s.SizeBytes = val
+}
+
+// SetGuestPath sets the value of GuestPath.
+func (s *ManagedFilesState) SetGuestPath(val ManagedFilesStateGuestPath) {
+	s.GuestPath = val
+}
+
+// Initial guest bind path. Guest pivot or mount changes do not redirect platform writes.
+type ManagedFilesStateGuestPath string
+
+const (
+	ManagedFilesStateGuestPathSlashRunSlashSandbox0SlashCredentials ManagedFilesStateGuestPath = "/run/sandbox0/credentials"
+)
+
+// AllValues returns all ManagedFilesStateGuestPath values.
+func (ManagedFilesStateGuestPath) AllValues() []ManagedFilesStateGuestPath {
+	return []ManagedFilesStateGuestPath{
+		ManagedFilesStateGuestPathSlashRunSlashSandbox0SlashCredentials,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ManagedFilesStateGuestPath) MarshalText() ([]byte, error) {
+	switch s {
+	case ManagedFilesStateGuestPathSlashRunSlashSandbox0SlashCredentials:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ManagedFilesStateGuestPath) UnmarshalText(data []byte) error {
+	switch ManagedFilesStateGuestPath(data) {
+	case ManagedFilesStateGuestPathSlashRunSlashSandbox0SlashCredentials:
+		*s = ManagedFilesStateGuestPathSlashRunSlashSandbox0SlashCredentials
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 type MetricsGetOK struct {
@@ -5636,6 +6522,51 @@ func (s *NetworkEgressPolicy) SetProxy(val OptEgressProxyPolicy) {
 	s.Proxy = val
 }
 
+// NewNilDateTime returns new NilDateTime with value set to v.
+func NewNilDateTime(v time.Time) NilDateTime {
+	return NilDateTime{
+		Value: v,
+	}
+}
+
+// NilDateTime is nullable time.Time.
+type NilDateTime struct {
+	Value time.Time
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilDateTime) SetTo(v time.Time) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o NilDateTime) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *NilDateTime) SetToNull() {
+	o.Null = true
+	var v time.Time
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilDateTime) Get() (v time.Time, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewNilInt64 returns new NilInt64 with value set to v.
 func NewNilInt64(v int64) NilInt64 {
 	return NilInt64{
@@ -5735,6 +6666,52 @@ func (s *ObservabilityEventSource) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// NewOptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl returns new OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl with value set to v.
+func NewOptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl(v APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl {
+	return OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl is optional APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl.
+type OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl struct {
+	Value APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl
+	Set   bool
+}
+
+// IsSet returns true if OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl was set.
+func (o OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) Reset() {
+	var v APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) SetTo(v APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) Get() (v APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) Or(d APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) APIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // NewOptBool returns new OptBool with value set to v.
@@ -9238,6 +10215,52 @@ func (o OptSandboxLifecycleStatus) Or(d SandboxLifecycleStatus) SandboxLifecycle
 	return d
 }
 
+// NewOptSandboxMemoryOperationReason returns new OptSandboxMemoryOperationReason with value set to v.
+func NewOptSandboxMemoryOperationReason(v SandboxMemoryOperationReason) OptSandboxMemoryOperationReason {
+	return OptSandboxMemoryOperationReason{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxMemoryOperationReason is optional SandboxMemoryOperationReason.
+type OptSandboxMemoryOperationReason struct {
+	Value SandboxMemoryOperationReason
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxMemoryOperationReason was set.
+func (o OptSandboxMemoryOperationReason) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxMemoryOperationReason) Reset() {
+	var v SandboxMemoryOperationReason
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxMemoryOperationReason) SetTo(v SandboxMemoryOperationReason) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxMemoryOperationReason) Get() (v SandboxMemoryOperationReason, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxMemoryOperationReason) Or(d SandboxMemoryOperationReason) SandboxMemoryOperationReason {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxNetworkPolicy returns new OptSandboxNetworkPolicy with value set to v.
 func NewOptSandboxNetworkPolicy(v SandboxNetworkPolicy) OptSandboxNetworkPolicy {
 	return OptSandboxNetworkPolicy{
@@ -9514,6 +10537,52 @@ func (o OptSandboxObservabilityOutcome) Or(d SandboxObservabilityOutcome) Sandbo
 	return d
 }
 
+// NewOptSandboxPauseRequest returns new OptSandboxPauseRequest with value set to v.
+func NewOptSandboxPauseRequest(v SandboxPauseRequest) OptSandboxPauseRequest {
+	return OptSandboxPauseRequest{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxPauseRequest is optional SandboxPauseRequest.
+type OptSandboxPauseRequest struct {
+	Value SandboxPauseRequest
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxPauseRequest was set.
+func (o OptSandboxPauseRequest) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxPauseRequest) Reset() {
+	var v SandboxPauseRequest
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxPauseRequest) SetTo(v SandboxPauseRequest) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxPauseRequest) Get() (v SandboxPauseRequest, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxPauseRequest) Or(d SandboxPauseRequest) SandboxPauseRequest {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxPreviewCreateRequestProtocol returns new OptSandboxPreviewCreateRequestProtocol with value set to v.
 func NewOptSandboxPreviewCreateRequestProtocol(v SandboxPreviewCreateRequestProtocol) OptSandboxPreviewCreateRequestProtocol {
 	return OptSandboxPreviewCreateRequestProtocol{
@@ -9698,6 +10767,190 @@ func (o OptSandboxResourceUsage) Or(d SandboxResourceUsage) SandboxResourceUsage
 	return d
 }
 
+// NewOptSandboxRestartOperationReason returns new OptSandboxRestartOperationReason with value set to v.
+func NewOptSandboxRestartOperationReason(v SandboxRestartOperationReason) OptSandboxRestartOperationReason {
+	return OptSandboxRestartOperationReason{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRestartOperationReason is optional SandboxRestartOperationReason.
+type OptSandboxRestartOperationReason struct {
+	Value SandboxRestartOperationReason
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRestartOperationReason was set.
+func (o OptSandboxRestartOperationReason) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRestartOperationReason) Reset() {
+	var v SandboxRestartOperationReason
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRestartOperationReason) SetTo(v SandboxRestartOperationReason) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRestartOperationReason) Get() (v SandboxRestartOperationReason, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRestartOperationReason) Or(d SandboxRestartOperationReason) SandboxRestartOperationReason {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRestartRetryObservation returns new OptSandboxRestartRetryObservation with value set to v.
+func NewOptSandboxRestartRetryObservation(v SandboxRestartRetryObservation) OptSandboxRestartRetryObservation {
+	return OptSandboxRestartRetryObservation{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRestartRetryObservation is optional SandboxRestartRetryObservation.
+type OptSandboxRestartRetryObservation struct {
+	Value SandboxRestartRetryObservation
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRestartRetryObservation was set.
+func (o OptSandboxRestartRetryObservation) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRestartRetryObservation) Reset() {
+	var v SandboxRestartRetryObservation
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRestartRetryObservation) SetTo(v SandboxRestartRetryObservation) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRestartRetryObservation) Get() (v SandboxRestartRetryObservation, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRestartRetryObservation) Or(d SandboxRestartRetryObservation) SandboxRestartRetryObservation {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRestartRetryObservationBlockedReason returns new OptSandboxRestartRetryObservationBlockedReason with value set to v.
+func NewOptSandboxRestartRetryObservationBlockedReason(v SandboxRestartRetryObservationBlockedReason) OptSandboxRestartRetryObservationBlockedReason {
+	return OptSandboxRestartRetryObservationBlockedReason{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRestartRetryObservationBlockedReason is optional SandboxRestartRetryObservationBlockedReason.
+type OptSandboxRestartRetryObservationBlockedReason struct {
+	Value SandboxRestartRetryObservationBlockedReason
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRestartRetryObservationBlockedReason was set.
+func (o OptSandboxRestartRetryObservationBlockedReason) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRestartRetryObservationBlockedReason) Reset() {
+	var v SandboxRestartRetryObservationBlockedReason
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRestartRetryObservationBlockedReason) SetTo(v SandboxRestartRetryObservationBlockedReason) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRestartRetryObservationBlockedReason) Get() (v SandboxRestartRetryObservationBlockedReason, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRestartRetryObservationBlockedReason) Or(d SandboxRestartRetryObservationBlockedReason) SandboxRestartRetryObservationBlockedReason {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxRestartRetryObservationObservedStage returns new OptSandboxRestartRetryObservationObservedStage with value set to v.
+func NewOptSandboxRestartRetryObservationObservedStage(v SandboxRestartRetryObservationObservedStage) OptSandboxRestartRetryObservationObservedStage {
+	return OptSandboxRestartRetryObservationObservedStage{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxRestartRetryObservationObservedStage is optional SandboxRestartRetryObservationObservedStage.
+type OptSandboxRestartRetryObservationObservedStage struct {
+	Value SandboxRestartRetryObservationObservedStage
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxRestartRetryObservationObservedStage was set.
+func (o OptSandboxRestartRetryObservationObservedStage) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxRestartRetryObservationObservedStage) Reset() {
+	var v SandboxRestartRetryObservationObservedStage
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxRestartRetryObservationObservedStage) SetTo(v SandboxRestartRetryObservationObservedStage) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxRestartRetryObservationObservedStage) Get() (v SandboxRestartRetryObservationObservedStage, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxRestartRetryObservationObservedStage) Or(d SandboxRestartRetryObservationObservedStage) SandboxRestartRetryObservationObservedStage {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptSandboxRuntimeMetricGapDimensions returns new OptSandboxRuntimeMetricGapDimensions with value set to v.
 func NewOptSandboxRuntimeMetricGapDimensions(v SandboxRuntimeMetricGapDimensions) OptSandboxRuntimeMetricGapDimensions {
 	return OptSandboxRuntimeMetricGapDimensions{
@@ -9876,6 +11129,52 @@ func (o OptSandboxSSHConnection) Get() (v SandboxSSHConnection, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptSandboxSSHConnection) Or(d SandboxSSHConnection) SandboxSSHConnection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptSandboxSnapshotRestoreOperationReason returns new OptSandboxSnapshotRestoreOperationReason with value set to v.
+func NewOptSandboxSnapshotRestoreOperationReason(v SandboxSnapshotRestoreOperationReason) OptSandboxSnapshotRestoreOperationReason {
+	return OptSandboxSnapshotRestoreOperationReason{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptSandboxSnapshotRestoreOperationReason is optional SandboxSnapshotRestoreOperationReason.
+type OptSandboxSnapshotRestoreOperationReason struct {
+	Value SandboxSnapshotRestoreOperationReason
+	Set   bool
+}
+
+// IsSet returns true if OptSandboxSnapshotRestoreOperationReason was set.
+func (o OptSandboxSnapshotRestoreOperationReason) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptSandboxSnapshotRestoreOperationReason) Reset() {
+	var v SandboxSnapshotRestoreOperationReason
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptSandboxSnapshotRestoreOperationReason) SetTo(v SandboxSnapshotRestoreOperationReason) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptSandboxSnapshotRestoreOperationReason) Get() (v SandboxSnapshotRestoreOperationReason, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptSandboxSnapshotRestoreOperationReason) Or(d SandboxSnapshotRestoreOperationReason) SandboxSnapshotRestoreOperationReason {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -10554,7 +11853,11 @@ func (s *PTYSize) SetCols(val OptInt32) {
 
 // Ref: #/components/schemas/PauseSandboxResponse
 type PauseSandboxResponse struct {
-	SandboxID string `json:"sandbox_id"`
+	// Exact checkpoint operation accepted for a conditional memory pause; stable across retries.
+	OperationID OptString `json:"operation_id"`
+	// Source runtime generation bound by the conditional memory pause.
+	RuntimeGeneration OptInt64 `json:"runtime_generation"`
+	SandboxID         string   `json:"sandbox_id"`
 	// True when checkpoint persistence has finished, runtime deletion has been accepted, and the sandbox
 	// is paused.
 	Paused bool `json:"paused"`
@@ -10563,6 +11866,16 @@ type PauseSandboxResponse struct {
 	ResourceUsage OptSandboxResourceUsage   `json:"resource_usage"`
 	UpdatedMemory OptString                 `json:"updated_memory"`
 	UpdatedCPU    OptString                 `json:"updated_cpu"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *PauseSandboxResponse) GetOperationID() OptString {
+	return s.OperationID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *PauseSandboxResponse) GetRuntimeGeneration() OptInt64 {
+	return s.RuntimeGeneration
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -10593,6 +11906,16 @@ func (s *PauseSandboxResponse) GetUpdatedMemory() OptString {
 // GetUpdatedCPU returns the value of UpdatedCPU.
 func (s *PauseSandboxResponse) GetUpdatedCPU() OptString {
 	return s.UpdatedCPU
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *PauseSandboxResponse) SetOperationID(val OptString) {
+	s.OperationID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *PauseSandboxResponse) SetRuntimeGeneration(val OptInt64) {
+	s.RuntimeGeneration = val
 }
 
 // SetSandboxID sets the value of SandboxID.
@@ -11349,6 +12672,109 @@ func (s *REPLReadyMode) UnmarshalText(data []byte) error {
 	}
 }
 
+type ReadSandboxManagedFileBadRequest ErrorEnvelope
+
+func (*ReadSandboxManagedFileBadRequest) readSandboxManagedFileRes() {}
+
+type ReadSandboxManagedFileConflict ErrorEnvelope
+
+func (*ReadSandboxManagedFileConflict) readSandboxManagedFileRes() {}
+
+type ReadSandboxManagedFileForbidden ErrorEnvelope
+
+func (*ReadSandboxManagedFileForbidden) readSandboxManagedFileRes() {}
+
+type ReadSandboxManagedFileNotFound ErrorEnvelope
+
+func (*ReadSandboxManagedFileNotFound) readSandboxManagedFileRes() {}
+
+type ReadSandboxManagedFileServiceUnavailable ErrorEnvelope
+
+func (*ReadSandboxManagedFileServiceUnavailable) readSandboxManagedFileRes() {}
+
+type ReadSandboxManagedFileUnauthorized ErrorEnvelope
+
+func (*ReadSandboxManagedFileUnauthorized) readSandboxManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileBadRequest ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileBadRequest) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileConflict ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileConflict) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileForbidden ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileForbidden) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileNotFound ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileNotFound) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileServiceUnavailable ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileServiceUnavailable) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxNamespacedManagedFileUnauthorized ErrorEnvelope
+
+func (*ReadSandboxNamespacedManagedFileUnauthorized) readSandboxNamespacedManagedFileRes() {}
+
+type ReadSandboxRestartFinalCaptureFileBadRequest ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileBadRequest) readSandboxRestartFinalCaptureFileRes() {}
+
+type ReadSandboxRestartFinalCaptureFileConflict ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileConflict) readSandboxRestartFinalCaptureFileRes() {}
+
+type ReadSandboxRestartFinalCaptureFileForbidden ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileForbidden) readSandboxRestartFinalCaptureFileRes() {}
+
+type ReadSandboxRestartFinalCaptureFileNotFound ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileNotFound) readSandboxRestartFinalCaptureFileRes() {}
+
+type ReadSandboxRestartFinalCaptureFileServiceUnavailable ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileServiceUnavailable) readSandboxRestartFinalCaptureFileRes() {
+}
+
+type ReadSandboxRestartFinalCaptureFileUnauthorized ErrorEnvelope
+
+func (*ReadSandboxRestartFinalCaptureFileUnauthorized) readSandboxRestartFinalCaptureFileRes() {}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileBadRequest ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileBadRequest) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileConflict ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileConflict) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileForbidden ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileForbidden) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileNotFound ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileNotFound) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileServiceUnavailable ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileServiceUnavailable) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type ReadSandboxSnapshotRestoreFinalCaptureFileUnauthorized ErrorEnvelope
+
+func (*ReadSandboxSnapshotRestoreFinalCaptureFileUnauthorized) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
 // Ref: #/components/schemas/RebaseSandboxRootFSRequest
 type RebaseSandboxRootFSRequest struct {
 	// Canonical SHA-256 digest of an already-attested immutable RootFS Base artifact.
@@ -11949,6 +13375,38 @@ func (s *ResourceUsage) SetMemoryBytes(val OptInt64) {
 	s.MemoryBytes = val
 }
 
+type RestartSandboxAccepted SuccessSandboxRestartOperationResponse
+
+func (*RestartSandboxAccepted) restartSandboxRes() {}
+
+type RestartSandboxBadRequest ErrorEnvelope
+
+func (*RestartSandboxBadRequest) restartSandboxRes() {}
+
+type RestartSandboxConflict ErrorEnvelope
+
+func (*RestartSandboxConflict) restartSandboxRes() {}
+
+type RestartSandboxForbidden ErrorEnvelope
+
+func (*RestartSandboxForbidden) restartSandboxRes() {}
+
+type RestartSandboxNotFound ErrorEnvelope
+
+func (*RestartSandboxNotFound) restartSandboxRes() {}
+
+type RestartSandboxOK SuccessSandboxRestartOperationResponse
+
+func (*RestartSandboxOK) restartSandboxRes() {}
+
+type RestartSandboxServiceUnavailable ErrorEnvelope
+
+func (*RestartSandboxServiceUnavailable) restartSandboxRes() {}
+
+type RestartSandboxUnauthorized ErrorEnvelope
+
+func (*RestartSandboxUnauthorized) restartSandboxRes() {}
+
 // Ref: #/components/schemas/RestoreSandboxRootFSRequest
 type RestoreSandboxRootFSRequest struct {
 	SnapshotID string `json:"snapshot_id"`
@@ -12001,13 +13459,75 @@ func (s *RestoreSandboxRootFSResponse) SetStatus(val SandboxLifecycleStatus) {
 	s.Status = val
 }
 
+type RestoreSandboxSnapshotAccepted SuccessSandboxSnapshotRestoreOperationResponse
+
+func (*RestoreSandboxSnapshotAccepted) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotBadRequest ErrorEnvelope
+
+func (*RestoreSandboxSnapshotBadRequest) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotConflict ErrorEnvelope
+
+func (*RestoreSandboxSnapshotConflict) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotForbidden ErrorEnvelope
+
+func (*RestoreSandboxSnapshotForbidden) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotNotFound ErrorEnvelope
+
+func (*RestoreSandboxSnapshotNotFound) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotOK SuccessSandboxSnapshotRestoreOperationResponse
+
+func (*RestoreSandboxSnapshotOK) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotServiceUnavailable ErrorEnvelope
+
+func (*RestoreSandboxSnapshotServiceUnavailable) restoreSandboxSnapshotRes() {}
+
+type RestoreSandboxSnapshotUnauthorized ErrorEnvelope
+
+func (*RestoreSandboxSnapshotUnauthorized) restoreSandboxSnapshotRes() {}
+
 // Ref: #/components/schemas/ResumeSandboxResponse
 type ResumeSandboxResponse struct {
-	SandboxID string `json:"sandbox_id"`
-	// True after a command-ready runtime has committed. False means an accepted durable resume is still
-	// pending (memory retry, cleanup, or RootFS fallback); poll sandbox status until running.
+	// Authenticated caller request for this conditional memory restore, distinct from the capture
+	// operation and internal worker lifecycle.
+	OperationID OptString `json:"operation_id"`
+	// Exact retained capture restored by this conditional request.
+	CheckpointID OptString `json:"checkpoint_id"`
+	// Source generation bound by this conditional request.
+	FromRuntimeGeneration OptInt64 `json:"from_runtime_generation"`
+	// Committed restored runtime generation, exactly one greater than from_runtime_generation. These
+	// conditional result coordinates are not a current process or storage health attestation.
+	RuntimeGeneration OptInt64 `json:"runtime_generation"`
+	SandboxID         string   `json:"sandbox_id"`
+	// True after the requested runtime has committed. Memory restoration never implicitly starts
+	// filesystem-only replacement processes.
 	Resumed        bool      `json:"resumed"`
 	RestoredMemory OptString `json:"restored_memory"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *ResumeSandboxResponse) GetOperationID() OptString {
+	return s.OperationID
+}
+
+// GetCheckpointID returns the value of CheckpointID.
+func (s *ResumeSandboxResponse) GetCheckpointID() OptString {
+	return s.CheckpointID
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *ResumeSandboxResponse) GetFromRuntimeGeneration() OptInt64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *ResumeSandboxResponse) GetRuntimeGeneration() OptInt64 {
+	return s.RuntimeGeneration
 }
 
 // GetSandboxID returns the value of SandboxID.
@@ -12023,6 +13543,26 @@ func (s *ResumeSandboxResponse) GetResumed() bool {
 // GetRestoredMemory returns the value of RestoredMemory.
 func (s *ResumeSandboxResponse) GetRestoredMemory() OptString {
 	return s.RestoredMemory
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *ResumeSandboxResponse) SetOperationID(val OptString) {
+	s.OperationID = val
+}
+
+// SetCheckpointID sets the value of CheckpointID.
+func (s *ResumeSandboxResponse) SetCheckpointID(val OptString) {
+	s.CheckpointID = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *ResumeSandboxResponse) SetFromRuntimeGeneration(val OptInt64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *ResumeSandboxResponse) SetRuntimeGeneration(val OptInt64) {
+	s.RuntimeGeneration = val
 }
 
 // SetSandboxID sets the value of SandboxID.
@@ -13619,12 +15159,20 @@ func (s *SandboxConfigEnvVars) init() SandboxConfigEnvVars {
 	return m
 }
 
+// Resume execution-state selection. Conditional memory resume requires all three body fields
+// together with Idempotency-Key.
 // Ref: #/components/schemas/SandboxExecutionStateRequest
 type SandboxExecutionStateRequest struct {
-	// On pause, retain process memory and execution state; capture failures remain errors. On resume,
-	// prefer retained memory and fall back to the committed RootFS if memory is missing, incompatible,
-	// or cannot be restored. Omitted or false uses filesystem-only behavior.
+	// Require the retained execution image. Missing, incompatible, or failed memory restoration remains
+	// an error and never falls back to new processes. Omitted or false explicitly selects
+	// filesystem-only behavior.
 	Memory OptBool `json:"memory"`
+	// Exact paused source generation. Zero is valid for a never-run memory fork. Requires memory=true,
+	// checkpoint_id and Idempotency-Key.
+	ExpectedRuntimeGeneration OptInt64 `json:"expected_runtime_generation"`
+	// Exact retained capture operation ID, returned as operation_id by a completed conditional memory
+	// pause. Requires memory=true, expected_runtime_generation and Idempotency-Key.
+	CheckpointID OptString `json:"checkpoint_id"`
 }
 
 // GetMemory returns the value of Memory.
@@ -13632,9 +15180,29 @@ func (s *SandboxExecutionStateRequest) GetMemory() OptBool {
 	return s.Memory
 }
 
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *SandboxExecutionStateRequest) GetExpectedRuntimeGeneration() OptInt64 {
+	return s.ExpectedRuntimeGeneration
+}
+
+// GetCheckpointID returns the value of CheckpointID.
+func (s *SandboxExecutionStateRequest) GetCheckpointID() OptString {
+	return s.CheckpointID
+}
+
 // SetMemory sets the value of Memory.
 func (s *SandboxExecutionStateRequest) SetMemory(val OptBool) {
 	s.Memory = val
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *SandboxExecutionStateRequest) SetExpectedRuntimeGeneration(val OptInt64) {
+	s.ExpectedRuntimeGeneration = val
+}
+
+// SetCheckpointID sets the value of CheckpointID.
+func (s *SandboxExecutionStateRequest) SetCheckpointID(val OptString) {
+	s.CheckpointID = val
 }
 
 // Function code executed by procd for a sandbox service request. cluster-gateway owns public ingress
@@ -13790,6 +15358,583 @@ func (s *SandboxFunctionSourceType) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/SandboxHealth
+type SandboxHealth struct {
+	SandboxID         string                    `json:"sandbox_id"`
+	RuntimeGeneration int64                     `json:"runtime_generation"`
+	LifecycleEpoch    int64                     `json:"lifecycle_epoch"`
+	DesiredState      SandboxHealthDesiredState `json:"desired_state"`
+	ActiveLifecycle   bool                      `json:"active_lifecycle"`
+	// Latest regional authority snapshot time; individual checks retain their own observation time.
+	ObservedAt time.Time                `json:"observed_at"`
+	Runtime    SandboxRuntimeHealth     `json:"runtime"`
+	Execution  SandboxHealthObservation `json:"execution"`
+	Terminal   SandboxHealthObservation `json:"terminal"`
+	Storage    SandboxStorageHealth     `json:"storage"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxHealth) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxHealth) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetLifecycleEpoch returns the value of LifecycleEpoch.
+func (s *SandboxHealth) GetLifecycleEpoch() int64 {
+	return s.LifecycleEpoch
+}
+
+// GetDesiredState returns the value of DesiredState.
+func (s *SandboxHealth) GetDesiredState() SandboxHealthDesiredState {
+	return s.DesiredState
+}
+
+// GetActiveLifecycle returns the value of ActiveLifecycle.
+func (s *SandboxHealth) GetActiveLifecycle() bool {
+	return s.ActiveLifecycle
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxHealth) GetObservedAt() time.Time {
+	return s.ObservedAt
+}
+
+// GetRuntime returns the value of Runtime.
+func (s *SandboxHealth) GetRuntime() SandboxRuntimeHealth {
+	return s.Runtime
+}
+
+// GetExecution returns the value of Execution.
+func (s *SandboxHealth) GetExecution() SandboxHealthObservation {
+	return s.Execution
+}
+
+// GetTerminal returns the value of Terminal.
+func (s *SandboxHealth) GetTerminal() SandboxHealthObservation {
+	return s.Terminal
+}
+
+// GetStorage returns the value of Storage.
+func (s *SandboxHealth) GetStorage() SandboxStorageHealth {
+	return s.Storage
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxHealth) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxHealth) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetLifecycleEpoch sets the value of LifecycleEpoch.
+func (s *SandboxHealth) SetLifecycleEpoch(val int64) {
+	s.LifecycleEpoch = val
+}
+
+// SetDesiredState sets the value of DesiredState.
+func (s *SandboxHealth) SetDesiredState(val SandboxHealthDesiredState) {
+	s.DesiredState = val
+}
+
+// SetActiveLifecycle sets the value of ActiveLifecycle.
+func (s *SandboxHealth) SetActiveLifecycle(val bool) {
+	s.ActiveLifecycle = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxHealth) SetObservedAt(val time.Time) {
+	s.ObservedAt = val
+}
+
+// SetRuntime sets the value of Runtime.
+func (s *SandboxHealth) SetRuntime(val SandboxRuntimeHealth) {
+	s.Runtime = val
+}
+
+// SetExecution sets the value of Execution.
+func (s *SandboxHealth) SetExecution(val SandboxHealthObservation) {
+	s.Execution = val
+}
+
+// SetTerminal sets the value of Terminal.
+func (s *SandboxHealth) SetTerminal(val SandboxHealthObservation) {
+	s.Terminal = val
+}
+
+// SetStorage sets the value of Storage.
+func (s *SandboxHealth) SetStorage(val SandboxStorageHealth) {
+	s.Storage = val
+}
+
+type SandboxHealthDesiredState string
+
+const (
+	SandboxHealthDesiredStateActive     SandboxHealthDesiredState = "active"
+	SandboxHealthDesiredStatePaused     SandboxHealthDesiredState = "paused"
+	SandboxHealthDesiredStateTerminated SandboxHealthDesiredState = "terminated"
+)
+
+// AllValues returns all SandboxHealthDesiredState values.
+func (SandboxHealthDesiredState) AllValues() []SandboxHealthDesiredState {
+	return []SandboxHealthDesiredState{
+		SandboxHealthDesiredStateActive,
+		SandboxHealthDesiredStatePaused,
+		SandboxHealthDesiredStateTerminated,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxHealthDesiredState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxHealthDesiredStateActive:
+		return []byte(s), nil
+	case SandboxHealthDesiredStatePaused:
+		return []byte(s), nil
+	case SandboxHealthDesiredStateTerminated:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxHealthDesiredState) UnmarshalText(data []byte) error {
+	switch SandboxHealthDesiredState(data) {
+	case SandboxHealthDesiredStateActive:
+		*s = SandboxHealthDesiredStateActive
+		return nil
+	case SandboxHealthDesiredStatePaused:
+		*s = SandboxHealthDesiredStatePaused
+		return nil
+	case SandboxHealthDesiredStateTerminated:
+		*s = SandboxHealthDesiredStateTerminated
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxHealthObservation
+type SandboxHealthObservation struct {
+	State SandboxHealthObservationState `json:"state"`
+	// Fixed explanation code; no raw backend error or guest output.
+	Reason SandboxHealthObservationReason `json:"reason"`
+	// Evidence origin. Guest evidence and its clock are workload-controlled and advisory.
+	Source SandboxHealthObservationSource `json:"source"`
+	// Original observation time, including cached guest observations; null when unobserved.
+	ObservedAt NilDateTime `json:"observed_at"`
+}
+
+// GetState returns the value of State.
+func (s *SandboxHealthObservation) GetState() SandboxHealthObservationState {
+	return s.State
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxHealthObservation) GetReason() SandboxHealthObservationReason {
+	return s.Reason
+}
+
+// GetSource returns the value of Source.
+func (s *SandboxHealthObservation) GetSource() SandboxHealthObservationSource {
+	return s.Source
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxHealthObservation) GetObservedAt() NilDateTime {
+	return s.ObservedAt
+}
+
+// SetState sets the value of State.
+func (s *SandboxHealthObservation) SetState(val SandboxHealthObservationState) {
+	s.State = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxHealthObservation) SetReason(val SandboxHealthObservationReason) {
+	s.Reason = val
+}
+
+// SetSource sets the value of Source.
+func (s *SandboxHealthObservation) SetSource(val SandboxHealthObservationSource) {
+	s.Source = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxHealthObservation) SetObservedAt(val NilDateTime) {
+	s.ObservedAt = val
+}
+
+// Fixed explanation code; no raw backend error or guest output.
+type SandboxHealthObservationReason string
+
+const (
+	SandboxHealthObservationReasonLaunchUnobserved                 SandboxHealthObservationReason = "launch_unobserved"
+	SandboxHealthObservationReasonRuntimeLivenessUnobserved        SandboxHealthObservationReason = "runtime_liveness_unobserved"
+	SandboxHealthObservationReasonRootfsIdentityUninitialized      SandboxHealthObservationReason = "rootfs_identity_uninitialized"
+	SandboxHealthObservationReasonWriterUnobserved                 SandboxHealthObservationReason = "writer_unobserved"
+	SandboxHealthObservationReasonStorageIoUnobserved              SandboxHealthObservationReason = "storage_io_unobserved"
+	SandboxHealthObservationReasonRuntimeUnavailableForDiagnostics SandboxHealthObservationReason = "runtime_unavailable_for_diagnostics"
+	SandboxHealthObservationReasonRootfsIdentityPresent            SandboxHealthObservationReason = "rootfs_identity_present"
+	SandboxHealthObservationReasonLifecycleTransition              SandboxHealthObservationReason = "lifecycle_transition"
+	SandboxHealthObservationReasonRuntimeNotRequested              SandboxHealthObservationReason = "runtime_not_requested"
+	SandboxHealthObservationReasonRuntimeSlotMissing               SandboxHealthObservationReason = "runtime_slot_missing"
+	SandboxHealthObservationReasonRuntimeSlotInactive              SandboxHealthObservationReason = "runtime_slot_inactive"
+	SandboxHealthObservationReasonRuntimeHeartbeatExpired          SandboxHealthObservationReason = "runtime_heartbeat_expired"
+	SandboxHealthObservationReasonExternalLaunchUnverified         SandboxHealthObservationReason = "external_launch_unverified"
+	SandboxHealthObservationReasonExternalLaunchAuthorityPresent   SandboxHealthObservationReason = "external_launch_authority_present"
+	SandboxHealthObservationReasonCurrentWriterLeasePresent        SandboxHealthObservationReason = "current_writer_lease_present"
+	SandboxHealthObservationReasonCurrentWriterLeaseUnverified     SandboxHealthObservationReason = "current_writer_lease_unverified"
+	SandboxHealthObservationReasonDiagnosticProbeBusy              SandboxHealthObservationReason = "diagnostic_probe_busy"
+	SandboxHealthObservationReasonDiagnosticRuntimeChanged         SandboxHealthObservationReason = "diagnostic_runtime_changed"
+	SandboxHealthObservationReasonExternalRuntimeUnavailable       SandboxHealthObservationReason = "external_runtime_unavailable"
+	SandboxHealthObservationReasonDiagnosticsNotConfigured         SandboxHealthObservationReason = "diagnostics_not_configured"
+	SandboxHealthObservationReasonDiagnosticAddressUnavailable     SandboxHealthObservationReason = "diagnostic_address_unavailable"
+	SandboxHealthObservationReasonDiagnosticAuthUnavailable        SandboxHealthObservationReason = "diagnostic_auth_unavailable"
+	SandboxHealthObservationReasonGuestDiagnosticsUnavailable      SandboxHealthObservationReason = "guest_diagnostics_unavailable"
+	SandboxHealthObservationReasonCommandCompleted                 SandboxHealthObservationReason = "command_completed"
+	SandboxHealthObservationReasonCommandStartFailed               SandboxHealthObservationReason = "command_start_failed"
+	SandboxHealthObservationReasonCommandFailed                    SandboxHealthObservationReason = "command_failed"
+	SandboxHealthObservationReasonProbeTimeout                     SandboxHealthObservationReason = "probe_timeout"
+	SandboxHealthObservationReasonProbeCanceled                    SandboxHealthObservationReason = "probe_canceled"
+	SandboxHealthObservationReasonRunscRunning                     SandboxHealthObservationReason = "runsc_running"
+	SandboxHealthObservationReasonRunscStopped                     SandboxHealthObservationReason = "runsc_stopped"
+	SandboxHealthObservationReasonRunscAbsent                      SandboxHealthObservationReason = "runsc_absent"
+	SandboxHealthObservationReasonRunscUnavailable                 SandboxHealthObservationReason = "runsc_unavailable"
+	SandboxHealthObservationReasonRuntimeIdentityChanged           SandboxHealthObservationReason = "runtime_identity_changed"
+)
+
+// AllValues returns all SandboxHealthObservationReason values.
+func (SandboxHealthObservationReason) AllValues() []SandboxHealthObservationReason {
+	return []SandboxHealthObservationReason{
+		SandboxHealthObservationReasonLaunchUnobserved,
+		SandboxHealthObservationReasonRuntimeLivenessUnobserved,
+		SandboxHealthObservationReasonRootfsIdentityUninitialized,
+		SandboxHealthObservationReasonWriterUnobserved,
+		SandboxHealthObservationReasonStorageIoUnobserved,
+		SandboxHealthObservationReasonRuntimeUnavailableForDiagnostics,
+		SandboxHealthObservationReasonRootfsIdentityPresent,
+		SandboxHealthObservationReasonLifecycleTransition,
+		SandboxHealthObservationReasonRuntimeNotRequested,
+		SandboxHealthObservationReasonRuntimeSlotMissing,
+		SandboxHealthObservationReasonRuntimeSlotInactive,
+		SandboxHealthObservationReasonRuntimeHeartbeatExpired,
+		SandboxHealthObservationReasonExternalLaunchUnverified,
+		SandboxHealthObservationReasonExternalLaunchAuthorityPresent,
+		SandboxHealthObservationReasonCurrentWriterLeasePresent,
+		SandboxHealthObservationReasonCurrentWriterLeaseUnverified,
+		SandboxHealthObservationReasonDiagnosticProbeBusy,
+		SandboxHealthObservationReasonDiagnosticRuntimeChanged,
+		SandboxHealthObservationReasonExternalRuntimeUnavailable,
+		SandboxHealthObservationReasonDiagnosticsNotConfigured,
+		SandboxHealthObservationReasonDiagnosticAddressUnavailable,
+		SandboxHealthObservationReasonDiagnosticAuthUnavailable,
+		SandboxHealthObservationReasonGuestDiagnosticsUnavailable,
+		SandboxHealthObservationReasonCommandCompleted,
+		SandboxHealthObservationReasonCommandStartFailed,
+		SandboxHealthObservationReasonCommandFailed,
+		SandboxHealthObservationReasonProbeTimeout,
+		SandboxHealthObservationReasonProbeCanceled,
+		SandboxHealthObservationReasonRunscRunning,
+		SandboxHealthObservationReasonRunscStopped,
+		SandboxHealthObservationReasonRunscAbsent,
+		SandboxHealthObservationReasonRunscUnavailable,
+		SandboxHealthObservationReasonRuntimeIdentityChanged,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxHealthObservationReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxHealthObservationReasonLaunchUnobserved:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeLivenessUnobserved:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRootfsIdentityUninitialized:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonWriterUnobserved:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonStorageIoUnobserved:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeUnavailableForDiagnostics:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRootfsIdentityPresent:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonLifecycleTransition:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeNotRequested:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeSlotMissing:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeSlotInactive:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeHeartbeatExpired:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonExternalLaunchUnverified:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonExternalLaunchAuthorityPresent:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonCurrentWriterLeasePresent:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonCurrentWriterLeaseUnverified:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonDiagnosticProbeBusy:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonDiagnosticRuntimeChanged:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonExternalRuntimeUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonDiagnosticsNotConfigured:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonDiagnosticAddressUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonDiagnosticAuthUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonGuestDiagnosticsUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonCommandCompleted:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonCommandStartFailed:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonCommandFailed:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonProbeTimeout:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonProbeCanceled:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRunscRunning:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRunscStopped:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRunscAbsent:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRunscUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationReasonRuntimeIdentityChanged:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxHealthObservationReason) UnmarshalText(data []byte) error {
+	switch SandboxHealthObservationReason(data) {
+	case SandboxHealthObservationReasonLaunchUnobserved:
+		*s = SandboxHealthObservationReasonLaunchUnobserved
+		return nil
+	case SandboxHealthObservationReasonRuntimeLivenessUnobserved:
+		*s = SandboxHealthObservationReasonRuntimeLivenessUnobserved
+		return nil
+	case SandboxHealthObservationReasonRootfsIdentityUninitialized:
+		*s = SandboxHealthObservationReasonRootfsIdentityUninitialized
+		return nil
+	case SandboxHealthObservationReasonWriterUnobserved:
+		*s = SandboxHealthObservationReasonWriterUnobserved
+		return nil
+	case SandboxHealthObservationReasonStorageIoUnobserved:
+		*s = SandboxHealthObservationReasonStorageIoUnobserved
+		return nil
+	case SandboxHealthObservationReasonRuntimeUnavailableForDiagnostics:
+		*s = SandboxHealthObservationReasonRuntimeUnavailableForDiagnostics
+		return nil
+	case SandboxHealthObservationReasonRootfsIdentityPresent:
+		*s = SandboxHealthObservationReasonRootfsIdentityPresent
+		return nil
+	case SandboxHealthObservationReasonLifecycleTransition:
+		*s = SandboxHealthObservationReasonLifecycleTransition
+		return nil
+	case SandboxHealthObservationReasonRuntimeNotRequested:
+		*s = SandboxHealthObservationReasonRuntimeNotRequested
+		return nil
+	case SandboxHealthObservationReasonRuntimeSlotMissing:
+		*s = SandboxHealthObservationReasonRuntimeSlotMissing
+		return nil
+	case SandboxHealthObservationReasonRuntimeSlotInactive:
+		*s = SandboxHealthObservationReasonRuntimeSlotInactive
+		return nil
+	case SandboxHealthObservationReasonRuntimeHeartbeatExpired:
+		*s = SandboxHealthObservationReasonRuntimeHeartbeatExpired
+		return nil
+	case SandboxHealthObservationReasonExternalLaunchUnverified:
+		*s = SandboxHealthObservationReasonExternalLaunchUnverified
+		return nil
+	case SandboxHealthObservationReasonExternalLaunchAuthorityPresent:
+		*s = SandboxHealthObservationReasonExternalLaunchAuthorityPresent
+		return nil
+	case SandboxHealthObservationReasonCurrentWriterLeasePresent:
+		*s = SandboxHealthObservationReasonCurrentWriterLeasePresent
+		return nil
+	case SandboxHealthObservationReasonCurrentWriterLeaseUnverified:
+		*s = SandboxHealthObservationReasonCurrentWriterLeaseUnverified
+		return nil
+	case SandboxHealthObservationReasonDiagnosticProbeBusy:
+		*s = SandboxHealthObservationReasonDiagnosticProbeBusy
+		return nil
+	case SandboxHealthObservationReasonDiagnosticRuntimeChanged:
+		*s = SandboxHealthObservationReasonDiagnosticRuntimeChanged
+		return nil
+	case SandboxHealthObservationReasonExternalRuntimeUnavailable:
+		*s = SandboxHealthObservationReasonExternalRuntimeUnavailable
+		return nil
+	case SandboxHealthObservationReasonDiagnosticsNotConfigured:
+		*s = SandboxHealthObservationReasonDiagnosticsNotConfigured
+		return nil
+	case SandboxHealthObservationReasonDiagnosticAddressUnavailable:
+		*s = SandboxHealthObservationReasonDiagnosticAddressUnavailable
+		return nil
+	case SandboxHealthObservationReasonDiagnosticAuthUnavailable:
+		*s = SandboxHealthObservationReasonDiagnosticAuthUnavailable
+		return nil
+	case SandboxHealthObservationReasonGuestDiagnosticsUnavailable:
+		*s = SandboxHealthObservationReasonGuestDiagnosticsUnavailable
+		return nil
+	case SandboxHealthObservationReasonCommandCompleted:
+		*s = SandboxHealthObservationReasonCommandCompleted
+		return nil
+	case SandboxHealthObservationReasonCommandStartFailed:
+		*s = SandboxHealthObservationReasonCommandStartFailed
+		return nil
+	case SandboxHealthObservationReasonCommandFailed:
+		*s = SandboxHealthObservationReasonCommandFailed
+		return nil
+	case SandboxHealthObservationReasonProbeTimeout:
+		*s = SandboxHealthObservationReasonProbeTimeout
+		return nil
+	case SandboxHealthObservationReasonProbeCanceled:
+		*s = SandboxHealthObservationReasonProbeCanceled
+		return nil
+	case SandboxHealthObservationReasonRunscRunning:
+		*s = SandboxHealthObservationReasonRunscRunning
+		return nil
+	case SandboxHealthObservationReasonRunscStopped:
+		*s = SandboxHealthObservationReasonRunscStopped
+		return nil
+	case SandboxHealthObservationReasonRunscAbsent:
+		*s = SandboxHealthObservationReasonRunscAbsent
+		return nil
+	case SandboxHealthObservationReasonRunscUnavailable:
+		*s = SandboxHealthObservationReasonRunscUnavailable
+		return nil
+	case SandboxHealthObservationReasonRuntimeIdentityChanged:
+		*s = SandboxHealthObservationReasonRuntimeIdentityChanged
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Evidence origin. Guest evidence and its clock are workload-controlled and advisory.
+type SandboxHealthObservationSource string
+
+const (
+	SandboxHealthObservationSourceNone              SandboxHealthObservationSource = "none"
+	SandboxHealthObservationSourceRegionalAuthority SandboxHealthObservationSource = "regional_authority"
+	SandboxHealthObservationSourceNodeRuntime       SandboxHealthObservationSource = "node_runtime"
+	SandboxHealthObservationSourceGuestDiagnostic   SandboxHealthObservationSource = "guest_diagnostic"
+)
+
+// AllValues returns all SandboxHealthObservationSource values.
+func (SandboxHealthObservationSource) AllValues() []SandboxHealthObservationSource {
+	return []SandboxHealthObservationSource{
+		SandboxHealthObservationSourceNone,
+		SandboxHealthObservationSourceRegionalAuthority,
+		SandboxHealthObservationSourceNodeRuntime,
+		SandboxHealthObservationSourceGuestDiagnostic,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxHealthObservationSource) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxHealthObservationSourceNone:
+		return []byte(s), nil
+	case SandboxHealthObservationSourceRegionalAuthority:
+		return []byte(s), nil
+	case SandboxHealthObservationSourceNodeRuntime:
+		return []byte(s), nil
+	case SandboxHealthObservationSourceGuestDiagnostic:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxHealthObservationSource) UnmarshalText(data []byte) error {
+	switch SandboxHealthObservationSource(data) {
+	case SandboxHealthObservationSourceNone:
+		*s = SandboxHealthObservationSourceNone
+		return nil
+	case SandboxHealthObservationSourceRegionalAuthority:
+		*s = SandboxHealthObservationSourceRegionalAuthority
+		return nil
+	case SandboxHealthObservationSourceNodeRuntime:
+		*s = SandboxHealthObservationSourceNodeRuntime
+		return nil
+	case SandboxHealthObservationSourceGuestDiagnostic:
+		*s = SandboxHealthObservationSourceGuestDiagnostic
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxHealthObservationState string
+
+const (
+	SandboxHealthObservationStateAvailable   SandboxHealthObservationState = "available"
+	SandboxHealthObservationStateUnavailable SandboxHealthObservationState = "unavailable"
+	SandboxHealthObservationStateUnknown     SandboxHealthObservationState = "unknown"
+)
+
+// AllValues returns all SandboxHealthObservationState values.
+func (SandboxHealthObservationState) AllValues() []SandboxHealthObservationState {
+	return []SandboxHealthObservationState{
+		SandboxHealthObservationStateAvailable,
+		SandboxHealthObservationStateUnavailable,
+		SandboxHealthObservationStateUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxHealthObservationState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxHealthObservationStateAvailable:
+		return []byte(s), nil
+	case SandboxHealthObservationStateUnavailable:
+		return []byte(s), nil
+	case SandboxHealthObservationStateUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxHealthObservationState) UnmarshalText(data []byte) error {
+	switch SandboxHealthObservationState(data) {
+	case SandboxHealthObservationStateAvailable:
+		*s = SandboxHealthObservationStateAvailable
+		return nil
+	case SandboxHealthObservationStateUnavailable:
+		*s = SandboxHealthObservationStateUnavailable
+		return nil
+	case SandboxHealthObservationStateUnknown:
+		*s = SandboxHealthObservationStateUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/SandboxLifecycleStatus
 type SandboxLifecycleStatus string
 
@@ -13851,6 +15996,426 @@ func (s *SandboxLifecycleStatus) UnmarshalText(data []byte) error {
 	default:
 		return errors.Errorf("invalid value: %q", data)
 	}
+}
+
+// Ref: #/components/schemas/SandboxMemoryOperation
+type SandboxMemoryOperation struct {
+	SandboxID string `json:"sandbox_id"`
+	// Authenticated caller request ID, never the internal restore worker operation ID.
+	OperationID           string                       `json:"operation_id"`
+	CheckpointID          string                       `json:"checkpoint_id"`
+	Action                SandboxMemoryOperationAction `json:"action"`
+	FromRuntimeGeneration int64                        `json:"from_runtime_generation"`
+	// Original operation epoch. Bind subsequent current-identity checks to this epoch; current is only a
+	// read snapshot.
+	LifecycleEpoch int64 `json:"lifecycle_epoch"`
+	// Present only for completed or physically resolved failed resume; equals source plus one in both
+	// cases.
+	ResultRuntimeGeneration OptInt64                    `json:"result_runtime_generation"`
+	State                   SandboxMemoryOperationState `json:"state"`
+	// Present only for canceled or failed. A failed capture never attests that the source survived.
+	Reason OptSandboxMemoryOperationReason `json:"reason"`
+	// Whether this terminal result still matches the owner snapshot. False for pending and capture
+	// failure. Never a new lease or execution authorization.
+	Current bool `json:"current"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxMemoryOperation) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxMemoryOperation) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetCheckpointID returns the value of CheckpointID.
+func (s *SandboxMemoryOperation) GetCheckpointID() string {
+	return s.CheckpointID
+}
+
+// GetAction returns the value of Action.
+func (s *SandboxMemoryOperation) GetAction() SandboxMemoryOperationAction {
+	return s.Action
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *SandboxMemoryOperation) GetFromRuntimeGeneration() int64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetLifecycleEpoch returns the value of LifecycleEpoch.
+func (s *SandboxMemoryOperation) GetLifecycleEpoch() int64 {
+	return s.LifecycleEpoch
+}
+
+// GetResultRuntimeGeneration returns the value of ResultRuntimeGeneration.
+func (s *SandboxMemoryOperation) GetResultRuntimeGeneration() OptInt64 {
+	return s.ResultRuntimeGeneration
+}
+
+// GetState returns the value of State.
+func (s *SandboxMemoryOperation) GetState() SandboxMemoryOperationState {
+	return s.State
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxMemoryOperation) GetReason() OptSandboxMemoryOperationReason {
+	return s.Reason
+}
+
+// GetCurrent returns the value of Current.
+func (s *SandboxMemoryOperation) GetCurrent() bool {
+	return s.Current
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxMemoryOperation) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxMemoryOperation) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetCheckpointID sets the value of CheckpointID.
+func (s *SandboxMemoryOperation) SetCheckpointID(val string) {
+	s.CheckpointID = val
+}
+
+// SetAction sets the value of Action.
+func (s *SandboxMemoryOperation) SetAction(val SandboxMemoryOperationAction) {
+	s.Action = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *SandboxMemoryOperation) SetFromRuntimeGeneration(val int64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetLifecycleEpoch sets the value of LifecycleEpoch.
+func (s *SandboxMemoryOperation) SetLifecycleEpoch(val int64) {
+	s.LifecycleEpoch = val
+}
+
+// SetResultRuntimeGeneration sets the value of ResultRuntimeGeneration.
+func (s *SandboxMemoryOperation) SetResultRuntimeGeneration(val OptInt64) {
+	s.ResultRuntimeGeneration = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxMemoryOperation) SetState(val SandboxMemoryOperationState) {
+	s.State = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxMemoryOperation) SetReason(val OptSandboxMemoryOperationReason) {
+	s.Reason = val
+}
+
+// SetCurrent sets the value of Current.
+func (s *SandboxMemoryOperation) SetCurrent(val bool) {
+	s.Current = val
+}
+
+type SandboxMemoryOperationAction string
+
+const (
+	SandboxMemoryOperationActionPause  SandboxMemoryOperationAction = "pause"
+	SandboxMemoryOperationActionResume SandboxMemoryOperationAction = "resume"
+)
+
+// AllValues returns all SandboxMemoryOperationAction values.
+func (SandboxMemoryOperationAction) AllValues() []SandboxMemoryOperationAction {
+	return []SandboxMemoryOperationAction{
+		SandboxMemoryOperationActionPause,
+		SandboxMemoryOperationActionResume,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxMemoryOperationAction) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxMemoryOperationActionPause:
+		return []byte(s), nil
+	case SandboxMemoryOperationActionResume:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxMemoryOperationAction) UnmarshalText(data []byte) error {
+	switch SandboxMemoryOperationAction(data) {
+	case SandboxMemoryOperationActionPause:
+		*s = SandboxMemoryOperationActionPause
+		return nil
+	case SandboxMemoryOperationActionResume:
+		*s = SandboxMemoryOperationActionResume
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Present only for canceled or failed. A failed capture never attests that the source survived.
+type SandboxMemoryOperationReason string
+
+const (
+	SandboxMemoryOperationReasonBeforeCapture SandboxMemoryOperationReason = "before_capture"
+	SandboxMemoryOperationReasonCaptureFailed SandboxMemoryOperationReason = "capture_failed"
+	SandboxMemoryOperationReasonBeforeRestore SandboxMemoryOperationReason = "before_restore"
+	SandboxMemoryOperationReasonRestoreFailed SandboxMemoryOperationReason = "restore_failed"
+)
+
+// AllValues returns all SandboxMemoryOperationReason values.
+func (SandboxMemoryOperationReason) AllValues() []SandboxMemoryOperationReason {
+	return []SandboxMemoryOperationReason{
+		SandboxMemoryOperationReasonBeforeCapture,
+		SandboxMemoryOperationReasonCaptureFailed,
+		SandboxMemoryOperationReasonBeforeRestore,
+		SandboxMemoryOperationReasonRestoreFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxMemoryOperationReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxMemoryOperationReasonBeforeCapture:
+		return []byte(s), nil
+	case SandboxMemoryOperationReasonCaptureFailed:
+		return []byte(s), nil
+	case SandboxMemoryOperationReasonBeforeRestore:
+		return []byte(s), nil
+	case SandboxMemoryOperationReasonRestoreFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxMemoryOperationReason) UnmarshalText(data []byte) error {
+	switch SandboxMemoryOperationReason(data) {
+	case SandboxMemoryOperationReasonBeforeCapture:
+		*s = SandboxMemoryOperationReasonBeforeCapture
+		return nil
+	case SandboxMemoryOperationReasonCaptureFailed:
+		*s = SandboxMemoryOperationReasonCaptureFailed
+		return nil
+	case SandboxMemoryOperationReasonBeforeRestore:
+		*s = SandboxMemoryOperationReasonBeforeRestore
+		return nil
+	case SandboxMemoryOperationReasonRestoreFailed:
+		*s = SandboxMemoryOperationReasonRestoreFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxMemoryOperationState string
+
+const (
+	SandboxMemoryOperationStatePending   SandboxMemoryOperationState = "pending"
+	SandboxMemoryOperationStateCompleted SandboxMemoryOperationState = "completed"
+	SandboxMemoryOperationStateCanceled  SandboxMemoryOperationState = "canceled"
+	SandboxMemoryOperationStateFailed    SandboxMemoryOperationState = "failed"
+)
+
+// AllValues returns all SandboxMemoryOperationState values.
+func (SandboxMemoryOperationState) AllValues() []SandboxMemoryOperationState {
+	return []SandboxMemoryOperationState{
+		SandboxMemoryOperationStatePending,
+		SandboxMemoryOperationStateCompleted,
+		SandboxMemoryOperationStateCanceled,
+		SandboxMemoryOperationStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxMemoryOperationState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxMemoryOperationStatePending:
+		return []byte(s), nil
+	case SandboxMemoryOperationStateCompleted:
+		return []byte(s), nil
+	case SandboxMemoryOperationStateCanceled:
+		return []byte(s), nil
+	case SandboxMemoryOperationStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxMemoryOperationState) UnmarshalText(data []byte) error {
+	switch SandboxMemoryOperationState(data) {
+	case SandboxMemoryOperationStatePending:
+		*s = SandboxMemoryOperationStatePending
+		return nil
+	case SandboxMemoryOperationStateCompleted:
+		*s = SandboxMemoryOperationStateCompleted
+		return nil
+	case SandboxMemoryOperationStateCanceled:
+		*s = SandboxMemoryOperationStateCanceled
+		return nil
+	case SandboxMemoryOperationStateFailed:
+		*s = SandboxMemoryOperationStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxMemoryRestoration
+type SandboxMemoryRestoration struct {
+	SandboxID                  string `json:"sandbox_id"`
+	RuntimeGeneration          int64  `json:"runtime_generation"`
+	RuntimeCompatibilityDigest string `json:"runtime_compatibility_digest"`
+	FilesystemID               string `json:"filesystem_id"`
+	// Oldest to newest contiguous memory restorations. Capture generation can precede failed restore
+	// attempts; do not infer from generation + 1. Bind the first capture generation to owned
+	// publication/session history.
+	Steps      []SandboxMemoryRestorationStep `json:"steps"`
+	ObservedAt time.Time                      `json:"observed_at"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxMemoryRestoration) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxMemoryRestoration) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetRuntimeCompatibilityDigest returns the value of RuntimeCompatibilityDigest.
+func (s *SandboxMemoryRestoration) GetRuntimeCompatibilityDigest() string {
+	return s.RuntimeCompatibilityDigest
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxMemoryRestoration) GetFilesystemID() string {
+	return s.FilesystemID
+}
+
+// GetSteps returns the value of Steps.
+func (s *SandboxMemoryRestoration) GetSteps() []SandboxMemoryRestorationStep {
+	return s.Steps
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxMemoryRestoration) GetObservedAt() time.Time {
+	return s.ObservedAt
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxMemoryRestoration) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxMemoryRestoration) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetRuntimeCompatibilityDigest sets the value of RuntimeCompatibilityDigest.
+func (s *SandboxMemoryRestoration) SetRuntimeCompatibilityDigest(val string) {
+	s.RuntimeCompatibilityDigest = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxMemoryRestoration) SetFilesystemID(val string) {
+	s.FilesystemID = val
+}
+
+// SetSteps sets the value of Steps.
+func (s *SandboxMemoryRestoration) SetSteps(val []SandboxMemoryRestorationStep) {
+	s.Steps = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxMemoryRestoration) SetObservedAt(val time.Time) {
+	s.ObservedAt = val
+}
+
+// Ref: #/components/schemas/SandboxMemoryRestorationStep
+type SandboxMemoryRestorationStep struct {
+	OperationID           string `json:"operation_id"`
+	CaptureOperationID    string `json:"capture_operation_id"`
+	FromRuntimeGeneration int64  `json:"from_runtime_generation"`
+	ToRuntimeGeneration   int64  `json:"to_runtime_generation"`
+	// Opaque committed restore identity, never an execution grant.
+	RestoreID string `json:"restore_id"`
+	// Zero for a legacy image without managed-file projection. Nonzero means the exact projected backing
+	// was required by the restored assignment.
+	ManagedFilesSizeBytes int64 `json:"managed_files_size_bytes"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxMemoryRestorationStep) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetCaptureOperationID returns the value of CaptureOperationID.
+func (s *SandboxMemoryRestorationStep) GetCaptureOperationID() string {
+	return s.CaptureOperationID
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *SandboxMemoryRestorationStep) GetFromRuntimeGeneration() int64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetToRuntimeGeneration returns the value of ToRuntimeGeneration.
+func (s *SandboxMemoryRestorationStep) GetToRuntimeGeneration() int64 {
+	return s.ToRuntimeGeneration
+}
+
+// GetRestoreID returns the value of RestoreID.
+func (s *SandboxMemoryRestorationStep) GetRestoreID() string {
+	return s.RestoreID
+}
+
+// GetManagedFilesSizeBytes returns the value of ManagedFilesSizeBytes.
+func (s *SandboxMemoryRestorationStep) GetManagedFilesSizeBytes() int64 {
+	return s.ManagedFilesSizeBytes
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxMemoryRestorationStep) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetCaptureOperationID sets the value of CaptureOperationID.
+func (s *SandboxMemoryRestorationStep) SetCaptureOperationID(val string) {
+	s.CaptureOperationID = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *SandboxMemoryRestorationStep) SetFromRuntimeGeneration(val int64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetToRuntimeGeneration sets the value of ToRuntimeGeneration.
+func (s *SandboxMemoryRestorationStep) SetToRuntimeGeneration(val int64) {
+	s.ToRuntimeGeneration = val
+}
+
+// SetRestoreID sets the value of RestoreID.
+func (s *SandboxMemoryRestorationStep) SetRestoreID(val string) {
+	s.RestoreID = val
+}
+
+// SetManagedFilesSizeBytes sets the value of ManagedFilesSizeBytes.
+func (s *SandboxMemoryRestorationStep) SetManagedFilesSizeBytes(val int64) {
+	s.ManagedFilesSizeBytes = val
 }
 
 // Ref: #/components/schemas/SandboxNetworkPolicy
@@ -14607,6 +17172,36 @@ func (s *SandboxObservabilityOutcome) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/SandboxPauseRequest
+type SandboxPauseRequest struct {
+	// Require retained process memory and execution state. Capture failure never falls back to
+	// filesystem-only pause.
+	Memory OptBool `json:"memory"`
+	// Pause only this source runtime generation. Requires memory=true and Idempotency-Key; stale
+	// requests never pause a successor.
+	ExpectedRuntimeGeneration OptInt64 `json:"expected_runtime_generation"`
+}
+
+// GetMemory returns the value of Memory.
+func (s *SandboxPauseRequest) GetMemory() OptBool {
+	return s.Memory
+}
+
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *SandboxPauseRequest) GetExpectedRuntimeGeneration() OptInt64 {
+	return s.ExpectedRuntimeGeneration
+}
+
+// SetMemory sets the value of Memory.
+func (s *SandboxPauseRequest) SetMemory(val OptBool) {
+	s.Memory = val
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *SandboxPauseRequest) SetExpectedRuntimeGeneration(val OptInt64) {
+	s.ExpectedRuntimeGeneration = val
+}
+
 // Ref: #/components/schemas/SandboxPreviewCreateRequest
 type SandboxPreviewCreateRequest struct {
 	// Loopback TCP port inside the sandbox runtime.
@@ -15035,13 +17630,1468 @@ func (s *SandboxResourceUsage) SetContexts(val []ContextResourceUsage) {
 	s.Contexts = val
 }
 
+// Ref: #/components/schemas/SandboxRestartFinalCapture
+type SandboxRestartFinalCapture struct {
+	OperationID           string                          `json:"operation_id"`
+	SandboxID             string                          `json:"sandbox_id"`
+	FromRuntimeGeneration int64                           `json:"from_runtime_generation"`
+	State                 SandboxRestartFinalCaptureState `json:"state"`
+	// Opaque immutable stopped-source identity, absent only while pending. No credential-content digest.
+	CaptureID OptString   `json:"capture_id"`
+	StoppedAt OptDateTime `json:"stopped_at"`
+	// Committed owner receipt, present only after acknowledgement.
+	ReceiptID OptString `json:"receipt_id"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxRestartFinalCapture) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxRestartFinalCapture) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *SandboxRestartFinalCapture) GetFromRuntimeGeneration() int64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetState returns the value of State.
+func (s *SandboxRestartFinalCapture) GetState() SandboxRestartFinalCaptureState {
+	return s.State
+}
+
+// GetCaptureID returns the value of CaptureID.
+func (s *SandboxRestartFinalCapture) GetCaptureID() OptString {
+	return s.CaptureID
+}
+
+// GetStoppedAt returns the value of StoppedAt.
+func (s *SandboxRestartFinalCapture) GetStoppedAt() OptDateTime {
+	return s.StoppedAt
+}
+
+// GetReceiptID returns the value of ReceiptID.
+func (s *SandboxRestartFinalCapture) GetReceiptID() OptString {
+	return s.ReceiptID
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxRestartFinalCapture) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxRestartFinalCapture) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *SandboxRestartFinalCapture) SetFromRuntimeGeneration(val int64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxRestartFinalCapture) SetState(val SandboxRestartFinalCaptureState) {
+	s.State = val
+}
+
+// SetCaptureID sets the value of CaptureID.
+func (s *SandboxRestartFinalCapture) SetCaptureID(val OptString) {
+	s.CaptureID = val
+}
+
+// SetStoppedAt sets the value of StoppedAt.
+func (s *SandboxRestartFinalCapture) SetStoppedAt(val OptDateTime) {
+	s.StoppedAt = val
+}
+
+// SetReceiptID sets the value of ReceiptID.
+func (s *SandboxRestartFinalCapture) SetReceiptID(val OptString) {
+	s.ReceiptID = val
+}
+
+// Ref: #/components/schemas/SandboxRestartFinalCaptureAcknowledgement
+type SandboxRestartFinalCaptureAcknowledgement struct {
+	CaptureID string `json:"capture_id"`
+	ReceiptID string `json:"receipt_id"`
+}
+
+// GetCaptureID returns the value of CaptureID.
+func (s *SandboxRestartFinalCaptureAcknowledgement) GetCaptureID() string {
+	return s.CaptureID
+}
+
+// GetReceiptID returns the value of ReceiptID.
+func (s *SandboxRestartFinalCaptureAcknowledgement) GetReceiptID() string {
+	return s.ReceiptID
+}
+
+// SetCaptureID sets the value of CaptureID.
+func (s *SandboxRestartFinalCaptureAcknowledgement) SetCaptureID(val string) {
+	s.CaptureID = val
+}
+
+// SetReceiptID sets the value of ReceiptID.
+func (s *SandboxRestartFinalCaptureAcknowledgement) SetReceiptID(val string) {
+	s.ReceiptID = val
+}
+
+// Ref: #/components/schemas/SandboxRestartFinalCaptureFile
+type SandboxRestartFinalCaptureFile struct {
+	OperationID       string `json:"operation_id"`
+	CaptureID         string `json:"capture_id"`
+	RuntimeGeneration int64  `json:"runtime_generation"`
+	MutationSequence  string `json:"mutation_sequence"`
+	SizeBytes         int64  `json:"size_bytes"`
+	Found             bool   `json:"found"`
+	// Base64 content, at most 4 MiB decoded. Empty when found=false; found=true also permits an empty
+	// file. Never log or persist this response without owner encryption.
+	Content []byte `json:"content"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxRestartFinalCaptureFile) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetCaptureID returns the value of CaptureID.
+func (s *SandboxRestartFinalCaptureFile) GetCaptureID() string {
+	return s.CaptureID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxRestartFinalCaptureFile) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetMutationSequence returns the value of MutationSequence.
+func (s *SandboxRestartFinalCaptureFile) GetMutationSequence() string {
+	return s.MutationSequence
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *SandboxRestartFinalCaptureFile) GetSizeBytes() int64 {
+	return s.SizeBytes
+}
+
+// GetFound returns the value of Found.
+func (s *SandboxRestartFinalCaptureFile) GetFound() bool {
+	return s.Found
+}
+
+// GetContent returns the value of Content.
+func (s *SandboxRestartFinalCaptureFile) GetContent() []byte {
+	return s.Content
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxRestartFinalCaptureFile) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetCaptureID sets the value of CaptureID.
+func (s *SandboxRestartFinalCaptureFile) SetCaptureID(val string) {
+	s.CaptureID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxRestartFinalCaptureFile) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetMutationSequence sets the value of MutationSequence.
+func (s *SandboxRestartFinalCaptureFile) SetMutationSequence(val string) {
+	s.MutationSequence = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *SandboxRestartFinalCaptureFile) SetSizeBytes(val int64) {
+	s.SizeBytes = val
+}
+
+// SetFound sets the value of Found.
+func (s *SandboxRestartFinalCaptureFile) SetFound(val bool) {
+	s.Found = val
+}
+
+// SetContent sets the value of Content.
+func (s *SandboxRestartFinalCaptureFile) SetContent(val []byte) {
+	s.Content = val
+}
+
+type SandboxRestartFinalCaptureState string
+
+const (
+	SandboxRestartFinalCaptureStatePending      SandboxRestartFinalCaptureState = "pending"
+	SandboxRestartFinalCaptureStateStopped      SandboxRestartFinalCaptureState = "stopped"
+	SandboxRestartFinalCaptureStateAcknowledged SandboxRestartFinalCaptureState = "acknowledged"
+	SandboxRestartFinalCaptureStateReleased     SandboxRestartFinalCaptureState = "released"
+)
+
+// AllValues returns all SandboxRestartFinalCaptureState values.
+func (SandboxRestartFinalCaptureState) AllValues() []SandboxRestartFinalCaptureState {
+	return []SandboxRestartFinalCaptureState{
+		SandboxRestartFinalCaptureStatePending,
+		SandboxRestartFinalCaptureStateStopped,
+		SandboxRestartFinalCaptureStateAcknowledged,
+		SandboxRestartFinalCaptureStateReleased,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRestartFinalCaptureState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRestartFinalCaptureStatePending:
+		return []byte(s), nil
+	case SandboxRestartFinalCaptureStateStopped:
+		return []byte(s), nil
+	case SandboxRestartFinalCaptureStateAcknowledged:
+		return []byte(s), nil
+	case SandboxRestartFinalCaptureStateReleased:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRestartFinalCaptureState) UnmarshalText(data []byte) error {
+	switch SandboxRestartFinalCaptureState(data) {
+	case SandboxRestartFinalCaptureStatePending:
+		*s = SandboxRestartFinalCaptureStatePending
+		return nil
+	case SandboxRestartFinalCaptureStateStopped:
+		*s = SandboxRestartFinalCaptureStateStopped
+		return nil
+	case SandboxRestartFinalCaptureStateAcknowledged:
+		*s = SandboxRestartFinalCaptureStateAcknowledged
+		return nil
+	case SandboxRestartFinalCaptureStateReleased:
+		*s = SandboxRestartFinalCaptureStateReleased
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRestartOperation
+type SandboxRestartOperation struct {
+	ID                    string `json:"id"`
+	SandboxID             string `json:"sandbox_id"`
+	RequestKey            string `json:"request_key"`
+	FromRuntimeGeneration int64  `json:"from_runtime_generation"`
+	// Paused means an admitted paused source awaiting resume; only succeeded proves replacement. Failed
+	// and superseded are terminal and are never replayed.
+	State SandboxRestartOperationState `json:"state"`
+	// Present only after committed replacement, even if a later lifecycle changes the current runtime.
+	ResultRuntimeGeneration OptInt64                          `json:"result_runtime_generation"`
+	Reason                  OptSandboxRestartOperationReason  `json:"reason"`
+	CreatedAt               time.Time                         `json:"created_at"`
+	UpdatedAt               time.Time                         `json:"updated_at"`
+	FinishedAt              OptDateTime                       `json:"finished_at"`
+	Retry                   OptSandboxRestartRetryObservation `json:"retry"`
+}
+
+// GetID returns the value of ID.
+func (s *SandboxRestartOperation) GetID() string {
+	return s.ID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxRestartOperation) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRequestKey returns the value of RequestKey.
+func (s *SandboxRestartOperation) GetRequestKey() string {
+	return s.RequestKey
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *SandboxRestartOperation) GetFromRuntimeGeneration() int64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetState returns the value of State.
+func (s *SandboxRestartOperation) GetState() SandboxRestartOperationState {
+	return s.State
+}
+
+// GetResultRuntimeGeneration returns the value of ResultRuntimeGeneration.
+func (s *SandboxRestartOperation) GetResultRuntimeGeneration() OptInt64 {
+	return s.ResultRuntimeGeneration
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxRestartOperation) GetReason() OptSandboxRestartOperationReason {
+	return s.Reason
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxRestartOperation) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SandboxRestartOperation) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetFinishedAt returns the value of FinishedAt.
+func (s *SandboxRestartOperation) GetFinishedAt() OptDateTime {
+	return s.FinishedAt
+}
+
+// GetRetry returns the value of Retry.
+func (s *SandboxRestartOperation) GetRetry() OptSandboxRestartRetryObservation {
+	return s.Retry
+}
+
+// SetID sets the value of ID.
+func (s *SandboxRestartOperation) SetID(val string) {
+	s.ID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxRestartOperation) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRequestKey sets the value of RequestKey.
+func (s *SandboxRestartOperation) SetRequestKey(val string) {
+	s.RequestKey = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *SandboxRestartOperation) SetFromRuntimeGeneration(val int64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxRestartOperation) SetState(val SandboxRestartOperationState) {
+	s.State = val
+}
+
+// SetResultRuntimeGeneration sets the value of ResultRuntimeGeneration.
+func (s *SandboxRestartOperation) SetResultRuntimeGeneration(val OptInt64) {
+	s.ResultRuntimeGeneration = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxRestartOperation) SetReason(val OptSandboxRestartOperationReason) {
+	s.Reason = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxRestartOperation) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SandboxRestartOperation) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetFinishedAt sets the value of FinishedAt.
+func (s *SandboxRestartOperation) SetFinishedAt(val OptDateTime) {
+	s.FinishedAt = val
+}
+
+// SetRetry sets the value of Retry.
+func (s *SandboxRestartOperation) SetRetry(val OptSandboxRestartRetryObservation) {
+	s.Retry = val
+}
+
+type SandboxRestartOperationReason string
+
+const (
+	SandboxRestartOperationReasonSourceChanged SandboxRestartOperationReason = "source_changed"
+	SandboxRestartOperationReasonPauseAborted  SandboxRestartOperationReason = "pause_aborted"
+	SandboxRestartOperationReasonResumeAborted SandboxRestartOperationReason = "resume_aborted"
+)
+
+// AllValues returns all SandboxRestartOperationReason values.
+func (SandboxRestartOperationReason) AllValues() []SandboxRestartOperationReason {
+	return []SandboxRestartOperationReason{
+		SandboxRestartOperationReasonSourceChanged,
+		SandboxRestartOperationReasonPauseAborted,
+		SandboxRestartOperationReasonResumeAborted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRestartOperationReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRestartOperationReasonSourceChanged:
+		return []byte(s), nil
+	case SandboxRestartOperationReasonPauseAborted:
+		return []byte(s), nil
+	case SandboxRestartOperationReasonResumeAborted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRestartOperationReason) UnmarshalText(data []byte) error {
+	switch SandboxRestartOperationReason(data) {
+	case SandboxRestartOperationReasonSourceChanged:
+		*s = SandboxRestartOperationReasonSourceChanged
+		return nil
+	case SandboxRestartOperationReasonPauseAborted:
+		*s = SandboxRestartOperationReasonPauseAborted
+		return nil
+	case SandboxRestartOperationReasonResumeAborted:
+		*s = SandboxRestartOperationReasonResumeAborted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Paused means an admitted paused source awaiting resume; only succeeded proves replacement. Failed
+// and superseded are terminal and are never replayed.
+type SandboxRestartOperationState string
+
+const (
+	SandboxRestartOperationStatePausing    SandboxRestartOperationState = "pausing"
+	SandboxRestartOperationStatePaused     SandboxRestartOperationState = "paused"
+	SandboxRestartOperationStateResuming   SandboxRestartOperationState = "resuming"
+	SandboxRestartOperationStateSucceeded  SandboxRestartOperationState = "succeeded"
+	SandboxRestartOperationStateSuperseded SandboxRestartOperationState = "superseded"
+	SandboxRestartOperationStateFailed     SandboxRestartOperationState = "failed"
+)
+
+// AllValues returns all SandboxRestartOperationState values.
+func (SandboxRestartOperationState) AllValues() []SandboxRestartOperationState {
+	return []SandboxRestartOperationState{
+		SandboxRestartOperationStatePausing,
+		SandboxRestartOperationStatePaused,
+		SandboxRestartOperationStateResuming,
+		SandboxRestartOperationStateSucceeded,
+		SandboxRestartOperationStateSuperseded,
+		SandboxRestartOperationStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRestartOperationState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRestartOperationStatePausing:
+		return []byte(s), nil
+	case SandboxRestartOperationStatePaused:
+		return []byte(s), nil
+	case SandboxRestartOperationStateResuming:
+		return []byte(s), nil
+	case SandboxRestartOperationStateSucceeded:
+		return []byte(s), nil
+	case SandboxRestartOperationStateSuperseded:
+		return []byte(s), nil
+	case SandboxRestartOperationStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRestartOperationState) UnmarshalText(data []byte) error {
+	switch SandboxRestartOperationState(data) {
+	case SandboxRestartOperationStatePausing:
+		*s = SandboxRestartOperationStatePausing
+		return nil
+	case SandboxRestartOperationStatePaused:
+		*s = SandboxRestartOperationStatePaused
+		return nil
+	case SandboxRestartOperationStateResuming:
+		*s = SandboxRestartOperationStateResuming
+		return nil
+	case SandboxRestartOperationStateSucceeded:
+		*s = SandboxRestartOperationStateSucceeded
+		return nil
+	case SandboxRestartOperationStateSuperseded:
+		*s = SandboxRestartOperationStateSuperseded
+		return nil
+	case SandboxRestartOperationStateFailed:
+		*s = SandboxRestartOperationStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRestartRequest
+type SandboxRestartRequest struct {
+	// Exact observed source runtime generation. Zero is allowed for a never-run paused sandbox. A
+	// changed source requires a new explicit request, never an automatic retry with a fresh generation.
+	ExpectedRuntimeGeneration int64 `json:"expected_runtime_generation"`
+}
+
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *SandboxRestartRequest) GetExpectedRuntimeGeneration() int64 {
+	return s.ExpectedRuntimeGeneration
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *SandboxRestartRequest) SetExpectedRuntimeGeneration(val int64) {
+	s.ExpectedRuntimeGeneration = val
+}
+
+// Ref: #/components/schemas/SandboxRestartRetryObservation
+type SandboxRestartRetryObservation struct {
+	Attempts      int64                                          `json:"attempts"`
+	ObservedAt    OptDateTime                                    `json:"observed_at"`
+	ObservedStage OptSandboxRestartRetryObservationObservedStage `json:"observed_stage"`
+	NextAttemptAt OptDateTime                                    `json:"next_attempt_at"`
+	// Fixed diagnostic code for the current stage. storage_not_writable means the host could not provide
+	// a writable RootFS and does not identify the underlying cause or authorize repair. No raw node
+	// errors, credentials, or topology are exposed.
+	BlockedReason OptSandboxRestartRetryObservationBlockedReason `json:"blocked_reason"`
+}
+
+// GetAttempts returns the value of Attempts.
+func (s *SandboxRestartRetryObservation) GetAttempts() int64 {
+	return s.Attempts
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxRestartRetryObservation) GetObservedAt() OptDateTime {
+	return s.ObservedAt
+}
+
+// GetObservedStage returns the value of ObservedStage.
+func (s *SandboxRestartRetryObservation) GetObservedStage() OptSandboxRestartRetryObservationObservedStage {
+	return s.ObservedStage
+}
+
+// GetNextAttemptAt returns the value of NextAttemptAt.
+func (s *SandboxRestartRetryObservation) GetNextAttemptAt() OptDateTime {
+	return s.NextAttemptAt
+}
+
+// GetBlockedReason returns the value of BlockedReason.
+func (s *SandboxRestartRetryObservation) GetBlockedReason() OptSandboxRestartRetryObservationBlockedReason {
+	return s.BlockedReason
+}
+
+// SetAttempts sets the value of Attempts.
+func (s *SandboxRestartRetryObservation) SetAttempts(val int64) {
+	s.Attempts = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxRestartRetryObservation) SetObservedAt(val OptDateTime) {
+	s.ObservedAt = val
+}
+
+// SetObservedStage sets the value of ObservedStage.
+func (s *SandboxRestartRetryObservation) SetObservedStage(val OptSandboxRestartRetryObservationObservedStage) {
+	s.ObservedStage = val
+}
+
+// SetNextAttemptAt sets the value of NextAttemptAt.
+func (s *SandboxRestartRetryObservation) SetNextAttemptAt(val OptDateTime) {
+	s.NextAttemptAt = val
+}
+
+// SetBlockedReason sets the value of BlockedReason.
+func (s *SandboxRestartRetryObservation) SetBlockedReason(val OptSandboxRestartRetryObservationBlockedReason) {
+	s.BlockedReason = val
+}
+
+// Fixed diagnostic code for the current stage. storage_not_writable means the host could not provide
+// a writable RootFS and does not identify the underlying cause or authorize repair. No raw node
+// errors, credentials, or topology are exposed.
+type SandboxRestartRetryObservationBlockedReason string
+
+const (
+	SandboxRestartRetryObservationBlockedReasonRetirementPending       SandboxRestartRetryObservationBlockedReason = "retirement_pending"
+	SandboxRestartRetryObservationBlockedReasonQuotaExceeded           SandboxRestartRetryObservationBlockedReason = "quota_exceeded"
+	SandboxRestartRetryObservationBlockedReasonCapacityUnavailable     SandboxRestartRetryObservationBlockedReason = "capacity_unavailable"
+	SandboxRestartRetryObservationBlockedReasonRuntimeUnavailable      SandboxRestartRetryObservationBlockedReason = "runtime_unavailable"
+	SandboxRestartRetryObservationBlockedReasonStorageNotWritable      SandboxRestartRetryObservationBlockedReason = "storage_not_writable"
+	SandboxRestartRetryObservationBlockedReasonAttemptTimedOut         SandboxRestartRetryObservationBlockedReason = "attempt_timed_out"
+	SandboxRestartRetryObservationBlockedReasonControlPlaneUnavailable SandboxRestartRetryObservationBlockedReason = "control_plane_unavailable"
+	SandboxRestartRetryObservationBlockedReasonLaunchPending           SandboxRestartRetryObservationBlockedReason = "launch_pending"
+)
+
+// AllValues returns all SandboxRestartRetryObservationBlockedReason values.
+func (SandboxRestartRetryObservationBlockedReason) AllValues() []SandboxRestartRetryObservationBlockedReason {
+	return []SandboxRestartRetryObservationBlockedReason{
+		SandboxRestartRetryObservationBlockedReasonRetirementPending,
+		SandboxRestartRetryObservationBlockedReasonQuotaExceeded,
+		SandboxRestartRetryObservationBlockedReasonCapacityUnavailable,
+		SandboxRestartRetryObservationBlockedReasonRuntimeUnavailable,
+		SandboxRestartRetryObservationBlockedReasonStorageNotWritable,
+		SandboxRestartRetryObservationBlockedReasonAttemptTimedOut,
+		SandboxRestartRetryObservationBlockedReasonControlPlaneUnavailable,
+		SandboxRestartRetryObservationBlockedReasonLaunchPending,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRestartRetryObservationBlockedReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRestartRetryObservationBlockedReasonRetirementPending:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonQuotaExceeded:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonCapacityUnavailable:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonRuntimeUnavailable:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonStorageNotWritable:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonAttemptTimedOut:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonControlPlaneUnavailable:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationBlockedReasonLaunchPending:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRestartRetryObservationBlockedReason) UnmarshalText(data []byte) error {
+	switch SandboxRestartRetryObservationBlockedReason(data) {
+	case SandboxRestartRetryObservationBlockedReasonRetirementPending:
+		*s = SandboxRestartRetryObservationBlockedReasonRetirementPending
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonQuotaExceeded:
+		*s = SandboxRestartRetryObservationBlockedReasonQuotaExceeded
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonCapacityUnavailable:
+		*s = SandboxRestartRetryObservationBlockedReasonCapacityUnavailable
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonRuntimeUnavailable:
+		*s = SandboxRestartRetryObservationBlockedReasonRuntimeUnavailable
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonStorageNotWritable:
+		*s = SandboxRestartRetryObservationBlockedReasonStorageNotWritable
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonAttemptTimedOut:
+		*s = SandboxRestartRetryObservationBlockedReasonAttemptTimedOut
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonControlPlaneUnavailable:
+		*s = SandboxRestartRetryObservationBlockedReasonControlPlaneUnavailable
+		return nil
+	case SandboxRestartRetryObservationBlockedReasonLaunchPending:
+		*s = SandboxRestartRetryObservationBlockedReasonLaunchPending
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SandboxRestartRetryObservationObservedStage string
+
+const (
+	SandboxRestartRetryObservationObservedStagePausing    SandboxRestartRetryObservationObservedStage = "pausing"
+	SandboxRestartRetryObservationObservedStagePaused     SandboxRestartRetryObservationObservedStage = "paused"
+	SandboxRestartRetryObservationObservedStageResuming   SandboxRestartRetryObservationObservedStage = "resuming"
+	SandboxRestartRetryObservationObservedStageSucceeded  SandboxRestartRetryObservationObservedStage = "succeeded"
+	SandboxRestartRetryObservationObservedStageSuperseded SandboxRestartRetryObservationObservedStage = "superseded"
+	SandboxRestartRetryObservationObservedStageFailed     SandboxRestartRetryObservationObservedStage = "failed"
+)
+
+// AllValues returns all SandboxRestartRetryObservationObservedStage values.
+func (SandboxRestartRetryObservationObservedStage) AllValues() []SandboxRestartRetryObservationObservedStage {
+	return []SandboxRestartRetryObservationObservedStage{
+		SandboxRestartRetryObservationObservedStagePausing,
+		SandboxRestartRetryObservationObservedStagePaused,
+		SandboxRestartRetryObservationObservedStageResuming,
+		SandboxRestartRetryObservationObservedStageSucceeded,
+		SandboxRestartRetryObservationObservedStageSuperseded,
+		SandboxRestartRetryObservationObservedStageFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRestartRetryObservationObservedStage) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRestartRetryObservationObservedStagePausing:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationObservedStagePaused:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationObservedStageResuming:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationObservedStageSucceeded:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationObservedStageSuperseded:
+		return []byte(s), nil
+	case SandboxRestartRetryObservationObservedStageFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRestartRetryObservationObservedStage) UnmarshalText(data []byte) error {
+	switch SandboxRestartRetryObservationObservedStage(data) {
+	case SandboxRestartRetryObservationObservedStagePausing:
+		*s = SandboxRestartRetryObservationObservedStagePausing
+		return nil
+	case SandboxRestartRetryObservationObservedStagePaused:
+		*s = SandboxRestartRetryObservationObservedStagePaused
+		return nil
+	case SandboxRestartRetryObservationObservedStageResuming:
+		*s = SandboxRestartRetryObservationObservedStageResuming
+		return nil
+	case SandboxRestartRetryObservationObservedStageSucceeded:
+		*s = SandboxRestartRetryObservationObservedStageSucceeded
+		return nil
+	case SandboxRestartRetryObservationObservedStageSuperseded:
+		*s = SandboxRestartRetryObservationObservedStageSuperseded
+		return nil
+	case SandboxRestartRetryObservationObservedStageFailed:
+		*s = SandboxRestartRetryObservationObservedStageFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRootFSForkLaunch
+type SandboxRootFSForkLaunch struct {
+	OperationID      string `json:"operation_id"`
+	SandboxID        string `json:"sandbox_id"`
+	ForkOperationID  string `json:"fork_operation_id"`
+	FilesystemID     string `json:"filesystem_id"`
+	HeadGenerationID string `json:"head_generation_id"`
+	// Original pre-admission writer epoch, not a current writer lease.
+	WriterEpoch    int64                                 `json:"writer_epoch"`
+	LifecycleEpoch SandboxRootFSForkLaunchLifecycleEpoch `json:"lifecycle_epoch"`
+	// Zero while pending or aborted; one when completed.
+	RuntimeGeneration SandboxRootFSForkLaunchRuntimeGeneration `json:"runtime_generation"`
+	State             SandboxRootFSForkLaunchState             `json:"state"`
+	Current           bool                                     `json:"current"`
+	// Present only for completed history; digest of retained external launch proof.
+	LaunchDigest OptString `json:"launch_digest"`
+	// Present only for completed history.
+	CompletedAt OptDateTime `json:"completed_at"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxRootFSForkLaunch) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxRootFSForkLaunch) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetForkOperationID returns the value of ForkOperationID.
+func (s *SandboxRootFSForkLaunch) GetForkOperationID() string {
+	return s.ForkOperationID
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxRootFSForkLaunch) GetFilesystemID() string {
+	return s.FilesystemID
+}
+
+// GetHeadGenerationID returns the value of HeadGenerationID.
+func (s *SandboxRootFSForkLaunch) GetHeadGenerationID() string {
+	return s.HeadGenerationID
+}
+
+// GetWriterEpoch returns the value of WriterEpoch.
+func (s *SandboxRootFSForkLaunch) GetWriterEpoch() int64 {
+	return s.WriterEpoch
+}
+
+// GetLifecycleEpoch returns the value of LifecycleEpoch.
+func (s *SandboxRootFSForkLaunch) GetLifecycleEpoch() SandboxRootFSForkLaunchLifecycleEpoch {
+	return s.LifecycleEpoch
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxRootFSForkLaunch) GetRuntimeGeneration() SandboxRootFSForkLaunchRuntimeGeneration {
+	return s.RuntimeGeneration
+}
+
+// GetState returns the value of State.
+func (s *SandboxRootFSForkLaunch) GetState() SandboxRootFSForkLaunchState {
+	return s.State
+}
+
+// GetCurrent returns the value of Current.
+func (s *SandboxRootFSForkLaunch) GetCurrent() bool {
+	return s.Current
+}
+
+// GetLaunchDigest returns the value of LaunchDigest.
+func (s *SandboxRootFSForkLaunch) GetLaunchDigest() OptString {
+	return s.LaunchDigest
+}
+
+// GetCompletedAt returns the value of CompletedAt.
+func (s *SandboxRootFSForkLaunch) GetCompletedAt() OptDateTime {
+	return s.CompletedAt
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxRootFSForkLaunch) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxRootFSForkLaunch) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetForkOperationID sets the value of ForkOperationID.
+func (s *SandboxRootFSForkLaunch) SetForkOperationID(val string) {
+	s.ForkOperationID = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxRootFSForkLaunch) SetFilesystemID(val string) {
+	s.FilesystemID = val
+}
+
+// SetHeadGenerationID sets the value of HeadGenerationID.
+func (s *SandboxRootFSForkLaunch) SetHeadGenerationID(val string) {
+	s.HeadGenerationID = val
+}
+
+// SetWriterEpoch sets the value of WriterEpoch.
+func (s *SandboxRootFSForkLaunch) SetWriterEpoch(val int64) {
+	s.WriterEpoch = val
+}
+
+// SetLifecycleEpoch sets the value of LifecycleEpoch.
+func (s *SandboxRootFSForkLaunch) SetLifecycleEpoch(val SandboxRootFSForkLaunchLifecycleEpoch) {
+	s.LifecycleEpoch = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxRootFSForkLaunch) SetRuntimeGeneration(val SandboxRootFSForkLaunchRuntimeGeneration) {
+	s.RuntimeGeneration = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxRootFSForkLaunch) SetState(val SandboxRootFSForkLaunchState) {
+	s.State = val
+}
+
+// SetCurrent sets the value of Current.
+func (s *SandboxRootFSForkLaunch) SetCurrent(val bool) {
+	s.Current = val
+}
+
+// SetLaunchDigest sets the value of LaunchDigest.
+func (s *SandboxRootFSForkLaunch) SetLaunchDigest(val OptString) {
+	s.LaunchDigest = val
+}
+
+// SetCompletedAt sets the value of CompletedAt.
+func (s *SandboxRootFSForkLaunch) SetCompletedAt(val OptDateTime) {
+	s.CompletedAt = val
+}
+
+type SandboxRootFSForkLaunchLifecycleEpoch int64
+
+const (
+	SandboxRootFSForkLaunchLifecycleEpoch1 SandboxRootFSForkLaunchLifecycleEpoch = 1
+)
+
+// AllValues returns all SandboxRootFSForkLaunchLifecycleEpoch values.
+func (SandboxRootFSForkLaunchLifecycleEpoch) AllValues() []SandboxRootFSForkLaunchLifecycleEpoch {
+	return []SandboxRootFSForkLaunchLifecycleEpoch{
+		SandboxRootFSForkLaunchLifecycleEpoch1,
+	}
+}
+
+// Ref: #/components/schemas/SandboxRootFSForkLaunchRequest
+type SandboxRootFSForkLaunchRequest struct {
+	ForkOperationID  string `json:"fork_operation_id"`
+	FilesystemID     string `json:"filesystem_id"`
+	HeadGenerationID string `json:"head_generation_id"`
+	WriterEpoch      int64  `json:"writer_epoch"`
+}
+
+// GetForkOperationID returns the value of ForkOperationID.
+func (s *SandboxRootFSForkLaunchRequest) GetForkOperationID() string {
+	return s.ForkOperationID
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxRootFSForkLaunchRequest) GetFilesystemID() string {
+	return s.FilesystemID
+}
+
+// GetHeadGenerationID returns the value of HeadGenerationID.
+func (s *SandboxRootFSForkLaunchRequest) GetHeadGenerationID() string {
+	return s.HeadGenerationID
+}
+
+// GetWriterEpoch returns the value of WriterEpoch.
+func (s *SandboxRootFSForkLaunchRequest) GetWriterEpoch() int64 {
+	return s.WriterEpoch
+}
+
+// SetForkOperationID sets the value of ForkOperationID.
+func (s *SandboxRootFSForkLaunchRequest) SetForkOperationID(val string) {
+	s.ForkOperationID = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxRootFSForkLaunchRequest) SetFilesystemID(val string) {
+	s.FilesystemID = val
+}
+
+// SetHeadGenerationID sets the value of HeadGenerationID.
+func (s *SandboxRootFSForkLaunchRequest) SetHeadGenerationID(val string) {
+	s.HeadGenerationID = val
+}
+
+// SetWriterEpoch sets the value of WriterEpoch.
+func (s *SandboxRootFSForkLaunchRequest) SetWriterEpoch(val int64) {
+	s.WriterEpoch = val
+}
+
+// Zero while pending or aborted; one when completed.
+type SandboxRootFSForkLaunchRuntimeGeneration int64
+
+const (
+	SandboxRootFSForkLaunchRuntimeGeneration0 SandboxRootFSForkLaunchRuntimeGeneration = 0
+	SandboxRootFSForkLaunchRuntimeGeneration1 SandboxRootFSForkLaunchRuntimeGeneration = 1
+)
+
+// AllValues returns all SandboxRootFSForkLaunchRuntimeGeneration values.
+func (SandboxRootFSForkLaunchRuntimeGeneration) AllValues() []SandboxRootFSForkLaunchRuntimeGeneration {
+	return []SandboxRootFSForkLaunchRuntimeGeneration{
+		SandboxRootFSForkLaunchRuntimeGeneration0,
+		SandboxRootFSForkLaunchRuntimeGeneration1,
+	}
+}
+
+type SandboxRootFSForkLaunchState string
+
+const (
+	SandboxRootFSForkLaunchStatePending   SandboxRootFSForkLaunchState = "pending"
+	SandboxRootFSForkLaunchStateCompleted SandboxRootFSForkLaunchState = "completed"
+	SandboxRootFSForkLaunchStateAborted   SandboxRootFSForkLaunchState = "aborted"
+)
+
+// AllValues returns all SandboxRootFSForkLaunchState values.
+func (SandboxRootFSForkLaunchState) AllValues() []SandboxRootFSForkLaunchState {
+	return []SandboxRootFSForkLaunchState{
+		SandboxRootFSForkLaunchStatePending,
+		SandboxRootFSForkLaunchStateCompleted,
+		SandboxRootFSForkLaunchStateAborted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRootFSForkLaunchState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRootFSForkLaunchStatePending:
+		return []byte(s), nil
+	case SandboxRootFSForkLaunchStateCompleted:
+		return []byte(s), nil
+	case SandboxRootFSForkLaunchStateAborted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRootFSForkLaunchState) UnmarshalText(data []byte) error {
+	switch SandboxRootFSForkLaunchState(data) {
+	case SandboxRootFSForkLaunchStatePending:
+		*s = SandboxRootFSForkLaunchStatePending
+		return nil
+	case SandboxRootFSForkLaunchStateCompleted:
+		*s = SandboxRootFSForkLaunchStateCompleted
+		return nil
+	case SandboxRootFSForkLaunchStateAborted:
+		*s = SandboxRootFSForkLaunchStateAborted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxRootFSForkObservation
+type SandboxRootFSForkObservation struct {
+	OperationID             string    `json:"operation_id"`
+	SourceSandboxID         string    `json:"source_sandbox_id"`
+	TargetSandboxID         string    `json:"target_sandbox_id"`
+	SourceRuntimeGeneration int64     `json:"source_runtime_generation"`
+	SourceFilesystemID      string    `json:"source_filesystem_id"`
+	SourceHeadGenerationID  string    `json:"source_head_generation_id"`
+	TargetFilesystemID      string    `json:"target_filesystem_id"`
+	TargetHeadGenerationID  string    `json:"target_head_generation_id"`
+	BaseArtifactDigest      string    `json:"base_artifact_digest"`
+	SourceOciDigest         string    `json:"source_oci_digest"`
+	WriterEpoch             int64     `json:"writer_epoch"`
+	ManagedFilesSizeBytes   int64     `json:"managed_files_size_bytes"`
+	AutoResume              bool      `json:"auto_resume"`
+	AutomaticRoutes         bool      `json:"automatic_routes"`
+	SandboxCreatedAt        time.Time `json:"sandbox_created_at"`
+	FilesystemCreatedAt     time.Time `json:"filesystem_created_at"`
+	ObservedAt              time.Time `json:"observed_at"`
+}
+
+// GetOperationID returns the value of OperationID.
+func (s *SandboxRootFSForkObservation) GetOperationID() string {
+	return s.OperationID
+}
+
+// GetSourceSandboxID returns the value of SourceSandboxID.
+func (s *SandboxRootFSForkObservation) GetSourceSandboxID() string {
+	return s.SourceSandboxID
+}
+
+// GetTargetSandboxID returns the value of TargetSandboxID.
+func (s *SandboxRootFSForkObservation) GetTargetSandboxID() string {
+	return s.TargetSandboxID
+}
+
+// GetSourceRuntimeGeneration returns the value of SourceRuntimeGeneration.
+func (s *SandboxRootFSForkObservation) GetSourceRuntimeGeneration() int64 {
+	return s.SourceRuntimeGeneration
+}
+
+// GetSourceFilesystemID returns the value of SourceFilesystemID.
+func (s *SandboxRootFSForkObservation) GetSourceFilesystemID() string {
+	return s.SourceFilesystemID
+}
+
+// GetSourceHeadGenerationID returns the value of SourceHeadGenerationID.
+func (s *SandboxRootFSForkObservation) GetSourceHeadGenerationID() string {
+	return s.SourceHeadGenerationID
+}
+
+// GetTargetFilesystemID returns the value of TargetFilesystemID.
+func (s *SandboxRootFSForkObservation) GetTargetFilesystemID() string {
+	return s.TargetFilesystemID
+}
+
+// GetTargetHeadGenerationID returns the value of TargetHeadGenerationID.
+func (s *SandboxRootFSForkObservation) GetTargetHeadGenerationID() string {
+	return s.TargetHeadGenerationID
+}
+
+// GetBaseArtifactDigest returns the value of BaseArtifactDigest.
+func (s *SandboxRootFSForkObservation) GetBaseArtifactDigest() string {
+	return s.BaseArtifactDigest
+}
+
+// GetSourceOciDigest returns the value of SourceOciDigest.
+func (s *SandboxRootFSForkObservation) GetSourceOciDigest() string {
+	return s.SourceOciDigest
+}
+
+// GetWriterEpoch returns the value of WriterEpoch.
+func (s *SandboxRootFSForkObservation) GetWriterEpoch() int64 {
+	return s.WriterEpoch
+}
+
+// GetManagedFilesSizeBytes returns the value of ManagedFilesSizeBytes.
+func (s *SandboxRootFSForkObservation) GetManagedFilesSizeBytes() int64 {
+	return s.ManagedFilesSizeBytes
+}
+
+// GetAutoResume returns the value of AutoResume.
+func (s *SandboxRootFSForkObservation) GetAutoResume() bool {
+	return s.AutoResume
+}
+
+// GetAutomaticRoutes returns the value of AutomaticRoutes.
+func (s *SandboxRootFSForkObservation) GetAutomaticRoutes() bool {
+	return s.AutomaticRoutes
+}
+
+// GetSandboxCreatedAt returns the value of SandboxCreatedAt.
+func (s *SandboxRootFSForkObservation) GetSandboxCreatedAt() time.Time {
+	return s.SandboxCreatedAt
+}
+
+// GetFilesystemCreatedAt returns the value of FilesystemCreatedAt.
+func (s *SandboxRootFSForkObservation) GetFilesystemCreatedAt() time.Time {
+	return s.FilesystemCreatedAt
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxRootFSForkObservation) GetObservedAt() time.Time {
+	return s.ObservedAt
+}
+
+// SetOperationID sets the value of OperationID.
+func (s *SandboxRootFSForkObservation) SetOperationID(val string) {
+	s.OperationID = val
+}
+
+// SetSourceSandboxID sets the value of SourceSandboxID.
+func (s *SandboxRootFSForkObservation) SetSourceSandboxID(val string) {
+	s.SourceSandboxID = val
+}
+
+// SetTargetSandboxID sets the value of TargetSandboxID.
+func (s *SandboxRootFSForkObservation) SetTargetSandboxID(val string) {
+	s.TargetSandboxID = val
+}
+
+// SetSourceRuntimeGeneration sets the value of SourceRuntimeGeneration.
+func (s *SandboxRootFSForkObservation) SetSourceRuntimeGeneration(val int64) {
+	s.SourceRuntimeGeneration = val
+}
+
+// SetSourceFilesystemID sets the value of SourceFilesystemID.
+func (s *SandboxRootFSForkObservation) SetSourceFilesystemID(val string) {
+	s.SourceFilesystemID = val
+}
+
+// SetSourceHeadGenerationID sets the value of SourceHeadGenerationID.
+func (s *SandboxRootFSForkObservation) SetSourceHeadGenerationID(val string) {
+	s.SourceHeadGenerationID = val
+}
+
+// SetTargetFilesystemID sets the value of TargetFilesystemID.
+func (s *SandboxRootFSForkObservation) SetTargetFilesystemID(val string) {
+	s.TargetFilesystemID = val
+}
+
+// SetTargetHeadGenerationID sets the value of TargetHeadGenerationID.
+func (s *SandboxRootFSForkObservation) SetTargetHeadGenerationID(val string) {
+	s.TargetHeadGenerationID = val
+}
+
+// SetBaseArtifactDigest sets the value of BaseArtifactDigest.
+func (s *SandboxRootFSForkObservation) SetBaseArtifactDigest(val string) {
+	s.BaseArtifactDigest = val
+}
+
+// SetSourceOciDigest sets the value of SourceOciDigest.
+func (s *SandboxRootFSForkObservation) SetSourceOciDigest(val string) {
+	s.SourceOciDigest = val
+}
+
+// SetWriterEpoch sets the value of WriterEpoch.
+func (s *SandboxRootFSForkObservation) SetWriterEpoch(val int64) {
+	s.WriterEpoch = val
+}
+
+// SetManagedFilesSizeBytes sets the value of ManagedFilesSizeBytes.
+func (s *SandboxRootFSForkObservation) SetManagedFilesSizeBytes(val int64) {
+	s.ManagedFilesSizeBytes = val
+}
+
+// SetAutoResume sets the value of AutoResume.
+func (s *SandboxRootFSForkObservation) SetAutoResume(val bool) {
+	s.AutoResume = val
+}
+
+// SetAutomaticRoutes sets the value of AutomaticRoutes.
+func (s *SandboxRootFSForkObservation) SetAutomaticRoutes(val bool) {
+	s.AutomaticRoutes = val
+}
+
+// SetSandboxCreatedAt sets the value of SandboxCreatedAt.
+func (s *SandboxRootFSForkObservation) SetSandboxCreatedAt(val time.Time) {
+	s.SandboxCreatedAt = val
+}
+
+// SetFilesystemCreatedAt sets the value of FilesystemCreatedAt.
+func (s *SandboxRootFSForkObservation) SetFilesystemCreatedAt(val time.Time) {
+	s.FilesystemCreatedAt = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxRootFSForkObservation) SetObservedAt(val time.Time) {
+	s.ObservedAt = val
+}
+
+// Ref: #/components/schemas/SandboxRootFSIdentity
+type SandboxRootFSIdentity struct {
+	// Observed sandbox identity.
+	SandboxID string `json:"sandbox_id"`
+	// Exact runtime generation at observation; zero is possible before first launch.
+	RuntimeGeneration int64 `json:"runtime_generation"`
+	// Control-plane lifecycle epoch at observation.
+	LifecycleEpoch int64 `json:"lifecycle_epoch"`
+	// Requested lifecycle state, not a guest health result.
+	DesiredState SandboxRootFSIdentityDesiredState `json:"desired_state"`
+	// Assigned external credential projection capacity; zero means legacy layout. Capacity is not
+	// credential safety evidence.
+	ManagedFilesSizeBytes int64 `json:"managed_files_size_bytes"`
+	// Opaque durable filesystem identity.
+	FilesystemID string `json:"filesystem_id"`
+	// Last committed RootFS generation; live uncommitted writes are not represented.
+	HeadGenerationID string `json:"head_generation_id"`
+	// Durable writer fence epoch; this does not prove a writer is currently alive.
+	WriterEpoch int64 `json:"writer_epoch"`
+	// Immutable base artifact digest.
+	BaseArtifactDigest string `json:"base_artifact_digest"`
+	// Immutable OCI source digest of the committed head.
+	SourceOciDigest string `json:"source_oci_digest"`
+	// Immutable runtime scheduling-class digest from the current active slot and matching external
+	// launch proof. Omitted during lifecycle transitions or when launch authority is absent, stale or
+	// mismatched. Binds the admitted runsc version and execution configuration; it is not a live Sentry
+	// observation or credential-safety attestation.
+	RuntimeCompatibilityDigest OptString `json:"runtime_compatibility_digest"`
+	// Runtime scheduling class of the exact retained external launch for recovery preflight, even after
+	// driver or writer lease expiry. Requires matching current sandbox generation, filesystem
+	// head/writer epoch, consumed writer grant and unreleased active resource lease. Omitted when that
+	// custody is absent, superseded, retired or transitioning. Does not establish current execution,
+	// permit ordinary credential access or authorize restart by itself; explicit restart still binds and
+	// fences the source before final capture.
+	RetainedRuntimeCompatibilityDigest OptString `json:"retained_runtime_compatibility_digest"`
+	// True for retained import ancestry or a head owned by another filesystem. False alone never proves
+	// pristine or credential-clean history.
+	HasImportedFilesystem bool `json:"has_imported_filesystem"`
+	// A lifecycle transaction was in progress at observation.
+	ActiveLifecycle bool `json:"active_lifecycle"`
+	// Control-plane sandbox creation time.
+	SandboxCreatedAt time.Time `json:"sandbox_created_at"`
+	// Durable filesystem creation time.
+	FilesystemCreatedAt time.Time `json:"filesystem_created_at"`
+	// Database statement observation timestamp.
+	ObservedAt time.Time `json:"observed_at"`
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxRootFSIdentity) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SandboxRootFSIdentity) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetLifecycleEpoch returns the value of LifecycleEpoch.
+func (s *SandboxRootFSIdentity) GetLifecycleEpoch() int64 {
+	return s.LifecycleEpoch
+}
+
+// GetDesiredState returns the value of DesiredState.
+func (s *SandboxRootFSIdentity) GetDesiredState() SandboxRootFSIdentityDesiredState {
+	return s.DesiredState
+}
+
+// GetManagedFilesSizeBytes returns the value of ManagedFilesSizeBytes.
+func (s *SandboxRootFSIdentity) GetManagedFilesSizeBytes() int64 {
+	return s.ManagedFilesSizeBytes
+}
+
+// GetFilesystemID returns the value of FilesystemID.
+func (s *SandboxRootFSIdentity) GetFilesystemID() string {
+	return s.FilesystemID
+}
+
+// GetHeadGenerationID returns the value of HeadGenerationID.
+func (s *SandboxRootFSIdentity) GetHeadGenerationID() string {
+	return s.HeadGenerationID
+}
+
+// GetWriterEpoch returns the value of WriterEpoch.
+func (s *SandboxRootFSIdentity) GetWriterEpoch() int64 {
+	return s.WriterEpoch
+}
+
+// GetBaseArtifactDigest returns the value of BaseArtifactDigest.
+func (s *SandboxRootFSIdentity) GetBaseArtifactDigest() string {
+	return s.BaseArtifactDigest
+}
+
+// GetSourceOciDigest returns the value of SourceOciDigest.
+func (s *SandboxRootFSIdentity) GetSourceOciDigest() string {
+	return s.SourceOciDigest
+}
+
+// GetRuntimeCompatibilityDigest returns the value of RuntimeCompatibilityDigest.
+func (s *SandboxRootFSIdentity) GetRuntimeCompatibilityDigest() OptString {
+	return s.RuntimeCompatibilityDigest
+}
+
+// GetRetainedRuntimeCompatibilityDigest returns the value of RetainedRuntimeCompatibilityDigest.
+func (s *SandboxRootFSIdentity) GetRetainedRuntimeCompatibilityDigest() OptString {
+	return s.RetainedRuntimeCompatibilityDigest
+}
+
+// GetHasImportedFilesystem returns the value of HasImportedFilesystem.
+func (s *SandboxRootFSIdentity) GetHasImportedFilesystem() bool {
+	return s.HasImportedFilesystem
+}
+
+// GetActiveLifecycle returns the value of ActiveLifecycle.
+func (s *SandboxRootFSIdentity) GetActiveLifecycle() bool {
+	return s.ActiveLifecycle
+}
+
+// GetSandboxCreatedAt returns the value of SandboxCreatedAt.
+func (s *SandboxRootFSIdentity) GetSandboxCreatedAt() time.Time {
+	return s.SandboxCreatedAt
+}
+
+// GetFilesystemCreatedAt returns the value of FilesystemCreatedAt.
+func (s *SandboxRootFSIdentity) GetFilesystemCreatedAt() time.Time {
+	return s.FilesystemCreatedAt
+}
+
+// GetObservedAt returns the value of ObservedAt.
+func (s *SandboxRootFSIdentity) GetObservedAt() time.Time {
+	return s.ObservedAt
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxRootFSIdentity) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SandboxRootFSIdentity) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetLifecycleEpoch sets the value of LifecycleEpoch.
+func (s *SandboxRootFSIdentity) SetLifecycleEpoch(val int64) {
+	s.LifecycleEpoch = val
+}
+
+// SetDesiredState sets the value of DesiredState.
+func (s *SandboxRootFSIdentity) SetDesiredState(val SandboxRootFSIdentityDesiredState) {
+	s.DesiredState = val
+}
+
+// SetManagedFilesSizeBytes sets the value of ManagedFilesSizeBytes.
+func (s *SandboxRootFSIdentity) SetManagedFilesSizeBytes(val int64) {
+	s.ManagedFilesSizeBytes = val
+}
+
+// SetFilesystemID sets the value of FilesystemID.
+func (s *SandboxRootFSIdentity) SetFilesystemID(val string) {
+	s.FilesystemID = val
+}
+
+// SetHeadGenerationID sets the value of HeadGenerationID.
+func (s *SandboxRootFSIdentity) SetHeadGenerationID(val string) {
+	s.HeadGenerationID = val
+}
+
+// SetWriterEpoch sets the value of WriterEpoch.
+func (s *SandboxRootFSIdentity) SetWriterEpoch(val int64) {
+	s.WriterEpoch = val
+}
+
+// SetBaseArtifactDigest sets the value of BaseArtifactDigest.
+func (s *SandboxRootFSIdentity) SetBaseArtifactDigest(val string) {
+	s.BaseArtifactDigest = val
+}
+
+// SetSourceOciDigest sets the value of SourceOciDigest.
+func (s *SandboxRootFSIdentity) SetSourceOciDigest(val string) {
+	s.SourceOciDigest = val
+}
+
+// SetRuntimeCompatibilityDigest sets the value of RuntimeCompatibilityDigest.
+func (s *SandboxRootFSIdentity) SetRuntimeCompatibilityDigest(val OptString) {
+	s.RuntimeCompatibilityDigest = val
+}
+
+// SetRetainedRuntimeCompatibilityDigest sets the value of RetainedRuntimeCompatibilityDigest.
+func (s *SandboxRootFSIdentity) SetRetainedRuntimeCompatibilityDigest(val OptString) {
+	s.RetainedRuntimeCompatibilityDigest = val
+}
+
+// SetHasImportedFilesystem sets the value of HasImportedFilesystem.
+func (s *SandboxRootFSIdentity) SetHasImportedFilesystem(val bool) {
+	s.HasImportedFilesystem = val
+}
+
+// SetActiveLifecycle sets the value of ActiveLifecycle.
+func (s *SandboxRootFSIdentity) SetActiveLifecycle(val bool) {
+	s.ActiveLifecycle = val
+}
+
+// SetSandboxCreatedAt sets the value of SandboxCreatedAt.
+func (s *SandboxRootFSIdentity) SetSandboxCreatedAt(val time.Time) {
+	s.SandboxCreatedAt = val
+}
+
+// SetFilesystemCreatedAt sets the value of FilesystemCreatedAt.
+func (s *SandboxRootFSIdentity) SetFilesystemCreatedAt(val time.Time) {
+	s.FilesystemCreatedAt = val
+}
+
+// SetObservedAt sets the value of ObservedAt.
+func (s *SandboxRootFSIdentity) SetObservedAt(val time.Time) {
+	s.ObservedAt = val
+}
+
+// Requested lifecycle state, not a guest health result.
+type SandboxRootFSIdentityDesiredState string
+
+const (
+	SandboxRootFSIdentityDesiredStateActive     SandboxRootFSIdentityDesiredState = "active"
+	SandboxRootFSIdentityDesiredStatePaused     SandboxRootFSIdentityDesiredState = "paused"
+	SandboxRootFSIdentityDesiredStateTerminated SandboxRootFSIdentityDesiredState = "terminated"
+)
+
+// AllValues returns all SandboxRootFSIdentityDesiredState values.
+func (SandboxRootFSIdentityDesiredState) AllValues() []SandboxRootFSIdentityDesiredState {
+	return []SandboxRootFSIdentityDesiredState{
+		SandboxRootFSIdentityDesiredStateActive,
+		SandboxRootFSIdentityDesiredStatePaused,
+		SandboxRootFSIdentityDesiredStateTerminated,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxRootFSIdentityDesiredState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxRootFSIdentityDesiredStateActive:
+		return []byte(s), nil
+	case SandboxRootFSIdentityDesiredStatePaused:
+		return []byte(s), nil
+	case SandboxRootFSIdentityDesiredStateTerminated:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxRootFSIdentityDesiredState) UnmarshalText(data []byte) error {
+	switch SandboxRootFSIdentityDesiredState(data) {
+	case SandboxRootFSIdentityDesiredStateActive:
+		*s = SandboxRootFSIdentityDesiredStateActive
+		return nil
+	case SandboxRootFSIdentityDesiredStatePaused:
+		*s = SandboxRootFSIdentityDesiredStatePaused
+		return nil
+	case SandboxRootFSIdentityDesiredStateTerminated:
+		*s = SandboxRootFSIdentityDesiredStateTerminated
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/SandboxRootFSSnapshot
 type SandboxRootFSSnapshot struct {
-	ID          string    `json:"id"`
-	SandboxID   string    `json:"sandbox_id"`
-	Name        OptString `json:"name"`
-	Description OptString `json:"description"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID        string `json:"id"`
+	SandboxID string `json:"sandbox_id"`
+	// Immutable storage generation captured by this snapshot. Use this exact value as
+	// snapshot_generation_id for conditional recovery; never substitute the sandbox's current head. May
+	// be absent on older servers, which cannot supply a conditional recovery target.
+	GenerationID OptString `json:"generation_id"`
+	Name         OptString `json:"name"`
+	Description  OptString `json:"description"`
+	CreatedAt    time.Time `json:"created_at"`
 	// Optional snapshot expiration timestamp. Zero value means not set.
 	ExpiresAt OptDateTime `json:"expires_at"`
 }
@@ -15054,6 +19104,11 @@ func (s *SandboxRootFSSnapshot) GetID() string {
 // GetSandboxID returns the value of SandboxID.
 func (s *SandboxRootFSSnapshot) GetSandboxID() string {
 	return s.SandboxID
+}
+
+// GetGenerationID returns the value of GenerationID.
+func (s *SandboxRootFSSnapshot) GetGenerationID() OptString {
+	return s.GenerationID
 }
 
 // GetName returns the value of Name.
@@ -15084,6 +19139,11 @@ func (s *SandboxRootFSSnapshot) SetID(val string) {
 // SetSandboxID sets the value of SandboxID.
 func (s *SandboxRootFSSnapshot) SetSandboxID(val string) {
 	s.SandboxID = val
+}
+
+// SetGenerationID sets the value of GenerationID.
+func (s *SandboxRootFSSnapshot) SetGenerationID(val OptString) {
+	s.GenerationID = val
 }
 
 // SetName sets the value of Name.
@@ -15130,6 +19190,32 @@ func (s *SandboxRootFSSnapshotList) SetSnapshots(val []SandboxRootFSSnapshot) {
 // SetCount sets the value of Count.
 func (s *SandboxRootFSSnapshotList) SetCount(val int) {
 	s.Count = val
+}
+
+// Ref: #/components/schemas/SandboxRuntimeHealth
+type SandboxRuntimeHealth struct {
+	LaunchAuthority SandboxHealthObservation `json:"launch_authority"`
+	Liveness        SandboxHealthObservation `json:"liveness"`
+}
+
+// GetLaunchAuthority returns the value of LaunchAuthority.
+func (s *SandboxRuntimeHealth) GetLaunchAuthority() SandboxHealthObservation {
+	return s.LaunchAuthority
+}
+
+// GetLiveness returns the value of Liveness.
+func (s *SandboxRuntimeHealth) GetLiveness() SandboxHealthObservation {
+	return s.Liveness
+}
+
+// SetLaunchAuthority sets the value of LaunchAuthority.
+func (s *SandboxRuntimeHealth) SetLaunchAuthority(val SandboxHealthObservation) {
+	s.LaunchAuthority = val
+}
+
+// SetLiveness sets the value of Liveness.
+func (s *SandboxRuntimeHealth) SetLiveness(val SandboxHealthObservation) {
+	s.Liveness = val
 }
 
 // Ref: #/components/schemas/SandboxRuntimeMetricDescriptor
@@ -15998,6 +20084,380 @@ func (s *SandboxServicesUpdateRequest) SetServices(val []SandboxAppService) {
 	s.Services = val
 }
 
+// Ref: #/components/schemas/SandboxSnapshotRestoreOperation
+type SandboxSnapshotRestoreOperation struct {
+	// Immutable snapshot selected when the operation was admitted; it may since have expired or been
+	// deleted.
+	SnapshotID string `json:"snapshot_id"`
+	// Exact snapshot generation fixed at admission.
+	SnapshotGenerationID string                                             `json:"snapshot_generation_id"`
+	DiscardProcessState  SandboxSnapshotRestoreOperationDiscardProcessState `json:"discard_process_state"`
+	// Present after the head replacement and cold resume child commit together. This alone does not
+	// prove the new runtime launched.
+	RestoredRootfsGenerationID OptString `json:"restored_rootfs_generation_id"`
+	ID                         string    `json:"id"`
+	SandboxID                  string    `json:"sandbox_id"`
+	RequestKey                 string    `json:"request_key"`
+	FromRuntimeGeneration      int64     `json:"from_runtime_generation"`
+	// Paused means an admitted paused source awaiting resume; only succeeded proves replacement. Failed
+	// and superseded are terminal and are never replayed.
+	State SandboxSnapshotRestoreOperationState `json:"state"`
+	// Present only after committed replacement, even if a later lifecycle changes the current runtime.
+	ResultRuntimeGeneration OptInt64                                 `json:"result_runtime_generation"`
+	Reason                  OptSandboxSnapshotRestoreOperationReason `json:"reason"`
+	CreatedAt               time.Time                                `json:"created_at"`
+	UpdatedAt               time.Time                                `json:"updated_at"`
+	FinishedAt              OptDateTime                              `json:"finished_at"`
+	Retry                   OptSandboxRestartRetryObservation        `json:"retry"`
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *SandboxSnapshotRestoreOperation) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetSnapshotGenerationID returns the value of SnapshotGenerationID.
+func (s *SandboxSnapshotRestoreOperation) GetSnapshotGenerationID() string {
+	return s.SnapshotGenerationID
+}
+
+// GetDiscardProcessState returns the value of DiscardProcessState.
+func (s *SandboxSnapshotRestoreOperation) GetDiscardProcessState() SandboxSnapshotRestoreOperationDiscardProcessState {
+	return s.DiscardProcessState
+}
+
+// GetRestoredRootfsGenerationID returns the value of RestoredRootfsGenerationID.
+func (s *SandboxSnapshotRestoreOperation) GetRestoredRootfsGenerationID() OptString {
+	return s.RestoredRootfsGenerationID
+}
+
+// GetID returns the value of ID.
+func (s *SandboxSnapshotRestoreOperation) GetID() string {
+	return s.ID
+}
+
+// GetSandboxID returns the value of SandboxID.
+func (s *SandboxSnapshotRestoreOperation) GetSandboxID() string {
+	return s.SandboxID
+}
+
+// GetRequestKey returns the value of RequestKey.
+func (s *SandboxSnapshotRestoreOperation) GetRequestKey() string {
+	return s.RequestKey
+}
+
+// GetFromRuntimeGeneration returns the value of FromRuntimeGeneration.
+func (s *SandboxSnapshotRestoreOperation) GetFromRuntimeGeneration() int64 {
+	return s.FromRuntimeGeneration
+}
+
+// GetState returns the value of State.
+func (s *SandboxSnapshotRestoreOperation) GetState() SandboxSnapshotRestoreOperationState {
+	return s.State
+}
+
+// GetResultRuntimeGeneration returns the value of ResultRuntimeGeneration.
+func (s *SandboxSnapshotRestoreOperation) GetResultRuntimeGeneration() OptInt64 {
+	return s.ResultRuntimeGeneration
+}
+
+// GetReason returns the value of Reason.
+func (s *SandboxSnapshotRestoreOperation) GetReason() OptSandboxSnapshotRestoreOperationReason {
+	return s.Reason
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *SandboxSnapshotRestoreOperation) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *SandboxSnapshotRestoreOperation) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetFinishedAt returns the value of FinishedAt.
+func (s *SandboxSnapshotRestoreOperation) GetFinishedAt() OptDateTime {
+	return s.FinishedAt
+}
+
+// GetRetry returns the value of Retry.
+func (s *SandboxSnapshotRestoreOperation) GetRetry() OptSandboxRestartRetryObservation {
+	return s.Retry
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *SandboxSnapshotRestoreOperation) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetSnapshotGenerationID sets the value of SnapshotGenerationID.
+func (s *SandboxSnapshotRestoreOperation) SetSnapshotGenerationID(val string) {
+	s.SnapshotGenerationID = val
+}
+
+// SetDiscardProcessState sets the value of DiscardProcessState.
+func (s *SandboxSnapshotRestoreOperation) SetDiscardProcessState(val SandboxSnapshotRestoreOperationDiscardProcessState) {
+	s.DiscardProcessState = val
+}
+
+// SetRestoredRootfsGenerationID sets the value of RestoredRootfsGenerationID.
+func (s *SandboxSnapshotRestoreOperation) SetRestoredRootfsGenerationID(val OptString) {
+	s.RestoredRootfsGenerationID = val
+}
+
+// SetID sets the value of ID.
+func (s *SandboxSnapshotRestoreOperation) SetID(val string) {
+	s.ID = val
+}
+
+// SetSandboxID sets the value of SandboxID.
+func (s *SandboxSnapshotRestoreOperation) SetSandboxID(val string) {
+	s.SandboxID = val
+}
+
+// SetRequestKey sets the value of RequestKey.
+func (s *SandboxSnapshotRestoreOperation) SetRequestKey(val string) {
+	s.RequestKey = val
+}
+
+// SetFromRuntimeGeneration sets the value of FromRuntimeGeneration.
+func (s *SandboxSnapshotRestoreOperation) SetFromRuntimeGeneration(val int64) {
+	s.FromRuntimeGeneration = val
+}
+
+// SetState sets the value of State.
+func (s *SandboxSnapshotRestoreOperation) SetState(val SandboxSnapshotRestoreOperationState) {
+	s.State = val
+}
+
+// SetResultRuntimeGeneration sets the value of ResultRuntimeGeneration.
+func (s *SandboxSnapshotRestoreOperation) SetResultRuntimeGeneration(val OptInt64) {
+	s.ResultRuntimeGeneration = val
+}
+
+// SetReason sets the value of Reason.
+func (s *SandboxSnapshotRestoreOperation) SetReason(val OptSandboxSnapshotRestoreOperationReason) {
+	s.Reason = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *SandboxSnapshotRestoreOperation) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *SandboxSnapshotRestoreOperation) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetFinishedAt sets the value of FinishedAt.
+func (s *SandboxSnapshotRestoreOperation) SetFinishedAt(val OptDateTime) {
+	s.FinishedAt = val
+}
+
+// SetRetry sets the value of Retry.
+func (s *SandboxSnapshotRestoreOperation) SetRetry(val OptSandboxRestartRetryObservation) {
+	s.Retry = val
+}
+
+type SandboxSnapshotRestoreOperationDiscardProcessState bool
+
+const (
+	SandboxSnapshotRestoreOperationDiscardProcessStateTrue SandboxSnapshotRestoreOperationDiscardProcessState = true
+)
+
+// AllValues returns all SandboxSnapshotRestoreOperationDiscardProcessState values.
+func (SandboxSnapshotRestoreOperationDiscardProcessState) AllValues() []SandboxSnapshotRestoreOperationDiscardProcessState {
+	return []SandboxSnapshotRestoreOperationDiscardProcessState{
+		SandboxSnapshotRestoreOperationDiscardProcessStateTrue,
+	}
+}
+
+type SandboxSnapshotRestoreOperationReason string
+
+const (
+	SandboxSnapshotRestoreOperationReasonSourceChanged SandboxSnapshotRestoreOperationReason = "source_changed"
+	SandboxSnapshotRestoreOperationReasonPauseAborted  SandboxSnapshotRestoreOperationReason = "pause_aborted"
+	SandboxSnapshotRestoreOperationReasonResumeAborted SandboxSnapshotRestoreOperationReason = "resume_aborted"
+)
+
+// AllValues returns all SandboxSnapshotRestoreOperationReason values.
+func (SandboxSnapshotRestoreOperationReason) AllValues() []SandboxSnapshotRestoreOperationReason {
+	return []SandboxSnapshotRestoreOperationReason{
+		SandboxSnapshotRestoreOperationReasonSourceChanged,
+		SandboxSnapshotRestoreOperationReasonPauseAborted,
+		SandboxSnapshotRestoreOperationReasonResumeAborted,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxSnapshotRestoreOperationReason) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxSnapshotRestoreOperationReasonSourceChanged:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationReasonPauseAborted:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationReasonResumeAborted:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxSnapshotRestoreOperationReason) UnmarshalText(data []byte) error {
+	switch SandboxSnapshotRestoreOperationReason(data) {
+	case SandboxSnapshotRestoreOperationReasonSourceChanged:
+		*s = SandboxSnapshotRestoreOperationReasonSourceChanged
+		return nil
+	case SandboxSnapshotRestoreOperationReasonPauseAborted:
+		*s = SandboxSnapshotRestoreOperationReasonPauseAborted
+		return nil
+	case SandboxSnapshotRestoreOperationReasonResumeAborted:
+		*s = SandboxSnapshotRestoreOperationReasonResumeAborted
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Paused means an admitted paused source awaiting resume; only succeeded proves replacement. Failed
+// and superseded are terminal and are never replayed.
+type SandboxSnapshotRestoreOperationState string
+
+const (
+	SandboxSnapshotRestoreOperationStatePausing    SandboxSnapshotRestoreOperationState = "pausing"
+	SandboxSnapshotRestoreOperationStatePaused     SandboxSnapshotRestoreOperationState = "paused"
+	SandboxSnapshotRestoreOperationStateResuming   SandboxSnapshotRestoreOperationState = "resuming"
+	SandboxSnapshotRestoreOperationStateSucceeded  SandboxSnapshotRestoreOperationState = "succeeded"
+	SandboxSnapshotRestoreOperationStateSuperseded SandboxSnapshotRestoreOperationState = "superseded"
+	SandboxSnapshotRestoreOperationStateFailed     SandboxSnapshotRestoreOperationState = "failed"
+)
+
+// AllValues returns all SandboxSnapshotRestoreOperationState values.
+func (SandboxSnapshotRestoreOperationState) AllValues() []SandboxSnapshotRestoreOperationState {
+	return []SandboxSnapshotRestoreOperationState{
+		SandboxSnapshotRestoreOperationStatePausing,
+		SandboxSnapshotRestoreOperationStatePaused,
+		SandboxSnapshotRestoreOperationStateResuming,
+		SandboxSnapshotRestoreOperationStateSucceeded,
+		SandboxSnapshotRestoreOperationStateSuperseded,
+		SandboxSnapshotRestoreOperationStateFailed,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SandboxSnapshotRestoreOperationState) MarshalText() ([]byte, error) {
+	switch s {
+	case SandboxSnapshotRestoreOperationStatePausing:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationStatePaused:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationStateResuming:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationStateSucceeded:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationStateSuperseded:
+		return []byte(s), nil
+	case SandboxSnapshotRestoreOperationStateFailed:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SandboxSnapshotRestoreOperationState) UnmarshalText(data []byte) error {
+	switch SandboxSnapshotRestoreOperationState(data) {
+	case SandboxSnapshotRestoreOperationStatePausing:
+		*s = SandboxSnapshotRestoreOperationStatePausing
+		return nil
+	case SandboxSnapshotRestoreOperationStatePaused:
+		*s = SandboxSnapshotRestoreOperationStatePaused
+		return nil
+	case SandboxSnapshotRestoreOperationStateResuming:
+		*s = SandboxSnapshotRestoreOperationStateResuming
+		return nil
+	case SandboxSnapshotRestoreOperationStateSucceeded:
+		*s = SandboxSnapshotRestoreOperationStateSucceeded
+		return nil
+	case SandboxSnapshotRestoreOperationStateSuperseded:
+		*s = SandboxSnapshotRestoreOperationStateSuperseded
+		return nil
+	case SandboxSnapshotRestoreOperationStateFailed:
+		*s = SandboxSnapshotRestoreOperationStateFailed
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/SandboxSnapshotRestoreRequest
+type SandboxSnapshotRestoreRequest struct {
+	ExpectedRuntimeGeneration int64  `json:"expected_runtime_generation"`
+	SnapshotID                string `json:"snapshot_id"`
+	SnapshotGenerationID      string `json:"snapshot_generation_id"`
+	// Explicit acknowledgement that old processes end and the selected snapshot replaces the current
+	// writable RootFS.
+	DiscardProcessState SandboxSnapshotRestoreRequestDiscardProcessState `json:"discard_process_state"`
+}
+
+// GetExpectedRuntimeGeneration returns the value of ExpectedRuntimeGeneration.
+func (s *SandboxSnapshotRestoreRequest) GetExpectedRuntimeGeneration() int64 {
+	return s.ExpectedRuntimeGeneration
+}
+
+// GetSnapshotID returns the value of SnapshotID.
+func (s *SandboxSnapshotRestoreRequest) GetSnapshotID() string {
+	return s.SnapshotID
+}
+
+// GetSnapshotGenerationID returns the value of SnapshotGenerationID.
+func (s *SandboxSnapshotRestoreRequest) GetSnapshotGenerationID() string {
+	return s.SnapshotGenerationID
+}
+
+// GetDiscardProcessState returns the value of DiscardProcessState.
+func (s *SandboxSnapshotRestoreRequest) GetDiscardProcessState() SandboxSnapshotRestoreRequestDiscardProcessState {
+	return s.DiscardProcessState
+}
+
+// SetExpectedRuntimeGeneration sets the value of ExpectedRuntimeGeneration.
+func (s *SandboxSnapshotRestoreRequest) SetExpectedRuntimeGeneration(val int64) {
+	s.ExpectedRuntimeGeneration = val
+}
+
+// SetSnapshotID sets the value of SnapshotID.
+func (s *SandboxSnapshotRestoreRequest) SetSnapshotID(val string) {
+	s.SnapshotID = val
+}
+
+// SetSnapshotGenerationID sets the value of SnapshotGenerationID.
+func (s *SandboxSnapshotRestoreRequest) SetSnapshotGenerationID(val string) {
+	s.SnapshotGenerationID = val
+}
+
+// SetDiscardProcessState sets the value of DiscardProcessState.
+func (s *SandboxSnapshotRestoreRequest) SetDiscardProcessState(val SandboxSnapshotRestoreRequestDiscardProcessState) {
+	s.DiscardProcessState = val
+}
+
+// Explicit acknowledgement that old processes end and the selected snapshot replaces the current
+// writable RootFS.
+type SandboxSnapshotRestoreRequestDiscardProcessState bool
+
+const (
+	SandboxSnapshotRestoreRequestDiscardProcessStateTrue SandboxSnapshotRestoreRequestDiscardProcessState = true
+)
+
+// AllValues returns all SandboxSnapshotRestoreRequestDiscardProcessState values.
+func (SandboxSnapshotRestoreRequestDiscardProcessState) AllValues() []SandboxSnapshotRestoreRequestDiscardProcessState {
+	return []SandboxSnapshotRestoreRequestDiscardProcessState{
+		SandboxSnapshotRestoreRequestDiscardProcessStateTrue,
+	}
+}
+
 // Ref: #/components/schemas/SandboxStatus
 type SandboxStatus struct {
 	SandboxID  OptString `json:"sandbox_id"`
@@ -16111,6 +20571,43 @@ func (s *SandboxStatus) SetHardExpiresAt(val OptNilDateTime) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *SandboxStatus) SetCreatedAt(val OptString) {
 	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/SandboxStorageHealth
+type SandboxStorageHealth struct {
+	Identity        SandboxHealthObservation `json:"identity"`
+	WriterAuthority SandboxHealthObservation `json:"writer_authority"`
+	Io              SandboxHealthObservation `json:"io"`
+}
+
+// GetIdentity returns the value of Identity.
+func (s *SandboxStorageHealth) GetIdentity() SandboxHealthObservation {
+	return s.Identity
+}
+
+// GetWriterAuthority returns the value of WriterAuthority.
+func (s *SandboxStorageHealth) GetWriterAuthority() SandboxHealthObservation {
+	return s.WriterAuthority
+}
+
+// GetIo returns the value of Io.
+func (s *SandboxStorageHealth) GetIo() SandboxHealthObservation {
+	return s.Io
+}
+
+// SetIdentity sets the value of Identity.
+func (s *SandboxStorageHealth) SetIdentity(val SandboxHealthObservation) {
+	s.Identity = val
+}
+
+// SetWriterAuthority sets the value of WriterAuthority.
+func (s *SandboxStorageHealth) SetWriterAuthority(val SandboxHealthObservation) {
+	s.WriterAuthority = val
+}
+
+// SetIo sets the value of Io.
+func (s *SandboxStorageHealth) SetIo(val SandboxHealthObservation) {
+	s.Io = val
 }
 
 // Ref: #/components/schemas/SandboxSummary
@@ -17487,6 +21984,34 @@ func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDDesired
 func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDGetRes()             {}
 func (*SuccessExecutionSessionResponse) aPIV1SandboxesIDSessionsSessionIDPutRes()             {}
 
+// SuccessExecutionSessionResponseHeaders wraps SuccessExecutionSessionResponse with response headers.
+type SuccessExecutionSessionResponseHeaders struct {
+	CacheControl OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl
+	Response     SuccessExecutionSessionResponse
+}
+
+// GetCacheControl returns the value of CacheControl.
+func (s *SuccessExecutionSessionResponseHeaders) GetCacheControl() OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl {
+	return s.CacheControl
+}
+
+// GetResponse returns the value of Response.
+func (s *SuccessExecutionSessionResponseHeaders) GetResponse() SuccessExecutionSessionResponse {
+	return s.Response
+}
+
+// SetCacheControl sets the value of CacheControl.
+func (s *SuccessExecutionSessionResponseHeaders) SetCacheControl(val OptAPIV1SandboxesIDSessionsConditionalLookupGetOKCacheControl) {
+	s.CacheControl = val
+}
+
+// SetResponse sets the value of Response.
+func (s *SuccessExecutionSessionResponseHeaders) SetResponse(val SuccessExecutionSessionResponse) {
+	s.Response = val
+}
+
+func (*SuccessExecutionSessionResponseHeaders) aPIV1SandboxesIDSessionsConditionalLookupGetRes() {}
+
 type SuccessExecutionSessionResponseSuccess bool
 
 const (
@@ -17854,6 +22379,194 @@ const (
 func (SuccessLoginResponseSuccess) AllValues() []SuccessLoginResponseSuccess {
 	return []SuccessLoginResponseSuccess{
 		SuccessLoginResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessManagedFileReadResponse
+type SuccessManagedFileReadResponse struct {
+	Success SuccessManagedFileReadResponseSuccess `json:"success"`
+	// Merged property.
+	Data SuccessManagedFileReadResponseData `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessManagedFileReadResponse) GetSuccess() SuccessManagedFileReadResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessManagedFileReadResponse) GetData() SuccessManagedFileReadResponseData {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessManagedFileReadResponse) SetSuccess(val SuccessManagedFileReadResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessManagedFileReadResponse) SetData(val SuccessManagedFileReadResponseData) {
+	s.Data = val
+}
+
+func (*SuccessManagedFileReadResponse) readSandboxManagedFileRes()           {}
+func (*SuccessManagedFileReadResponse) readSandboxNamespacedManagedFileRes() {}
+
+// Merged schema.
+type SuccessManagedFileReadResponseData struct {
+	RuntimeGeneration int64                       `json:"runtime_generation"`
+	MutationSequence  ManagedFileMutationSequence `json:"mutation_sequence"`
+	// Capacity of this runtime's node-owned noswap tmpfs; excluded from durable RootFS.
+	SizeBytes int64 `json:"size_bytes"`
+	// Initial guest bind path. Guest pivot or mount changes do not redirect platform writes.
+	GuestPath SuccessManagedFileReadResponseDataGuestPath `json:"guest_path"`
+	// Base64-encoded file bytes, at most 4 MiB decoded. Treat as sensitive and do not log.
+	Content []byte `json:"content"`
+}
+
+// GetRuntimeGeneration returns the value of RuntimeGeneration.
+func (s *SuccessManagedFileReadResponseData) GetRuntimeGeneration() int64 {
+	return s.RuntimeGeneration
+}
+
+// GetMutationSequence returns the value of MutationSequence.
+func (s *SuccessManagedFileReadResponseData) GetMutationSequence() ManagedFileMutationSequence {
+	return s.MutationSequence
+}
+
+// GetSizeBytes returns the value of SizeBytes.
+func (s *SuccessManagedFileReadResponseData) GetSizeBytes() int64 {
+	return s.SizeBytes
+}
+
+// GetGuestPath returns the value of GuestPath.
+func (s *SuccessManagedFileReadResponseData) GetGuestPath() SuccessManagedFileReadResponseDataGuestPath {
+	return s.GuestPath
+}
+
+// GetContent returns the value of Content.
+func (s *SuccessManagedFileReadResponseData) GetContent() []byte {
+	return s.Content
+}
+
+// SetRuntimeGeneration sets the value of RuntimeGeneration.
+func (s *SuccessManagedFileReadResponseData) SetRuntimeGeneration(val int64) {
+	s.RuntimeGeneration = val
+}
+
+// SetMutationSequence sets the value of MutationSequence.
+func (s *SuccessManagedFileReadResponseData) SetMutationSequence(val ManagedFileMutationSequence) {
+	s.MutationSequence = val
+}
+
+// SetSizeBytes sets the value of SizeBytes.
+func (s *SuccessManagedFileReadResponseData) SetSizeBytes(val int64) {
+	s.SizeBytes = val
+}
+
+// SetGuestPath sets the value of GuestPath.
+func (s *SuccessManagedFileReadResponseData) SetGuestPath(val SuccessManagedFileReadResponseDataGuestPath) {
+	s.GuestPath = val
+}
+
+// SetContent sets the value of Content.
+func (s *SuccessManagedFileReadResponseData) SetContent(val []byte) {
+	s.Content = val
+}
+
+// Initial guest bind path. Guest pivot or mount changes do not redirect platform writes.
+type SuccessManagedFileReadResponseDataGuestPath string
+
+const (
+	SuccessManagedFileReadResponseDataGuestPathSlashRunSlashSandbox0SlashCredentials SuccessManagedFileReadResponseDataGuestPath = "/run/sandbox0/credentials"
+)
+
+// AllValues returns all SuccessManagedFileReadResponseDataGuestPath values.
+func (SuccessManagedFileReadResponseDataGuestPath) AllValues() []SuccessManagedFileReadResponseDataGuestPath {
+	return []SuccessManagedFileReadResponseDataGuestPath{
+		SuccessManagedFileReadResponseDataGuestPathSlashRunSlashSandbox0SlashCredentials,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s SuccessManagedFileReadResponseDataGuestPath) MarshalText() ([]byte, error) {
+	switch s {
+	case SuccessManagedFileReadResponseDataGuestPathSlashRunSlashSandbox0SlashCredentials:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *SuccessManagedFileReadResponseDataGuestPath) UnmarshalText(data []byte) error {
+	switch SuccessManagedFileReadResponseDataGuestPath(data) {
+	case SuccessManagedFileReadResponseDataGuestPathSlashRunSlashSandbox0SlashCredentials:
+		*s = SuccessManagedFileReadResponseDataGuestPathSlashRunSlashSandbox0SlashCredentials
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type SuccessManagedFileReadResponseSuccess bool
+
+const (
+	SuccessManagedFileReadResponseSuccessTrue SuccessManagedFileReadResponseSuccess = true
+)
+
+// AllValues returns all SuccessManagedFileReadResponseSuccess values.
+func (SuccessManagedFileReadResponseSuccess) AllValues() []SuccessManagedFileReadResponseSuccess {
+	return []SuccessManagedFileReadResponseSuccess{
+		SuccessManagedFileReadResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessManagedFilesStateResponse
+type SuccessManagedFilesStateResponse struct {
+	Success SuccessManagedFilesStateResponseSuccess `json:"success"`
+	// Merged property.
+	Data ManagedFilesState `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessManagedFilesStateResponse) GetSuccess() SuccessManagedFilesStateResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessManagedFilesStateResponse) GetData() ManagedFilesState {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessManagedFilesStateResponse) SetSuccess(val SuccessManagedFilesStateResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessManagedFilesStateResponse) SetData(val ManagedFilesState) {
+	s.Data = val
+}
+
+func (*SuccessManagedFilesStateResponse) deleteSandboxManagedFileRes()           {}
+func (*SuccessManagedFilesStateResponse) deleteSandboxNamespacedManagedFileRes() {}
+func (*SuccessManagedFilesStateResponse) inspectSandboxManagedFilesRes()         {}
+func (*SuccessManagedFilesStateResponse) writeSandboxManagedFileRes()            {}
+func (*SuccessManagedFilesStateResponse) writeSandboxNamespacedManagedFileRes()  {}
+
+type SuccessManagedFilesStateResponseSuccess bool
+
+const (
+	SuccessManagedFilesStateResponseSuccessTrue SuccessManagedFilesStateResponseSuccess = true
+)
+
+// AllValues returns all SuccessManagedFilesStateResponseSuccess values.
+func (SuccessManagedFilesStateResponseSuccess) AllValues() []SuccessManagedFilesStateResponseSuccess {
+	return []SuccessManagedFilesStateResponseSuccess{
+		SuccessManagedFilesStateResponseSuccessTrue,
 	}
 }
 
@@ -18501,6 +23214,49 @@ func (SuccessSSHPublicKeyResponseSuccess) AllValues() []SuccessSSHPublicKeyRespo
 }
 
 // Merged schema.
+// Ref: #/components/schemas/SuccessSandboxHealthResponse
+type SuccessSandboxHealthResponse struct {
+	Success SuccessSandboxHealthResponseSuccess `json:"success"`
+	// Merged property.
+	Data SandboxHealth `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxHealthResponse) GetSuccess() SuccessSandboxHealthResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxHealthResponse) GetData() SandboxHealth {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxHealthResponse) SetSuccess(val SuccessSandboxHealthResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxHealthResponse) SetData(val SandboxHealth) {
+	s.Data = val
+}
+
+func (*SuccessSandboxHealthResponse) getSandboxHealthRes() {}
+
+type SuccessSandboxHealthResponseSuccess bool
+
+const (
+	SuccessSandboxHealthResponseSuccessTrue SuccessSandboxHealthResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxHealthResponseSuccess values.
+func (SuccessSandboxHealthResponseSuccess) AllValues() []SuccessSandboxHealthResponseSuccess {
+	return []SuccessSandboxHealthResponseSuccess{
+		SuccessSandboxHealthResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
 // Ref: #/components/schemas/SuccessSandboxListResponse
 type SuccessSandboxListResponse struct {
 	Success SuccessSandboxListResponseSuccess `json:"success"`
@@ -18578,6 +23334,88 @@ const (
 func (SuccessSandboxListResponseSuccess) AllValues() []SuccessSandboxListResponseSuccess {
 	return []SuccessSandboxListResponseSuccess{
 		SuccessSandboxListResponseSuccessTrue,
+	}
+}
+
+// Ref: #/components/schemas/SuccessSandboxMemoryOperationResponse
+type SuccessSandboxMemoryOperationResponse struct {
+	Success SuccessSandboxMemoryOperationResponseSuccess `json:"success"`
+	Data    SandboxMemoryOperation                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxMemoryOperationResponse) GetSuccess() SuccessSandboxMemoryOperationResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxMemoryOperationResponse) GetData() SandboxMemoryOperation {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxMemoryOperationResponse) SetSuccess(val SuccessSandboxMemoryOperationResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxMemoryOperationResponse) SetData(val SandboxMemoryOperation) {
+	s.Data = val
+}
+
+func (*SuccessSandboxMemoryOperationResponse) lookupSandboxMemoryOperationRes() {}
+
+type SuccessSandboxMemoryOperationResponseSuccess bool
+
+const (
+	SuccessSandboxMemoryOperationResponseSuccessTrue SuccessSandboxMemoryOperationResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxMemoryOperationResponseSuccess values.
+func (SuccessSandboxMemoryOperationResponseSuccess) AllValues() []SuccessSandboxMemoryOperationResponseSuccess {
+	return []SuccessSandboxMemoryOperationResponseSuccess{
+		SuccessSandboxMemoryOperationResponseSuccessTrue,
+	}
+}
+
+// Ref: #/components/schemas/SuccessSandboxMemoryRestorationResponse
+type SuccessSandboxMemoryRestorationResponse struct {
+	Success SuccessSandboxMemoryRestorationResponseSuccess `json:"success"`
+	Data    SandboxMemoryRestoration                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxMemoryRestorationResponse) GetSuccess() SuccessSandboxMemoryRestorationResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxMemoryRestorationResponse) GetData() SandboxMemoryRestoration {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxMemoryRestorationResponse) SetSuccess(val SuccessSandboxMemoryRestorationResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxMemoryRestorationResponse) SetData(val SandboxMemoryRestoration) {
+	s.Data = val
+}
+
+func (*SuccessSandboxMemoryRestorationResponse) getSandboxMemoryRestorationRes() {}
+
+type SuccessSandboxMemoryRestorationResponseSuccess bool
+
+const (
+	SuccessSandboxMemoryRestorationResponseSuccessTrue SuccessSandboxMemoryRestorationResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxMemoryRestorationResponseSuccess values.
+func (SuccessSandboxMemoryRestorationResponseSuccess) AllValues() []SuccessSandboxMemoryRestorationResponseSuccess {
+	return []SuccessSandboxMemoryRestorationResponseSuccess{
+		SuccessSandboxMemoryRestorationResponseSuccessTrue,
 	}
 }
 
@@ -18799,6 +23637,265 @@ func (SuccessSandboxResponseSuccess) AllValues() []SuccessSandboxResponseSuccess
 	}
 }
 
+// Ref: #/components/schemas/SuccessSandboxRestartFinalCaptureFileResponse
+type SuccessSandboxRestartFinalCaptureFileResponse struct {
+	Success SuccessSandboxRestartFinalCaptureFileResponseSuccess `json:"success"`
+	Data    SandboxRestartFinalCaptureFile                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRestartFinalCaptureFileResponse) GetSuccess() SuccessSandboxRestartFinalCaptureFileResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRestartFinalCaptureFileResponse) GetData() SandboxRestartFinalCaptureFile {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRestartFinalCaptureFileResponse) SetSuccess(val SuccessSandboxRestartFinalCaptureFileResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRestartFinalCaptureFileResponse) SetData(val SandboxRestartFinalCaptureFile) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRestartFinalCaptureFileResponse) readSandboxRestartFinalCaptureFileRes() {}
+func (*SuccessSandboxRestartFinalCaptureFileResponse) readSandboxSnapshotRestoreFinalCaptureFileRes() {
+}
+
+type SuccessSandboxRestartFinalCaptureFileResponseSuccess bool
+
+const (
+	SuccessSandboxRestartFinalCaptureFileResponseSuccessTrue SuccessSandboxRestartFinalCaptureFileResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRestartFinalCaptureFileResponseSuccess values.
+func (SuccessSandboxRestartFinalCaptureFileResponseSuccess) AllValues() []SuccessSandboxRestartFinalCaptureFileResponseSuccess {
+	return []SuccessSandboxRestartFinalCaptureFileResponseSuccess{
+		SuccessSandboxRestartFinalCaptureFileResponseSuccessTrue,
+	}
+}
+
+// Ref: #/components/schemas/SuccessSandboxRestartFinalCaptureResponse
+type SuccessSandboxRestartFinalCaptureResponse struct {
+	Success SuccessSandboxRestartFinalCaptureResponseSuccess `json:"success"`
+	Data    SandboxRestartFinalCapture                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRestartFinalCaptureResponse) GetSuccess() SuccessSandboxRestartFinalCaptureResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRestartFinalCaptureResponse) GetData() SandboxRestartFinalCapture {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRestartFinalCaptureResponse) SetSuccess(val SuccessSandboxRestartFinalCaptureResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRestartFinalCaptureResponse) SetData(val SandboxRestartFinalCapture) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRestartFinalCaptureResponse) acknowledgeSandboxRestartFinalCaptureRes() {}
+func (*SuccessSandboxRestartFinalCaptureResponse) acknowledgeSandboxSnapshotRestoreFinalCaptureRes() {
+}
+func (*SuccessSandboxRestartFinalCaptureResponse) getSandboxRestartFinalCaptureRes()         {}
+func (*SuccessSandboxRestartFinalCaptureResponse) getSandboxSnapshotRestoreFinalCaptureRes() {}
+
+type SuccessSandboxRestartFinalCaptureResponseSuccess bool
+
+const (
+	SuccessSandboxRestartFinalCaptureResponseSuccessTrue SuccessSandboxRestartFinalCaptureResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRestartFinalCaptureResponseSuccess values.
+func (SuccessSandboxRestartFinalCaptureResponseSuccess) AllValues() []SuccessSandboxRestartFinalCaptureResponseSuccess {
+	return []SuccessSandboxRestartFinalCaptureResponseSuccess{
+		SuccessSandboxRestartFinalCaptureResponseSuccessTrue,
+	}
+}
+
+// Ref: #/components/schemas/SuccessSandboxRestartOperationResponse
+type SuccessSandboxRestartOperationResponse struct {
+	Success SuccessSandboxRestartOperationResponseSuccess `json:"success"`
+	Data    SandboxRestartOperation                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRestartOperationResponse) GetSuccess() SuccessSandboxRestartOperationResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRestartOperationResponse) GetData() SandboxRestartOperation {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRestartOperationResponse) SetSuccess(val SuccessSandboxRestartOperationResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRestartOperationResponse) SetData(val SandboxRestartOperation) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRestartOperationResponse) findSandboxRestartOperationRes() {}
+func (*SuccessSandboxRestartOperationResponse) getSandboxRestartOperationRes()  {}
+
+type SuccessSandboxRestartOperationResponseSuccess bool
+
+const (
+	SuccessSandboxRestartOperationResponseSuccessTrue SuccessSandboxRestartOperationResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRestartOperationResponseSuccess values.
+func (SuccessSandboxRestartOperationResponseSuccess) AllValues() []SuccessSandboxRestartOperationResponseSuccess {
+	return []SuccessSandboxRestartOperationResponseSuccess{
+		SuccessSandboxRestartOperationResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRootFSForkLaunchResponse
+type SuccessSandboxRootFSForkLaunchResponse struct {
+	Success SuccessSandboxRootFSForkLaunchResponseSuccess `json:"success"`
+	// Merged property.
+	Data SandboxRootFSForkLaunch `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRootFSForkLaunchResponse) GetSuccess() SuccessSandboxRootFSForkLaunchResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRootFSForkLaunchResponse) GetData() SandboxRootFSForkLaunch {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRootFSForkLaunchResponse) SetSuccess(val SuccessSandboxRootFSForkLaunchResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRootFSForkLaunchResponse) SetData(val SandboxRootFSForkLaunch) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRootFSForkLaunchResponse) getSandboxRootFSForkLaunchRes() {}
+
+type SuccessSandboxRootFSForkLaunchResponseSuccess bool
+
+const (
+	SuccessSandboxRootFSForkLaunchResponseSuccessTrue SuccessSandboxRootFSForkLaunchResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRootFSForkLaunchResponseSuccess values.
+func (SuccessSandboxRootFSForkLaunchResponseSuccess) AllValues() []SuccessSandboxRootFSForkLaunchResponseSuccess {
+	return []SuccessSandboxRootFSForkLaunchResponseSuccess{
+		SuccessSandboxRootFSForkLaunchResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRootFSForkObservationResponse
+type SuccessSandboxRootFSForkObservationResponse struct {
+	Success SuccessSandboxRootFSForkObservationResponseSuccess `json:"success"`
+	// Merged property.
+	Data SandboxRootFSForkObservation `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRootFSForkObservationResponse) GetSuccess() SuccessSandboxRootFSForkObservationResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRootFSForkObservationResponse) GetData() SandboxRootFSForkObservation {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRootFSForkObservationResponse) SetSuccess(val SuccessSandboxRootFSForkObservationResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRootFSForkObservationResponse) SetData(val SandboxRootFSForkObservation) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRootFSForkObservationResponse) getSandboxRootFSForkRes() {}
+
+type SuccessSandboxRootFSForkObservationResponseSuccess bool
+
+const (
+	SuccessSandboxRootFSForkObservationResponseSuccessTrue SuccessSandboxRootFSForkObservationResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRootFSForkObservationResponseSuccess values.
+func (SuccessSandboxRootFSForkObservationResponseSuccess) AllValues() []SuccessSandboxRootFSForkObservationResponseSuccess {
+	return []SuccessSandboxRootFSForkObservationResponseSuccess{
+		SuccessSandboxRootFSForkObservationResponseSuccessTrue,
+	}
+}
+
+// Merged schema.
+// Ref: #/components/schemas/SuccessSandboxRootFSIdentityResponse
+type SuccessSandboxRootFSIdentityResponse struct {
+	Success SuccessSandboxRootFSIdentityResponseSuccess `json:"success"`
+	// Merged property.
+	Data SandboxRootFSIdentity `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxRootFSIdentityResponse) GetSuccess() SuccessSandboxRootFSIdentityResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxRootFSIdentityResponse) GetData() SandboxRootFSIdentity {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxRootFSIdentityResponse) SetSuccess(val SuccessSandboxRootFSIdentityResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxRootFSIdentityResponse) SetData(val SandboxRootFSIdentity) {
+	s.Data = val
+}
+
+func (*SuccessSandboxRootFSIdentityResponse) getSandboxRootFSIdentityRes() {}
+
+type SuccessSandboxRootFSIdentityResponseSuccess bool
+
+const (
+	SuccessSandboxRootFSIdentityResponseSuccessTrue SuccessSandboxRootFSIdentityResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxRootFSIdentityResponseSuccess values.
+func (SuccessSandboxRootFSIdentityResponseSuccess) AllValues() []SuccessSandboxRootFSIdentityResponseSuccess {
+	return []SuccessSandboxRootFSIdentityResponseSuccess{
+		SuccessSandboxRootFSIdentityResponseSuccessTrue,
+	}
+}
+
 // Merged schema.
 // Ref: #/components/schemas/SuccessSandboxRootFSSnapshotListResponse
 type SuccessSandboxRootFSSnapshotListResponse struct {
@@ -18872,6 +23969,8 @@ func (s *SuccessSandboxRootFSSnapshotResponse) SetData(val SandboxRootFSSnapshot
 
 func (*SuccessSandboxRootFSSnapshotResponse) aPIV1SandboxRootfsSnapshotsSnapshotIDGetRes() {}
 func (*SuccessSandboxRootFSSnapshotResponse) aPIV1SandboxesIDSnapshotsPostRes()            {}
+func (*SuccessSandboxRootFSSnapshotResponse) captureSandboxRootFSSnapshotRes()             {}
+func (*SuccessSandboxRootFSSnapshotResponse) getCapturedSandboxRootFSSnapshotRes()         {}
 
 type SuccessSandboxRootFSSnapshotResponseSuccess bool
 
@@ -19049,6 +24148,48 @@ const (
 func (SuccessSandboxServicesResponseSuccess) AllValues() []SuccessSandboxServicesResponseSuccess {
 	return []SuccessSandboxServicesResponseSuccess{
 		SuccessSandboxServicesResponseSuccessTrue,
+	}
+}
+
+// Ref: #/components/schemas/SuccessSandboxSnapshotRestoreOperationResponse
+type SuccessSandboxSnapshotRestoreOperationResponse struct {
+	Success SuccessSandboxSnapshotRestoreOperationResponseSuccess `json:"success"`
+	Data    SandboxSnapshotRestoreOperation                       `json:"data"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *SuccessSandboxSnapshotRestoreOperationResponse) GetSuccess() SuccessSandboxSnapshotRestoreOperationResponseSuccess {
+	return s.Success
+}
+
+// GetData returns the value of Data.
+func (s *SuccessSandboxSnapshotRestoreOperationResponse) GetData() SandboxSnapshotRestoreOperation {
+	return s.Data
+}
+
+// SetSuccess sets the value of Success.
+func (s *SuccessSandboxSnapshotRestoreOperationResponse) SetSuccess(val SuccessSandboxSnapshotRestoreOperationResponseSuccess) {
+	s.Success = val
+}
+
+// SetData sets the value of Data.
+func (s *SuccessSandboxSnapshotRestoreOperationResponse) SetData(val SandboxSnapshotRestoreOperation) {
+	s.Data = val
+}
+
+func (*SuccessSandboxSnapshotRestoreOperationResponse) findSandboxSnapshotRestoreOperationRes() {}
+func (*SuccessSandboxSnapshotRestoreOperationResponse) getSandboxSnapshotRestoreOperationRes()  {}
+
+type SuccessSandboxSnapshotRestoreOperationResponseSuccess bool
+
+const (
+	SuccessSandboxSnapshotRestoreOperationResponseSuccessTrue SuccessSandboxSnapshotRestoreOperationResponseSuccess = true
+)
+
+// AllValues returns all SuccessSandboxSnapshotRestoreOperationResponseSuccess values.
+func (SuccessSandboxSnapshotRestoreOperationResponseSuccess) AllValues() []SuccessSandboxSnapshotRestoreOperationResponseSuccess {
+	return []SuccessSandboxSnapshotRestoreOperationResponseSuccess{
+		SuccessSandboxSnapshotRestoreOperationResponseSuccessTrue,
 	}
 }
 
@@ -21608,3 +26749,51 @@ func (s *WebhookConfig) SetSecret(val OptString) {
 func (s *WebhookConfig) SetWatchDir(val OptString) {
 	s.WatchDir = val
 }
+
+type WriteSandboxManagedFileBadRequest ErrorEnvelope
+
+func (*WriteSandboxManagedFileBadRequest) writeSandboxManagedFileRes() {}
+
+type WriteSandboxManagedFileConflict ErrorEnvelope
+
+func (*WriteSandboxManagedFileConflict) writeSandboxManagedFileRes() {}
+
+type WriteSandboxManagedFileForbidden ErrorEnvelope
+
+func (*WriteSandboxManagedFileForbidden) writeSandboxManagedFileRes() {}
+
+type WriteSandboxManagedFileNotFound ErrorEnvelope
+
+func (*WriteSandboxManagedFileNotFound) writeSandboxManagedFileRes() {}
+
+type WriteSandboxManagedFileServiceUnavailable ErrorEnvelope
+
+func (*WriteSandboxManagedFileServiceUnavailable) writeSandboxManagedFileRes() {}
+
+type WriteSandboxManagedFileUnauthorized ErrorEnvelope
+
+func (*WriteSandboxManagedFileUnauthorized) writeSandboxManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileBadRequest ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileBadRequest) writeSandboxNamespacedManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileConflict ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileConflict) writeSandboxNamespacedManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileForbidden ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileForbidden) writeSandboxNamespacedManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileNotFound ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileNotFound) writeSandboxNamespacedManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileServiceUnavailable ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileServiceUnavailable) writeSandboxNamespacedManagedFileRes() {}
+
+type WriteSandboxNamespacedManagedFileUnauthorized ErrorEnvelope
+
+func (*WriteSandboxNamespacedManagedFileUnauthorized) writeSandboxNamespacedManagedFileRes() {}

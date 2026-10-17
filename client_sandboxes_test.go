@@ -530,6 +530,10 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			t.Fatalf("decode fork request: %v", err)
 		}
+		generation, bound := req.ExpectedRuntimeGeneration.Get()
+		if !bound || generation != 7 {
+			t.Fatal("fork must retain the supplied source generation")
+		}
 		config, ok := req.Config.Get()
 		if !ok {
 			t.Fatal("config not set")
@@ -541,6 +545,10 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 		hardTTL, ok := config.HardTTL.Get()
 		if !ok || hardTTL != 120 {
 			t.Fatalf("hard_ttl = %d, want 120", hardTTL)
+		}
+		autoResume, ok := config.AutoResume.Get()
+		if !ok || autoResume {
+			t.Fatal("explicit auto_resume=false must survive serialization")
 		}
 
 		writeJSON(t, w, http.StatusCreated, map[string]any{
@@ -554,9 +562,11 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 	defer server.Close()
 
 	forked, err := client.ForkSandboxWithOptions(context.Background(), "sb_source", &apispec.ForkSandboxRequest{
+		ExpectedRuntimeGeneration: apispec.NewOptInt64(7),
 		Config: apispec.NewOptForkSandboxConfig(apispec.ForkSandboxConfig{
-			TTL:     apispec.NewOptInt32(60),
-			HardTTL: apispec.NewOptInt32(120),
+			TTL:        apispec.NewOptInt32(60),
+			HardTTL:    apispec.NewOptInt32(120),
+			AutoResume: apispec.NewOptBool(false),
 		}),
 	}, &ForkSandboxOptions{IdempotencyKey: "fork-request-one"})
 	if err != nil {
@@ -564,6 +574,44 @@ func TestForkSandboxBuildsLifecycleOverrideRequest(t *testing.T) {
 	}
 	if forked.SourceSandboxID != "sb_source" || forked.Sandbox.ID != "sb_fork" {
 		t.Fatalf("forked = %+v, want source sb_source and sandbox sb_fork", forked)
+	}
+}
+
+func TestConditionalForkRejectsInvalidInputsAndPreservesZeroOnRetry(t *testing.T) {
+	calls := 0
+	client, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		var req apispec.ForkSandboxRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			t.Fatal(err)
+		}
+		generation, set := req.ExpectedRuntimeGeneration.Get()
+		if !set || generation != 0 || r.Header.Get("Idempotency-Key") != "fork-zero" {
+			t.Fatal("lost original conditional fork coordinates")
+		}
+		writeJSON(t, w, http.StatusServiceUnavailable, map[string]any{"success": false, "error": map[string]any{"code": "unavailable", "message": "pending"}})
+	})
+	defer server.Close()
+	request := &apispec.ForkSandboxRequest{ExpectedRuntimeGeneration: apispec.NewOptInt64(0)}
+	if _, err := client.ForkSandboxWithOptions(context.Background(), "source", request, nil); err == nil {
+		t.Fatal("missing key admitted")
+	}
+	for _, generation := range []int64{-1, 9007199254740992} {
+		bad := &apispec.ForkSandboxRequest{ExpectedRuntimeGeneration: apispec.NewOptInt64(generation)}
+		if _, err := client.ForkSandboxWithOptions(context.Background(), "source", bad, &ForkSandboxOptions{IdempotencyKey: "fork-zero"}); err == nil {
+			t.Fatal("invalid generation admitted")
+		}
+	}
+	if calls != 0 {
+		t.Fatal("invalid input reached transport")
+	}
+	for range 2 {
+		if _, err := client.ForkSandboxWithOptions(context.Background(), "source", request, &ForkSandboxOptions{IdempotencyKey: "fork-zero"}); err == nil {
+			t.Fatal("pending reply claimed success")
+		}
+	}
+	if calls != 2 {
+		t.Fatalf("calls=%d", calls)
 	}
 }
 

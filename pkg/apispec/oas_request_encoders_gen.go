@@ -201,7 +201,7 @@ func encodeAPIV1SandboxesIDNetworkPutRequest(
 }
 
 func encodeAPIV1SandboxesIDPausePostRequest(
-	req OptSandboxExecutionStateRequest,
+	req OptSandboxPauseRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -332,6 +332,20 @@ func encodeAPIV1SandboxesIDRootfsRestorePostRequest(
 
 func encodeAPIV1SandboxesIDServicesPutRequest(
 	req *SandboxServicesUpdateRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAPIV1SandboxesIDSessionsConditionalPostRequest(
+	req *ConditionalExecutionSessionRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -524,6 +538,34 @@ func encodeAPIV1TemplatesPostRequest(
 	return nil
 }
 
+func encodeAcknowledgeSandboxRestartFinalCaptureRequest(
+	req *SandboxRestartFinalCaptureAcknowledgement,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeAcknowledgeSandboxSnapshotRestoreFinalCaptureRequest(
+	req *SandboxRestartFinalCaptureAcknowledgement,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeAuthChangePasswordPostRequest(
 	req *ChangePasswordRequest,
 	r *http.Request,
@@ -608,6 +650,34 @@ func encodeAuthWebLoginExchangePostRequest(
 	return nil
 }
 
+func encodeCaptureSandboxRootFSSnapshotRequest(
+	req *CaptureSandboxRootFSSnapshotRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeLaunchSandboxRootFSForkRequest(
+	req *SandboxRootFSForkLaunchRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeRegionsIDPutRequest(
 	req *UpdateRegionRequest,
 	r *http.Request,
@@ -624,6 +694,34 @@ func encodeRegionsIDPutRequest(
 
 func encodeRegionsPostRequest(
 	req *CreateRegionRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeRestartSandboxRequest(
+	req *SandboxRestartRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeRestoreSandboxSnapshotRequest(
+	req *SandboxSnapshotRestoreRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -722,6 +820,34 @@ func encodeUsersMePutRequest(
 
 func encodeUsersMeSSHKeysPostRequest(
 	req *CreateSSHPublicKeyRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeWriteSandboxManagedFileRequest(
+	req *ManagedFileWriteRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeWriteSandboxNamespacedManagedFileRequest(
+	req *ManagedFileWriteRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
