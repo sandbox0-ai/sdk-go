@@ -11289,6 +11289,8 @@ func (s *CredentialSourceResolverKind) Decode(d *jx.Decoder) error {
 		*s = CredentialSourceResolverKindStaticUsernamePassword
 	case CredentialSourceResolverKindStaticSSHPrivateKey:
 		*s = CredentialSourceResolverKindStaticSSHPrivateKey
+	case CredentialSourceResolverKindStaticS3:
+		*s = CredentialSourceResolverKindStaticS3
 	default:
 		*s = CredentialSourceResolverKind(v)
 	}
@@ -11468,13 +11470,20 @@ func (s *CredentialSourceWriteSpec) encodeFields(e *jx.Encoder) {
 			s.StaticSSHPrivateKey.Encode(e)
 		}
 	}
+	{
+		if s.StaticS3.Set {
+			e.FieldStart("staticS3")
+			s.StaticS3.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfCredentialSourceWriteSpec = [4]string{
+var jsonFieldsNameOfCredentialSourceWriteSpec = [5]string{
 	0: "staticHeaders",
 	1: "staticTLSClientCertificate",
 	2: "staticUsernamePassword",
 	3: "staticSSHPrivateKey",
+	4: "staticS3",
 }
 
 // Decode decodes CredentialSourceWriteSpec from json.
@@ -11524,6 +11533,16 @@ func (s *CredentialSourceWriteSpec) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"staticSSHPrivateKey\"")
+			}
+		case "staticS3":
+			if err := func() error {
+				s.StaticS3.Reset()
+				if err := s.StaticS3.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"staticS3\"")
 			}
 		default:
 			return d.Skip()
@@ -16757,6 +16776,194 @@ func (s *ExecutionSessionTerminalSpec) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ExecutionSessionTerminalSpec) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *ExternalMountBinding) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *ExternalMountBinding) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("source_ref")
+		e.Str(s.SourceRef)
+	}
+	{
+		e.FieldStart("mount_path")
+		e.Str(s.MountPath)
+	}
+	{
+		if s.Prefix.Set {
+			e.FieldStart("prefix")
+			s.Prefix.Encode(e)
+		}
+	}
+	{
+		if s.Access.Set {
+			e.FieldStart("access")
+			s.Access.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfExternalMountBinding = [4]string{
+	0: "source_ref",
+	1: "mount_path",
+	2: "prefix",
+	3: "access",
+}
+
+// Decode decodes ExternalMountBinding from json.
+func (s *ExternalMountBinding) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ExternalMountBinding to nil")
+	}
+	var requiredBitSet [1]uint8
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "source_ref":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.SourceRef = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source_ref\"")
+			}
+		case "mount_path":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.MountPath = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mount_path\"")
+			}
+		case "prefix":
+			if err := func() error {
+				s.Prefix.Reset()
+				if err := s.Prefix.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"prefix\"")
+			}
+		case "access":
+			if err := func() error {
+				s.Access.Reset()
+				if err := s.Access.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"access\"")
+			}
+		default:
+			return errors.Errorf("unexpected field %q", k)
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode ExternalMountBinding")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfExternalMountBinding) {
+					name = jsonFieldsNameOfExternalMountBinding[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *ExternalMountBinding) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ExternalMountBinding) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ExternalMountBindingAccess as json.
+func (s ExternalMountBindingAccess) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes ExternalMountBindingAccess from json.
+func (s *ExternalMountBindingAccess) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ExternalMountBindingAccess to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch ExternalMountBindingAccess(v) {
+	case ExternalMountBindingAccessReadOnly:
+		*s = ExternalMountBindingAccessReadOnly
+	case ExternalMountBindingAccessReadWrite:
+		*s = ExternalMountBindingAccessReadWrite
+	default:
+		*s = ExternalMountBindingAccess(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ExternalMountBindingAccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ExternalMountBindingAccess) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -24541,6 +24748,39 @@ func (s *OptExecutionSessionTerminalSpec) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes ExternalMountBindingAccess as json.
+func (o OptExternalMountBindingAccess) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes ExternalMountBindingAccess from json.
+func (o *OptExternalMountBindingAccess) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptExternalMountBindingAccess to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptExternalMountBindingAccess) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptExternalMountBindingAccess) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes FileContentResponse as json.
 func (o OptFileContentResponse) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -26785,6 +27025,39 @@ func (s OptStaticHeadersSourceSpecValues) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptStaticHeadersSourceSpecValues) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes StaticS3SourceSpec as json.
+func (o OptStaticS3SourceSpec) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes StaticS3SourceSpec from json.
+func (o *OptStaticS3SourceSpec) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptStaticS3SourceSpec to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptStaticS3SourceSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptStaticS3SourceSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -33371,6 +33644,16 @@ func (s *Sandbox) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	{
+		if s.ExternalMounts != nil {
+			e.FieldStart("external_mounts")
+			e.ArrStart()
+			for _, elem := range s.ExternalMounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		e.FieldStart("id")
 		e.Str(s.ID)
 	}
@@ -33456,24 +33739,25 @@ func (s *Sandbox) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandbox = [17]string{
-	0:  "id",
-	1:  "template_id",
-	2:  "team_id",
-	3:  "user_id",
-	4:  "status",
-	5:  "paused",
-	6:  "auto_resume",
-	7:  "services",
-	8:  "resources",
-	9:  "runtime_id",
-	10: "runtime_generation",
-	11: "ssh",
-	12: "expires_at",
-	13: "hard_expires_at",
-	14: "claimed_at",
-	15: "created_at",
-	16: "updated_at",
+var jsonFieldsNameOfSandbox = [18]string{
+	0:  "external_mounts",
+	1:  "id",
+	2:  "template_id",
+	3:  "team_id",
+	4:  "user_id",
+	5:  "status",
+	6:  "paused",
+	7:  "auto_resume",
+	8:  "services",
+	9:  "resources",
+	10: "runtime_id",
+	11: "runtime_generation",
+	12: "ssh",
+	13: "expires_at",
+	14: "hard_expires_at",
+	15: "claimed_at",
+	16: "created_at",
+	17: "updated_at",
 }
 
 // Decode decodes Sandbox from json.
@@ -33485,8 +33769,25 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "external_mounts":
+			if err := func() error {
+				s.ExternalMounts = make([]ExternalMountBinding, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ExternalMountBinding
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.ExternalMounts = append(s.ExternalMounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"external_mounts\"")
+			}
 		case "id":
-			requiredBitSet[0] |= 1 << 0
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.ID = string(v)
@@ -33498,7 +33799,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
 		case "template_id":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
 				s.TemplateID = string(v)
@@ -33510,7 +33811,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"template_id\"")
 			}
 		case "team_id":
-			requiredBitSet[0] |= 1 << 2
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.TeamID = string(v)
@@ -33532,7 +33833,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"user_id\"")
 			}
 		case "status":
-			requiredBitSet[0] |= 1 << 4
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				if err := s.Status.Decode(d); err != nil {
 					return err
@@ -33542,7 +33843,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"status\"")
 			}
 		case "paused":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Bool()
 				s.Paused = bool(v)
@@ -33554,7 +33855,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"paused\"")
 			}
 		case "auto_resume":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Bool()
 				s.AutoResume = bool(v)
@@ -33593,7 +33894,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"resources\"")
 			}
 		case "runtime_id":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
 				s.RuntimeID = string(v)
@@ -33605,7 +33906,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"runtime_id\"")
 			}
 		case "runtime_generation":
-			requiredBitSet[1] |= 1 << 2
+			requiredBitSet[1] |= 1 << 3
 			if err := func() error {
 				v, err := d.Int64()
 				s.RuntimeGeneration = int64(v)
@@ -33647,7 +33948,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"hard_expires_at\"")
 			}
 		case "claimed_at":
-			requiredBitSet[1] |= 1 << 6
+			requiredBitSet[1] |= 1 << 7
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.ClaimedAt = v
@@ -33659,7 +33960,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"claimed_at\"")
 			}
 		case "created_at":
-			requiredBitSet[1] |= 1 << 7
+			requiredBitSet[2] |= 1 << 0
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -33671,7 +33972,7 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
-			requiredBitSet[2] |= 1 << 0
+			requiredBitSet[2] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.UpdatedAt = v
@@ -33692,9 +33993,9 @@ func (s *Sandbox) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [3]uint8{
-		0b01110111,
-		0b11000110,
-		0b00000001,
+		0b11101110,
+		0b10001100,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -36316,6 +36617,16 @@ func (s *SandboxConfig) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 	{
+		if s.ExternalMounts != nil {
+			e.FieldStart("external_mounts")
+			e.ArrStart()
+			for _, elem := range s.ExternalMounts {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		if s.EnvVars.Set {
 			e.FieldStart("env_vars")
 			s.EnvVars.Encode(e)
@@ -36369,15 +36680,16 @@ func (s *SandboxConfig) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxConfig = [8]string{
-	0: "env_vars",
-	1: "resources",
-	2: "ttl",
-	3: "hard_ttl",
-	4: "network",
-	5: "webhook",
-	6: "auto_resume",
-	7: "services",
+var jsonFieldsNameOfSandboxConfig = [9]string{
+	0: "external_mounts",
+	1: "env_vars",
+	2: "resources",
+	3: "ttl",
+	4: "hard_ttl",
+	5: "network",
+	6: "webhook",
+	7: "auto_resume",
+	8: "services",
 }
 
 // Decode decodes SandboxConfig from json.
@@ -36389,6 +36701,23 @@ func (s *SandboxConfig) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
+		case "external_mounts":
+			if err := func() error {
+				s.ExternalMounts = make([]ExternalMountBinding, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem ExternalMountBinding
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.ExternalMounts = append(s.ExternalMounts, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"external_mounts\"")
+			}
 		case "env_vars":
 			if err := func() error {
 				s.EnvVars.Reset()
@@ -47627,6 +47956,222 @@ func (s StaticHeadersSourceSpecValues) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *StaticHeadersSourceSpecValues) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *StaticS3SourceSpec) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *StaticS3SourceSpec) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("bucket")
+		e.Str(s.Bucket)
+	}
+	{
+		if s.Prefix.Set {
+			e.FieldStart("prefix")
+			s.Prefix.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("region")
+		e.Str(s.Region)
+	}
+	{
+		if s.EndpointUrl.Set {
+			e.FieldStart("endpointUrl")
+			s.EndpointUrl.Encode(e)
+		}
+	}
+	{
+		if s.AllowWrite.Set {
+			e.FieldStart("allowWrite")
+			s.AllowWrite.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("accessKey")
+		e.Str(s.AccessKey)
+	}
+	{
+		e.FieldStart("secretKey")
+		e.Str(s.SecretKey)
+	}
+	{
+		if s.SessionToken.Set {
+			e.FieldStart("sessionToken")
+			s.SessionToken.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfStaticS3SourceSpec = [8]string{
+	0: "bucket",
+	1: "prefix",
+	2: "region",
+	3: "endpointUrl",
+	4: "allowWrite",
+	5: "accessKey",
+	6: "secretKey",
+	7: "sessionToken",
+}
+
+// Decode decodes StaticS3SourceSpec from json.
+func (s *StaticS3SourceSpec) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode StaticS3SourceSpec to nil")
+	}
+	var requiredBitSet [1]uint8
+	s.setDefaults()
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "bucket":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Bucket = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"bucket\"")
+			}
+		case "prefix":
+			if err := func() error {
+				s.Prefix.Reset()
+				if err := s.Prefix.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"prefix\"")
+			}
+		case "region":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Region = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"region\"")
+			}
+		case "endpointUrl":
+			if err := func() error {
+				s.EndpointUrl.Reset()
+				if err := s.EndpointUrl.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"endpointUrl\"")
+			}
+		case "allowWrite":
+			if err := func() error {
+				s.AllowWrite.Reset()
+				if err := s.AllowWrite.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"allowWrite\"")
+			}
+		case "accessKey":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.AccessKey = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"accessKey\"")
+			}
+		case "secretKey":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.SecretKey = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"secretKey\"")
+			}
+		case "sessionToken":
+			if err := func() error {
+				s.SessionToken.Reset()
+				if err := s.SessionToken.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sessionToken\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode StaticS3SourceSpec")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b01100101,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfStaticS3SourceSpec) {
+					name = jsonFieldsNameOfStaticS3SourceSpec[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *StaticS3SourceSpec) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *StaticS3SourceSpec) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
