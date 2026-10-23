@@ -290,3 +290,10 @@ false after later lifecycle changes. `Current` is an owner snapshot, not a live
 lease, health check or credential authorization. Pending has no completion
 proof; neither aborted nor 404 proves physical absence. Helpers validate the
 returned identity and state-specific evidence and never poll or retry for you.
+
+### Go security updates
+
+Build applications with Go 1.26.10 or 1.27.3 (or a later patched release) to include
+the crypto/x509 intermediate-CA distrust protection for CVE-2026-111943. Updating
+this SDK alone does not update the Go standard library in an existing binary;
+recompile and redeploy the application.
