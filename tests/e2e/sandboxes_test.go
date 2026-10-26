@@ -5,6 +5,7 @@ package sandbox0_test
 import (
 	"bytes"
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -91,14 +92,23 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 		t.Fatalf("claim sandbox failed: %v", err)
 	}
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cleanupCancel()
-		_, _ = client.DeleteSandbox(cleanupCtx, source.ID)
+		_, err := client.DeleteSandbox(cleanupCtx, source.ID)
+		requireRootFSCleanup(t, "source sandbox", err)
 	})
 
-	const markerPath = "/tmp/sdk-go-rootfs-marker.txt"
+	t.Logf("rootfs source sandbox: %s", source.ID)
+	const markerPath = "/workspace/sdk-go-rootfs-marker.txt"
+	const ephemeralPath = "/tmp/sdk-go-rootfs-ephemeral.txt"
+	if _, err := source.Mkdir(ctx, "/workspace", true); err != nil {
+		t.Fatalf("create persistent workspace failed: %v", err)
+	}
 	if _, err := source.WriteFile(ctx, markerPath, []byte("rootfs-v1\n")); err != nil {
 		t.Fatalf("write v1 marker failed: %v", err)
+	}
+	if _, err := source.WriteFile(ctx, ephemeralPath, []byte("runtime-only\n")); err != nil {
+		t.Fatalf("write ephemeral marker failed: %v", err)
 	}
 	snapshot, err := client.CreateSandboxRootFSSnapshot(ctx, source.ID, &apispec.CreateSandboxRootFSSnapshotRequest{
 		Name: apispec.NewOptString("sdk-go-e2e-rootfs"),
@@ -106,10 +116,12 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create rootfs snapshot failed: %v", err)
 	}
+	t.Logf("rootfs snapshot: %s", snapshot.ID)
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cleanupCancel()
-		_, _ = client.DeleteSandboxRootFSSnapshot(cleanupCtx, snapshot.ID)
+		_, err := client.DeleteSandboxRootFSSnapshot(cleanupCtx, snapshot.ID)
+		requireRootFSCleanup(t, "rootfs snapshot", err)
 	})
 
 	snapshots, err := client.ListSandboxRootFSSnapshots(ctx, source.ID)
@@ -140,10 +152,12 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if err != nil {
 		t.Fatalf("fork running sandbox failed: %v", err)
 	}
+	t.Logf("rootfs fork sandbox: %s", forked.Sandbox.ID)
 	t.Cleanup(func() {
-		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cleanupCancel()
-		_, _ = client.DeleteSandbox(cleanupCtx, forked.Sandbox.ID)
+		_, err := client.DeleteSandbox(cleanupCtx, forked.Sandbox.ID)
+		requireRootFSCleanup(t, "fork sandbox", err)
 	})
 	if forked.SourceSandboxID != source.ID {
 		t.Fatalf("fork source ID = %q, want %q", forked.SourceSandboxID, source.ID)
@@ -185,4 +199,32 @@ func TestSandboxRootFSSnapshotRestoreFork(t *testing.T) {
 	if !bytes.Equal(forkContent, []byte("rootfs-v2\n")) {
 		t.Fatalf("fork marker = %q, want rootfs-v2", string(forkContent))
 	}
+	for _, sandbox := range []*sandbox0.Sandbox{source, client.Sandbox(forked.Sandbox.ID)} {
+		if _, err := sandbox.ReadFile(ctx, ephemeralPath); err == nil {
+			t.Fatalf("runtime-only file survived snapshot/resume in %s", sandbox.ID)
+		} else {
+			var apiErr *sandbox0.APIError
+			if !errors.As(err, &apiErr) || apiErr.StatusCode != 404 {
+				t.Fatalf("read absent ephemeral file in %s: %v, want 404", sandbox.ID, err)
+			}
+		}
+	}
+	if _, err := client.Sandbox(forked.Sandbox.ID).WriteFile(ctx, markerPath, []byte("fork-only\n")); err != nil {
+		t.Fatalf("write fork private branch failed: %v", err)
+	}
+	if content, err := source.ReadFile(ctx, markerPath); err != nil || !bytes.Equal(content, []byte("rootfs-v1\n")) {
+		t.Fatalf("fork write changed source branch: content=%q, error=%v", content, err)
+	}
+}
+
+func requireRootFSCleanup(t *testing.T, resource string, err error) {
+	t.Helper()
+	if err == nil {
+		return
+	}
+	var apiErr *sandbox0.APIError
+	if errors.As(err, &apiErr) && apiErr.StatusCode == 404 {
+		return
+	}
+	t.Errorf("cleanup %s failed: %v", resource, err)
 }
