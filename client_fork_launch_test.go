@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/sandbox0-ai/sdk-go/pkg/apispec"
@@ -162,10 +163,9 @@ func TestForkLaunchRejectsForeignAndInvalidEvidence(t *testing.T) {
 }
 
 func TestForkLaunchLostReplyThenOriginalLookup(t *testing.T) {
-	calls := 0
+	var calls atomic.Int32
 	c, server := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
-		calls++
-		if calls == 1 {
+		if calls.Add(1) == 1 {
 			if r.Method != "POST" {
 				t.Error("expected initial submission")
 			}
@@ -186,13 +186,13 @@ func TestForkLaunchLostReplyThenOriginalLookup(t *testing.T) {
 	if _, err := c.LaunchSandboxRootFSFork(t.Context(), "child", forkLaunchOptions); err == nil {
 		t.Fatal("lost reply accepted")
 	}
-	if calls != 1 {
+	if calls.Load() != 1 {
 		t.Fatal("submission retried")
 	}
 	if r, err := c.GetSandboxRootFSForkLaunch(t.Context(), "child", forkLaunchOptions); err != nil || r.Current {
 		t.Fatalf("retained history lost: %v", err)
 	}
-	if calls != 2 {
+	if calls.Load() != 2 {
 		t.Fatal("lookup submitted work")
 	}
 }

@@ -2630,6 +2630,7 @@ const (
 	CredentialSourceResolverKindStaticTLSClientCertificate CredentialSourceResolverKind = "static_tls_client_certificate"
 	CredentialSourceResolverKindStaticUsernamePassword     CredentialSourceResolverKind = "static_username_password"
 	CredentialSourceResolverKindStaticSSHPrivateKey        CredentialSourceResolverKind = "static_ssh_private_key"
+	CredentialSourceResolverKindStaticS3                   CredentialSourceResolverKind = "static_s3"
 )
 
 // AllValues returns all CredentialSourceResolverKind values.
@@ -2639,6 +2640,7 @@ func (CredentialSourceResolverKind) AllValues() []CredentialSourceResolverKind {
 		CredentialSourceResolverKindStaticTLSClientCertificate,
 		CredentialSourceResolverKindStaticUsernamePassword,
 		CredentialSourceResolverKindStaticSSHPrivateKey,
+		CredentialSourceResolverKindStaticS3,
 	}
 }
 
@@ -2652,6 +2654,8 @@ func (s CredentialSourceResolverKind) MarshalText() ([]byte, error) {
 	case CredentialSourceResolverKindStaticUsernamePassword:
 		return []byte(s), nil
 	case CredentialSourceResolverKindStaticSSHPrivateKey:
+		return []byte(s), nil
+	case CredentialSourceResolverKindStaticS3:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -2672,6 +2676,9 @@ func (s *CredentialSourceResolverKind) UnmarshalText(data []byte) error {
 		return nil
 	case CredentialSourceResolverKindStaticSSHPrivateKey:
 		*s = CredentialSourceResolverKindStaticSSHPrivateKey
+		return nil
+	case CredentialSourceResolverKindStaticS3:
+		*s = CredentialSourceResolverKindStaticS3
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -2721,6 +2728,7 @@ type CredentialSourceWriteSpec struct {
 	StaticTLSClientCertificate OptStaticTLSClientCertificateSourceSpec `json:"staticTLSClientCertificate"`
 	StaticUsernamePassword     OptStaticUsernamePasswordSourceSpec     `json:"staticUsernamePassword"`
 	StaticSSHPrivateKey        OptStaticSSHPrivateKeySourceSpec        `json:"staticSSHPrivateKey"`
+	StaticS3                   OptStaticS3SourceSpec                   `json:"staticS3"`
 }
 
 // GetStaticHeaders returns the value of StaticHeaders.
@@ -2743,6 +2751,11 @@ func (s *CredentialSourceWriteSpec) GetStaticSSHPrivateKey() OptStaticSSHPrivate
 	return s.StaticSSHPrivateKey
 }
 
+// GetStaticS3 returns the value of StaticS3.
+func (s *CredentialSourceWriteSpec) GetStaticS3() OptStaticS3SourceSpec {
+	return s.StaticS3
+}
+
 // SetStaticHeaders sets the value of StaticHeaders.
 func (s *CredentialSourceWriteSpec) SetStaticHeaders(val OptStaticHeadersSourceSpec) {
 	s.StaticHeaders = val
@@ -2761,6 +2774,11 @@ func (s *CredentialSourceWriteSpec) SetStaticUsernamePassword(val OptStaticUsern
 // SetStaticSSHPrivateKey sets the value of StaticSSHPrivateKey.
 func (s *CredentialSourceWriteSpec) SetStaticSSHPrivateKey(val OptStaticSSHPrivateKeySourceSpec) {
 	s.StaticSSHPrivateKey = val
+}
+
+// SetStaticS3 sets the value of StaticS3.
+func (s *CredentialSourceWriteSpec) SetStaticS3(val OptStaticS3SourceSpec) {
+	s.StaticS3 = val
 }
 
 // Ref: #/components/schemas/CurrentAPIKeyResponse
@@ -5011,6 +5029,107 @@ func (s *ExecutionSessionTerminalSpec) SetCols(val OptInt32) {
 // SetTerm sets the value of Term.
 func (s *ExecutionSessionTerminalSpec) SetTerm(val OptString) {
 	s.Term = val
+}
+
+// Credential-free binding to a team-owned S3 source. Bucket, endpoint and credentials come from the
+// source and are never supplied here or exposed to the guest. At attachment the mount target must be
+// an empty directory without symlink aliases.
+// Ref: #/components/schemas/ExternalMountBinding
+type ExternalMountBinding struct {
+	// Name of an enabled static_s3 source owned by the authenticated team. No whitespace at either end,
+	// slash, backslash, NUL or line breaks.
+	SourceRef string `json:"source_ref"`
+	// Canonical absolute guest directory, at most 4096 UTF-8 bytes. No root, dot components, duplicate
+	// slashes, backslash, NUL or line breaks. Must not overlap other mounts, template tmpfs mounts or
+	// platform-owned paths such as /tmp, /proc, /sys, /dev, /config and /run/sandbox0.
+	MountPath string `json:"mount_path"`
+	// Optional canonical relative directory prefix ending in a slash, appended to the source prefix to
+	// narrow its scope. The combined S3 key must fit 1024 UTF-8 bytes.
+	Prefix OptString `json:"prefix"`
+	// Read_write additionally requires allowWrite on the source. Omission never grants write access.
+	Access OptExternalMountBindingAccess `json:"access"`
+}
+
+// GetSourceRef returns the value of SourceRef.
+func (s *ExternalMountBinding) GetSourceRef() string {
+	return s.SourceRef
+}
+
+// GetMountPath returns the value of MountPath.
+func (s *ExternalMountBinding) GetMountPath() string {
+	return s.MountPath
+}
+
+// GetPrefix returns the value of Prefix.
+func (s *ExternalMountBinding) GetPrefix() OptString {
+	return s.Prefix
+}
+
+// GetAccess returns the value of Access.
+func (s *ExternalMountBinding) GetAccess() OptExternalMountBindingAccess {
+	return s.Access
+}
+
+// SetSourceRef sets the value of SourceRef.
+func (s *ExternalMountBinding) SetSourceRef(val string) {
+	s.SourceRef = val
+}
+
+// SetMountPath sets the value of MountPath.
+func (s *ExternalMountBinding) SetMountPath(val string) {
+	s.MountPath = val
+}
+
+// SetPrefix sets the value of Prefix.
+func (s *ExternalMountBinding) SetPrefix(val OptString) {
+	s.Prefix = val
+}
+
+// SetAccess sets the value of Access.
+func (s *ExternalMountBinding) SetAccess(val OptExternalMountBindingAccess) {
+	s.Access = val
+}
+
+// Read_write additionally requires allowWrite on the source. Omission never grants write access.
+type ExternalMountBindingAccess string
+
+const (
+	ExternalMountBindingAccessReadOnly  ExternalMountBindingAccess = "read_only"
+	ExternalMountBindingAccessReadWrite ExternalMountBindingAccess = "read_write"
+)
+
+// AllValues returns all ExternalMountBindingAccess values.
+func (ExternalMountBindingAccess) AllValues() []ExternalMountBindingAccess {
+	return []ExternalMountBindingAccess{
+		ExternalMountBindingAccessReadOnly,
+		ExternalMountBindingAccessReadWrite,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ExternalMountBindingAccess) MarshalText() ([]byte, error) {
+	switch s {
+	case ExternalMountBindingAccessReadOnly:
+		return []byte(s), nil
+	case ExternalMountBindingAccessReadWrite:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ExternalMountBindingAccess) UnmarshalText(data []byte) error {
+	switch ExternalMountBindingAccess(data) {
+	case ExternalMountBindingAccessReadOnly:
+		*s = ExternalMountBindingAccessReadOnly
+		return nil
+	case ExternalMountBindingAccessReadWrite:
+		*s = ExternalMountBindingAccessReadWrite
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/FileContentResponse
@@ -8088,6 +8207,52 @@ func (o OptExecutionSessionTerminalSpec) Get() (v ExecutionSessionTerminalSpec, 
 
 // Or returns value if set, or given parameter if does not.
 func (o OptExecutionSessionTerminalSpec) Or(d ExecutionSessionTerminalSpec) ExecutionSessionTerminalSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptExternalMountBindingAccess returns new OptExternalMountBindingAccess with value set to v.
+func NewOptExternalMountBindingAccess(v ExternalMountBindingAccess) OptExternalMountBindingAccess {
+	return OptExternalMountBindingAccess{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptExternalMountBindingAccess is optional ExternalMountBindingAccess.
+type OptExternalMountBindingAccess struct {
+	Value ExternalMountBindingAccess
+	Set   bool
+}
+
+// IsSet returns true if OptExternalMountBindingAccess was set.
+func (o OptExternalMountBindingAccess) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptExternalMountBindingAccess) Reset() {
+	var v ExternalMountBindingAccess
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptExternalMountBindingAccess) SetTo(v ExternalMountBindingAccess) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptExternalMountBindingAccess) Get() (v ExternalMountBindingAccess, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptExternalMountBindingAccess) Or(d ExternalMountBindingAccess) ExternalMountBindingAccess {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -11411,6 +11576,52 @@ func (o OptStaticHeadersSourceSpecValues) Or(d StaticHeadersSourceSpecValues) St
 	return d
 }
 
+// NewOptStaticS3SourceSpec returns new OptStaticS3SourceSpec with value set to v.
+func NewOptStaticS3SourceSpec(v StaticS3SourceSpec) OptStaticS3SourceSpec {
+	return OptStaticS3SourceSpec{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptStaticS3SourceSpec is optional StaticS3SourceSpec.
+type OptStaticS3SourceSpec struct {
+	Value StaticS3SourceSpec
+	Set   bool
+}
+
+// IsSet returns true if OptStaticS3SourceSpec was set.
+func (o OptStaticS3SourceSpec) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptStaticS3SourceSpec) Reset() {
+	var v StaticS3SourceSpec
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptStaticS3SourceSpec) SetTo(v StaticS3SourceSpec) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptStaticS3SourceSpec) Get() (v StaticS3SourceSpec, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptStaticS3SourceSpec) Or(d StaticS3SourceSpec) StaticS3SourceSpec {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptStaticSSHPrivateKeySourceSpec returns new OptStaticSSHPrivateKeySourceSpec with value set to v.
 func NewOptStaticSSHPrivateKeySourceSpec(v StaticSSHPrivateKeySourceSpec) OptStaticSSHPrivateKeySourceSpec {
 	return OptStaticSSHPrivateKeySourceSpec{
@@ -13715,11 +13926,14 @@ func (s *SSHPublicKey) SetUpdatedAt(val time.Time) {
 
 // Ref: #/components/schemas/Sandbox
 type Sandbox struct {
-	ID         string                 `json:"id"`
-	TemplateID string                 `json:"template_id"`
-	TeamID     string                 `json:"team_id"`
-	UserID     OptString              `json:"user_id"`
-	Status     SandboxLifecycleStatus `json:"status"`
+	// Persisted credential-free external mount bindings. Present while paused as well as running; this
+	// is configuration, not a worker health assertion.
+	ExternalMounts []ExternalMountBinding `json:"external_mounts"`
+	ID             string                 `json:"id"`
+	TemplateID     string                 `json:"template_id"`
+	TeamID         string                 `json:"team_id"`
+	UserID         OptString              `json:"user_id"`
+	Status         SandboxLifecycleStatus `json:"status"`
 	// True when status is paused.
 	Paused     bool                     `json:"paused"`
 	AutoResume bool                     `json:"auto_resume"`
@@ -13737,6 +13951,11 @@ type Sandbox struct {
 	ClaimedAt     time.Time      `json:"claimed_at"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
+}
+
+// GetExternalMounts returns the value of ExternalMounts.
+func (s *Sandbox) GetExternalMounts() []ExternalMountBinding {
+	return s.ExternalMounts
 }
 
 // GetID returns the value of ID.
@@ -13822,6 +14041,11 @@ func (s *Sandbox) GetCreatedAt() time.Time {
 // GetUpdatedAt returns the value of UpdatedAt.
 func (s *Sandbox) GetUpdatedAt() time.Time {
 	return s.UpdatedAt
+}
+
+// SetExternalMounts sets the value of ExternalMounts.
+func (s *Sandbox) SetExternalMounts(val []ExternalMountBinding) {
+	s.ExternalMounts = val
 }
 
 // SetID sets the value of ID.
@@ -15049,8 +15273,13 @@ func (s *SandboxAuditResource) SetSubresource(val OptString) {
 
 // Ref: #/components/schemas/SandboxConfig
 type SandboxConfig struct {
-	EnvVars   OptSandboxConfigEnvVars  `json:"env_vars"`
-	Resources OptSandboxResourceConfig `json:"resources"`
+	// Creation-time bindings to team-owned static_s3 credential sources. Available only in enabled
+	// regions. Bindings persist across filesystem pause/resume and cannot be changed by sandbox update.
+	// External objects are excluded from RootFS snapshots and forks; forks drop bindings. Memory
+	// pause/resume, memory fork and migration with mounts are unsupported.
+	ExternalMounts []ExternalMountBinding   `json:"external_mounts"`
+	EnvVars        OptSandboxConfigEnvVars  `json:"env_vars"`
+	Resources      OptSandboxResourceConfig `json:"resources"`
 	// Runtime soft time-to-live in seconds. When it expires, Sandbox0 checkpoints the writable rootfs,
 	// pauses the sandbox, and releases runtime compute while preserving durable sandbox state.
 	TTL OptInt32 `json:"ttl"`
@@ -15066,6 +15295,11 @@ type SandboxConfig struct {
 	// `503 sandbox_resume_failed` when that resume attempt has ended unsuccessfully.
 	AutoResume OptBool             `json:"auto_resume"`
 	Services   []SandboxAppService `json:"services"`
+}
+
+// GetExternalMounts returns the value of ExternalMounts.
+func (s *SandboxConfig) GetExternalMounts() []ExternalMountBinding {
+	return s.ExternalMounts
 }
 
 // GetEnvVars returns the value of EnvVars.
@@ -15106,6 +15340,11 @@ func (s *SandboxConfig) GetAutoResume() OptBool {
 // GetServices returns the value of Services.
 func (s *SandboxConfig) GetServices() []SandboxAppService {
 	return s.Services
+}
+
+// SetExternalMounts sets the value of ExternalMounts.
+func (s *SandboxConfig) SetExternalMounts(val []ExternalMountBinding) {
+	s.ExternalMounts = val
 }
 
 // SetEnvVars sets the value of EnvVars.
@@ -20967,6 +21206,105 @@ func (s *StaticHeadersSourceSpecValues) init() StaticHeadersSourceSpecValues {
 		*s = m
 	}
 	return m
+}
+
+// Team-owned S3 connection for isolated external mounts. Stored as platform-side secret material;
+// never returned in source metadata or injected into the user sandbox.
+// Ref: #/components/schemas/StaticS3SourceSpec
+type StaticS3SourceSpec struct {
+	Bucket string `json:"bucket"`
+	// Optional canonical directory prefix ending in a slash. Mount bindings may only narrow this scope.
+	// The combined S3 key must fit 1024 UTF-8 bytes.
+	Prefix OptString `json:"prefix"`
+	Region string    `json:"region"`
+	// Optional HTTPS origin for an S3-compatible provider. Private and metadata network addresses are
+	// rejected by the worker transport.
+	EndpointUrl OptString `json:"endpointUrl"`
+	// Authorizes writable bindings. Omitted or false permits read-only mounts only.
+	AllowWrite   OptBool   `json:"allowWrite"`
+	AccessKey    string    `json:"accessKey"`
+	SecretKey    string    `json:"secretKey"`
+	SessionToken OptString `json:"sessionToken"`
+}
+
+// GetBucket returns the value of Bucket.
+func (s *StaticS3SourceSpec) GetBucket() string {
+	return s.Bucket
+}
+
+// GetPrefix returns the value of Prefix.
+func (s *StaticS3SourceSpec) GetPrefix() OptString {
+	return s.Prefix
+}
+
+// GetRegion returns the value of Region.
+func (s *StaticS3SourceSpec) GetRegion() string {
+	return s.Region
+}
+
+// GetEndpointUrl returns the value of EndpointUrl.
+func (s *StaticS3SourceSpec) GetEndpointUrl() OptString {
+	return s.EndpointUrl
+}
+
+// GetAllowWrite returns the value of AllowWrite.
+func (s *StaticS3SourceSpec) GetAllowWrite() OptBool {
+	return s.AllowWrite
+}
+
+// GetAccessKey returns the value of AccessKey.
+func (s *StaticS3SourceSpec) GetAccessKey() string {
+	return s.AccessKey
+}
+
+// GetSecretKey returns the value of SecretKey.
+func (s *StaticS3SourceSpec) GetSecretKey() string {
+	return s.SecretKey
+}
+
+// GetSessionToken returns the value of SessionToken.
+func (s *StaticS3SourceSpec) GetSessionToken() OptString {
+	return s.SessionToken
+}
+
+// SetBucket sets the value of Bucket.
+func (s *StaticS3SourceSpec) SetBucket(val string) {
+	s.Bucket = val
+}
+
+// SetPrefix sets the value of Prefix.
+func (s *StaticS3SourceSpec) SetPrefix(val OptString) {
+	s.Prefix = val
+}
+
+// SetRegion sets the value of Region.
+func (s *StaticS3SourceSpec) SetRegion(val string) {
+	s.Region = val
+}
+
+// SetEndpointUrl sets the value of EndpointUrl.
+func (s *StaticS3SourceSpec) SetEndpointUrl(val OptString) {
+	s.EndpointUrl = val
+}
+
+// SetAllowWrite sets the value of AllowWrite.
+func (s *StaticS3SourceSpec) SetAllowWrite(val OptBool) {
+	s.AllowWrite = val
+}
+
+// SetAccessKey sets the value of AccessKey.
+func (s *StaticS3SourceSpec) SetAccessKey(val string) {
+	s.AccessKey = val
+}
+
+// SetSecretKey sets the value of SecretKey.
+func (s *StaticS3SourceSpec) SetSecretKey(val string) {
+	s.SecretKey = val
+}
+
+// SetSessionToken sets the value of SessionToken.
+func (s *StaticS3SourceSpec) SetSessionToken(val OptString) {
+	s.SessionToken = val
 }
 
 // Ref: #/components/schemas/StaticSSHPrivateKeySourceSpec

@@ -17,6 +17,34 @@ go get github.com/sandbox0-ai/sdk-go
 
 - Go 1.25 or later
 
+## External S3 mounts (pre-release)
+
+Requires a region with external mounts enabled; the feature is not enabled in
+production yet. Create a team-owned `static_s3` credential source using the
+existing credential-source API, then bind its name when claiming a sandbox.
+Credentials belong in the source and stay outside the guest.
+
+```go
+// Import "github.com/sandbox0-ai/sdk-go/pkg/apispec".
+sandbox, err := client.ClaimSandbox(ctx, "default",
+    sandbox0.WithSandboxExternalMounts([]apispec.ExternalMountBinding{{
+        SourceRef: "customer-data", MountPath: "/data",
+        Prefix: apispec.NewOptString("runs/"),
+    }}),
+)
+if err != nil { return err }
+detail, err := client.GetSandbox(ctx, sandbox.ID)
+// detail.ExternalMounts contains persisted bindings, including while paused.
+```
+
+Bindings are immutable and default to read-only. Writable access also requires
+`allowWrite` on the source. Filesystem pause/resume preserves bindings; memory
+pause/resume and migration with mounts are unsupported. External objects are
+excluded from RootFS snapshots, forks and paused Files API access. Forks drop
+bindings. Sandbox deletion does not delete bucket contents. See
+[external mounts](https://sandbox0.ai/docs/sandbox/external-mounts) for file
+semantics, durability and source setup.
+
 ## Files while compute is paused
 
 Use the existing file methods without starting or resuming compute:
