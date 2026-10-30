@@ -34867,6 +34867,12 @@ func (s *SandboxAppServiceRuntime) encodeFields(e *jx.Encoder) {
 		s.Type.Encode(e)
 	}
 	{
+		if s.ServiceID.Set {
+			e.FieldStart("service_id")
+			s.ServiceID.Encode(e)
+		}
+	}
+	{
 		if s.Command != nil {
 			e.FieldStart("command")
 			e.ArrStart()
@@ -34896,12 +34902,13 @@ func (s *SandboxAppServiceRuntime) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSandboxAppServiceRuntime = [5]string{
+var jsonFieldsNameOfSandboxAppServiceRuntime = [6]string{
 	0: "type",
-	1: "command",
-	2: "cwd",
-	3: "env_vars",
-	4: "function",
+	1: "service_id",
+	2: "command",
+	3: "cwd",
+	4: "env_vars",
+	5: "function",
 }
 
 // Decode decodes SandboxAppServiceRuntime from json.
@@ -34922,6 +34929,16 @@ func (s *SandboxAppServiceRuntime) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "service_id":
+			if err := func() error {
+				s.ServiceID.Reset()
+				if err := s.ServiceID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"service_id\"")
 			}
 		case "command":
 			if err := func() error {
@@ -35106,6 +35123,8 @@ func (s *SandboxAppServiceRuntimeType) Decode(d *jx.Decoder) error {
 		*s = SandboxAppServiceRuntimeTypeManual
 	case SandboxAppServiceRuntimeTypeFunction:
 		*s = SandboxAppServiceRuntimeTypeFunction
+	case SandboxAppServiceRuntimeTypeService:
+		*s = SandboxAppServiceRuntimeTypeService
 	default:
 		*s = SandboxAppServiceRuntimeType(v)
 	}

@@ -14329,6 +14329,9 @@ func (s *SandboxAppServiceRouteRateLimit) SetBurst(val int32) {
 type SandboxAppServiceRuntime struct {
 	// Runtime strategy for restarting a service process.
 	Type SandboxAppServiceRuntimeType `json:"type"`
+	// For type service, the ID of a different cmd service in the same sandbox whose supervised runtime
+	// is shared. References cannot override command, cwd, env_vars or function, and cannot form chains.
+	ServiceID OptString `json:"service_id"`
 	// Process argv used when type is cmd.
 	Command  []string                           `json:"command"`
 	Cwd      OptString                          `json:"cwd"`
@@ -14339,6 +14342,11 @@ type SandboxAppServiceRuntime struct {
 // GetType returns the value of Type.
 func (s *SandboxAppServiceRuntime) GetType() SandboxAppServiceRuntimeType {
 	return s.Type
+}
+
+// GetServiceID returns the value of ServiceID.
+func (s *SandboxAppServiceRuntime) GetServiceID() OptString {
+	return s.ServiceID
 }
 
 // GetCommand returns the value of Command.
@@ -14364,6 +14372,11 @@ func (s *SandboxAppServiceRuntime) GetFunction() OptSandboxFunction {
 // SetType sets the value of Type.
 func (s *SandboxAppServiceRuntime) SetType(val SandboxAppServiceRuntimeType) {
 	s.Type = val
+}
+
+// SetServiceID sets the value of ServiceID.
+func (s *SandboxAppServiceRuntime) SetServiceID(val OptString) {
+	s.ServiceID = val
 }
 
 // SetCommand sets the value of Command.
@@ -14404,6 +14417,7 @@ const (
 	SandboxAppServiceRuntimeTypeCmd      SandboxAppServiceRuntimeType = "cmd"
 	SandboxAppServiceRuntimeTypeManual   SandboxAppServiceRuntimeType = "manual"
 	SandboxAppServiceRuntimeTypeFunction SandboxAppServiceRuntimeType = "function"
+	SandboxAppServiceRuntimeTypeService  SandboxAppServiceRuntimeType = "service"
 )
 
 // AllValues returns all SandboxAppServiceRuntimeType values.
@@ -14412,6 +14426,7 @@ func (SandboxAppServiceRuntimeType) AllValues() []SandboxAppServiceRuntimeType {
 		SandboxAppServiceRuntimeTypeCmd,
 		SandboxAppServiceRuntimeTypeManual,
 		SandboxAppServiceRuntimeTypeFunction,
+		SandboxAppServiceRuntimeTypeService,
 	}
 }
 
@@ -14423,6 +14438,8 @@ func (s SandboxAppServiceRuntimeType) MarshalText() ([]byte, error) {
 	case SandboxAppServiceRuntimeTypeManual:
 		return []byte(s), nil
 	case SandboxAppServiceRuntimeTypeFunction:
+		return []byte(s), nil
+	case SandboxAppServiceRuntimeTypeService:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -14440,6 +14457,9 @@ func (s *SandboxAppServiceRuntimeType) UnmarshalText(data []byte) error {
 		return nil
 	case SandboxAppServiceRuntimeTypeFunction:
 		*s = SandboxAppServiceRuntimeTypeFunction
+		return nil
+	case SandboxAppServiceRuntimeTypeService:
+		*s = SandboxAppServiceRuntimeTypeService
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
