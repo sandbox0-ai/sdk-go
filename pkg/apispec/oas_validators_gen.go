@@ -6458,6 +6458,8 @@ func (s SandboxAppServiceRuntimeType) Validate() error {
 		return nil
 	case "function":
 		return nil
+	case "service":
+		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
