@@ -123,6 +123,14 @@ func (s *ExecutionSessionTerminalSpec) setDefaults() {
 }
 
 // setDefaults set default value of fields.
+func (s *ExternalMountBinding) setDefaults() {
+	{
+		val := ExternalMountBindingAccess("read_only")
+		s.Access.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *ForkSandboxRequest) setDefaults() {
 	{
 		val := bool(false)
@@ -191,5 +199,13 @@ func (s *SandboxUpdateConfig) setDefaults() {
 	{
 		val := bool(true)
 		s.AutoResume.SetTo(val)
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *StaticS3SourceSpec) setDefaults() {
+	{
+		val := bool(false)
+		s.AllowWrite.SetTo(val)
 	}
 }

@@ -3,6 +3,7 @@ package sandbox0
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 	"time"
 
@@ -123,6 +124,16 @@ func WithSandboxServices(services []apispec.SandboxAppService) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
 		config.Services = normalizeSandboxServices(services)
+	}
+}
+
+// WithSandboxExternalMounts sets immutable creation-time S3 bindings. This
+// pre-release feature requires an enabled region. Credentials belong in a
+// team-owned static_s3 source, never in the binding or guest environment.
+func WithSandboxExternalMounts(mounts []apispec.ExternalMountBinding) SandboxOption {
+	bindings := slices.Clone(mounts)
+	return func(opts *sandboxOptions) {
+		ensureSandboxConfig(opts).ExternalMounts = slices.Clone(bindings)
 	}
 }
 
