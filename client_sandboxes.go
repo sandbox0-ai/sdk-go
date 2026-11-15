@@ -72,14 +72,26 @@ func WithSandboxHardTTL(ttlSec int32) SandboxOption {
 	}
 }
 
-// WithSandboxMemory sets the sandbox memory limit, such as "512Mi" or "2Gi".
+// WithSandboxMemory sets base sandbox memory, such as "512Mi" or "2Gi".
 // Sandbox0 derives CPU from the platform memory-per-CPU ratio.
 func WithSandboxMemory(memory string) SandboxOption {
 	return func(opts *sandboxOptions) {
 		config := ensureSandboxConfig(opts)
-		config.Resources = apispec.NewOptSandboxResourceConfig(apispec.SandboxResourceConfig{
-			Memory: apispec.NewOptString(memory),
-		})
+		resources, _ := config.Resources.Get()
+		resources.Memory = apispec.NewOptString(memory)
+		config.Resources = apispec.NewOptSandboxResourceConfig(resources)
+	}
+}
+
+// WithSandboxMemoryBurstPercent authorizes up to 50 percent additional RAM
+// where enabled. CPU stays based on base memory; billing follows the applied
+// hard limit. Omit this option or use zero to disable burst.
+func WithSandboxMemoryBurstPercent(percent int32) SandboxOption {
+	return func(opts *sandboxOptions) {
+		config := ensureSandboxConfig(opts)
+		resources, _ := config.Resources.Get()
+		resources.MemoryBurstPercent = apispec.NewOptInt32(percent)
+		config.Resources = apispec.NewOptSandboxResourceConfig(resources)
 	}
 }
 

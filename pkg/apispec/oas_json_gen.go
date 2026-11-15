@@ -40519,10 +40519,17 @@ func (s *SandboxResourceConfig) encodeFields(e *jx.Encoder) {
 			s.Memory.Encode(e)
 		}
 	}
+	{
+		if s.MemoryBurstPercent.Set {
+			e.FieldStart("memory_burst_percent")
+			s.MemoryBurstPercent.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfSandboxResourceConfig = [1]string{
+var jsonFieldsNameOfSandboxResourceConfig = [2]string{
 	0: "memory",
+	1: "memory_burst_percent",
 }
 
 // Decode decodes SandboxResourceConfig from json.
@@ -40542,6 +40549,16 @@ func (s *SandboxResourceConfig) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"memory\"")
+			}
+		case "memory_burst_percent":
+			if err := func() error {
+				s.MemoryBurstPercent.Reset()
+				if err := s.MemoryBurstPercent.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"memory_burst_percent\"")
 			}
 		default:
 			return d.Skip()
