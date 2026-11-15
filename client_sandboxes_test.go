@@ -38,6 +38,10 @@ func TestClaimSandboxWithOptions(t *testing.T) {
 		if !ok {
 			t.Fatal("resources not set")
 		}
+		burst, burstSet := resources.MemoryBurstPercent.Get()
+		if !burstSet || burst != 50 {
+			t.Fatalf("burst = %d/%v, want 50/true", burst, burstSet)
+		}
 		memory, ok := resources.Memory.Get()
 		if !ok || memory != "512Mi" {
 			t.Fatalf("memory = %q, want 512Mi", memory)
@@ -64,6 +68,7 @@ func TestClaimSandboxWithOptions(t *testing.T) {
 		context.Background(),
 		"default",
 		WithSandboxTTL(300),
+		WithSandboxMemoryBurstPercent(50),
 		WithSandboxMemory("512Mi"),
 		WithSandboxSnapshotID("snap_123"),
 	)
@@ -655,5 +660,28 @@ func sandboxJSON(id string) map[string]any {
 		"claimed_at":         "2026-01-02T03:04:05Z",
 		"created_at":         "2026-01-02T03:04:05Z",
 		"updated_at":         "2026-01-02T03:04:05Z",
+	}
+}
+
+func TestSandboxMemoryBurstOptionsPreserveBaseAndValidate(t *testing.T) {
+	for _, percent := range []int32{-1, 0, 50, 51} {
+		opts := sandboxOptions{}
+		WithSandboxMemory("4Gi")(&opts)
+		WithSandboxMemoryBurstPercent(percent)(&opts)
+		resources, _ := opts.config.Resources.Get()
+		memory, _ := resources.Memory.Get()
+		if memory != "4Gi" {
+			t.Fatal("burst option discarded base memory")
+		}
+		err := opts.config.Validate()
+		if (err != nil) != (percent < 0 || percent > 50) {
+			t.Fatalf("percent %d: validation error %v", percent, err)
+		}
+	}
+	opts := sandboxOptions{}
+	WithSandboxMemory("4Gi")(&opts)
+	resources, _ := opts.config.Resources.Get()
+	if resources.MemoryBurstPercent.IsSet() {
+		t.Fatal("omitted burst must remain absent for old servers")
 	}
 }
